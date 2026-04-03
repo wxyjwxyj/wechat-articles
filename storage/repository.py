@@ -144,3 +144,62 @@ class ItemRepository:
                 ).fetchall()
             ]
         return rows
+
+
+class BundleRepository:
+    """bundle、bundle_items、bundle_topics 的持久化接口。"""
+
+    def __init__(self, db_path: Path | str):
+        self.db_path = db_path
+
+    def upsert_bundle(self, bundle: dict) -> int:
+        """插入或更新 bundle，返回 bundle.id。"""
+        now = datetime.utcnow().isoformat()
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute(
+                    """
+                    insert into bundles(bundle_date, title, intro, highlights, status, created_at, updated_at)
+                    values (?, ?, ?, ?, ?, ?, ?)
+                    on conflict(bundle_date) do update set
+                      title=excluded.title,
+                      intro=excluded.intro,
+                      highlights=excluded.highlights,
+                      status=excluded.status,
+                      updated_at=excluded.updated_at
+                    """,
+                    (
+                        bundle["bundle_date"],
+                        bundle["title"],
+                        bundle["intro"],
+                        json.dumps(bundle.get("highlights", []), ensure_ascii=False),
+                        bundle.get("status", "draft"),
+                        now,
+                        now,
+                    ),
+                )
+                row = conn.execute(
+                    "select id from bundles where bundle_date = ?",
+                    (bundle["bundle_date"],),
+                ).fetchone()
+        return row["id"]
+
+    def replace_bundle_items(self, bundle_id: int, item_ids: list[int]) -> None:
+        """替换 bundle 关联的 item 列表（先删后插）。"""
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute("delete from bundle_items where bundle_id = ?", (bundle_id,))
+                conn.executemany(
+                    "insert into bundle_items(bundle_id, item_id, sort_order) values (?, ?, ?)",
+                    [(bundle_id, item_id, i) for i, item_id in enumerate(item_ids)],
+                )
+
+    def replace_bundle_topics(self, bundle_id: int, topic_ids: list[int]) -> None:
+        """替换 bundle 关联的 topic 列表（先删后插）。"""
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute("delete from bundle_topics where bundle_id = ?", (bundle_id,))
+                conn.executemany(
+                    "insert into bundle_topics(bundle_id, topic_id) values (?, ?)",
+                    [(bundle_id, topic_id) for topic_id in topic_ids],
+                )
