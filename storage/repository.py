@@ -16,6 +16,22 @@ class SourcePayload(TypedDict):
     config: Optional[dict]
 
 
+class ItemPayload(TypedDict):
+    source_id: int
+    source_type: str
+    title: str
+    url: str
+    author: Optional[str]
+    published_at: str
+    raw_content: str
+    summary: Optional[str]
+    cover: Optional[str]
+    tags: list[str]
+    language: str
+    content_hash: str
+    status: str
+
+
 class SourceRepository:
     """管理数据源（sources）的仓库类。"""
 
@@ -56,3 +72,56 @@ class SourceRepository:
         with closing(get_connection(self.db_path)) as conn:
             rows = [dict(row) for row in conn.execute("select * from sources order by id asc").fetchall()]
         return rows
+
+
+class ItemRepository:
+    """管理内容条目（items）的仓库类。"""
+
+    def __init__(self, db_path: Path | str):
+        self.db_path = db_path
+
+    def upsert_item(self, payload: ItemPayload) -> None:
+        """
+        插入或更新条目。如果 url 已存在则更新除内容哈希和状态外的其他字段。
+        """
+        now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute(
+                    """
+                    insert into items(
+                        source_id, source_type, title, url, author,
+                        published_at, raw_content, summary, cover,
+                        tags, language, content_hash, status,
+                        created_at, updated_at
+                    )
+                    values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    on conflict(url) do update set
+                      title=excluded.title,
+                      author=excluded.author,
+                      published_at=excluded.published_at,
+                      raw_content=excluded.raw_content,
+                      summary=excluded.summary,
+                      cover=excluded.cover,
+                      tags=excluded.tags,
+                      language=excluded.language,
+                      updated_at=excluded.updated_at
+                    """,
+                    (
+                        payload["source_id"],
+                        payload["source_type"],
+                        payload["title"],
+                        payload["url"],
+                        payload.get("author"),
+                        payload["published_at"],
+                        payload["raw_content"],
+                        payload.get("summary"),
+                        payload.get("cover"),
+                        json.dumps(payload.get("tags", []), ensure_ascii=False),
+                        payload.get("language", "zh"),
+                        payload["content_hash"],
+                        payload.get("status", "raw"),
+                        now,
+                        now,
+                    ),
+                )
