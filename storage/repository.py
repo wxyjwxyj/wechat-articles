@@ -85,7 +85,7 @@ class ItemRepository:
 
     def upsert_item(self, payload: ItemPayload) -> None:
         """
-        插入或更新条目。如果 url 已存在则更新除内容哈希和状态外的其他字段。
+        插入或更新条目。如果 url 已存在则更新所有字段。
         """
         now = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with closing(get_connection(self.db_path)) as conn:
@@ -108,6 +108,8 @@ class ItemRepository:
                       cover=excluded.cover,
                       tags=excluded.tags,
                       language=excluded.language,
+                      content_hash=excluded.content_hash,
+                      status=excluded.status,
                       updated_at=excluded.updated_at
                     """,
                     (
