@@ -132,13 +132,15 @@ class ItemRepository:
                 )
 
     def list_items_by_date(self, date_str: str) -> list[dict]:
-        """按日期（YYYY-MM-DD）查找内容条目。"""
+        """返回指定日期的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。"""
+        start = f"{date_str}T00:00:00"
+        end = f"{date_str}T23:59:59"
         with closing(get_connection(self.db_path)) as conn:
             rows = [
                 dict(row)
                 for row in conn.execute(
-                    "select * from items where substr(published_at, 1, 10) = ? order by published_at desc",
-                    (date_str,),
+                    "select * from items where published_at between ? and ? order by published_at desc",
+                    (start, end),
                 ).fetchall()
             ]
-            return rows
+        return rows
