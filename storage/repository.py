@@ -128,3 +128,15 @@ class ItemRepository:
                         now,
                     ),
                 )
+
+    def list_items_by_date(self, date_str: str) -> list[dict]:
+        """按日期（YYYY-MM-DD）查找内容条目。"""
+        with closing(get_connection(self.db_path)) as conn:
+            rows = [
+                dict(row)
+                for row in conn.execute(
+                    "select * from items where substr(published_at, 1, 10) = ? order by published_at desc",
+                    (date_str,),
+                ).fetchall()
+            ]
+            return rows
