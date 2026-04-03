@@ -38,14 +38,15 @@ class SourceRepository:
     def __init__(self, db_path: Path | str):
         self.db_path = db_path
 
-    def upsert_source(self, payload: SourcePayload) -> None:
+    def upsert_source(self, payload: SourcePayload) -> dict:
         """
         插入或更新数据源信息。如果名称（name）已存在则更新其他字段。
+        返回操作后的 source 字典。
         """
         now = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with closing(get_connection(self.db_path)) as conn:
             with conn:
-                conn.execute(
+                cursor = conn.execute(
                     """
                     insert into sources(type, name, external_id, status, config, created_at, updated_at)
                     values (?, ?, ?, ?, ?, ?, ?)
@@ -55,6 +56,7 @@ class SourceRepository:
                       status=excluded.status,
                       config=excluded.config,
                       updated_at=excluded.updated_at
+                    returning *
                     """,
                     (
                         payload["type"],
@@ -66,6 +68,7 @@ class SourceRepository:
                         now,
                     ),
                 )
+                return dict(cursor.fetchone())
 
     def list_sources(self) -> list[dict]:
         """列表所有数据源。"""

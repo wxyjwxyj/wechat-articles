@@ -21,21 +21,32 @@ def load_config():
         sys.exit(1)
 
     with open(config_file, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        config = json.load(f)
+        
+    # Validate required config keys
+    if 'accounts' not in config:
+        print("✗ 错误: config.json 中缺少 'accounts' 配置")
+        sys.exit(1)
+        
+    if 'token' not in config:
+        print("✗ 错误: config.json 中缺少 'token' 配置")
+        sys.exit(1)
+        
+    return config
 
 
 if __name__ == "__main__":
     config = load_config()
-    ACCOUNTS = config['accounts']
-    TOKEN = config['token']
+    ACCOUNTS = config.get('accounts', {})
+    TOKEN = config.get('token', '')
     TARGET_ID = config.get('target_id', '')  # 可选，如果为空则自动查找
     CDP_PROXY = config.get('cdp_proxy', 'http://localhost:3456')
+    DB_PATH = Path(config.get('db_path', 'content.db'))
 
     # 初始化数据库和仓库
-    db_path = Path("content.db")
-    init_db(db_path)
-    source_repo = SourceRepository(db_path)
-    item_repo = ItemRepository(db_path)
+    init_db(DB_PATH)
+    source_repo = SourceRepository(DB_PATH)
+    item_repo = ItemRepository(DB_PATH)
 
     collector = WechatCollector(
         cdp_proxy=CDP_PROXY,
@@ -47,21 +58,19 @@ if __name__ == "__main__":
 
     for account, fakeid in ACCOUNTS.items():
         print(f"\n获取 {account} 今天的文章...")
+        # 移除未使用的 account_name 参数（改为内部打印使用）
+        # 这里我们在外层处理报错信息，由于 collector 方法签名我们已经更新了
         articles = collector.fetch_articles(account, fakeid)
 
         if articles:
-            # 确保 source 存在，用于 normalize
-            source_repo.upsert_source({
+            # 确保 source 存在，用于 normalize，并且直接返回 source 记录
+            source = source_repo.upsert_source({
                 "type": "wechat",
                 "name": account,
                 "external_id": fakeid,
                 "status": "active",
                 "config": {}
             })
-
-            # 获取刚刚插入或更新的 source id
-            sources = source_repo.list_sources()
-            source = next((s for s in sources if s["name"] == account), None)
 
             if not source:
                 print(f"  警告: 无法获取 {account} 的 source 记录")
@@ -70,7 +79,7 @@ if __name__ == "__main__":
             normalized_articles = []
             print(f"  找到 {len(articles)} 篇")
             for art in articles:
-                print(f"    {art['time']} - {art['title'][:50]}")
+                print(f"    {art.get('time', '')} - {art.get('title', '')[:50]}")
                 # 规范化文章
                 item = normalize_wechat_article(source, art)
                 normalized_articles.append(item)

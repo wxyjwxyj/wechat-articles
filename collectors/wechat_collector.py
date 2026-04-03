@@ -11,8 +11,9 @@ class WechatCollector:
         self.target_id = target_id
 
     def fetch_articles(self, account_name: str, fakeid: str, count: int = 20) -> list[dict]:
-        target_id = self.target_id or self._find_target_id()
-        if not target_id:
+        self.target_id = self.target_id or self._find_target_id()
+        if not self.target_id:
+            print(f"[{account_name}] 错误: 无法获取 target_id")
             return []
 
         js_code = f'''
@@ -23,15 +24,28 @@ class WechatCollector:
             return JSON.parse(xhr.responseText);
         }})()
         '''
-        resp = requests.post(f"{self.cdp_proxy}/eval?target={target_id}", data=js_code)
-        raw_data = resp.json().get("value", {})
+        try:
+            resp = requests.post(f"{self.cdp_proxy}/eval?target={self.target_id}", data=js_code, timeout=10)
+            resp.raise_for_status()
+            raw_data = resp.json().get("value", {})
+        except requests.RequestException as e:
+            print(f"[{account_name}] 错误: CDP 请求失败 - {e}")
+            return []
+        except ValueError as e:
+            print(f"[{account_name}] 错误: JSON 解析失败 - {e}")
+            return []
+
         return self._parse_articles(raw_data)
 
     def _find_target_id(self) -> str:
-        resp = requests.get(f"{self.cdp_proxy}/targets")
-        for target in resp.json():
-            if "mp.weixin.qq.com" in target.get("url", ""):
-                return target["targetId"]
+        try:
+            resp = requests.get(f"{self.cdp_proxy}/targets", timeout=10)
+            resp.raise_for_status()
+            for target in resp.json():
+                if "mp.weixin.qq.com" in target.get("url", ""):
+                    return target.get("targetId", "")
+        except (requests.RequestException, ValueError) as e:
+            print(f"错误: 获取 targets 失败 - {e}")
         return ""
 
     def _parse_articles(self, raw_data: dict) -> list[dict]:
@@ -39,20 +53,31 @@ class WechatCollector:
             return []
         publish_page = raw_data.get("publish_page", "{}")
         if isinstance(publish_page, str):
-            publish_page = json.loads(publish_page)
+            try:
+                publish_page = json.loads(publish_page)
+            except json.JSONDecodeError:
+                publish_page = {}
+                
         today = datetime.now().date()
         articles = []
         for item in publish_page.get("publish_list", []):
             publish_info = item.get("publish_info", "{}")
             if isinstance(publish_info, str):
-                publish_info = json.loads(publish_info)
+                try:
+                    publish_info = json.loads(publish_info)
+                except json.JSONDecodeError:
+                    publish_info = {}
+                    
             for msg in publish_info.get("appmsgex", []):
-                pub_time = datetime.fromtimestamp(msg["update_time"])
+                update_time = msg.get("update_time")
+                if not update_time:
+                    continue
+                pub_time = datetime.fromtimestamp(update_time)
                 if pub_time.date() == today:
                     articles.append(
                         {
-                            "title": msg["title"],
-                            "link": msg["link"],
+                            "title": msg.get("title", ""),
+                            "link": msg.get("link", ""),
                             "digest": msg.get("digest", ""),
                             "time": pub_time.strftime("%Y-%m-%d %H:%M:%S"),
                         }
