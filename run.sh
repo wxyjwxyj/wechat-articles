@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 echo "========================================="
 echo "  微信公众号文章自动获取与发布"
@@ -46,38 +45,39 @@ echo ""
 
 # 3. 初始化 sources
 echo "🔧 初始化 sources..."
-python scripts/seed_sources.py
+if ! python scripts/seed_sources.py; then
+    echo "✗ sources 初始化失败，退出"
+    exit 1
+fi
 echo ""
 
 # 4. 获取今日文章
 echo "📥 获取今日文章..."
-python fetch_wechat_today.py
+if ! python fetch_wechat_today.py; then
+    echo "✗ 文章采集失败，退出"
+    exit 1
+fi
 echo ""
 
 # 5. 生成每日 bundle
 echo "📦 生成每日 bundle..."
 python scripts/build_bundle.py
+BUNDLE_OK=$?
 echo ""
 
 # 6. 生成 HTML
 echo "🌐 生成 HTML 预览..."
 if [ -f "bundle_today.json" ]; then
-    python generate_html.py bundle_today.json
+    python generate_html.py bundle_today.json || echo "⚠ HTML 生成失败，继续"
 else
-    TODAY=$(date +%Y%m%d)
-    JSON_FILE="wechat_today_${TODAY}.json"
-    if [ -f "$JSON_FILE" ]; then
-        python generate_html.py "$JSON_FILE"
-    else
-        echo "⚠ 未找到可用的 JSON 文件，跳过 HTML 生成"
-    fi
+    echo "⚠ 今日无内容，跳过 HTML 生成"
 fi
 echo ""
 
 # 7. 生成公众号发布稿（可选）
 if [ -f "scripts/generate_mp_article.py" ]; then
     echo "📝 生成公众号发布稿..."
-    python scripts/generate_mp_article.py bundle_today.json
+    python scripts/generate_mp_article.py bundle_today.json || echo "⚠ 公众号稿生成失败，继续"
     echo ""
 fi
 

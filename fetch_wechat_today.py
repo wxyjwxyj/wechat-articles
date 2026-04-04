@@ -29,8 +29,6 @@ def main() -> None:
 
     collector = WechatCollector(
         cdp_proxy=config.get("cdp_proxy", "http://localhost:3456"),
-        token=config.get("token", ""),
-        target_id=config.get("target_id", ""),
     )
 
     source_repo = SourceRepository(DB_PATH)

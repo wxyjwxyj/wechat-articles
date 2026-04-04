@@ -1,20 +1,66 @@
 import json
+import re
 from datetime import datetime
+from urllib.parse import urlparse, parse_qs
 
 import requests
 
 
 class WechatCollector:
-    def __init__(self, cdp_proxy: str, token: str, target_id: str = ""):
+    def __init__(self, cdp_proxy: str, token: str = "", target_id: str = ""):
         self.cdp_proxy = cdp_proxy
         self.token = token
         self.target_id = target_id
 
-    def fetch_articles(self, account_name: str, fakeid: str, count: int = 20) -> list[dict]:
-        self.target_id = self.target_id or self._find_target_id()
+    def _resolve_session(self) -> bool:
+        """自动从浏览器标签页中探测 target_id 和 token，优先使用公众平台主页。"""
+        try:
+            resp = requests.get(f"{self.cdp_proxy}/targets", timeout=10)
+            resp.raise_for_status()
+            targets = resp.json()
+        except (requests.RequestException, ValueError) as e:
+            print(f"错误: 获取 targets 失败 - {e}")
+            return False
+
+        # 优先匹配公众平台管理页（含 token 参数），其次匹配任意微信域名
+        best_target = None
+        best_token = ""
+        for t in targets:
+            url = t.get("url", "")
+            if "mp.weixin.qq.com" not in url:
+                continue
+            parsed = urlparse(url)
+            qs = parse_qs(parsed.query)
+            token_val = qs.get("token", [""])[0]
+            if token_val:
+                # 含 token 的管理页，优先级最高
+                best_target = t.get("targetId", "")
+                best_token = token_val
+                break
+            if best_target is None:
+                best_target = t.get("targetId", "")
+
+        if not best_target:
+            print("错误: 未找到微信公众平台标签页，请先在浏览器中打开 mp.weixin.qq.com 并登录")
+            return False
+
         if not self.target_id:
-            print(f"[{account_name}] 错误: 无法获取 target_id")
-            return []
+            self.target_id = best_target
+        if not self.token:
+            self.token = best_token
+
+        if not self.token:
+            print("错误: 无法从浏览器 URL 获取 token，请确保在微信公众平台管理页（含 token 参数）已登录")
+            return False
+
+        return True
+
+    def fetch_articles(self, account_name: str, fakeid: str, count: int = 20) -> list[dict]:
+        # 首次调用时探测 session（后续复用已探测到的值）
+        if not self.target_id or not self.token:
+            if not self._resolve_session():
+                print(f"[{account_name}] 错误: 无法获取 target_id / token")
+                return []
 
         js_code = f'''
         (() => {{
@@ -36,17 +82,6 @@ class WechatCollector:
             return []
 
         return self._parse_articles(raw_data)
-
-    def _find_target_id(self) -> str:
-        try:
-            resp = requests.get(f"{self.cdp_proxy}/targets", timeout=10)
-            resp.raise_for_status()
-            for target in resp.json():
-                if "mp.weixin.qq.com" in target.get("url", ""):
-                    return target.get("targetId", "")
-        except (requests.RequestException, ValueError) as e:
-            print(f"错误: 获取 targets 失败 - {e}")
-        return ""
 
     def _parse_articles(self, raw_data: dict) -> list[dict]:
         if not raw_data or raw_data.get("base_resp", {}).get("ret") != 0:

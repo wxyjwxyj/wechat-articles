@@ -18,6 +18,10 @@ OUTPUT_PATH = Path(__file__).parent.parent / "mp_article_preview.json"
 def main() -> None:
     bundle_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_BUNDLE
 
+    if not bundle_path.exists():
+        print(f"⚠ bundle 文件不存在，跳过公众号稿生成：{bundle_path}")
+        return
+
     with open(bundle_path, "r", encoding="utf-8") as f:
         bundle = json.load(f)
 

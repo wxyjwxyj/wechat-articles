@@ -54,19 +54,22 @@ def main() -> None:
     bundle_repo.replace_bundle_items(bundle_id, item_ids)
 
     # 输出 JSON 快照供 HTML/公众号稿件生成器使用
-    # 将 items 按 source 分组，方便下游使用
-    sources_grouped: dict[str, list[dict]] = {}
-    for item in items:
-        src = item["source_name"]
-        sources_grouped.setdefault(src, []).append(
-            {
-                "title": item["title"],
-                "summary": item.get("summary", ""),
-                "published_at": item["published_at"],
-                "url": item["url"],
-            }
-        )
-    bundle["sources"] = sources_grouped
+    # items 已含 sources_list（聚合来源列表），直接写入
+    bundle["items_flat"] = [
+        {
+            "title": item["title"],
+            "summary": item.get("summary", ""),
+            "published_at": item["published_at"],
+            "url": item.get("url", ""),
+            "source_name": item.get("source_name", ""),
+            "sources_list": item.get("sources_list", [{
+                "source_name": item.get("source_name", ""),
+                "url": item.get("url", ""),
+            }]),
+            "tags": item.get("tags", []),
+        }
+        for item in items
+    ]
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(bundle, f, ensure_ascii=False, indent=2)
