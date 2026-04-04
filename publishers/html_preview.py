@@ -353,15 +353,121 @@ def render_bundle_html(bundle: dict) -> str:
       border-top: 1px solid #f0f2f5;
     }}
 
+    /* ── 手机适配 ── */
     @media (max-width: 768px) {{
-      .container {{ margin: 10px; border-radius: 8px; }}
-      .header {{ padding: 20px; }}
-      .header h1 {{ font-size: 20px; }}
-      .table-wrap {{ padding: 0 16px 20px; }}
-      .col-digest {{ display: none; }}
-      .col-time {{ display: none; }}
-      .col-title {{ width: 60%; }}
-      .col-sources {{ width: 40%; }}
+      .container {{ margin: 0; border-radius: 0; box-shadow: none; }}
+      .header {{ padding: 16px 16px 14px; }}
+      .header h1 {{ font-size: 18px; }}
+      .header .meta {{ font-size: 11px; }}
+
+      /* 标签栏：默认折叠，只显示 2 行 */
+      .topics-bar {{
+        padding: 10px 16px;
+        max-height: 90px;
+        overflow: hidden;
+        position: relative;
+        transition: max-height 0.3s ease;
+      }}
+      .topics-bar.expanded {{
+        max-height: 600px;
+      }}
+      .topics-toggle {{
+        display: block !important;
+        text-align: center;
+        padding: 6px 0;
+        font-size: 11px;
+        color: #999;
+        cursor: pointer;
+        user-select: none;
+        background: #f8f9fb;
+        border-bottom: 1px solid #eaecf0;
+      }}
+      .topics-toggle:active {{ color: #667eea; }}
+      .topic-group {{
+        gap: 4px;
+        padding: 3px 0;
+      }}
+      .topic-cat-label {{
+        font-size: 10px;
+        min-width: 56px;
+      }}
+      .topic-tag {{
+        font-size: 11px;
+        padding: 2px 8px;
+      }}
+
+      /* 来源筛选栏 */
+      .sources-bar {{
+        padding: 8px 16px;
+        gap: 6px;
+      }}
+
+      /* 表格 → 卡片布局 */
+      .table-wrap {{ padding: 0; }}
+      table {{ display: block; width: 100%; }}
+      thead {{ display: none; }}
+      tbody {{ display: block; }}
+      tr.article-row {{
+        display: block;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f2f5;
+      }}
+      tr.article-row:hover td {{ background: transparent; }}
+      td {{
+        display: block;
+        padding: 0;
+        border: none;
+      }}
+      .col-title {{
+        width: 100%;
+        margin-bottom: 6px;
+      }}
+      .title-text {{
+        font-size: 15px;
+        line-height: 1.45;
+      }}
+      .col-digest {{
+        display: block;
+        width: 100%;
+        margin-bottom: 6px;
+      }}
+      .digest {{
+        font-size: 12px;
+        color: #999;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }}
+      .no-digest {{ display: none; }}
+      .col-sources {{
+        width: 100%;
+        display: inline;
+      }}
+      .source-badge {{
+        font-size: 11px;
+        padding: 1px 6px;
+        margin: 0 4px 0 0;
+      }}
+      .col-time {{
+        display: inline;
+        width: auto;
+        font-size: 11px;
+        color: #bbb;
+        margin-left: 4px;
+      }}
+      .col-time::before {{
+        content: '·';
+        margin-right: 4px;
+      }}
+      .score-badge {{
+        font-size: 9px;
+        padding: 0 4px;
+      }}
+      .merged-badge {{
+        font-size: 9px;
+        padding: 0 4px;
+      }}
     }}
   </style>
 </head>
@@ -372,9 +478,10 @@ def render_bundle_html(bundle: dict) -> str:
       <div class="meta">获取时间：{generated_at} &nbsp;|&nbsp; 共采集 {total_raw} 篇，聚合为 {total_articles} 条资讯 &nbsp;|&nbsp; {bundle_date}</div>
     </div>
 
-    <div class="topics-bar">
+    <div class="topics-bar" id="topicsBar">
       {topics_html}
     </div>
+    <div class="topics-toggle" id="topicsToggle" style="display:none" onclick="var bar=document.getElementById('topicsBar');bar.classList.toggle('expanded');this.textContent=bar.classList.contains('expanded')?'收起 ▲':'展开全部标签 ▼'">展开全部标签 ▼</div>
 
     <div class="sources-bar">
       <span class="topics-label">📰 来源</span>
