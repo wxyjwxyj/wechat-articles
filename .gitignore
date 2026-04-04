@@ -21,6 +21,10 @@ config.json
 # agent-reach（如果不需要提交）
 agent-reach/
 
+# superpowers 工具目录
+.superpowers/
+docs/
+
 # 旧的测试脚本
 fetch_all_wechat.py
 fetch_wechat.py
