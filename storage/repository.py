@@ -203,3 +203,14 @@ class BundleRepository:
                     "insert into bundle_topics(bundle_id, topic_id) values (?, ?)",
                     [(bundle_id, topic_id) for topic_id in topic_ids],
                 )
+
+    def get_bundle_by_date(self, bundle_date: str) -> dict | None:
+        """按日期获取 bundle。不存在时返回 None。"""
+        with closing(get_connection(self.db_path)) as conn:
+            row = conn.execute(
+                "select * from bundles where bundle_date = ?",
+                (bundle_date,),
+            ).fetchone()
+        if row is None:
+            return None
+        return dict(row)
