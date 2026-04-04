@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日 AI 资讯速览｜2026-04-04</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0c0c0e;
+      --border:  #222228;
+      --text:    #f0ece2;
+      --muted:   #6b6b7a;
+      --accent:  #f5a623;
+      --accent2: #e8845a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif SC', 'PingFang SC', serif;
+      min-height: 100vh;
+      background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .masthead {
+      max-width: 760px; margin: 0 auto; padding: 60px 32px 0;
+    }
+    .masthead-eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    .masthead-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 56px); font-weight: 900;
+      line-height: 1.08; letter-spacing: -1px;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .masthead-title em { font-style: italic; color: var(--accent); }
+    .masthead-rule {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+    }
+    .masthead-rule::before, .masthead-rule::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .masthead-rule span {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
+    }
+    .masthead-sub {
+      font-size: 13px; color: var(--muted);
+      padding-bottom: 32px; border-bottom: 1px solid var(--border);
+    }
+    .masthead-sub strong { color: var(--accent); font-weight: 600; }
+    .feed { max-width: 760px; margin: 0 auto; padding: 0 32px 80px; }
+    .card {
+      display: grid; grid-template-columns: 52px 1fr; gap: 0 20px;
+      padding: 32px 0; border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateY(16px);
+      animation: rise 0.5s ease forwards;
+    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px; font-weight: 900; color: var(--border);
+      line-height: 1; padding-top: 4px; user-select: none;
+      transition: color 0.2s;
+    }
+    .card:hover .card-num { color: var(--accent); }
+    .card-body { min-width: 0; }
+    .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .source-name {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .merged-tag {
+      font-size: 10px; background: var(--accent2); color: #fff;
+      padding: 1px 6px; border-radius: 3px; letter-spacing: 0.5px;
+    }
+    .score-tag {
+      font-size: 10px; color: var(--accent); border: 1px solid #f5a62344;
+      padding: 1px 6px; border-radius: 3px; margin-left: auto;
+    }
+    .card-title {
+      font-size: 18px; font-weight: 600; line-height: 1.55;
+      color: var(--text); margin-bottom: 14px; transition: color 0.2s;
+    }
+    .card:hover .card-title { color: #fff; }
+    .comment {
+      background: #f5a62309; border-left: 2px solid var(--accent);
+      padding: 10px 14px; margin-bottom: 12px; border-radius: 0 6px 6px 0;
+    }
+    .comment-mark {
+      display: inline-block; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 5px;
+    }
+    .comment p { font-size: 13px; line-height: 1.7; color: #c8c4b8; }
+    .summary { font-size: 13px; line-height: 1.75; color: var(--muted); margin-bottom: 14px; }
+    .card-footer a {
+      font-size: 12px; color: var(--accent); text-decoration: none;
+      letter-spacing: 0.5px; transition: opacity 0.15s;
+    }
+    .card-footer a:hover { opacity: 0.7; }
+    .card-footer a + a { margin-left: 12px; }
+    .page-footer {
+      text-align: center; padding: 24px 32px 48px;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #2e2e38;
+    }
+    @media (max-width: 600px) {
+      .masthead, .feed { padding-left: 20px; padding-right: 20px; }
+      .card { grid-template-columns: 36px 1fr; gap: 0 12px; }
+      .card-num { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="masthead">
+    <div class="masthead-eyebrow">AI Daily Digest</div>
+    <h1 class="masthead-title">今日 <em>AI</em><br>资讯速览</h1>
+    <div class="masthead-rule"><span>2026-04-04</span></div>
+    <p class="masthead-sub">编辑精选 <strong>8 条</strong>重要资讯 &nbsp;·&nbsp; 自动采集 + Claude 导读</p>
+  </div>
+  <div class="feed">
+    
+    <article class="card" style="animation-delay: 0.00s">
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位</span>
+          
+          <span class="score-tag">8分</span>
+        </div>
+        <h2 class="card-title">OpenAI新模型不是GPTX！全新预训练“土豆”曝光，Sora成弃子的原因找到了</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>OpenAI放弃渐进式迭代，另起炉灶搞全新架构，Sora被砍大概率是资源全面倾斜的结果。</p>
+      </div>
+        <p class="summary">来自OpenAI总裁亲自爆料</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/45BjIryfTMx6ZZPAwP3diw" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.08s">
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">25年10x工程师经验一夜归零！Django创始人警告：3-8年的程序员受AI冲击最大</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>中间层程序员最危险：太贵不够牛，经验又没到架构级别，正好卡在AI替代的甜蜜区。</p>
+      </div>
+        <p class="summary">“AI时代，我已经不会估项目时间了”</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/njRxx7V_-MJrXn6sS7Hh8g" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.16s">
+      <div class="card-num">03</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">补全具身智能「触觉」拼图！哈工深发布EgoTouch：300项操作任务，百万帧视觉触觉同步对齐</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>具身智能缺的不是眼睛而是手感，触觉数据集一直是稀缺资源，这个工作补的是真短板。</p>
+      </div>
+        <p class="summary">第一人称视频双掌触觉估计模型来了！</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/qvFg1-bihlvvHGkBgJEKBA" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.24s">
+      <div class="card-num">04</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">新智元</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">末日时间表提前了！OpenAI前研究员硬核推演：AI拐点逼近，人类成NPC</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>从技术推演到时间表量化，恐慌虽有贩卖之嫌，但论证链条值得认真读一遍。</p>
+      </div>
+        
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/Q05Nf7sWuBlSImwqRzs6-g" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.32s">
+      <div class="card-num">05</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位 · 机器之心 · AI寒武纪 · 新智元 · APPSO</span>
+          <span class="merged-tag">多家报道</span>
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">Claude封杀OpenClaw！龙虾之父回应</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>围墙越砌越高，Anthropic这步棋短期护利润，长期恐怕把开发者生态往对手那边推。</p>
+      </div>
+        <p class="summary">1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。 用户纷纷收到邮件通知，宣布正式停用第三方harness支持。 订阅费只能用于Claude官方自己的网页、App或官方开发工具。 2…</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/Mh3yRrvMDYTWXUUjhPFo9A" target="_blank">量子位</a> <a href="https://mp.weixin.qq.com/s/F9mimuW3ym61JL5SqqwGbQ" target="_blank">机器之心</a> <a href="https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA" target="_blank">AI寒武纪</a> <a href="https://mp.weixin.qq.com/s/pr6pCoRCFKeWDyr5xoBrjQ" target="_blank">新智元</a> <a href="https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg" target="_blank">APPSO</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.40s">
+      <div class="card-num">06</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">机器之心</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">大模型SFT后效果≠RL潜力！港科大、阿里提出自适应冷启动新范式</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>SFT调出来的乖学生不一定适合RL探索，冷启动策略决定了强化学习的天花板高度。</p>
+      </div>
+        <p class="summary">为大模型的 RL 训练打造了最完美的起跑线</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/XThWpLxqMT0TKrAQ3kibmg" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.48s">
+      <div class="card-num">07</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">硅星人Pro</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">苹果成了Vibe Coding创业者们最大的敌人</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>苹果审核机制本就不友好，叠加Vibe Coding批量产出的低质应用，冲突只会越来越尖锐。</p>
+      </div>
+        <p class="summary">AI创业者，苦苹果久矣</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/ThrIHHwPMvWYY5G3Mp1KbA" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.56s">
+      <div class="card-num">08</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">机器之心</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">AI 视频生成的战场如何从「模型秀场」转向「工作流」？</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>模型效果已卷到瓶颈期，谁先把生成-编辑-合成串成可用工作流，谁才能真正吃到市场。</p>
+      </div>
+        <p class="summary">AI 视频是否已经告别「模型秀场」阶段？</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+  </div>
+  <div class="page-footer">AI Daily · 2026-04-04 · Powered by Claude</div>
+</body>
+</html>

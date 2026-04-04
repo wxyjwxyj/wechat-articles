@@ -57,23 +57,28 @@ python generate_html.py bundle_today.json >> "$LOG_FILE" 2>&1
 log "生成公众号发布稿..."
 python scripts/generate_mp_article.py bundle_today.json >> "$LOG_FILE" 2>&1
 
-# 10. 归档当日 HTML
+# 10. 生成导读风 HTML（mp_article_preview.html + archive/digest_YYYY-MM-DD.html）
+log "生成导读风 HTML..."
+python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
+
+# 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"
 mkdir -p archive
 cp index.html "archive/${TODAY_DATE}.html"
 python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 
-# 11. 切换到 main，把 index.html 和 archive/ 带过去，推送
+# 13. 切换到 main，把 index.html 和 archive/ 带过去，推送
 log "推送到 GitHub..."
 git checkout main >> "$LOG_FILE" 2>&1
 git checkout dev -- index.html >> "$LOG_FILE" 2>&1
 git checkout dev -- archive/ >> "$LOG_FILE" 2>&1
-git add index.html archive/
+git checkout dev -- mp_article_preview.html >> "$LOG_FILE" 2>&1
+git add index.html archive/ mp_article_preview.html
 git commit -m "Update: $(date +%Y-%m-%d) articles" >> "$LOG_FILE" 2>&1
 git push origin main >> "$LOG_FILE" 2>&1
 
-# 12. 切回 dev
+# 14. 切回 dev
 git checkout dev >> "$LOG_FILE" 2>&1
 
 log "✅ 完成！"
