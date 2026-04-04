@@ -3,65 +3,323 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>今日 AI 资讯速览｜2026-04-04</title>
+  <title>微信公众号文章汇总 - 2026-04-04</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
-    h1 { font-size: 1.5em; margin-bottom: 8px; }
-    .meta { color: #888; font-size: 0.9em; margin-bottom: 16px; }
-    .intro { background: #f5f5f5; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; }
-    .topics { margin-bottom: 20px; }
-    .topic-tag { display: inline-block; background: #e8f4f8; color: #2196F3; padding: 4px 10px; border-radius: 12px; margin: 4px; font-size: 0.85em; }
-    .article-list { list-style: none; padding: 0; }
-    .article-item { padding: 14px 0; border-bottom: 1px solid #eee; }
-    .article-title { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-    .summary { color: #555; font-size: 0.9em; margin: 4px 0; }
-    .article-sources { font-size: 0.82em; color: #888; margin: 4px 0 0; }
-    .article-sources a { color: #2196F3; text-decoration: none; }
-    .article-sources a:hover { text-decoration: underline; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      line-height: 1.6;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    /* 顶部 Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 28px 32px 24px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+    .header .meta {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* 话题栏 */
+    .topics-bar {
+      background: #f8f9fb;
+      padding: 16px 32px;
+      border-bottom: 1px solid #eaecf0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .topics-label {
+      font-size: 12px;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+    .topic-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .topic-tag:hover { opacity: 0.85; transform: translateY(-1px); }
+    .topic-tag.active {
+      box-shadow: 0 0 0 3px rgba(102,126,234,0.35);
+      transform: translateY(-1px);
+    }
+    .topic-tag.dimmed { opacity: 0.35; }
+
+    /* 来源筛选栏 */
+    .sources-bar {
+      background: #fff;
+      padding: 12px 32px;
+      border-bottom: 1px solid #eaecf0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .source-filter {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s, transform 0.1s, box-shadow 0.1s;
+      white-space: nowrap;
+    }
+    .source-filter:hover { opacity: 0.8; transform: translateY(-1px); }
+    .source-filter.active { box-shadow: 0 0 0 2px currentColor; transform: translateY(-1px); }
+    .source-filter.dimmed { opacity: 0.3; }
+
+    /* 表格 */
+    .table-wrap { padding: 0 32px 28px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th {
+      background: #f8f9fb;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #eaecf0;
+    }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      vertical-align: top;
+    }
+    tr.article-row:hover td { background: #fafbff; }
+    tr.merged td { background: #fdf9ff; }
+    tr.merged:hover td { background: #f8f2ff; }
+
+    /* 标题列 */
+    .col-title { width: 44%; }
+    .title-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a2e;
+      line-height: 1.5;
+    }
+    .merged-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.5px;
+    }
+
+    /* 摘要列 */
+    .col-digest { width: 32%; }
+    .digest {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .no-digest { color: #bbb; font-style: italic; }
+
+    /* 来源列 */
+    .col-sources { width: 16%; }
+    .source-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid;
+      margin: 2px 2px 2px 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .source-badge:hover { opacity: 0.7; }
+
+    /* 时间列 */
+    .col-time { width: 8%; white-space: nowrap; }
+    .col-time { font-size: 13px; color: #aaa; text-align: right; }
+
+    /* 底部 */
+    .footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #bbb;
+      border-top: 1px solid #f0f2f5;
+    }
+
+    @media (max-width: 768px) {
+      .container { margin: 10px; border-radius: 8px; }
+      .header { padding: 20px; }
+      .header h1 { font-size: 20px; }
+      .table-wrap { padding: 0 16px 20px; }
+      .col-digest { display: none; }
+      .col-time { display: none; }
+      .col-title { width: 60%; }
+      .col-sources { width: 40%; }
+    }
   </style>
 </head>
 <body>
-  <h1>今日 AI 资讯速览｜2026-04-04</h1>
-  <p class="meta">生成时间：2026-04-04 11:04:51 | 共 3 条</p>
-  <div class="intro">今天共整理 3 篇内容，重点关注 AI, Claude Code, OpenAI。</div>
-  <div class="topics">
-<span class='topic-tag'>AI (3)</span>
-<span class='topic-tag'>Claude Code (1)</span>
-<span class='topic-tag'>OpenAI (1)</span>
-  </div>
-  <ul class="article-list">
-<li class='article-item'><div class='article-title'>Claude封杀OpenClaw！龙虾之父回应</div><p class='summary'>1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。
+  <div class="container">
+    <div class="header">
+      <h1>📱 微信公众号文章汇总</h1>
+      <div class="meta">获取时间：2026-04-04 11:21:04 &nbsp;|&nbsp; 共 3 条资讯 &nbsp;|&nbsp; 2026-04-04</div>
+    </div>
+
+    <div class="topics-bar">
+      <span class="topics-label">🔥 热点</span>
+      <span class='topic-tag' data-tag='AI'>AI <em>3</em></span>
+<span class='topic-tag' data-tag='Claude Code'>Claude Code <em>1</em></span>
+<span class='topic-tag' data-tag='OpenAI'>OpenAI <em>1</em></span>
+
+    </div>
+
+    <div class="sources-bar">
+      <span class="topics-label">📰 来源</span>
+      <span class='source-filter' data-source='AI寒武纪' style='background:#667eea18;color:#667eea;border-color:#667eea55'>AI寒武纪</span>
+<span class='source-filter' data-source='量子位' style='background:#f093fb18;color:#f093fb;border-color:#f093fb55'>量子位</span>
+<span class='source-filter' data-source='APPSO' style='background:#4facfe18;color:#4facfe;border-color:#4facfe55'>APPSO</span>
+<span class='source-filter' data-source='机器之心' style='background:#43e97b18;color:#43e97b;border-color:#43e97b55'>机器之心</span>
+
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>标题</th>
+            <th>摘要</th>
+            <th>来源</th>
+            <th style="text-align:right">时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class='article-row merged' data-tags='Claude Code AI OpenAI' data-sources='AI寒武纪|量子位|APPSO'>
+  <td class='col-title'>
+    <span class='merged-badge'>多家</span>
+    <span class='title-text'>Claude封杀OpenClaw！龙虾之父回应</span>
+  </td>
+  <td class='col-digest'><div class='digest'>1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。
 
 用户纷纷收到邮件通知，宣布正式停用第三方harness支持。
 
 订阅费只能用于Claude官方自己的网页、App或官方开发工具。
 
-2、Claude Code负责人Boris Cherny证实了这一消息，称要是想继续用第三方，另外充钱吧，按token付费没有套餐，还打折哦～
-
-3、龙虾之父回应：
-
-我已经劝了他们一周了也没用。他们先抄了我的功能，然后是这个。
-
-根据官方邮件，A社对于此举给出的理由是第三方“薅羊毛”行为太多，系统不堪重负。
-
-4、在推上，网友们已经开始发起退订潮了。
-
-5、A社称之所以这么干，因为是模型服务的订阅定价其实是基于个人用户的正常使用强度。
-
-不过，像OpenClaw等自主代理工具能够以机器速度24/7不间断运行，执行高强度的编码、测试循环，将订阅用户的实际使用量推高至API计费模式下数千甚至数万美元的水平。
-
-所以，这种词元套利对于模型商肯定是忍不了的。
-
-另一方面，咱们的龙虾之父Peter加入了对家OpenAI，所以，龙虾被封是早晚的事。
-
-by the way，封杀龙虾这种事儿，谷歌也干了。
-
-
-<a class="wx_topic_link" topic-id="topic_1775263622383_5xkk3pgux" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263622526_gnknoilpa" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#龙虾</a><a class="wx_topic_link" topic-id="topic_1775263626378_frtnpwhc3" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263626518_abwdaisjj" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#OpenClaw</a><a class="wx_topic_link" topic-id="topic_1775263638644_7v811nax9" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263643220_9zbc8tqk1" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Anthropic</a><a class="wx_topic_link" topic-id="topic_1775263645062_odxuq0k74" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263645225_jon2zbejs" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Claude</a><a class="wx_topic_link" topic-id="topic_1775263656543_3ofy2cv8v" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263656718_ihqkfmsnz" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Google</a><a class="wx_topic_link" topic-id="topic_1775263667810_7g7v9cp3l" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263667968_e21u5s12p" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#AI</a></p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA' target='_blank'>AI寒武纪</a> / <a href='https://mp.weixin.qq.com/s/N1wnzxBH0ucryNxBx2O_lA' target='_blank'>量子位</a> / <a href='https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg' target='_blank'>APPSO</a></p></li>
-<li class='article-item'><div class='article-title'>AI 视频生成的战场如何从「模型秀场」转向「工作流」？</div><p class='summary'>AI 视频是否已经告别「模型秀场」阶段？</p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ' target='_blank'>机器之心</a></p></li>
-<li class='article-item'><div class='article-title'>小米手机涨价，曝销量预计下滑13%/苹果「天价扫货」内存芯片阻止竞争对手/充电宝迎史上最严国标</div><p class='summary'>· 工信部预警：iOS 13 至 17.2.1 存在严重漏洞，建议尽快升级
+2、Claude Code负责人Bo…</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>AI寒武纪</a><a href='https://mp.weixin.qq.com/s/N1wnzxBH0ucryNxBx2O_lA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>量子位</a><a href='https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>APPSO</a></td>
+  <td class='col-time'>09:10</td>
+</tr>
+<tr class='article-row' data-tags='AI' data-sources='机器之心'>
+  <td class='col-title'>
+    
+    <span class='title-text'>AI 视频生成的战场如何从「模型秀场」转向「工作流」？</span>
+  </td>
+  <td class='col-digest'><div class='digest'>AI 视频是否已经告别「模型秀场」阶段？</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-time'>10:30</td>
+</tr>
+<tr class='article-row' data-tags='AI' data-sources='APPSO'>
+  <td class='col-title'>
+    
+    <span class='title-text'>小米手机涨价，曝销量预计下滑13%/苹果「天价扫货」内存芯片阻止竞争对手/充电宝迎史上最严国标</span>
+  </td>
+  <td class='col-digest'><div class='digest'>· 工信部预警：iOS 13 至 17.2.1 存在严重漏洞，建议尽快升级
 · 苹果下架 Vibe Coding 应用 Anything
-· 曝 R 星母公司解散 AI 团队，七年研发成果戛然而止</p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/badaaEiqxdd1779EM6_gAQ' target='_blank'>APPSO</a></p></li>
-  </ul>
+· 曝 R 星母公司解散 AI 团队，七年研发成果戛然而止</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/badaaEiqxdd1779EM6_gAQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>APPSO</a></td>
+  <td class='col-time'>08:25</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">由 Claude 自动生成 · 2026-04-04 11:21:04</div>
+  </div>
+
+  <script>
+    const topicBtns  = document.querySelectorAll('.topic-tag');
+    const sourceBtns = document.querySelectorAll('.source-filter');
+    const rows = document.querySelectorAll('.article-row');
+
+    let activeTag    = null;
+    let activeSource = null;
+
+    function applyFilter() {
+      rows.forEach(r => {
+        const rowTags    = r.dataset.tags    || '';
+        const rowSources = r.dataset.sources || '';
+        const tagOk    = !activeTag    || rowTags.includes(activeTag);
+        const sourceOk = !activeSource || rowSources.split('|').includes(activeSource);
+        r.style.display = (tagOk && sourceOk) ? '' : 'none';
+      });
+    }
+
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.tag;
+        activeTag = (activeTag === name) ? null : name;
+        topicBtns.forEach(b => {
+          b.classList.toggle('active',  b.dataset.tag === activeTag && activeTag !== null);
+          b.classList.toggle('dimmed',  activeTag !== null && b.dataset.tag !== activeTag);
+        });
+        applyFilter();
+      });
+    });
+
+    sourceBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.source;
+        activeSource = (activeSource === name) ? null : name;
+        sourceBtns.forEach(b => {
+          b.classList.toggle('active',  b.dataset.source === activeSource && activeSource !== null);
+          b.classList.toggle('dimmed',  activeSource !== null && b.dataset.source !== activeSource);
+        });
+        applyFilter();
+      });
+    });
+  </script>
 </body>
 </html>
