@@ -2,6 +2,10 @@ from pathlib import Path
 
 from storage.db import init_db, get_connection
 from storage.repository import SourceRepository, ItemRepository, BundleRepository
+from pipeline.normalize import normalize_wechat_article
+from pipeline.dedupe import dedupe_items
+from pipeline.tagging import extract_tags
+from pipeline.bundles import build_daily_bundle
 
 
 def test_init_db_creates_core_tables(tmp_path: Path):
@@ -96,3 +100,39 @@ def test_bundle_repository_upsert_and_replace(tmp_path: Path):
         }
     )
     assert same_id == bundle_id
+
+
+def test_bundle_pipeline_produces_bundle_dict(tmp_path: Path):
+    db_path = tmp_path / "content.db"
+    init_db(db_path)
+    SourceRepository(db_path).upsert_source(
+        {
+            "type": "wechat",
+            "name": "量子位",
+            "external_id": "fakeid",
+            "status": "active",
+            "config": {"fakeid": "fakeid"},
+        }
+    )
+
+    source = SourceRepository(db_path).list_sources()[0]
+    item = normalize_wechat_article(
+        source,
+        {
+            "title": "Claude Code 与 AI Agent 最新进展",
+            "link": "https://mp.weixin.qq.com/s/demo",
+            "digest": "智能体工作流",
+            "time": "2026-04-03 09:30:05",
+        },
+    )
+    item["tags"] = extract_tags(item)
+
+    ItemRepository(db_path).upsert_item(item)
+    stored = ItemRepository(db_path).list_items_by_date("2026-04-03")
+    stored[0]["source_name"] = "量子位"
+    stored[0]["tags"] = item["tags"]
+
+    bundle = build_daily_bundle("2026-04-03", dedupe_items(stored))
+
+    assert bundle["title"] == "今日 AI 资讯速览｜2026-04-03"
+    assert bundle["topics"][0]["name"] == "AI"

@@ -1,7 +1,5 @@
-#!/bin/bash
-# 一键获取微信公众号文章并生成 HTML
-
-set -e  # 遇到错误立即退出
+#!/usr/bin/env bash
+set -e
 
 echo "========================================="
 echo "  微信公众号文章自动获取与发布"
@@ -46,39 +44,46 @@ else
 fi
 echo ""
 
-# 3. 获取今日文章
+# 3. 初始化 sources
+echo "🔧 初始化 sources..."
+python scripts/seed_sources.py
+echo ""
+
+# 4. 获取今日文章
 echo "📥 获取今日文章..."
 python fetch_wechat_today.py
-if [ $? -ne 0 ]; then
-    echo "✗ 获取文章失败！"
-    exit 1
+echo ""
+
+# 5. 生成每日 bundle
+echo "📦 生成每日 bundle..."
+python scripts/build_bundle.py
+echo ""
+
+# 6. 生成 HTML
+echo "🌐 生成 HTML 预览..."
+if [ -f "bundle_today.json" ]; then
+    python generate_html.py bundle_today.json
+else
+    TODAY=$(date +%Y%m%d)
+    JSON_FILE="wechat_today_${TODAY}.json"
+    if [ -f "$JSON_FILE" ]; then
+        python generate_html.py "$JSON_FILE"
+    else
+        echo "⚠ 未找到可用的 JSON 文件，跳过 HTML 生成"
+    fi
 fi
 echo ""
 
-# 4. 生成 HTML
-echo "🎨 生成 HTML 页面..."
-TODAY=$(date +%Y%m%d)
-JSON_FILE="wechat_today_${TODAY}.json"
-
-if [ ! -f "$JSON_FILE" ]; then
-    echo "✗ 找不到文件: $JSON_FILE"
-    exit 1
+# 7. 生成公众号发布稿（可选）
+if [ -f "scripts/generate_mp_article.py" ]; then
+    echo "📝 生成公众号发布稿..."
+    python scripts/generate_mp_article.py bundle_today.json
+    echo ""
 fi
 
-python generate_html.py "$JSON_FILE"
-if [ $? -ne 0 ]; then
-    echo "✗ 生成 HTML 失败！"
-    exit 1
-fi
-echo ""
-
-# 5. 询问是否提交到 Git
+# 8. 询问是否提交到 Git
 echo "========================================="
 echo "✓ 完成！"
-echo ""
-echo "生成的文件："
-echo "  - index.html"
-echo "  - $JSON_FILE"
 echo ""
 
 if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -87,7 +92,7 @@ if git rev-parse --git-dir > /dev/null 2>&1; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo ""
         echo "📝 提交到 Git..."
-        git add index.html "$JSON_FILE"
+        git add index.html bundle_today.json wechat_today_*.json 2>/dev/null || true
         git commit -m "Update: $(date +%Y-%m-%d) articles"
         echo ""
         read -p "是否推送到远程仓库? (y/N): " -n 1 -r
