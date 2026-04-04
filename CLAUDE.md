@@ -10,6 +10,26 @@
 - 实施类任务默认使用 git worktree 隔离执行
 - worktree 目录固定使用项目根目录下的 `.worktrees/`
 
+## 分支管理
+
+- **`main`**：只放 `index.html`，推 GitHub，供 GitHub Pages 展示
+  - 地址：https://wxyjwxyj.github.io/wechat-articles/
+- **`dev`**：所有代码改动提交到这里，只本地保存，不推 GitHub
+
+### 日常操作流程
+
+```bash
+# 改代码 → 在 dev 提交
+git checkout dev
+git add <文件>
+git commit -m "..."
+
+# 推页面 → 切 main 生成 HTML 再推
+git checkout main
+python generate_html.py bundle_today.json
+git add index.html && git commit -m "Update: $(date +%Y-%m-%d)" && git push
+```
+
 ## 监控的公众号
 
 - 量子位 (MzIzNjc1NzUzMw==)
