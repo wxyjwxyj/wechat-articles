@@ -3,7 +3,9 @@
 # 无交互，适合 launchd 定时调用
 
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOG_FILE="$PROJECT_DIR/.claude/daily_run.log"
+LOG_DIR="$PROJECT_DIR/.claude/logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/$(date +%Y-%m-%d).log"
 CDP_PROXY="http://localhost:3456"
 ERRORS=""
 
@@ -103,3 +105,6 @@ else
     log "⚠ 完成，但有问题：${ERRORS}"
     notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条，但：${ERRORS}"
 fi
+
+# 16. 清理 30 天前的旧日志
+find "$LOG_DIR" -name "*.log" -mtime +30 -delete 2>/dev/null
