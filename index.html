@@ -1,198 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>微信公众号文章汇总 - 2026-04-02</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
-        .container { max-width: 1200px; margin: 20px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; text-align: center; margin-bottom: 10px; font-size: 28px; }
-        .summary { text-align: center; color: #666; margin-bottom: 30px; font-size: 14px; }
-        .topics { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-        .topics-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 15px; }
-        .topic-tags { display: flex; flex-wrap: wrap; gap: 10px; }
-        .topic-tag { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 15px; border-radius: 20px; font-size: 14px; }
-        .account-section { margin-bottom: 40px; }
-        .account-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 15px; }
-        .account-name { font-size: 20px; font-weight: bold; }
-        .account-count { font-size: 14px; opacity: 0.9; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th { background: #f8f9fa; padding: 12px; text-align: left; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6; }
-        td { padding: 12px; border-bottom: 1px solid #dee2e6; vertical-align: top; }
-        tr:hover { background: #f8f9fa; }
-        .title { font-weight: 500; }
-        .title a { color: #667eea; text-decoration: none; }
-        .title a:hover { text-decoration: underline; color: #764ba2; }
-        .digest { color: #666; font-size: 14px; }
-        .time { color: #999; font-size: 13px; white-space: nowrap; }
-        @media (max-width: 768px) {
-            .container { margin: 10px; padding: 15px; }
-            h1 { font-size: 22px; }
-            table { font-size: 14px; }
-            th, td { padding: 8px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日 AI 资讯速览｜2026-04-04</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; color: #333; }
+    h1 { font-size: 1.5em; margin-bottom: 8px; }
+    .meta { color: #888; font-size: 0.9em; margin-bottom: 16px; }
+    .intro { background: #f5f5f5; padding: 12px 16px; border-radius: 6px; margin-bottom: 20px; }
+    .topics { margin-bottom: 20px; }
+    .topic-tag { display: inline-block; background: #e8f4f8; color: #2196F3; padding: 4px 10px; border-radius: 12px; margin: 4px; font-size: 0.85em; }
+    .article-list { list-style: none; padding: 0; }
+    .article-item { padding: 14px 0; border-bottom: 1px solid #eee; }
+    .article-title { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .summary { color: #555; font-size: 0.9em; margin: 4px 0; }
+    .article-sources { font-size: 0.82em; color: #888; margin: 4px 0 0; }
+    .article-sources a { color: #2196F3; text-decoration: none; }
+    .article-sources a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📱 微信公众号文章汇总</h1>
-        <div class="summary">获取时间: 2026-04-02 13:15:58 | 共 10 篇文章 | 覆盖 5 个公众号</div>
-        <div class="topics">
-            <div class="topics-title">🔥 热门主题</div>
-            <div class="topic-tags">
-                <div class="topic-tag">Claude Code (2)</div>
-                <div class="topic-tag">Claude (2)</div>
-                <div class="topic-tag">具身智能 (1)</div>
-                <div class="topic-tag">OpenAI (1)</div>
-                <div class="topic-tag">Agent (1)</div>
-                <div class="topic-tag">源码 (1)</div>
-                <div class="topic-tag">开源 (1)</div>
-            </div>
-        </div>
+  <h1>今日 AI 资讯速览｜2026-04-04</h1>
+  <p class="meta">生成时间：2026-04-04 11:04:51 | 共 3 条</p>
+  <div class="intro">今天共整理 3 篇内容，重点关注 AI, Claude Code, OpenAI。</div>
+  <div class="topics">
+<span class='topic-tag'>AI (3)</span>
+<span class='topic-tag'>Claude Code (1)</span>
+<span class='topic-tag'>OpenAI (1)</span>
+  </div>
+  <ul class="article-list">
+<li class='article-item'><div class='article-title'>Claude封杀OpenClaw！龙虾之父回应</div><p class='summary'>1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。
 
-        <div class="account-section">
-            <div class="account-header">
-                <div class="account-name">量子位</div>
-                <div class="account-count">共 2 篇文章</div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%">标题</th>
-                        <th style="width: 35%">摘要</th>
-                        <th style="width: 15%">发布时间</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/OZNc1MjdJEe2NtVarwp0AQ" target="_blank">封不住！Claude Code爆改Python版加冕最快10万星，且clone且珍惜</a></td>
-                        <td class="digest">韩国女友神助攻</td>
-                        <td class="time">09:30:05</td>
-                    </tr>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/Q-cy_kcexZ2roWqC1egnQw" target="_blank">再融20亿！星海图把具身智能头部门槛抬到了200亿</a></td>
-                        <td class="digest">200亿估值将成具身智能“季后赛”入场券</td>
-                        <td class="time">09:30:05</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+用户纷纷收到邮件通知，宣布正式停用第三方harness支持。
 
-        <div class="account-section">
-            <div class="account-header">
-                <div class="account-name">AI寒武纪</div>
-                <div class="account-count">共 1 篇文章</div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%">标题</th>
-                        <th style="width: 35%">摘要</th>
-                        <th style="width: 15%">发布时间</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/jiWn1dj57WYB1PL4k2jk-w" target="_blank">重磅！LibTV上线满血版Seedance 2.0：不用排队，最强AI短剧电影平台拿走不谢，附一手实测</a></td>
-                        <td class="digest"></td>
-                        <td class="time">09:00:00</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+订阅费只能用于Claude官方自己的网页、App或官方开发工具。
 
-        <div class="account-section">
-            <div class="account-header">
-                <div class="account-name">机器之心</div>
-                <div class="account-count">共 3 篇文章</div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%">标题</th>
-                        <th style="width: 35%">摘要</th>
-                        <th style="width: 15%">发布时间</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/IzzNLPI9L2tSRvOXniOJ2Q" target="_blank">美团LongCat-Next：把图像、声音、文字都变成Token，然后呢？</a></td>
-                        <td class="digest">一款离散原生自回归多模态大模型。</td>
-                        <td class="time">11:46:34</td>
-                    </tr>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/9muzsAwpC28Axbmip8NdGg" target="_blank">OpenAI刚融到1220亿美元，却在二级市场「没人接盘」？</a></td>
-                        <td class="digest">不是不看好，而是先等等。</td>
-                        <td class="time">11:46:34</td>
-                    </tr>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/ztE8GofcssuI1PdkHx_kLg" target="_blank">重构跨域RL框架！理论驱动「双重对齐」让跨域迁移「质变」</a></td>
-                        <td class="digest">有效的策略迁移不仅需要关注动力学是否对齐，还需要关注价值是否对齐，即源域数据是否是高质量数据。</td>
-                        <td class="time">11:46:34</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+2、Claude Code负责人Boris Cherny证实了这一消息，称要是想继续用第三方，另外充钱吧，按token付费没有套餐，还打折哦～
 
-        <div class="account-section">
-            <div class="account-header">
-                <div class="account-name">数字生命卡兹克</div>
-                <div class="account-count">共 1 篇文章</div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%">标题</th>
-                        <th style="width: 35%">摘要</th>
-                        <th style="width: 15%">发布时间</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/iBCNkORwkff3PL1EZD3zqw" target="_blank">我用1400年前的三省六部制，搞了一套很酷的多Agent协同方案。</a></td>
-                        <td class="digest">也是当上土皇帝了。</td>
-                        <td class="time">10:08:00</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+3、龙虾之父回应：
 
-        <div class="account-section">
-            <div class="account-header">
-                <div class="account-name">APPSO</div>
-                <div class="account-count">共 3 篇文章</div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50%">标题</th>
-                        <th style="width: 35%">摘要</th>
-                        <th style="width: 15%">发布时间</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/lm6AKsB5Pg0TpEYB5Udebg" target="_blank">惹众怒！Anthropic 疯狂删库，他连夜爆改 Claude Code 源码拿下史上最快 10 万星</a></td>
-                        <td class="digest">马没跑，马鞍丢了</td>
-                        <td class="time">12:10:26</td>
-                    </tr>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/qstIyV7Lvz6PlCgRLi47Zg" target="_blank">Kimi 有个「赋予灵魂」的神秘项目，它的故事全都开源了</a></td>
-                        <td class="digest">Lead, don't follow.</td>
-                        <td class="time">09:35:09</td>
-                    </tr>
-                    <tr>
-                        <td class="title"><a href="https://mp.weixin.qq.com/s/uBcf50W441IlHQFNcttWkA" target="_blank">刚刚，人类时隔54年重返月球轨道/国内安卓五大厂商全线涨价/智谱CEO：API涨价83%仍供不应求</a></td>
-                        <td class="digest">· Claude Code 高危漏洞曝光：clone 一个项目，摄像头和密码就被拿走
-· 原特斯拉中国区总经理孔艳双加盟小米，接手汽车销售业务
-· 多车企公布 3 月交付成绩单</td>
-                        <td class="time">08:07:27</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+我已经劝了他们一周了也没用。他们先抄了我的功能，然后是这个。
+
+根据官方邮件，A社对于此举给出的理由是第三方“薅羊毛”行为太多，系统不堪重负。
+
+4、在推上，网友们已经开始发起退订潮了。
+
+5、A社称之所以这么干，因为是模型服务的订阅定价其实是基于个人用户的正常使用强度。
+
+不过，像OpenClaw等自主代理工具能够以机器速度24/7不间断运行，执行高强度的编码、测试循环，将订阅用户的实际使用量推高至API计费模式下数千甚至数万美元的水平。
+
+所以，这种词元套利对于模型商肯定是忍不了的。
+
+另一方面，咱们的龙虾之父Peter加入了对家OpenAI，所以，龙虾被封是早晚的事。
+
+by the way，封杀龙虾这种事儿，谷歌也干了。
+
+
+<a class="wx_topic_link" topic-id="topic_1775263622383_5xkk3pgux" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263622526_gnknoilpa" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#龙虾</a><a class="wx_topic_link" topic-id="topic_1775263626378_frtnpwhc3" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263626518_abwdaisjj" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#OpenClaw</a><a class="wx_topic_link" topic-id="topic_1775263638644_7v811nax9" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263643220_9zbc8tqk1" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Anthropic</a><a class="wx_topic_link" topic-id="topic_1775263645062_odxuq0k74" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263645225_jon2zbejs" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Claude</a><a class="wx_topic_link" topic-id="topic_1775263656543_3ofy2cv8v" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263656718_ihqkfmsnz" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#Google</a><a class="wx_topic_link" topic-id="topic_1775263667810_7g7v9cp3l" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#</a><a class="wx_topic_link" topic-id="topic_1775263667968_e21u5s12p" style="color: #576B95 !important;" data-topic="1" data-recommend="0">#AI</a></p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA' target='_blank'>AI寒武纪</a> / <a href='https://mp.weixin.qq.com/s/N1wnzxBH0ucryNxBx2O_lA' target='_blank'>量子位</a> / <a href='https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg' target='_blank'>APPSO</a></p></li>
+<li class='article-item'><div class='article-title'>AI 视频生成的战场如何从「模型秀场」转向「工作流」？</div><p class='summary'>AI 视频是否已经告别「模型秀场」阶段？</p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ' target='_blank'>机器之心</a></p></li>
+<li class='article-item'><div class='article-title'>小米手机涨价，曝销量预计下滑13%/苹果「天价扫货」内存芯片阻止竞争对手/充电宝迎史上最严国标</div><p class='summary'>· 工信部预警：iOS 13 至 17.2.1 存在严重漏洞，建议尽快升级
+· 苹果下架 Vibe Coding 应用 Anything
+· 曝 R 星母公司解散 AI 团队，七年研发成果戛然而止</p><p class='article-sources'>来源：<a href='https://mp.weixin.qq.com/s/badaaEiqxdd1779EM6_gAQ' target='_blank'>APPSO</a></p></li>
+  </ul>
 </body>
 </html>
