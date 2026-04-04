@@ -154,7 +154,7 @@ class BundleRepository:
 
     def upsert_bundle(self, bundle: dict) -> int:
         """插入或更新 bundle，返回 bundle.id。"""
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with closing(get_connection(self.db_path)) as conn:
             with conn:
                 conn.execute(

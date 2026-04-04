@@ -9,6 +9,9 @@ PATTERNS = [
     ("具身智能", ["具身智能"]),
 ]
 
+# 标签名 -> 真实关键词列表，供 build_topics 使用
+_PATTERN_KEYWORDS: dict[str, list[str]] = {tag: keywords for tag, keywords in PATTERNS}
+
 
 def extract_tags(item: dict) -> list[str]:
     """从 title 和 summary 中提取标签，按 PATTERNS 顺序返回匹配的标签。"""
@@ -27,6 +30,6 @@ def build_topics(items: list[dict]) -> list[dict]:
         for tag in item.get("tags", []):
             counts[tag] = counts.get(tag, 0) + 1
     return [
-        {"name": name, "count": count, "keywords": [name]}
+        {"name": name, "count": count, "keywords": _PATTERN_KEYWORDS.get(name, [name])}
         for name, count in sorted(counts.items(), key=lambda x: (-x[1], x[0]))
     ]
