@@ -1,120 +1,112 @@
-# 微信公众号文章监控
+# 微信内容中台 — 第一阶段
 
-自动获取指定微信公众号的最新文章，生成 HTML 汇总页面。
-
-## 监控的公众号
-
-- 量子位
-- AI寒武纪
-- 机器之心
-- 数字生命卡兹克
-- APPSO
+把微信公众号文章采集升级为"采集入库 → 内容处理 → API 输出 → 小程序可读 → 公众号发布稿生成"的闭环系统。
 
 ## 快速开始
 
-### 1. 配置
+### 环境要求
+
+- Python 3.11+
+- Chrome 浏览器（需登录微信公众平台）
+- CDP Proxy（本地运行于 localhost:3456）
+
+### 安装依赖
 
 ```bash
-# 复制配置模板
-cp config.example.json config.json
-
-# 编辑配置文件，填写你的 token
-# token 从微信公众平台 URL 中获取: https://mp.weixin.qq.com/...?token=YOUR_TOKEN
+pip install requests flask pytest
 ```
 
-`config.json` 示例：
+### 配置
+
+复制 `config.example.json` 为 `config.json` 并填入：
+
 ```json
 {
-  "accounts": {
-    "量子位": "MzIzNjc1NzUzMw==",
-    ...
-  },
-  "token": "YOUR_TOKEN_HERE",
-  "target_id": "",  // 可选，留空自动查找
-  "cdp_proxy": "http://localhost:3456"
+  "cdp_proxy": "http://localhost:3456",
+  "token": "你的微信公众平台 token"
 }
 ```
 
-### 2. 前置条件
-
-1. 启动 CDP Proxy（端口 3456）
-2. 在 Chrome 浏览器中登录微信公众平台 (mp.weixin.qq.com)
-
-### 3. 一键执行
+### 一键运行
 
 ```bash
-./run.sh
+bash run.sh
 ```
 
-这会自动：
-- ✅ 检查环境
-- 📥 获取今日文章
-- 🎨 生成 HTML 页面
-- 📝 可选提交到 Git
-
-## 手动执行
+### 单步运行
 
 ```bash
-# 1. 获取今日文章
+# 初始化 sources（首次运行或新增公众号时）
+python scripts/seed_sources.py
+
+# 抓取今日微信文章并入库
 python fetch_wechat_today.py
 
-# 2. 生成 HTML
-python generate_html.py wechat_today_20260402.json
+# 生成每日 bundle（标准化 → 去重 → 标签 → bundle）
+python scripts/build_bundle.py
 
-# 3. 查看结果
-open index.html
+# 生成 HTML 预览页
+python generate_html.py bundle_today.json
+
+# 生成公众号发布稿
+python scripts/generate_mp_article.py bundle_today.json
+
+# 启动本地 API（供小程序或调试使用）
+python -m flask --app api.app run --debug
 ```
 
-## 输出示例
+## 数据文件说明
+
+| 文件 | 说明 |
+|------|------|
+| `config.json` | 微信配置（token 等），**不提交 git** |
+| `content.db` | SQLite 主数据库，所有内容的唯一数据源 |
+| `bundle_today.json` | 每日 bundle 快照，HTML 和公众号稿件的共同输入 |
+| `index.html` | 生成的 HTML 预览页 |
+| `mp_article_preview.json` | 公众号发布稿预览，人工确认后发布 |
+
+## 本地 API
+
+启动：`python -m flask --app api.app run --debug`
+
+| 路由 | 说明 |
+|------|------|
+| `GET /api/bundles/today` | 今日 bundle |
+| `GET /api/bundles/<date>` | 指定日期 bundle（格式：YYYY-MM-DD）|
+| `GET /api/sources` | 所有来源列表 |
+| `GET /api/sources/<name>/items` | 指定来源今日文章 |
+
+## 模块结构
 
 ```
-获取 量子位 今天的文章...
-  找到 2 篇
-    2026-04-02 09:30:05 - 封不住！Claude Code爆改Python版...
-    2026-04-02 09:30:05 - 再融20亿！星海图把具身智能头部门槛...
-
-✓ 结果已保存到: wechat_today_20260402.json
-✓ HTML 已生成: index.html
+collectors/     # 内容采集器（微信公众号等）
+pipeline/       # 内容处理（标准化、去重、标签、bundle 生成）
+storage/        # SQLite 数据库访问层
+publishers/     # 内容输出（HTML 预览、公众号发布稿）
+api/            # Flask 只读 API
+scripts/        # 独立脚本（seed sources、build bundle、生成稿件）
+tests/          # 测试
 ```
 
-## 技术方案
+## 运行测试
 
-- **数据来源**：微信公众平台官方 API
-- **认证方式**：CDP Proxy + 浏览器登录态
-- **数据格式**：JSON → HTML
+```bash
+pytest
+```
 
 ## 常见问题
 
-**Q: 为什么不用搜狗微信搜索？**
+**Q: 为什么返回空数据？**
 
-A: 搜狗有反爬机制，数据不准确。我们使用官方 API，更稳定可靠。
+A: 检查以下几点：
+1. CDP Proxy 是否正常运行（`curl http://localhost:3456/health`）
+2. 浏览器是否已登录微信公众平台
+3. token 是否过期（从浏览器 URL 中重新获取）
 
-**Q: 返回空数据怎么办？**
+**Q: 为什么不用 async/await？**
 
-A: 检查：
-1. CDP Proxy 是否运行
-2. 浏览器是否登录微信公众平台
-3. Token 是否过期（从浏览器 URL 中更新）
+A: CDP Proxy 的 `/eval` 端点对 Promise 返回值处理不完善，异步代码会返回空对象 `{}`。使用同步的 XMLHttpRequest 更可靠。
 
 **Q: 如何添加新的公众号？**
 
-A: 编辑 `fetch_wechat_today.py` 中的 `ACCOUNTS` 字典，添加公众号名称和 fakeid。
-
-## 项目结构
-
-```
-.
-├── run.sh                      # 一键执行脚本
-├── fetch_wechat_today.py       # 获取今日文章
-├── generate_html.py            # 生成 HTML
-├── index.html                  # 输出的 HTML 页面
-├── wechat_today_*.json         # 每日文章数据
-├── CLAUDE.md                   # 详细文档
-└── .claude/
-    └── skills/
-        └── wechat-news.md      # Claude Code skill
-```
-
-## License
-
-MIT
+A: 在 `content.db` 的 `sources` 表中新增记录，或修改 `scripts/seed_sources.py` 后重新执行。
