@@ -41,12 +41,27 @@
     /* 话题栏 */
     .topics-bar {
       background: #f8f9fb;
-      padding: 16px 32px;
+      padding: 14px 32px;
       border-bottom: 1px solid #eaecf0;
+    }
+    .topic-group {
       display: flex;
       align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 6px;
+      padding: 5px 0;
+    }
+    .topic-group + .topic-group {
+      border-top: 1px dashed #eaecf0;
+    }
+    .topic-cat-label {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      min-width: 70px;
+      flex-shrink: 0;
     }
     .topics-label {
       font-size: 12px;
@@ -62,9 +77,9 @@
       gap: 4px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
@@ -150,6 +165,22 @@
       vertical-align: middle;
       letter-spacing: 0.5px;
     }
+    .score-badge {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #888;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+    tr.article-row:has(.score-badge) .score-badge {
+      background: #fff3e0;
+      color: #e67e22;
+    }
 
     /* 摘要列 */
     .col-digest { width: 32%; }
@@ -205,23 +236,29 @@
   <div class="container">
     <div class="header">
       <h1>📱 微信公众号文章汇总</h1>
-      <div class="meta">获取时间：2026-04-04 11:21:04 &nbsp;|&nbsp; 共 3 条资讯 &nbsp;|&nbsp; 2026-04-04</div>
+      <div class="meta">获取时间：2026-04-04 16:49:00 &nbsp;|&nbsp; 共采集 25 篇，聚合为 20 条资讯 &nbsp;|&nbsp; 2026-04-04</div>
     </div>
 
     <div class="topics-bar">
-      <span class="topics-label">🔥 热点</span>
-      <span class='topic-tag' data-tag='AI'>AI <em>3</em></span>
-<span class='topic-tag' data-tag='Claude Code'>Claude Code <em>1</em></span>
-<span class='topic-tag' data-tag='OpenAI'>OpenAI <em>1</em></span>
+      <div class='topic-group'><span class='topic-cat-label'>🛠 编程工具</span><span class='topic-tag' data-tag='Vibe Coding'>Vibe Coding <em>2</em></span><span class='topic-tag' data-tag='Claude Code'>Claude Code <em>1</em></span></div>
+<div class='topic-group'><span class='topic-cat-label'>🏢 AI公司</span><span class='topic-tag' data-tag='OpenAI'>OpenAI <em>3</em></span><span class='topic-tag' data-tag='苹果'>苹果 <em>2</em></span><span class='topic-tag' data-tag='Anthropic'>Anthropic <em>1</em></span><span class='topic-tag' data-tag='Google'>Google <em>1</em></span><span class='topic-tag' data-tag='小米'>小米 <em>1</em></span><span class='topic-tag' data-tag='阿里'>阿里 <em>1</em></span></div>
+<div class='topic-group'><span class='topic-cat-label'>⚙️ AI技术</span><span class='topic-tag' data-tag='AI安全'>AI安全 <em>2</em></span><span class='topic-tag' data-tag='Agent'>Agent <em>1</em></span><span class='topic-tag' data-tag='具身智能'>具身智能 <em>1</em></span><span class='topic-tag' data-tag='多模态'>多模态 <em>1</em></span><span class='topic-tag' data-tag='强化学习'>强化学习 <em>1</em></span><span class='topic-tag' data-tag='模型训练'>模型训练 <em>1</em></span><span class='topic-tag' data-tag='视频生成'>视频生成 <em>1</em></span></div>
+<div class='topic-group'><span class='topic-cat-label'>🌐 行业应用</span><span class='topic-tag' data-tag='创业'>创业 <em>2</em></span><span class='topic-tag' data-tag='芯片'>芯片 <em>2</em></span><span class='topic-tag' data-tag='AI编程'>AI编程 <em>1</em></span><span class='topic-tag' data-tag='招聘'>招聘 <em>1</em></span></div>
+<div class='topic-group'><span class='topic-cat-label'>📚 学术</span><span class='topic-tag' data-tag='学术'>学术 <em>2</em></span></div>
+<div class='topic-group'><span class='topic-cat-label'>🔖 其他</span><span class='topic-tag' data-tag='AI'>AI <em>12</em></span><span class='topic-tag' data-tag='大模型'>大模型 <em>3</em></span></div>
 
     </div>
 
     <div class="sources-bar">
       <span class="topics-label">📰 来源</span>
-      <span class='source-filter' data-source='AI寒武纪' style='background:#667eea18;color:#667eea;border-color:#667eea55'>AI寒武纪</span>
-<span class='source-filter' data-source='量子位' style='background:#f093fb18;color:#f093fb;border-color:#f093fb55'>量子位</span>
-<span class='source-filter' data-source='APPSO' style='background:#4facfe18;color:#4facfe;border-color:#4facfe55'>APPSO</span>
-<span class='source-filter' data-source='机器之心' style='background:#43e97b18;color:#43e97b;border-color:#43e97b55'>机器之心</span>
+      <span class='source-filter' data-source='量子位' style='background:#667eea18;color:#667eea;border-color:#667eea55'>量子位</span>
+<span class='source-filter' data-source='新智元' style='background:#f093fb18;color:#f093fb;border-color:#f093fb55'>新智元</span>
+<span class='source-filter' data-source='机器之心' style='background:#4facfe18;color:#4facfe;border-color:#4facfe55'>机器之心</span>
+<span class='source-filter' data-source='AI寒武纪' style='background:#43e97b18;color:#43e97b;border-color:#43e97b55'>AI寒武纪</span>
+<span class='source-filter' data-source='APPSO' style='background:#fa709a18;color:#fa709a;border-color:#fa709a55'>APPSO</span>
+<span class='source-filter' data-source='硅星人Pro' style='background:#a18cd118;color:#a18cd1;border-color:#a18cd155'>硅星人Pro</span>
+<span class='source-filter' data-source='36氪' style='background:#fccb9018;color:#fccb90;border-color:#fccb9055'>36氪</span>
+<span class='source-filter' data-source='虎嗅APP' style='background:#84fab018;color:#84fab0;border-color:#84fab055'>虎嗅APP</span>
 
     </div>
 
@@ -236,47 +273,192 @@
           </tr>
         </thead>
         <tbody>
-          <tr class='article-row merged' data-tags='Claude Code AI OpenAI' data-sources='AI寒武纪|量子位|APPSO'>
+          <tr class='article-row' data-tags='OpenAI 大模型 模型训练' data-sources='量子位'>
   <td class='col-title'>
-    <span class='merged-badge'>多家</span>
+    <span class='score-badge'>8</span>
+    <span class='title-text'>OpenAI新模型不是GPTX！全新预训练“土豆”曝光，Sora成弃子的原因找到了</span>
+  </td>
+  <td class='col-digest'><div class='digest'>来自OpenAI总裁亲自爆料</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/45BjIryfTMx6ZZPAwP3diw' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>12:02</td>
+</tr>
+<tr class='article-row' data-tags='AI编程 AI' data-sources='量子位'>
+  <td class='col-title'>
+    <span class='score-badge'>7</span>
+    <span class='title-text'>25年10x工程师经验一夜归零！Django创始人警告：3-8年的程序员受AI冲击最大</span>
+  </td>
+  <td class='col-digest'><div class='digest'>“AI时代，我已经不会估项目时间了”</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/njRxx7V_-MJrXn6sS7Hh8g' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>13:03</td>
+</tr>
+<tr class='article-row' data-tags='具身智能 多模态 学术' data-sources='量子位'>
+  <td class='col-title'>
+    <span class='score-badge'>7</span>
+    <span class='title-text'>补全具身智能「触觉」拼图！哈工深发布EgoTouch：300项操作任务，百万帧视觉触觉同步对齐</span>
+  </td>
+  <td class='col-digest'><div class='digest'>第一人称视频双掌触觉估计模型来了！</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/qvFg1-bihlvvHGkBgJEKBA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>13:03</td>
+</tr>
+<tr class='article-row' data-tags='OpenAI AI安全' data-sources='新智元'>
+  <td class='col-title'>
+    <span class='score-badge'>7</span>
+    <span class='title-text'>末日时间表提前了！OpenAI前研究员硬核推演：AI拐点逼近，人类成NPC</span>
+  </td>
+  <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Q05Nf7sWuBlSImwqRzs6-g' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-time'>12:30</td>
+</tr>
+<tr class='article-row merged' data-tags='Anthropic Claude Code AI' data-sources='量子位|机器之心|AI寒武纪|新智元|APPSO'>
+  <td class='col-title'>
+    <span class='merged-badge'>多家</span><span class='score-badge'>7</span>
     <span class='title-text'>Claude封杀OpenClaw！龙虾之父回应</span>
   </td>
-  <td class='col-digest'><div class='digest'>1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。
-
-用户纷纷收到邮件通知，宣布正式停用第三方harness支持。
-
-订阅费只能用于Claude官方自己的网页、App或官方开发工具。
-
-2、Claude Code负责人Bo…</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>AI寒武纪</a><a href='https://mp.weixin.qq.com/s/N1wnzxBH0ucryNxBx2O_lA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>量子位</a><a href='https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>APPSO</a></td>
+  <td class='col-digest'><div class='digest'>1、Anthropic正式宣布封杀OpenClaw在内的第三方平台。 用户纷纷收到邮件通知，宣布正式停用第三方harness支持。 订阅费只能用于Claude官方自己的网页、App或官方开发工具。 2、Claude Code负责人Boris…</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Mh3yRrvMDYTWXUUjhPFo9A' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a><a href='https://mp.weixin.qq.com/s/F9mimuW3ym61JL5SqqwGbQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a><a href='https://mp.weixin.qq.com/s/f9rYm7BZYrPPp9b4UdsimA' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>AI寒武纪</a><a href='https://mp.weixin.qq.com/s/pr6pCoRCFKeWDyr5xoBrjQ' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a><a href='https://mp.weixin.qq.com/s/If-JMCsIhGfQfZ6QviT4Xg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>APPSO</a></td>
   <td class='col-time'>09:10</td>
 </tr>
-<tr class='article-row' data-tags='AI' data-sources='机器之心'>
+<tr class='article-row' data-tags='强化学习 阿里 大模型 学术' data-sources='机器之心'>
   <td class='col-title'>
-    
+    <span class='score-badge'>7</span>
+    <span class='title-text'>大模型SFT后效果≠RL潜力！港科大、阿里提出自适应冷启动新范式</span>
+  </td>
+  <td class='col-digest'><div class='digest'>为大模型的 RL 训练打造了最完美的起跑线</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/XThWpLxqMT0TKrAQ3kibmg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
+  <td class='col-time'>11:26</td>
+</tr>
+<tr class='article-row' data-tags='Vibe Coding 苹果 创业' data-sources='硅星人Pro'>
+  <td class='col-title'>
+    <span class='score-badge'>7</span>
+    <span class='title-text'>苹果成了Vibe Coding创业者们最大的敌人</span>
+  </td>
+  <td class='col-digest'><div class='digest'>AI创业者，苦苹果久矣</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/ThrIHHwPMvWYY5G3Mp1KbA' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>硅星人Pro</a></td>
+  <td class='col-time'>10:31</td>
+</tr>
+<tr class='article-row' data-tags='视频生成 AI' data-sources='机器之心'>
+  <td class='col-title'>
+    <span class='score-badge'>7</span>
     <span class='title-text'>AI 视频生成的战场如何从「模型秀场」转向「工作流」？</span>
   </td>
   <td class='col-digest'><div class='digest'>AI 视频是否已经告别「模型秀场」阶段？</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/ixF2OeCyQQosOKjuBHZ2BQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>10:30</td>
 </tr>
-<tr class='article-row' data-tags='AI' data-sources='APPSO'>
+<tr class='article-row' data-tags='AI安全 AI' data-sources='新智元'>
   <td class='col-title'>
-    
+    <span class='score-badge'>6</span>
+    <span class='title-text'>百万OpenClaw哭喊「自由」？微软AI CEO直戳幻觉：小心数据镜像陷阱</span>
+  </td>
+  <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/-oBFB8Nxa89TLnz-QjCNlQ' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-time'>09:58</td>
+</tr>
+<tr class='article-row' data-tags='Google Agent AI' data-sources='新智元'>
+  <td class='col-title'>
+    <span class='score-badge'>6</span>
+    <span class='title-text'>$19.99买断你的一生？Gemini变身系统管家，人类开始被AI安排了</span>
+  </td>
+  <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/SIajxgMlficRH6Hkd11pqA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-time'>09:58</td>
+</tr>
+<tr class='article-row' data-tags='小米 苹果 Vibe Coding 芯片' data-sources='APPSO'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
     <span class='title-text'>小米手机涨价，曝销量预计下滑13%/苹果「天价扫货」内存芯片阻止竞争对手/充电宝迎史上最严国标</span>
   </td>
-  <td class='col-digest'><div class='digest'>· 工信部预警：iOS 13 至 17.2.1 存在严重漏洞，建议尽快升级
-· 苹果下架 Vibe Coding 应用 Anything
-· 曝 R 星母公司解散 AI 团队，七年研发成果戛然而止</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/badaaEiqxdd1779EM6_gAQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>APPSO</a></td>
+  <td class='col-digest'><div class='digest'>· 工信部预警：iOS 13 至 17.2.1 存在严重漏洞，建议尽快升级 · 苹果下架 Vibe Coding 应用 Anything · 曝 R 星母公司解散 AI 团队，七年研发成果戛然而止</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/badaaEiqxdd1779EM6_gAQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>APPSO</a></td>
   <td class='col-time'>08:25</td>
+</tr>
+<tr class='article-row' data-tags='芯片 AI' data-sources='量子位'>
+  <td class='col-title'>
+    <span class='score-badge'>4</span>
+    <span class='title-text'>联想重新定义“龙虾”</span>
+  </td>
+  <td class='col-digest'><div class='digest'>算力需求有解了</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/yWb_EA8ODbFBsUlPBH10Tg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>13:03</td>
+</tr>
+<tr class='article-row' data-tags='OpenAI AI' data-sources='36氪'>
+  <td class='col-title'>
+    <span class='score-badge'>4</span>
+    <span class='title-text'>日本寺庙没和尚了，ChatGPT出家普度众生</span>
+  </td>
+  <td class='col-digest'><div class='digest'>10件三月最值得你关注的事。</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/1XbYP5Nk6dB4sXv5pApjyg' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>36氪</a></td>
+  <td class='col-time'>12:00</td>
+</tr>
+<tr class='article-row' data-tags='AI 大模型' data-sources='量子位'>
+  <td class='col-title'>
+    <span class='score-badge'>3</span>
+    <span class='title-text'>一年一度最值得关注的AI榜单来啦！申报即日启动</span>
+  </td>
+  <td class='col-digest'><div class='digest'>欢迎申报，截至4月27日</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/TZTR89jMVfXO5lnra8YgDA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>13:03</td>
+</tr>
+<tr class='article-row merged' data-tags='AI' data-sources='APPSO|硅星人Pro'>
+  <td class='col-title'>
+    <span class='merged-badge'>多家</span><span class='score-badge'>3</span>
+    <span class='title-text'>同事.skill 的尽头，是把人生外包给 AI</span>
+  </td>
+  <td class='col-digest'><div class='digest'>是我在用 skill，还是 skill 在用我？</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/4WBeFt11y8enVr43S-Ev1Q' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>APPSO</a><a href='https://mp.weixin.qq.com/s/1I_fKHtPOCWlDdFdeOrsGA' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>硅星人Pro</a></td>
+  <td class='col-time'>11:11</td>
+</tr>
+<tr class='article-row' data-tags='招聘' data-sources='量子位'>
+  <td class='col-title'>
+    <span class='score-badge'>2</span>
+    <span class='title-text'>量子位编辑作者招聘</span>
+  </td>
+  <td class='col-digest'><div class='digest'>3个岗位（含实习），不设边界</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/48BnZgwE1i4tFnePadb9xA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
+  <td class='col-time'>13:03</td>
+</tr>
+<tr class='article-row' data-tags='AI' data-sources='虎嗅APP'>
+  <td class='col-title'>
+    <span class='score-badge'>2</span>
+    <span class='title-text'>小鹏要用10万级的车撑起100亿的梦</span>
+  </td>
+  <td class='col-digest'><div class='digest'>没有规模，就没有供应链话语权；没有现金流，就撑不起高强度研</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/RkDd9fqGIeJqAU_lXyBRVA' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>虎嗅APP</a></td>
+  <td class='col-time'>10:41</td>
+</tr>
+<tr class='article-row' data-tags='AI' data-sources='36氪'>
+  <td class='col-title'>
+    <span class='score-badge'>1</span>
+    <span class='title-text'>前夫、性欲、失眠……当代年轻人最想烧掉的46件「脏东西」</span>
+  </td>
+  <td class='col-digest'><div class='digest'>我们造了一座赛博焚化炉，来帮大家“烧掉”那些困住我们太久的“坏东西”。</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/TJt9QotReEdRxZpIa9wJnA' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>36氪</a></td>
+  <td class='col-time'>12:00</td>
+</tr>
+<tr class='article-row' data-tags='AI' data-sources='虎嗅APP'>
+  <td class='col-title'>
+    <span class='score-badge'>1</span>
+    <span class='title-text'>回到2016：赶在AI、战争和短视频到来之前</span>
+  </td>
+  <td class='col-digest'><div class='digest'>为什么全世界年轻人都想回到2016年？</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/8d8NbgYu-p-mEMkA8oSlhQ' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>虎嗅APP</a></td>
+  <td class='col-time'>10:41</td>
+</tr>
+<tr class='article-row' data-tags='创业' data-sources='虎嗅APP'>
+  <td class='col-title'>
+    <span class='score-badge'>1</span>
+    <span class='title-text'>冰糖葫芦啤酒，要去IPO了</span>
+  </td>
+  <td class='col-digest'><div class='digest'>一罐毛尖啤酒，撬动了什么</div></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/aSiRPHXCn42D36Mxb-Hn7g' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>虎嗅APP</a></td>
+  <td class='col-time'>10:41</td>
 </tr>
 
         </tbody>
       </table>
     </div>
 
-    <div class="footer">由 Claude 自动生成 · 2026-04-04 11:21:04</div>
+    <div class="footer">由 Claude 自动生成 · 2026-04-04 16:49:00</div>
   </div>
 
   <script>
