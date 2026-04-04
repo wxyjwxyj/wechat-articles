@@ -61,6 +61,10 @@ python scripts/generate_mp_article.py bundle_today.json >> "$LOG_FILE" 2>&1
 log "生成导读风 HTML..."
 python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
 
+# 11. 提交到公众号草稿箱
+log "提交到公众号草稿箱..."
+python scripts/publish_to_mp.py >> "$LOG_FILE" 2>&1 || log "⚠ 草稿提交失败，继续"
+
 # 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"

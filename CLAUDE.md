@@ -101,7 +101,7 @@ sources 表
 ./run.sh
 ```
 
-流程：检查环境 → 初始化 sources → 采集文章 → 生成 bundle → 生成 HTML → 生成公众号稿
+流程：检查环境 → 初始化 sources → 采集文章 → 生成 bundle → 生成 HTML → 生成公众号稿 → 提交草稿箱 → 推送 GitHub Pages
 
 ### API 启动
 
@@ -128,6 +128,12 @@ python -m flask --app api.app run --debug
 **`generate_html.py`** - 消费 `bundle_today.json` 生成 HTML 预览页
 
 **`scripts/generate_mp_article.py`** - 消费 `bundle_today.json` 生成公众号发布稿
+
+**`scripts/publish_to_mp.py`** - 将公众号稿件提交到草稿箱
+- 读取 `mp_article_preview.json`，通过 CDP Proxy 调用公众号后台接口创建草稿
+- 自动检查是否已有同日草稿（防重复）
+- 支持 `--dry-run` 模式
+- **只提交到草稿箱，不自动发布**，需人工确认后点"发布"
 
 ### ⚠️ 已废弃
 

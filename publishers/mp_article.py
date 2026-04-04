@@ -150,66 +150,118 @@ def _render_html(
     highlights: list[dict],
     commentary_list: list[str],
 ) -> str:
-    """渲染完整公众号 HTML。"""
+    """渲染公众号正文 HTML（适配微信编辑器，纯内联样式）。
+
+    设计风格：精致编辑部 — 深色线条分隔、浅灰卡片点评、红色编号徽章。
+    不使用 h1（公众号自带标题栏）、不使用 class/flex/grid/渐变/动画。
+    """
     has_commentary = bool(commentary_list and any(commentary_list))
 
-    # 导语
-    intro_html = (
-        f"<p>今日精选 {len(highlights)} 条 AI 资讯，快速掌握行业动态。</p>"
+    # ── 头部引导语 ──
+    header_html = (
+        '<section style="margin:0 0 8px;padding:0;">'
+        '<section style="text-align:center;padding:16px 0 12px;">'
+        '<p style="font-size:13px;color:#888;letter-spacing:2px;margin:0;">DAILY AI BRIEFING</p>'
+        '</section>'
+        '<section style="border-top:2px solid #222;border-bottom:1px solid #e5e5e5;padding:10px 0;margin:0 0 6px;">'
+        f'<p style="font-size:13px;color:#999;letter-spacing:1px;margin:0;text-align:center;">'
+        f'{bundle_date} · 精选 <strong style="color:#c0392b;">{len(highlights)}</strong> 条 · 编辑点评版</p>'
+        '</section>'
+        '</section>'
     )
 
-    # 内容块
+    # ── 内容卡片 ──
     items_parts = []
     for i, item in enumerate(highlights):
+        num = str(i + 1).zfill(2)
         sources_list = item.get("sources_list", [])
-        if len(sources_list) == 1 and sources_list[0].get("url"):
-            link_html = f"<a href='{sources_list[0]['url']}'>查看原文 →</a>"
-        elif sources_list:
-            links = " | ".join(
-                f"<a href='{s['url']}'>{s['source_name']}</a>"
-                for s in sources_list if s.get("url")
-            )
-            link_html = f"多家报道：{links}" if links else ""
-        else:
-            link_html = ""
 
-        summary = _clean_summary(item.get("summary", ""))
-        # 摘要截断：超过100字折叠
-        summary_short = summary[:100] + "…" if len(summary) > 100 else summary
-
-        # 点评块（有点评时显示）
-        comment = commentary_list[i] if has_commentary and i < len(commentary_list) else ""
-        comment_html = (
-            f"<p style='background:#fffbe6;border-left:3px solid #f0a500;"
-            f"padding:6px 10px;margin:8px 0;color:#555;font-size:14px;'>"
-            f"💬 {comment}</p>\n"
-            if comment else ""
-        )
-
-        # 来源徽章
+        # 来源名称
         source_names = " · ".join(
             s.get("source_name", "") for s in sources_list if s.get("source_name")
         ) or item.get("source_name", "")
 
-        summary_html = f"<p style='color:#666;font-size:14px'>{summary_short}</p>" if summary_short else ""
+        # 多家报道标签
+        merged_tag = ""
+        if len(sources_list) > 1:
+            merged_tag = (
+                '<span style="display:inline-block;font-size:10px;color:#c0392b;'
+                'border:1px solid #e8c8c8;border-radius:2px;padding:0 4px;'
+                'margin-left:6px;vertical-align:middle;line-height:16px;">多家报道</span>'
+            )
+
+        # 链接
+        if len(sources_list) == 1 and sources_list[0].get("url"):
+            link_html = (
+                f'<p style="margin:0;"><a style="font-size:12px;color:#576b95;'
+                f'text-decoration:none;letter-spacing:0.5px;" '
+                f'href=\'{sources_list[0]["url"]}\'>阅读原文 →</a></p>'
+            )
+        elif len(sources_list) > 1:
+            links = " ｜ ".join(
+                f'<a style="color:#576b95;text-decoration:none;" '
+                f'href=\'{s["url"]}\'>{s["source_name"]}</a>'
+                for s in sources_list if s.get("url")
+            )
+            link_html = f'<p style="margin:0;font-size:12px;color:#999;">{links}</p>'
+        else:
+            link_html = ""
+
+        # 摘要
+        summary = _clean_summary(item.get("summary", ""))
+        summary_short = summary[:100] + "…" if len(summary) > 100 else summary
+        summary_html = (
+            f'<p style="font-size:14px;color:#888;line-height:1.7;margin:0 0 8px;">'
+            f'{summary_short}</p>'
+            if summary_short else ""
+        )
+
+        # 编辑点评
+        comment = commentary_list[i] if has_commentary and i < len(commentary_list) else ""
+        comment_html = ""
+        if comment:
+            comment_html = (
+                '<section style="background:#f7f7f7;border-radius:6px;padding:10px 14px;margin:0 0 10px;">'
+                '<p style="font-size:13px;color:#666;line-height:1.75;margin:0;">'
+                '<span style="color:#c0392b;font-weight:bold;margin-right:4px;">编辑观点</span>'
+                f'{comment}</p>'
+                '</section>'
+            )
 
         items_parts.append(
-            f"<h3 style='margin-top:24px'>{item['title']}</h3>\n"
-            f"{comment_html}"
-            f"{summary_html}\n"
-            f"<p style='font-size:13px;color:#999'>📰 {source_names} &nbsp; {link_html}</p>"
+            f'<section style="margin:22px 0 0;padding:0 0 20px;border-bottom:1px solid #f0f0f0;">'
+            # 编号 + 来源
+            f'<section style="margin:0 0 10px;">'
+            f'<span style="display:inline-block;background:#c0392b;color:#fff;font-size:11px;'
+            f'font-weight:bold;min-width:20px;height:20px;line-height:20px;text-align:center;'
+            f'border-radius:3px;margin-right:8px;vertical-align:middle;letter-spacing:0;'
+            f'padding:0 4px;white-space:nowrap;">{num}</span>'
+            f'<span style="font-size:12px;color:#999;letter-spacing:1px;vertical-align:middle;">'
+            f'{source_names}</span>'
+            f'{merged_tag}'
+            f'</section>'
+            # 标题
+            f'<p style="font-size:17px;font-weight:bold;color:#1a1a1a;line-height:1.6;'
+            f'margin:0 0 10px;letter-spacing:0.5px;">{item["title"]}</p>'
+            # 点评
+            f'{comment_html}'
+            # 摘要
+            f'{summary_html}'
+            # 链接
+            f'{link_html}'
+            f'</section>'
         )
 
     items_html = "\n".join(items_parts)
 
-    # 结尾
-    outro_html = "<p style='color:#999;font-size:13px;text-align:center'>— 以上为今日导读，完整列表见 HTML 预览页 —</p>"
-
-    return (
-        f"<h1>{title}</h1>\n"
-        f"{intro_html}\n"
-        f"<hr>\n"
-        f"{items_html}\n"
-        f"<hr>\n"
-        f"{outro_html}"
+    # ── 尾部 ──
+    footer_html = (
+        '<section style="text-align:center;margin:28px 0 16px;">'
+        '<section style="border-top:2px solid #222;width:40px;margin:0 auto 14px;"></section>'
+        '<p style="font-size:11px;color:#bbb;letter-spacing:3px;margin:0;">AI DAILY BRIEFING</p>'
+        '<p style="font-size:11px;color:#ccc;letter-spacing:1px;margin:6px 0 0;">'
+        '自动采集 · Claude 编辑点评 · 每日更新</p>'
+        '</section>'
     )
+
+    return f"{header_html}\n{items_html}\n{footer_html}"
