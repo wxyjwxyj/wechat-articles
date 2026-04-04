@@ -35,8 +35,7 @@ def main() -> None:
         item["source_name"] = sources.get(item["source_id"], {}).get("name", "未知来源")
         # tags 在 DB 中存为 JSON 字符串，需要反序列化
         if isinstance(item.get("tags"), str):
-            import json as _json
-            item["tags"] = _json.loads(item["tags"])
+            item["tags"] = json.loads(item["tags"])
         # 如果 tags 为空，补充提取
         if not item.get("tags"):
             item["tags"] = extract_tags(item)
@@ -50,6 +49,7 @@ def main() -> None:
     # 持久化到 DB
     bundle_repo = BundleRepository(DB_PATH)
     bundle_id = bundle_repo.upsert_bundle(bundle)
+    # list_items_by_date 返回的 row 包含 DB 自增 id
     item_ids = [item["id"] for item in items if "id" in item]
     bundle_repo.replace_bundle_items(bundle_id, item_ids)
 
