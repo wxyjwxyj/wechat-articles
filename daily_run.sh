@@ -65,16 +65,17 @@ python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"
 mkdir -p archive
-cp index.html "archive/${TODAY_DATE}.html"
+cp today.html "archive/${TODAY_DATE}.html"
 python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 
-# 13. 切换到 main，把 index.html 和 archive/ 带过去，推送
+# 13. 切换到 main，把 index.html / today.html / archive/ 带过去，推送
 log "推送到 GitHub..."
 git checkout main >> "$LOG_FILE" 2>&1
 git checkout dev -- index.html >> "$LOG_FILE" 2>&1
+git checkout dev -- today.html >> "$LOG_FILE" 2>&1
 git checkout dev -- archive/ >> "$LOG_FILE" 2>&1
 git checkout dev -- mp_article_preview.html >> "$LOG_FILE" 2>&1
-git add index.html archive/ mp_article_preview.html
+git add index.html today.html archive/ mp_article_preview.html
 git commit -m "Update: $(date +%Y-%m-%d) articles" >> "$LOG_FILE" 2>&1
 git push origin main >> "$LOG_FILE" 2>&1
 

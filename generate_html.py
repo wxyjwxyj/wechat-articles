@@ -2,7 +2,7 @@
 
 用法：python generate_html.py [bundle_json_path] [output_html_path]
   bundle_json_path  默认：bundle_today.json
-  output_html_path  默认：index.html
+  output_html_path  默认：today.html
 """
 import json
 import sys
@@ -11,7 +11,7 @@ from pathlib import Path
 from publishers.html_preview import render_bundle_html
 
 DEFAULT_BUNDLE = Path(__file__).parent / "bundle_today.json"
-DEFAULT_OUTPUT = Path(__file__).parent / "index.html"
+DEFAULT_OUTPUT = Path(__file__).parent / "today.html"
 
 
 def main() -> None:
