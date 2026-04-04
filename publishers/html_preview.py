@@ -38,13 +38,42 @@ def render_bundle_html(bundle: dict) -> str:
 
     items_flat = bundle.get("items_flat", [])
     total_articles = len(items_flat)
+    # 原始文章总数（去重聚合前）= 所有 sources_list 的长度之和
+    total_raw = sum(len(item.get("sources_list", [item])) for item in items_flat)
     generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     bundle_date = bundle.get("bundle_date", "")
 
-    # 话题标签
-    topics_html = ""
+    # 话题标签：按分类分组
+    # 分类显示名
+    _CAT_LABELS = {
+        "编程工具": "🛠 编程工具",
+        "AI公司":   "🏢 AI公司",
+        "AI技术":   "⚙️ AI技术",
+        "行业应用": "🌐 行业应用",
+        "学术":     "📚 学术",
+        "宽泛":     "🔖 其他",
+    }
+    _CAT_ORDER = ["编程工具", "AI公司", "AI技术", "行业应用", "学术", "宽泛"]
+
+    # 按分类归组
+    from collections import OrderedDict
+    cat_groups: dict[str, list] = OrderedDict((c, []) for c in _CAT_ORDER)
     for topic in bundle.get("topics", []):
-        topics_html += f"<span class='topic-tag' data-tag='{topic['name']}'>{topic['name']} <em>{topic['count']}</em></span>\n"
+        cat = topic.get("category", "宽泛")
+        if cat not in cat_groups:
+            cat_groups[cat] = []
+        cat_groups[cat].append(topic)
+
+    topics_html = ""
+    for cat in _CAT_ORDER:
+        group = cat_groups.get(cat, [])
+        if not group:
+            continue
+        label = _CAT_LABELS.get(cat, cat)
+        tags_html = ""
+        for topic in group:
+            tags_html += f"<span class='topic-tag' data-tag='{topic['name']}'>{topic['name']} <em>{topic['count']}</em></span>"
+        topics_html += f"<div class='topic-group'><span class='topic-cat-label'>{label}</span>{tags_html}</div>\n"
 
     # 收集所有来源（去重，保持顺序）
     seen_sources: list[str] = []
@@ -81,6 +110,10 @@ def render_bundle_html(bundle: dict) -> str:
         pub = item.get("published_at", "")
         time_str = pub[11:16] if len(pub) >= 16 else ""
 
+        # 重要性分数
+        score = item.get("score", None)
+        score_badge = f"<span class='score-badge'>{score}</span>" if score is not None else ""
+
         # 多来源时加聚合标记
         merged = len(sources_list) > 1
         merged_badge = "<span class='merged-badge'>多家</span>" if merged else ""
@@ -90,7 +123,7 @@ def render_bundle_html(bundle: dict) -> str:
         sources_attr = "|".join(s.get("source_name", "") for s in sources_list)
         rows_html += f"""<tr class='article-row{"" if not merged else " merged"}' data-tags='{tags_attr}' data-sources='{sources_attr}'>
   <td class='col-title'>
-    {merged_badge}
+    {merged_badge}{score_badge}
     <span class='title-text'>{item['title']}</span>
   </td>
   <td class='col-digest'>{summary_html}</td>
@@ -141,12 +174,27 @@ def render_bundle_html(bundle: dict) -> str:
     /* 话题栏 */
     .topics-bar {{
       background: #f8f9fb;
-      padding: 16px 32px;
+      padding: 14px 32px;
       border-bottom: 1px solid #eaecf0;
+    }}
+    .topic-group {{
       display: flex;
       align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 6px;
+      padding: 5px 0;
+    }}
+    .topic-group + .topic-group {{
+      border-top: 1px dashed #eaecf0;
+    }}
+    .topic-cat-label {{
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      min-width: 70px;
+      flex-shrink: 0;
     }}
     .topics-label {{
       font-size: 12px;
@@ -162,9 +210,9 @@ def render_bundle_html(bundle: dict) -> str:
       gap: 4px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
       cursor: pointer;
       user-select: none;
@@ -250,6 +298,22 @@ def render_bundle_html(bundle: dict) -> str:
       vertical-align: middle;
       letter-spacing: 0.5px;
     }}
+    .score-badge {{
+      display: inline-block;
+      background: #f0f0f0;
+      color: #888;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }}
+    tr.article-row:has(.score-badge) .score-badge {{
+      background: #fff3e0;
+      color: #e67e22;
+    }}
 
     /* 摘要列 */
     .col-digest {{ width: 32%; }}
@@ -305,11 +369,10 @@ def render_bundle_html(bundle: dict) -> str:
   <div class="container">
     <div class="header">
       <h1>📱 微信公众号文章汇总</h1>
-      <div class="meta">获取时间：{generated_at} &nbsp;|&nbsp; 共 {total_articles} 条资讯 &nbsp;|&nbsp; {bundle_date}</div>
+      <div class="meta">获取时间：{generated_at} &nbsp;|&nbsp; 共采集 {total_raw} 篇，聚合为 {total_articles} 条资讯 &nbsp;|&nbsp; {bundle_date}</div>
     </div>
 
     <div class="topics-bar">
-      <span class="topics-label">🔥 热点</span>
       {topics_html}
     </div>
 

@@ -1,4 +1,4 @@
-"""初始化 5 个微信公众号 source。如果已存在则更新。"""
+"""初始化微信公众号 source。如果已存在则更新。"""
 import sys
 from pathlib import Path
 
@@ -16,6 +16,10 @@ SOURCES = [
     {"type": "wechat", "name": "机器之心", "external_id": "MzA3MzI4MjgzMw==", "status": "active", "config": {"fakeid": "MzA3MzI4MjgzMw=="}},
     {"type": "wechat", "name": "数字生命卡兹克", "external_id": "MzIyMzA5NjEyMA==", "status": "active", "config": {"fakeid": "MzIyMzA5NjEyMA=="}},
     {"type": "wechat", "name": "APPSO", "external_id": "MjM5MjAyNDUyMA==", "status": "active", "config": {"fakeid": "MjM5MjAyNDUyMA=="}},
+    {"type": "wechat", "name": "36氪", "external_id": "MzI2NDk5NzA0Mw==", "status": "active", "config": {"fakeid": "MzI2NDk5NzA0Mw=="}},
+    {"type": "wechat", "name": "虎嗅APP", "external_id": "MTQzMjE1NjQwMQ==", "status": "active", "config": {"fakeid": "MTQzMjE1NjQwMQ=="}},
+    {"type": "wechat", "name": "新智元", "external_id": "MzI3MTA0MTk1MA==", "status": "active", "config": {"fakeid": "MzI3MTA0MTk1MA=="}},
+    {"type": "wechat", "name": "硅星人Pro", "external_id": "MzkyNjU2ODM2NQ==", "status": "active", "config": {"fakeid": "MzkyNjU2ODM2NQ=="}},
 ]
 
 

@@ -1,3 +1,4 @@
+import json
 import re
 
 # 品牌/实体别名映射，合并后统一用规范词替换
@@ -9,36 +10,46 @@ _ALIASES: list[tuple[str, str]] = [
 
 
 def _tokenize(text: str) -> set[str]:
-    """分词：CamelCase 拆分 + 中英文边界切割 + 按非字符切割，保留长度 >= 2 的词元。并应用别名归一化。"""
+    """
+    分词：CamelCase 拆分 + 中英文边界切割 + 按非字符切割，保留长度 >= 2 的词元。
+    并应用别名归一化。
+    对中文连续串额外生成双字 bigram，改善中文标题匹配效果。
+    """
     # CamelCase 拆分：OpenClaw → Open Claw
     text = re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
     # 中英文边界插入空格：封杀OpenClaw → 封杀 Open Claw
     text = re.sub(r"([\u4e00-\u9fff])([A-Za-z])", r"\1 \2", text)
     text = re.sub(r"([A-Za-z])([\u4e00-\u9fff])", r"\1 \2", text)
     tokens = re.split(r"[^\u4e00-\u9fffA-Za-z0-9]+", text.lower())
+
     result = set()
     for t in tokens:
         if len(t) < 2:
             continue
+        # 别名归一化
         for alias, canonical in _ALIASES:
             if t == alias:
                 t = canonical
                 break
         result.add(t)
+        # 中文连续串额外生成双字 bigram，增强部分匹配能力
+        # 例如 "龙虾之父回应" → {龙虾, 虾之, 之父, 父回, 回应}
+        if re.fullmatch(r"[\u4e00-\u9fff]{3,}", t):
+            for i in range(len(t) - 1):
+                result.add(t[i:i+2])
+
     return result
 
 
 def _similar(a: set, b: set, threshold: float) -> bool:
     """
-    两个词集相似性判断：
-    1. Jaccard >= threshold，或
-    2. 共享词数 >= 2（捕获专有名词重叠，如 openclaw + 龙虾）
+    两个词集相似性判断：仅用 Jaccard >= threshold。
+    不用"共享词数 >= N"条件，避免 open/ai 这类泛词触发误合并。
     """
     if not a or not b:
         return False
-    intersection = a & b
-    jaccard_score = len(intersection) / len(a | b)
-    return jaccard_score >= threshold or len(intersection) >= 2
+    jaccard_score = len(a & b) / len(a | b)
+    return jaccard_score >= threshold
 
 
 def _merge_group(group: list[dict]) -> dict:
@@ -51,15 +62,15 @@ def _merge_group(group: list[dict]) -> dict:
     primary = max(group, key=lambda x: len(x.get("summary", "")))
     merged = dict(primary)
 
-    # 收集所有来源（去重）
-    seen_sources = set()
+    # 收集所有来源（按 source_name 去重，URL 保留第一个出现的）
+    seen_sources: set[str] = set()
     sources_list = []
     for item in group:
-        key = (item.get("source_name", ""), item.get("url", ""))
-        if key not in seen_sources:
-            seen_sources.add(key)
+        name = item.get("source_name", "")
+        if name and name not in seen_sources:
+            seen_sources.add(name)
             sources_list.append({
-                "source_name": item.get("source_name", ""),
+                "source_name": name,
                 "url": item.get("url", ""),
             })
 
@@ -69,11 +80,143 @@ def _merge_group(group: list[dict]) -> dict:
     return merged
 
 
-def dedupe_items(items: list[dict], sim_threshold: float = 0.4) -> list[dict]:
+def _keyword_dedupe(items: list[dict], sim_threshold: float = 0.4) -> list[dict]:
+    """
+    基于标题关键词的去重聚合（兜底方案）。
+    两轮聚合：
+    1. 代表文章匹配（每篇和已有组的代表比较）
+    2. 组间合并（把相似的组再合并一次，解决代表风格差异导致的漏合并）
+    """
+    token_sets = [_tokenize(item.get("title", "")) for item in items]
+
+    # 第一轮：代表文章匹配
+    groups: list[list[int]] = []      # 每组存 item 下标
+    group_repr: list[set] = []        # 每组代表文章的 token set
+
+    for i, ts in enumerate(token_sets):
+        merged = False
+        for g_idx, repr_ts in enumerate(group_repr):
+            if _similar(ts, repr_ts, sim_threshold):
+                groups[g_idx].append(i)
+                merged = True
+                break
+        if not merged:
+            groups.append([i])
+            group_repr.append(ts)
+
+    # 第二轮：组间合并（合并相似的组）
+    merged_flags = [False] * len(groups)
+    final_groups: list[list[int]] = []
+
+    for i in range(len(groups)):
+        if merged_flags[i]:
+            continue
+        current = list(groups[i])
+        for j in range(i + 1, len(groups)):
+            if merged_flags[j]:
+                continue
+            if _similar(group_repr[i], group_repr[j], sim_threshold):
+                current.extend(groups[j])
+                merged_flags[j] = True
+        final_groups.append(current)
+
+    # 组装结果
+    result = []
+    for group_indices in final_groups:
+        group = [items[i] for i in group_indices]
+        if len(group) == 1:
+            item = dict(group[0])
+            item.setdefault("sources_list", [{
+                "source_name": item.get("source_name", item.get("author", "")),
+                "url": item.get("url", ""),
+            }])
+            result.append(item)
+        else:
+            result.append(_merge_group(group))
+
+    return result
+
+
+def _claude_dedupe(
+    items: list[dict],
+    api_key: str,
+    base_url: str = "https://api.anthropic.com",
+) -> list[list[int]] | None:
+    """
+    用 Claude 判断哪些文章报道同一事件，返回分组（下标列表的列表）。
+    失败时返回 None，由调用方降级到关键词方案。
+    """
+    titles_text = "\n".join(
+        f"{i+1}. {item.get('title', '')}"
+        for i, item in enumerate(items)
+    )
+
+    prompt = (
+        "你是一位编辑助手。以下是今日采集的文章标题，请找出「报道同一事件」的文章并分组。\n\n"
+        "规则：\n"
+        "- 同一事件：不同媒体对同一条新闻/发布/公告的报道\n"
+        "- 不同角度的评论、分析不算同一事件（即使主题相关）\n"
+        "- 没有重复的文章单独一组\n\n"
+        f"文章列表：\n{titles_text}\n\n"
+        "严格按 JSON 格式返回，不要有任何其他文字：\n"
+        '{"groups": [[1,2], [3], [4,5,6], ...]}'
+    )
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+        message = client.messages.create(
+            model="claude-opus-4-6",
+            max_tokens=512,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        if not message.content:
+            print("  ⚠ Claude 去重返回空内容，降级到关键词方案")
+            return None
+        raw = message.content[0].text.strip()
+    except ImportError:
+        print("  ⚠ 未安装 anthropic 库，降级到关键词方案")
+        return None
+    except Exception as e:
+        print(f"  ⚠ Claude 去重失败（{e}），降级到关键词方案")
+        return None
+
+    try:
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        data = json.loads(raw[start:end])
+        groups = data.get("groups", [])
+        # 验证格式：每组是下标列表，下标在合法范围内
+        n = len(items)
+        valid_groups = []
+        for g in groups:
+            valid = [idx - 1 for idx in g if isinstance(idx, int) and 1 <= idx <= n]
+            if valid:
+                valid_groups.append(valid)
+        # 确保所有下标都被覆盖
+        covered = {idx for g in valid_groups for idx in g}
+        for i in range(n):
+            if i not in covered:
+                valid_groups.append([i])
+        return valid_groups
+    except Exception as e:
+        print(f"  ⚠ Claude 去重结果解析失败（{e}），降级到关键词方案")
+        return None
+
+
+def dedupe_items(
+    items: list[dict],
+    sim_threshold: float = 0.4,
+    api_key: str = "",
+    base_url: str = "https://api.anthropic.com",
+) -> list[dict]:
     """
     两阶段去重：
     1. URL / content_hash 精确去重
-    2. 标题 Jaccard 相似度 >= sim_threshold 的文章聚合为一条
+    2. 标题相似度聚合：优先用 Claude，失败时降级到关键词匹配
+
+    Claude 方案：将所有标题发给 Claude，让它判断哪些报道同一事件。
+    关键词兜底：双字 bigram + Jaccard 相似度 + 两轮聚合。
     """
     # 第一阶段：精确去重
     seen_keys: set[str] = set()
@@ -88,50 +231,36 @@ def dedupe_items(items: list[dict], sim_threshold: float = 0.4) -> list[dict]:
         seen_keys.add(key)
         exact_deduped.append(item)
 
-    # 第二阶段：标题相似度聚合
-    # 给每个 item 预计算标题词集
-    token_sets = [_tokenize(item.get("title", "")) for item in exact_deduped]
+    if len(exact_deduped) <= 1:
+        for item in exact_deduped:
+            item.setdefault("sources_list", [{
+                "source_name": item.get("source_name", ""),
+                "url": item.get("url", ""),
+            }])
+        return exact_deduped
 
-    # 并查集：合并相似 item
-    parent = list(range(len(exact_deduped)))
+    # 第二阶段：相似度聚合
+    groups: list[list[int]] | None = None
 
-    def find(x):
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
+    if api_key:
+        print(f"  🤖 使用 Claude 去重（共 {len(exact_deduped)} 篇）...")
+        groups = _claude_dedupe(exact_deduped, api_key, base_url)
+        if groups is not None:
+            print(f"  ✓ Claude 去重完成，聚合为 {len(groups)} 条")
 
-    def union(x, y):
-        parent[find(x)] = find(y)
+    if groups is None:
+        print(f"  📝 使用关键词方案去重...")
+        deduped = _keyword_dedupe(exact_deduped, sim_threshold)
+        return deduped
 
-    for i in range(len(exact_deduped)):
-        for j in range(i + 1, len(exact_deduped)):
-            if _similar(token_sets[i], token_sets[j], sim_threshold):
-                union(i, j)
-
-    # 按组收集
-    groups: dict[int, list[dict]] = {}
-    for i, item in enumerate(exact_deduped):
-        root = find(i)
-        groups.setdefault(root, []).append(item)
-
-    # 按第一次出现顺序输出（保持原始顺序）
-    order = []
-    seen_roots = set()
-    for i in range(len(exact_deduped)):
-        root = find(i)
-        if root not in seen_roots:
-            seen_roots.add(root)
-            order.append(root)
-
+    # 按 Claude 分组结果组装
     result = []
-    for root in order:
-        group = groups[root]
+    for group_indices in groups:
+        group = [exact_deduped[i] for i in group_indices]
         if len(group) == 1:
-            # 单篇：补 sources_list 字段保持结构一致
             item = dict(group[0])
             item.setdefault("sources_list", [{
-                "source_name": item.get("source_name", item.get("author", "")),
+                "source_name": item.get("source_name", ""),
                 "url": item.get("url", ""),
             }])
             result.append(item)

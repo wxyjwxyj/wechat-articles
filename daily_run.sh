@@ -53,7 +53,11 @@ fi
 log "生成 HTML..."
 python generate_html.py bundle_today.json >> "$LOG_FILE" 2>&1
 
-# 9. 切换到 main，把 index.html 带过去，推送
+# 9. 生成公众号发布稿
+log "生成公众号发布稿..."
+python scripts/generate_mp_article.py bundle_today.json >> "$LOG_FILE" 2>&1
+
+# 11. 切换到 main，把 index.html 带过去，推送
 log "推送 index.html 到 GitHub..."
 git checkout main >> "$LOG_FILE" 2>&1
 git checkout dev -- index.html >> "$LOG_FILE" 2>&1
@@ -61,7 +65,7 @@ git add index.html
 git commit -m "Update: $(date +%Y-%m-%d) articles" >> "$LOG_FILE" 2>&1
 git push origin main >> "$LOG_FILE" 2>&1
 
-# 10. 切回 dev
+# 12. 切回 dev
 git checkout dev >> "$LOG_FILE" 2>&1
 
 log "✅ 完成！"

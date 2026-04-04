@@ -8,5 +8,7 @@
   },
   "token": "YOUR_TOKEN_HERE",
   "target_id": "YOUR_TARGET_ID_HERE",
-  "cdp_proxy": "http://localhost:3456"
+  "cdp_proxy": "http://localhost:3456",
+  "claude_api_key": "sk-ant-xxxx",
+  "claude_base_url": "https://api.anthropic.com"
 }

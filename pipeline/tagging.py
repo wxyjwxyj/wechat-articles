@@ -1,35 +1,199 @@
 # pipeline/tagging.py
+#
+# 规则说明：
+#   - 每条规则 (标签名, 分类, [触发关键词])，关键词不区分大小写
+#   - 规则顺序 = 优先级：更具体的放前面，宽泛的（如"大模型"）放后面
+#   - 一篇文章可匹配多个标签，但最多取前 MAX_TAGS 个
+#
+# 分类用于 topics 排序：同分类内按文章数降序，分类间按固定顺序
+#
+import json
 
-# 关键词匹配规则：(标签名, 触发关键词列表)
+MAX_TAGS = 4
+
+# 分类顺序定义（值越小越靠前）
+_CATEGORY_ORDER = {
+    "编程工具": 0,
+    "AI公司":   1,
+    "AI技术":   2,
+    "行业应用": 3,
+    "学术":     4,
+    "宽泛":     5,
+}
+
+# (标签名, 分类, 触发关键词列表)
 PATTERNS = [
-    ("Claude Code", ["Claude Code"]),
-    ("Agent", ["Agent", "智能体"]),
-    ("AI", ["AI", "人工智能"]),
-    ("OpenAI", ["OpenAI"]),
-    ("具身智能", ["具身智能"]),
+    # ── 编程 / 开发工具 ──────────────────────────────────────────
+    ("Claude Code",  "编程工具", ["Claude Code"]),
+    ("Vibe Coding",  "编程工具", ["Vibe Coding", "vibe coding"]),
+    ("开源",         "编程工具", ["开源", "open source", "Apache 2.0", "MIT license"]),
+
+    # ── AI 产品 / 公司 ───────────────────────────────────────────
+    ("OpenAI",   "AI公司", ["OpenAI", "ChatGPT", "GPT-4", "GPT-5", "Sora", "o3", "o4"]),
+    ("Anthropic","AI公司", ["Anthropic", "Claude"]),
+    ("Google",   "AI公司", ["Google", "Gemini", "Gemma", "DeepMind", "谷歌"]),
+    ("Meta",     "AI公司", ["Meta", "Llama", "LLaMA"]),
+    ("DeepSeek", "AI公司", ["DeepSeek", "深度求索"]),
+    ("Kimi",     "AI公司", ["Kimi", "月之暗面"]),
+    ("阿里",     "AI公司", ["阿里", "通义", "千问", "Qwen", "阿里云"]),
+    ("字节",     "AI公司", ["字节", "豆包", "抖音"]),
+    ("腾讯",     "AI公司", ["腾讯", "混元", "微信", "WeChat"]),
+    ("百度",     "AI公司", ["百度", "文心", "ERNIE"]),
+    ("小米",     "AI公司", ["小米", "Xiaomi"]),
+    ("苹果",     "AI公司", ["苹果", "Apple", "iPhone", "Siri", "iOS"]),
+    ("英伟达",   "AI公司", ["英伟达", "NVIDIA", "CUDA", "GPU"]),
+
+    # ── AI 技术方向 ───────────────────────────────────────────────
+    ("Agent",   "AI技术", ["Agent", "智能体", "多智能体", "AgentOS", "agentic"]),
+    ("具身智能","AI技术", ["具身智能", "机器人", "robot", "humanoid", "导航"]),
+    ("多模态",  "AI技术", ["多模态", "multimodal", "视觉语言", "VLM", "图像语音"]),
+    ("视频生成","AI技术", ["视频生成", "AI视频", "文生视频", "video generation"]),
+    ("RAG",     "AI技术", ["RAG", "知识库", "检索增强", "向量数据库"]),
+    ("强化学习","AI技术", ["强化学习", "RL", "RLHF", "奖励模型", "reward model"]),
+    ("推理",    "AI技术", ["推理能力", "reasoning", "思维链", "chain of thought", "CoT"]),
+    ("模型训练","AI技术", ["SFT", "微调", "fine-tune", "预训练", "蒸馏", "distill"]),
+    ("AI安全",  "AI技术", ["AI安全", "对齐", "alignment", "越狱", "jailbreak", "勒索", "情绪"]),
+
+    # ── 行业应用 ─────────────────────────────────────────────────
+    ("AI编程","行业应用", ["Copilot", "代码生成", "编程助手", "cursor", "coding"]),
+    ("AI搜索","行业应用", ["AI搜索", "搜索引擎", "Perplexity"]),
+    ("AR/VR", "行业应用", ["AR", "VR", "XR", "眼镜", "XREAL", "空间计算"]),
+    ("芯片",  "行业应用", ["芯片", "算力", "TPU", "NPU", "半导体", "内存"]),
+    ("创业",  "行业应用", ["创业", "融资", "估值", "IPO", "上市", "投资"]),
+    ("招聘",  "行业应用", ["招聘", "内推", "实习", "offer"]),
+
+    # ── 学术 / 会议 ───────────────────────────────────────────────
+    ("学术", "学术", ["CVPR", "NeurIPS", "ICLR", "ICML", "AAAI", "论文", "arxiv", "基准"]),
+
+    # ── 兜底：宽泛标签放最后 ──────────────────────────────────────
+    ("大模型", "宽泛", ["大模型", "LLM", "语言模型", "基础模型", "foundation model",
+                        "token", "Token", "参数", "亿参"]),
+    ("AI",     "宽泛", ["AI", "人工智能"]),
 ]
 
-# 标签名 -> 真实关键词列表，供 build_topics 使用
-_PATTERN_KEYWORDS: dict[str, list[str]] = {tag: keywords for tag, keywords in PATTERNS}
+# 标签名 -> 分类，供 build_topics 排序
+_TAG_CATEGORY: dict[str, str] = {tag: cat for tag, cat, _ in PATTERNS}
+
+# 标签名 -> 关键词列表，供 build_topics 输出
+_PATTERN_KEYWORDS: dict[str, list[str]] = {tag: kws for tag, _, kws in PATTERNS}
+
+# 所有合法标签名，供 Claude 参考
+ALL_TAGS = [tag for tag, _, _ in PATTERNS]
+
+# 关键词匹配用的简化列表 (标签名, 关键词列表)
+_MATCH_PATTERNS = [(tag, kws) for tag, _, kws in PATTERNS]
 
 
 def extract_tags(item: dict) -> list[str]:
-    """从 title 和 summary 中提取标签，按 PATTERNS 顺序返回匹配的标签。"""
+    """从 title 和 summary 中提取标签，按 PATTERNS 顺序返回，最多 MAX_TAGS 个。"""
     text = f'{item.get("title", "")} {item.get("summary", "")}'
+    text_lower = text.lower()
     tags = []
-    for tag, keywords in PATTERNS:
-        if any(keyword.lower() in text.lower() for keyword in keywords):
+    for tag, keywords in _MATCH_PATTERNS:
+        if len(tags) >= MAX_TAGS:
+            break
+        if any(kw.lower() in text_lower for kw in keywords):
             tags.append(tag)
     return tags
 
 
+def extract_tags_batch_with_claude(
+    items: list[dict],
+    api_key: str,
+    base_url: str = "https://api.anthropic.com",
+) -> list[dict]:
+    """
+    用 Claude API 批量为文章打标签，同时打重要性分数（0-10）。
+    返回与 items 等长的列表，每项为 {"tags": [...], "score": int}。
+    失败时返回空列表，由调用方降级到关键词匹配。
+    """
+    articles_text = "\n".join(
+        f"{i+1}. 标题：{item.get('title', '')}  摘要：{item.get('summary', '')[:80]}"
+        for i, item in enumerate(items)
+    )
+    tags_list = "、".join(ALL_TAGS)
+
+    prompt = f"""你是一个科技资讯编辑助手。请为以下每篇文章：
+1. 从标签库中选取最合适的标签（1-{MAX_TAGS}个）
+2. 打一个重要性分数（0-10分），评分标准：
+   - 9-10分：重大行业事件、顶级模型发布、重要政策
+   - 7-8分：值得关注的产品更新、研究成果、公司动态
+   - 5-6分：普通资讯、功能更新、行业数据
+   - 3-4分：软文、招聘、活动通知、与AI关系不大的内容
+   - 0-2分：无关内容、广告
+
+标签库：{tags_list}
+
+文章列表：
+{articles_text}
+
+要求：
+- 标签必须来自标签库，优先选具体标签（如"OpenAI"、"具身智能"），再选宽泛标签
+- 严格按 JSON 格式返回，不要有任何其他文字
+
+返回格式：
+{{"results": [{{"id": 1, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+        message = client.messages.create(
+            model="claude-opus-4-6",
+            max_tokens=1024,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = message.content[0].text.strip()
+    except ImportError:
+        print("  ⚠ 未安装 anthropic 库（pip install anthropic），降级到关键词匹配")
+        return []
+    except Exception as e:
+        print(f"  ⚠ Claude 打标签失败（{e}），降级到关键词匹配")
+        return []
+
+    try:
+        start = raw.find("{")
+        end = raw.rfind("}") + 1
+        data = json.loads(raw[start:end])
+        results = data.get("results", [])
+
+        tag_set = set(ALL_TAGS)
+        output = [{"tags": [], "score": 5} for _ in items]
+        for r in results:
+            idx = r.get("id", 0) - 1
+            if 0 <= idx < len(items):
+                output[idx] = {
+                    "tags": [t for t in r.get("tags", []) if t in tag_set][:MAX_TAGS],
+                    "score": int(r.get("score", 5)),
+                }
+        return output
+    except Exception as e:
+        print(f"  ⚠ Claude 返回解析失败（{e}），降级到关键词匹配")
+        return []
+
+
 def build_topics(items: list[dict]) -> list[dict]:
-    """统计所有 item 的标签频次，返回按频次降序排列的 topic 列表。"""
+    """
+    统计所有 item 的标签频次，返回按「分类顺序 → 文章数降序」排列的 topic 列表。
+    分类顺序：编程工具 → AI公司 → AI技术 → 行业应用 → 学术 → 宽泛
+    每条 topic 带有 category 字段，供前端分组显示。
+    """
     counts: dict[str, int] = {}
     for item in items:
         for tag in item.get("tags", []):
             counts[tag] = counts.get(tag, 0) + 1
+
+    def sort_key(item):
+        name, count = item
+        cat = _TAG_CATEGORY.get(name, "宽泛")
+        cat_order = _CATEGORY_ORDER.get(cat, 99)
+        return (cat_order, -count, name)
+
     return [
-        {"name": name, "count": count, "keywords": _PATTERN_KEYWORDS.get(name, [name])}
-        for name, count in sorted(counts.items(), key=lambda x: (-x[1], x[0]))
+        {
+            "name": name,
+            "count": count,
+            "category": _TAG_CATEGORY.get(name, "宽泛"),
+            "keywords": _PATTERN_KEYWORDS.get(name, [name]),
+        }
+        for name, count in sorted(counts.items(), key=sort_key)
     ]

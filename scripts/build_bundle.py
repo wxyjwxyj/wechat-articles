@@ -9,11 +9,40 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from storage.db import init_db
 from storage.repository import SourceRepository, ItemRepository, BundleRepository
 from pipeline.dedupe import dedupe_items
-from pipeline.tagging import extract_tags
+from pipeline.tagging import extract_tags, extract_tags_batch_with_claude
 from pipeline.bundles import build_daily_bundle
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
+CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+
+
+def _load_claude_config() -> tuple[str, str]:
+    """从 config.json 读取 Claude API 配置，返回 (api_key, base_url)。"""
+    try:
+        cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        return cfg.get("claude_api_key", ""), cfg.get("claude_base_url", "https://api.anthropic.com")
+    except Exception:
+        return "", "https://api.anthropic.com"
+
+
+def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
+    """为 items 打标签，优先用 Claude，无 key 或失败时降级到关键词匹配。"""
+    if api_key:
+        print(f"  🤖 使用 Claude 打标签（共 {len(items)} 篇）...")
+        claude_results = extract_tags_batch_with_claude(items, api_key, base_url)
+        if claude_results:
+            for item, result in zip(items, claude_results):
+                item["tags"] = result["tags"] or extract_tags(item)  # Claude 返回空则兜底
+                item["score"] = result["score"]
+            print(f"  ✓ Claude 打标签完成")
+            return
+    # 降级：关键词匹配
+    if not api_key:
+        print("  ℹ 未配置 claude_api_key，使用关键词匹配打标签")
+    for item in items:
+        if not item.get("tags"):
+            item["tags"] = extract_tags(item)
 
 
 def main() -> None:
@@ -36,12 +65,15 @@ def main() -> None:
         # tags 在 DB 中存为 JSON 字符串，需要反序列化
         if isinstance(item.get("tags"), str):
             item["tags"] = json.loads(item["tags"])
-        # 如果 tags 为空，补充提取
-        if not item.get("tags"):
-            item["tags"] = extract_tags(item)
 
-    # 去重
-    items = dedupe_items(raw_items)
+    # 读取 Claude 配置（去重和打标签共用）
+    api_key, base_url = _load_claude_config()
+
+    # 去重（Claude 优先，降级到关键词匹配）
+    items = dedupe_items(raw_items, api_key=api_key, base_url=base_url)
+
+    # 打标签（Claude 优先，降级到关键词匹配）
+    _tag_items(items, api_key, base_url)
 
     # 生成 bundle
     bundle = build_daily_bundle(today, items)
@@ -49,12 +81,13 @@ def main() -> None:
     # 持久化到 DB
     bundle_repo = BundleRepository(DB_PATH)
     bundle_id = bundle_repo.upsert_bundle(bundle)
-    # list_items_by_date 返回的 row 包含 DB 自增 id
     item_ids = [item["id"] for item in items if "id" in item]
     bundle_repo.replace_bundle_items(bundle_id, item_ids)
 
+    # 按重要性分数降序排列
+    items.sort(key=lambda x: x.get("score", 5), reverse=True)
+
     # 输出 JSON 快照供 HTML/公众号稿件生成器使用
-    # items 已含 sources_list（聚合来源列表），直接写入
     bundle["items_flat"] = [
         {
             "title": item["title"],
@@ -67,6 +100,7 @@ def main() -> None:
                 "url": item.get("url", ""),
             }]),
             "tags": item.get("tags", []),
+            "score": item.get("score", 5),
         }
         for item in items
     ]
