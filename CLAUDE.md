@@ -12,22 +12,43 @@
 
 ## 分支管理
 
-- **`main`**：只放 `index.html`，推 GitHub，供 GitHub Pages 展示
+- **`main`**：放 GitHub Pages 展示的页面文件，推 GitHub
   - 地址：https://wxyjwxyj.github.io/wechat-articles/
+  - **`index.html`**：门户导航页（三栏：导读/完整版/归档），不要用 generate_html.py 覆盖！
+  - **`today.html`**：今日完整版（由 generate_html.py 生成）
+  - **`mp_article_preview.html`**：今日导读精选点评
+  - **`archive/`**：历史归档页面
 - **`dev`**：所有代码改动提交到这里，只本地保存，不推 GitHub
 
-### 日常操作流程
+### ⚠️ 推送 GitHub Pages 的正确流程
+
+**关键：index.html 是手写的门户页，不能用脚本覆盖！**
 
 ```bash
-# 改代码 → 在 dev 提交
+# 1. 改代码 → 在 dev 提交
 git checkout dev
 git add <文件>
 git commit -m "..."
 
-# 推页面 → 切 main 生成 HTML 再推
+# 2. 切 main → 用 dev 代码生成子页面（不碰 index.html）
 git checkout main
-python generate_html.py bundle_today.json
-git add index.html && git commit -m "Update: $(date +%Y-%m-%d)" && git push
+
+# 从 dev 临时拉生成代码
+git checkout dev -- publishers/html_preview.py generate_html.py
+
+# 生成 today.html（注意输出到 today.html，不是 index.html！）
+python generate_html.py bundle_today.json today.html
+
+# 还原临时拉取的代码
+git checkout -- publishers/html_preview.py generate_html.py
+
+# 提交并推送（只 add 页面文件）
+git add today.html mp_article_preview.html
+git commit -m "Update: $(date +%Y-%m-%d)"
+git push
+
+# 3. 切回 dev
+git checkout dev
 ```
 
 ## 监控的公众号
