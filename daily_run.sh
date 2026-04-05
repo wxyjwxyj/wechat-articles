@@ -99,6 +99,16 @@ if [ $GH_EXIT -ne 0 ]; then
     ERRORS="${ERRORS}GitHub:${GH_REASON} "
 fi
 
+# 5.8 采集 RSS 文章（不依赖 CDP，独立运行）
+log "采集 RSS 文章..."
+python fetch_rss_today.py >> "$LOG_FILE" 2>&1
+RSS_EXIT=$?
+if [ $RSS_EXIT -ne 0 ]; then
+    RSS_REASON=$(describe_exit $RSS_EXIT)
+    log "⚠ RSS 采集失败: $RSS_REASON (exit=$RSS_EXIT)"
+    ERRORS="${ERRORS}RSS:${RSS_REASON} "
+fi
+
 # 6. 生成 bundle
 log "生成 bundle..."
 python scripts/build_bundle.py >> "$LOG_FILE" 2>&1
