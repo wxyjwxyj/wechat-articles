@@ -185,3 +185,42 @@ def normalize_arxiv_paper(source: dict, raw_paper: dict) -> dict:
         "content_hash": content_hash,
         "status": "raw",
     }
+
+
+def normalize_rss_item(source: dict, raw_item: dict) -> dict:
+    """将 RssCollector 返回的条目转换为 ItemPayload 格式。
+
+    raw_item 字段（来自 RssCollector.fetch_recent_items）:
+        title, url, summary, published, source_name
+    """
+    title = raw_item.get("title", "")
+    url = raw_item.get("url", "")
+    source_name = raw_item.get("source_name", source.get("name", ""))
+
+    content_hash = hashlib.sha256(
+        f'rss|{source_name}|{title}|{url}'.encode("utf-8")
+    ).hexdigest()
+
+    summary = _clean_text(raw_item.get("summary", ""))
+
+    time_str = raw_item.get("published", "")
+    try:
+        published_at = datetime.fromisoformat(time_str)
+    except (ValueError, TypeError):
+        published_at = datetime.now(timezone.utc)
+
+    return {
+        "source_id": source.get("id"),
+        "source_type": "rss",
+        "title": title,
+        "url": url,
+        "author": source_name,
+        "published_at": published_at.isoformat(),
+        "raw_content": json.dumps(raw_item, ensure_ascii=False),
+        "summary": summary,
+        "cover": "",
+        "tags": [],
+        "language": "en",
+        "content_hash": content_hash,
+        "status": "raw",
+    }
