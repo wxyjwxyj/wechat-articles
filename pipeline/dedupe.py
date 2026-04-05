@@ -1,6 +1,10 @@
 import json
 import re
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 # 品牌/实体别名映射，合并后统一用规范词替换
 _ALIASES: list[tuple[str, str]] = [
     ("claude", "anthropic"),
@@ -171,14 +175,14 @@ def _claude_dedupe(
             messages=[{"role": "user", "content": prompt}],
         )
         if not message.content:
-            print("  ⚠ Claude 去重返回空内容，降级到关键词方案")
+            logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
         raw = message.content[0].text.strip()
     except ImportError:
-        print("  ⚠ 未安装 anthropic 库，降级到关键词方案")
+        logger.warning("未安装 anthropic 库，降级到关键词方案")
         return None
     except Exception as e:
-        print(f"  ⚠ Claude 去重失败（{e}），降级到关键词方案")
+        logger.warning("Claude 去重失败（%s），降级到关键词方案", e)
         return None
 
     try:
@@ -200,7 +204,7 @@ def _claude_dedupe(
                 valid_groups.append([i])
         return valid_groups
     except Exception as e:
-        print(f"  ⚠ Claude 去重结果解析失败（{e}），降级到关键词方案")
+        logger.warning("Claude 去重结果解析失败（%s），降级到关键词方案", e)
         return None
 
 
@@ -243,13 +247,13 @@ def dedupe_items(
     groups: list[list[int]] | None = None
 
     if api_key:
-        print(f"  🤖 使用 Claude 去重（共 {len(exact_deduped)} 篇）...")
+        logger.info("使用 Claude 去重（共 %d 篇）...", len(exact_deduped))
         groups = _claude_dedupe(exact_deduped, api_key, base_url)
         if groups is not None:
-            print(f"  ✓ Claude 去重完成，聚合为 {len(groups)} 条")
+            logger.info("Claude 去重完成，聚合为 %d 条", len(groups))
 
     if groups is None:
-        print(f"  📝 使用关键词方案去重...")
+        logger.info("使用关键词方案去重...")
         deduped = _keyword_dedupe(exact_deduped, sim_threshold)
         return deduped
 

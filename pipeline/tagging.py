@@ -9,6 +9,10 @@
 #
 import json
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 MAX_TAGS = 4
 
 # 分类顺序定义（值越小越靠前）
@@ -144,10 +148,10 @@ def extract_tags_batch_with_claude(
         )
         raw = message.content[0].text.strip()
     except ImportError:
-        print("  ⚠ 未安装 anthropic 库（pip install anthropic），降级到关键词匹配")
+        logger.warning("未安装 anthropic 库（pip install anthropic），降级到关键词匹配")
         return []
     except Exception as e:
-        print(f"  ⚠ Claude 打标签失败（{e}），降级到关键词匹配")
+        logger.warning("Claude 打标签失败（%s），降级到关键词匹配", e)
         return []
 
     try:
@@ -167,7 +171,7 @@ def extract_tags_batch_with_claude(
                 }
         return output
     except Exception as e:
-        print(f"  ⚠ Claude 返回解析失败（{e}），降级到关键词匹配")
+        logger.warning("Claude 返回解析失败（%s），降级到关键词匹配", e)
         return []
 
 

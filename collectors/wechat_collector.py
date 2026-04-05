@@ -5,6 +5,10 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 
 class WechatCollector:
     def __init__(self, cdp_proxy: str, token: str = "", target_id: str = ""):
@@ -19,7 +23,7 @@ class WechatCollector:
             resp.raise_for_status()
             targets = resp.json()
         except (requests.RequestException, ValueError) as e:
-            print(f"错误: 获取 targets 失败 - {e}")
+            logger.error("获取 targets 失败: %s", e)
             return False
 
         # 优先匹配公众平台管理页（含 token 参数），其次匹配任意微信域名
@@ -41,7 +45,7 @@ class WechatCollector:
                 best_target = t.get("targetId", "")
 
         if not best_target:
-            print("错误: 未找到微信公众平台标签页，请先在浏览器中打开 mp.weixin.qq.com 并登录")
+            logger.error("未找到微信公众平台标签页，请先在浏览器中打开 mp.weixin.qq.com 并登录")
             return False
 
         if not self.target_id:
@@ -50,7 +54,7 @@ class WechatCollector:
             self.token = best_token
 
         if not self.token:
-            print("错误: 无法从浏览器 URL 获取 token，请确保在微信公众平台管理页（含 token 参数）已登录")
+            logger.error("无法从浏览器 URL 获取 token，请确保在微信公众平台管理页（含 token 参数）已登录")
             return False
 
         return True
@@ -59,7 +63,7 @@ class WechatCollector:
         # 首次调用时探测 session（后续复用已探测到的值）
         if not self.target_id or not self.token:
             if not self._resolve_session():
-                print(f"[{account_name}] 错误: 无法获取 target_id / token")
+                logger.error("[%s] 无法获取 target_id / token", account_name)
                 return []
 
         js_code = f'''
@@ -75,10 +79,10 @@ class WechatCollector:
             resp.raise_for_status()
             raw_data = resp.json().get("value", {})
         except requests.RequestException as e:
-            print(f"[{account_name}] 错误: CDP 请求失败 - {e}")
+            logger.error("[%s] CDP 请求失败: %s", account_name, e)
             return []
         except ValueError as e:
-            print(f"[{account_name}] 错误: JSON 解析失败 - {e}")
+            logger.error("[%s] JSON 解析失败: %s", account_name, e)
             return []
 
         return self._parse_articles(raw_data)
@@ -87,7 +91,7 @@ class WechatCollector:
         """翻页抓取指定日期的文章，超出该日期范围即停止。target_date 为 date 对象。"""
         if not self.target_id or not self.token:
             if not self._resolve_session():
-                print(f"[{account_name}] 错误: 无法获取 target_id / token")
+                logger.error("[%s] 无法获取 target_id / token", account_name)
                 return []
 
         articles = []
@@ -108,7 +112,7 @@ class WechatCollector:
                 resp.raise_for_status()
                 raw_data = resp.json().get("value", {})
             except (requests.RequestException, ValueError) as e:
-                print(f"[{account_name}] 错误: CDP 请求失败 - {e}")
+                logger.error("[%s] CDP 请求失败: %s", account_name, e)
                 break
 
             page_articles, should_stop = self._parse_articles_by_date(raw_data, target_date)

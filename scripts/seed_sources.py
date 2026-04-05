@@ -7,6 +7,9 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from storage.db import init_db
 from storage.repository import SourceRepository
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 
@@ -30,8 +33,8 @@ def main() -> None:
     repo = SourceRepository(DB_PATH)
     for source in SOURCES:
         repo.upsert_source(source)
-        print(f"✓ source: {source['name']}")
-    print(f"已初始化 {len(SOURCES)} 个 source → {DB_PATH}")
+        logger.info("source: %s", source['name'])
+    logger.info("已初始化 %d 个 source → %s", len(SOURCES), DB_PATH)
 
 
 if __name__ == "__main__":

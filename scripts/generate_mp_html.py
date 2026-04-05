@@ -9,6 +9,12 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 PROJECT_DIR = Path(__file__).parent.parent
 DEFAULT_BUNDLE  = PROJECT_DIR / "bundle_today.json"
 DEFAULT_PREVIEW = PROJECT_DIR / "mp_article_preview.json"
@@ -219,10 +225,10 @@ def main() -> None:
     preview_path = Path(sys.argv[2]) if len(sys.argv) > 2 else DEFAULT_PREVIEW
 
     if not bundle_path.exists():
-        print(f"⚠ bundle 文件不存在：{bundle_path}")
+        logger.warning("bundle 文件不存在：%s", bundle_path)
         return
     if not preview_path.exists():
-        print(f"⚠ preview 文件不存在：{preview_path}")
+        logger.warning("preview 文件不存在：%s", preview_path)
         return
 
     bundle  = json.loads(bundle_path.read_text(encoding="utf-8"))
@@ -232,7 +238,7 @@ def main() -> None:
 
     # 写到根目录
     OUTPUT_HTML.write_text(html, encoding="utf-8")
-    print(f"✓ 导读 HTML 已生成 → {OUTPUT_HTML}")
+    logger.info("导读 HTML 已生成 → %s", OUTPUT_HTML)
 
     # 同时归档一份
     bundle_date = bundle.get("bundle_date", "")
@@ -240,7 +246,7 @@ def main() -> None:
         ARCHIVE_DIR.mkdir(exist_ok=True)
         archive_path = ARCHIVE_DIR / f"digest_{bundle_date}.html"
         archive_path.write_text(html, encoding="utf-8")
-        print(f"✓ 归档 → {archive_path}")
+        logger.info("归档 → %s", archive_path)
 
 
 if __name__ == "__main__":

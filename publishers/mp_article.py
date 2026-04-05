@@ -2,6 +2,10 @@
 import json
 import re
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 
 def _clean_summary(text: str) -> str:
     """去掉微信原始 ##hashtag## 标签，清理多余空白。"""
@@ -131,19 +135,19 @@ def _generate_commentary(
                 messages=[{"role": "user", "content": prompt}],
             )
             if not message.content:
-                print(f"  ⚠ {model} 返回空内容，尝试下一个模型")
+                logger.warning("%s 返回空内容，尝试下一个模型", model)
                 continue
             raw = message.content[0].text.strip()
-            print(f"  ✓ 使用 {model} 生成点评")
+            logger.info("使用 %s 生成点评", model)
             break
         except ImportError:
-            print("  ⚠ 未安装 anthropic 库，跳过点评生成")
+            logger.warning("未安装 anthropic 库，跳过点评生成")
             return []
         except Exception as e:
-            print(f"  ⚠ {model} 调用失败（{e}），尝试下一个模型")
+            logger.warning("%s 调用失败（%s），尝试下一个模型", model, e)
             continue
     else:
-        print("  ⚠ 所有模型均失败，跳过点评生成")
+        logger.warning("所有模型均失败，跳过点评生成")
         return []
 
     try:
@@ -156,7 +160,7 @@ def _generate_commentary(
             comments.append("")
         return comments[:len(highlights)]
     except Exception as e:
-        print(f"  ⚠ 点评解析失败（{e}），跳过")
+        logger.warning("点评解析失败（%s），跳过", e)
         return []
 
 

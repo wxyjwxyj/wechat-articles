@@ -9,6 +9,9 @@ from pipeline.normalize import normalize_wechat_article
 from pipeline.tagging import extract_tags
 from storage.db import init_db
 from storage.repository import SourceRepository, ItemRepository
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 CONFIG_PATH = Path(__file__).parent / "config.json"
 DB_PATH = Path(__file__).parent / "content.db"
@@ -16,8 +19,7 @@ DB_PATH = Path(__file__).parent / "content.db"
 
 def load_config() -> dict:
     if not os.path.exists(CONFIG_PATH):
-        print("✗ 错误: 找不到 config.json")
-        print("  请复制 config.example.json 为 config.json 并填写配置")
+        logger.error("找不到 config.json，请复制 config.example.json 为 config.json 并填写配置")
         sys.exit(1)
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -36,7 +38,7 @@ def main() -> None:
     sources = source_repo.list_sources()
 
     if not sources:
-        print("⚠ sources 表为空，请先运行 python scripts/seed_sources.py")
+        logger.warning("sources 表为空，请先运行 python scripts/seed_sources.py")
         return
 
     total = 0
@@ -47,21 +49,21 @@ def main() -> None:
             cfg = json.loads(cfg)
         fakeid = cfg.get("fakeid", source["external_id"])
 
-        print(f"\n📡 抓取: {source['name']} (fakeid={fakeid})")
+        logger.info("抓取: %s (fakeid=%s)", source['name'], fakeid)
         articles = collector.fetch_articles(source["name"], fakeid)
 
         if articles:
-            print(f"  找到 {len(articles)} 篇")
+            logger.info("  找到 %d 篇", len(articles))
             for raw in articles:
-                print(f"    {raw.get('time', '')} - {raw.get('title', '')[:50]}")
+                logger.info("    %s - %s", raw.get('time', ''), raw.get('title', '')[:50])
                 item = normalize_wechat_article(source, raw)
                 item["tags"] = extract_tags(item)
                 item_repo.upsert_item(item)
                 total += 1
         else:
-            print("  今天暂无文章")
+            logger.info("  今天暂无文章")
 
-    print(f"\n✓ 采集完成，共写入 {total} 篇文章 → {DB_PATH}")
+    logger.info("采集完成，共写入 %d 篇文章 → %s", total, DB_PATH)
 
 
 if __name__ == "__main__":

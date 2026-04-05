@@ -6,6 +6,10 @@
 import requests
 from datetime import datetime, timezone
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 HN_API = "https://hacker-news.firebaseio.com/v0"
 
 # AI 相关关键词（不区分大小写匹配）
@@ -96,7 +100,7 @@ class HackerNewsCollector:
             resp.raise_for_status()
             story_ids = resp.json()[:self.scan_limit]
         except Exception as e:
-            print(f"  ✗ 获取 HN Top Stories 失败: {e}")
+            logger.error("获取 HN Top Stories 失败: %s", e)
             return []
 
         # 逐条获取并筛选

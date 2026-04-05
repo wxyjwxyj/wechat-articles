@@ -9,6 +9,9 @@ import sys
 from pathlib import Path
 
 from publishers.html_preview import render_bundle_html
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 DEFAULT_BUNDLE = Path(__file__).parent / "bundle_today.json"
 DEFAULT_OUTPUT = Path(__file__).parent / "today.html"
@@ -26,7 +29,7 @@ def main() -> None:
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"✓ HTML 已生成 → {output_path}")
+    logger.info("HTML 已生成 → %s", output_path)
 
 
 if __name__ == "__main__":

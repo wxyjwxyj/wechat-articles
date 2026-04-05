@@ -11,6 +11,9 @@ from storage.repository import SourceRepository, ItemRepository, BundleRepositor
 from pipeline.dedupe import dedupe_items
 from pipeline.tagging import extract_tags, extract_tags_batch_with_claude
 from pipeline.bundles import build_daily_bundle
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
@@ -29,17 +32,17 @@ def _load_claude_config() -> tuple[str, str]:
 def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
     """为 items 打标签，优先用 Claude，无 key 或失败时降级到关键词匹配。"""
     if api_key:
-        print(f"  🤖 使用 Claude 打标签（共 {len(items)} 篇）...")
+        logger.info("使用 Claude 打标签（共 %d 篇）...", len(items))
         claude_results = extract_tags_batch_with_claude(items, api_key, base_url)
         if claude_results:
             for item, result in zip(items, claude_results):
                 item["tags"] = result["tags"] or extract_tags(item)  # Claude 返回空则兜底
                 item["score"] = result["score"]
-            print(f"  ✓ Claude 打标签完成")
+            logger.info("Claude 打标签完成")
             return
     # 降级：关键词匹配
     if not api_key:
-        print("  ℹ 未配置 claude_api_key，使用关键词匹配打标签")
+        logger.info("未配置 claude_api_key，使用关键词匹配打标签")
     for item in items:
         if not item.get("tags"):
             item["tags"] = extract_tags(item)
@@ -54,7 +57,7 @@ def main() -> None:
     raw_items = item_repo.list_items_by_date(today)
 
     if not raw_items:
-        print(f"今日（{today}）暂无内容")
+        logger.info("今日（%s）暂无内容", today)
         return
 
     # 补充 source_name（从 source 表读取）
@@ -108,8 +111,8 @@ def main() -> None:
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(bundle, f, ensure_ascii=False, indent=2)
 
-    print(f"✓ bundle 已生成 → {OUTPUT_PATH}")
-    print(f"  日期：{today}，条数：{len(items)}，话题：{len(bundle['topics'])}")
+    logger.info("bundle 已生成 → %s", OUTPUT_PATH)
+    logger.info("  日期：%s，条数：%d，话题：%d", today, len(items), len(bundle['topics']))
 
 
 if __name__ == "__main__":

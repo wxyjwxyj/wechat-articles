@@ -7,6 +7,10 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 
+from utils.log import get_logger
+
+logger = get_logger(__name__)
+
 
 class MpPublisher:
     """微信公众号草稿箱操作器。"""
@@ -27,7 +31,7 @@ class MpPublisher:
             resp.raise_for_status()
             targets = resp.json()
         except (requests.RequestException, ValueError) as e:
-            print(f"错误: 获取 targets 失败 - {e}")
+            logger.error("获取 targets 失败: %s", e)
             return False
 
         best_target = None
@@ -47,10 +51,10 @@ class MpPublisher:
                 best_target = t.get("targetId", "")
 
         if not best_target:
-            print("错误: 未找到微信公众平台标签页")
+            logger.error("未找到微信公众平台标签页")
             return False
         if not best_token:
-            print("错误: 无法从浏览器 URL 获取 token，请确保已登录公众号后台")
+            logger.error("无法从浏览器 URL 获取 token，请确保已登录公众号后台")
             return False
 
         self.target_id = best_target

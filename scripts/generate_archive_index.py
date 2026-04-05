@@ -1,6 +1,13 @@
 """生成 archive/index.html，列出所有历史日期。"""
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 ARCHIVE_DIR = Path(__file__).parent.parent / "archive"
 
@@ -129,7 +136,7 @@ def main():
     html = build_archive_index()
     out = ARCHIVE_DIR / "index.html"
     out.write_text(html, encoding="utf-8")
-    print(f"✓ 归档索引已生成 → {out}（共 {len(list(ARCHIVE_DIR.glob('????-??-??.html')))} 天）")
+    logger.info("归档索引已生成 → %s（共 %d 天）", out, len(list(ARCHIVE_DIR.glob('????-??-??.html'))))
 
 
 if __name__ == "__main__":
