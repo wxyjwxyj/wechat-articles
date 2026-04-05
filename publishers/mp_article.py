@@ -15,14 +15,36 @@ def _clean_summary(text: str) -> str:
 
 def _select_highlights(items_flat: list[dict], min_score: int = 6, max_count: int = 8) -> list[dict]:
     """
-    从 items_flat（已按 score 降序）中精选亮点文章。
-    优先取 score >= min_score 的，不足时往下补，最多 max_count 条。
+    多样性选取：非微信源（HN/ArXiv/GitHub）各保底1条，剩余按分数补齐，最多 max_count 条。
     """
-    high = [item for item in items_flat if item.get("score", 5) >= min_score]
-    if len(high) >= 3:
-        return high[:max_count]
-    # 不足3条时直接取前 max_count 条
-    return items_flat[:max_count]
+    if not items_flat:
+        return []
+
+    # 非微信源各取分数最高的1条
+    non_wechat_types = {"hackernews", "arxiv", "github_trending"}
+    seen_types: set[str] = set()
+    guaranteed: list[dict] = []
+    for item in sorted(items_flat, key=lambda x: x.get("score", 5), reverse=True):
+        stype = item.get("source_type", "")
+        if stype in non_wechat_types and stype not in seen_types:
+            guaranteed.append(item)
+            seen_types.add(stype)
+
+    # 剩余名额从高分条目里按分数补齐
+    guaranteed_urls = {i.get("url") for i in guaranteed}
+    remaining = [
+        item for item in items_flat
+        if item.get("url") not in guaranteed_urls and item.get("score", 5) >= min_score
+    ]
+    remaining.sort(key=lambda x: x.get("score", 5), reverse=True)
+
+    highlights = (guaranteed + remaining)[:max_count]
+
+    # 不足时降低阈值补齐
+    if len(highlights) < 3:
+        highlights = items_flat[:max_count]
+
+    return highlights
 
 
 def _build_highlight_html(highlights: list[dict]) -> str:

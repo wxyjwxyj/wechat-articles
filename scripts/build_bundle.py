@@ -99,6 +99,7 @@ def main() -> None:
             "published_at": item["published_at"],
             "url": item.get("url", ""),
             "source_name": item.get("source_name", ""),
+            "source_type": item.get("source_type", ""),
             "sources_list": item.get("sources_list", [{
                 "source_name": item.get("source_name", ""),
                 "url": item.get("url", ""),

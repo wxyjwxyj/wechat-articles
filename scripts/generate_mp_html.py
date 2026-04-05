@@ -43,11 +43,42 @@ def source_link(item: dict) -> tuple[str, str]:
     return "", item.get("source_name", "")
 
 
+def _select_highlights(items_flat: list[dict], total: int = 8) -> list[dict]:
+    """多样性选取：非微信源各保底1条，剩余按分数补齐。"""
+    if not items_flat:
+        return []
+
+    # 非微信源（HN / ArXiv / GitHub Trending）各取分数最高的1条
+    non_wechat_types = {"hackernews", "arxiv", "github_trending"}
+    seen_types: set[str] = set()
+    guaranteed: list[dict] = []
+    for item in sorted(items_flat, key=lambda x: x.get("score", 5), reverse=True):
+        stype = item.get("source_type", "")
+        if stype in non_wechat_types and stype not in seen_types:
+            guaranteed.append(item)
+            seen_types.add(stype)
+
+    # 剩余名额从高分条目里补（不重复）
+    guaranteed_urls = {i.get("url") for i in guaranteed}
+    remaining = [
+        item for item in items_flat
+        if item.get("url") not in guaranteed_urls and item.get("score", 5) >= 6
+    ]
+    remaining.sort(key=lambda x: x.get("score", 5), reverse=True)
+
+    highlights = guaranteed + remaining
+    highlights = highlights[:total]
+
+    # 不足时降低阈值补齐
+    if len(highlights) < 3:
+        highlights = items_flat[:total]
+
+    return highlights
+
+
 def build_html(bundle: dict, preview: dict) -> str:
     items_flat  = bundle.get("items_flat", [])
-    highlights  = [item for item in items_flat if item.get("score", 5) >= 6][:8]
-    if len(highlights) < 3:
-        highlights = items_flat[:8]
+    highlights  = _select_highlights(items_flat, total=8)
 
     commentary  = preview.get("commentary", [])
     bundle_date = bundle.get("bundle_date", "")
