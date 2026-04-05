@@ -13,20 +13,20 @@ def _clean_summary(text: str) -> str:
     return text.strip()
 
 
-def _select_highlights(items_flat: list[dict], min_score: int = 6, max_count: int = 8) -> list[dict]:
+def _select_highlights(items_flat: list[dict], min_score: int = 6, max_count: int = 6) -> list[dict]:
     """
-    多样性选取：非微信源（HN/ArXiv/GitHub）各保底1条，剩余按分数补齐，最多 max_count 条。
+    多样性选取：HN/GitHub 各保底1条（ArXiv 靠分数自然竞争），剩余按分数补齐，最多 max_count 条。
     """
     if not items_flat:
         return []
 
-    # 非微信源各取分数最高的1条
-    non_wechat_types = {"hackernews", "arxiv", "github_trending"}
+    # HN 和 GitHub Trending 各取分数最高的1条（ArXiv 不保底，靠分数竞争）
+    guaranteed_types = {"hackernews", "github_trending"}
     seen_types: set[str] = set()
     guaranteed: list[dict] = []
     for item in sorted(items_flat, key=lambda x: x.get("score", 5), reverse=True):
         stype = item.get("source_type", "")
-        if stype in non_wechat_types and stype not in seen_types:
+        if stype in guaranteed_types and stype not in seen_types:
             guaranteed.append(item)
             seen_types.add(stype)
 
@@ -43,7 +43,7 @@ def _select_highlights(items_flat: list[dict], min_score: int = 6, max_count: in
     highlights = candidates[:max_count]
 
     # 不足时降低阈值补齐
-    if len(highlights) < 3:
+    if len(highlights) < 2:
         highlights = items_flat[:max_count]
 
     return highlights
