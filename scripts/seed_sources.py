@@ -27,6 +27,40 @@ SOURCES = [
     {"type": "hackernews", "name": "Hacker News", "external_id": "hackernews", "status": "active", "config": {"min_score": 20, "max_stories": 10}},
     {"type": "arxiv", "name": "ArXiv", "external_id": "arxiv", "status": "active", "config": {"max_results": 50, "max_papers": 10, "days_back": 2}},
     {"type": "github_trending", "name": "GitHub Trending", "external_id": "github_trending", "status": "active", "config": {"since": "daily", "max_repos": 10}},
+    # ── RSS 源 ──
+    {
+        "type": "rss",
+        "name": "TechCrunch AI",
+        "external_id": "techcrunch_ai",
+        "status": "active",
+        "config": {
+            "feed_url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+            "max_items": 8,
+            "days_back": 2,
+        },
+    },
+    {
+        "type": "rss",
+        "name": "MIT Technology Review",
+        "external_id": "mit_tech_review",
+        "status": "active",
+        "config": {
+            "feed_url": "https://www.technologyreview.com/feed/",
+            "max_items": 8,
+            "days_back": 2,
+        },
+    },
+    {
+        "type": "rss",
+        "name": "The Verge AI",
+        "external_id": "theverge_ai",
+        "status": "active",
+        "config": {
+            "feed_url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
+            "max_items": 8,
+            "days_back": 2,
+        },
+    },
 ]
 
 
