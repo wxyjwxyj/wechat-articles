@@ -20,7 +20,7 @@ def test_build_mp_article_payload_contains_sections():
     payload = build_mp_article_payload(bundle)
 
     assert payload["title"] == "今日 AI 资讯速览｜2026-04-03"
-    assert "DAILY AI BRIEFING" in payload["body_html"]
+    assert "DAILY" in payload["body_html"] and "BRIEFING" in payload["body_html"]
     assert "量子位" in payload["body_html"]
     assert payload["status"] == "draft"
     assert payload["bundle_date"] == "2026-04-03"

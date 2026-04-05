@@ -176,20 +176,34 @@ def _render_html(
 ) -> str:
     """渲染公众号正文 HTML（适配微信编辑器，纯内联样式）。
 
-    设计风格：精致编辑部 — 深色线条分隔、浅灰卡片点评、红色编号徽章。
+    设计风格：科技杂志编辑部 — 大号编号、蓝色点评边框、精致排版。
     不使用 h1（公众号自带标题栏）、不使用 class/flex/grid/渐变/动画。
     """
     has_commentary = bool(commentary_list and any(commentary_list))
 
+    # 根据是否有点评动态调整描述
+    edition_label = "编辑点评版" if has_commentary else "精选速览版"
+
     # ── 头部引导语 ──
     header_html = (
-        '<section style="margin:0 0 8px;padding:0;">'
-        '<section style="text-align:center;padding:16px 0 12px;">'
-        '<p style="font-size:13px;color:#888;letter-spacing:2px;margin:0;">DAILY AI BRIEFING</p>'
+        '<section style="margin:0 0 4px;padding:0;">'
+        '<section style="text-align:center;padding:20px 0 14px;">'
+        '<p style="font-size:11px;color:#999;letter-spacing:4px;margin:0;">'
+        'DAILY · AI · BRIEFING</p>'
         '</section>'
-        '<section style="border-top:2px solid #222;border-bottom:1px solid #e5e5e5;padding:10px 0;margin:0 0 6px;">'
-        f'<p style="font-size:13px;color:#999;letter-spacing:1px;margin:0;text-align:center;">'
-        f'{bundle_date} · 精选 <strong style="color:#c0392b;">{len(highlights)}</strong> 条 · 编辑点评版</p>'
+        # 居中粗线装饰
+        '<section style="border-top:1px solid #e0e0e0;margin:0;">'
+        '<section style="border-top:2px solid #1a1a1a;'
+        'width:48px;margin:-1px auto 0;"></section>'
+        '</section>'
+        '<section style="padding:14px 0 16px;">'
+        f'<p style="font-size:13px;color:#999;letter-spacing:0.5px;'
+        f'margin:0;text-align:center;">'
+        f'{bundle_date} · 精选 '
+        f'<strong style="color:#1a1a1a;">{len(highlights)}</strong>'
+        f' 条 · {edition_label}</p>'
+        '</section>'
+        '<section style="border-bottom:1px solid #e8e8e8;margin:0 0 6px;">'
         '</section>'
         '</section>'
     )
@@ -205,29 +219,37 @@ def _render_html(
             s.get("source_name", "") for s in sources_list if s.get("source_name")
         ) or item.get("source_name", "")
 
-        # 多家报道标签
+        # 多源报道标签
         merged_tag = ""
         if len(sources_list) > 1:
             merged_tag = (
-                '<span style="display:inline-block;font-size:10px;color:#c0392b;'
-                'border:1px solid #e8c8c8;border-radius:2px;padding:0 4px;'
-                'margin-left:6px;vertical-align:middle;line-height:16px;">多家报道</span>'
+                '<span style="display:inline-block;font-size:10px;color:#e8713a;'
+                'border:1px solid #f0d4c0;border-radius:2px;padding:0 5px;'
+                'margin-left:6px;vertical-align:middle;line-height:16px;">'
+                '综合报道</span>'
             )
 
         # 链接
         if len(sources_list) == 1 and sources_list[0].get("url"):
             link_html = (
-                f'<p style="margin:0;"><a style="font-size:12px;color:#576b95;'
-                f'text-decoration:none;letter-spacing:0.5px;" '
-                f'href=\'{sources_list[0]["url"]}\'>阅读原文 →</a></p>'
+                f'<p style="margin:0;">'
+                f'<a style="font-size:12px;color:#576b95;'
+                f'text-decoration:none;letter-spacing:0.3px;" '
+                f"href='{sources_list[0]['url']}'>阅读原文 →</a></p>"
             )
         elif len(sources_list) > 1:
-            links = " ｜ ".join(
-                f'<a style="color:#576b95;text-decoration:none;" '
-                f'href=\'{s["url"]}\'>{s["source_name"]}</a>'
-                for s in sources_list if s.get("url")
-            )
-            link_html = f'<p style="margin:0;font-size:12px;color:#999;">{links}</p>'
+            link_parts = []
+            for s in sources_list:
+                if s.get("url"):
+                    link_parts.append(
+                        f'<a style="font-size:12px;color:#576b95;'
+                        f"text-decoration:none;letter-spacing:0.3px;\" "
+                        f"href='{s['url']}'>{s['source_name']}</a>"
+                    )
+            links = (
+                '<span style="font-size:12px;color:#ddd;margin:0 6px;">｜</span>'
+            ).join(link_parts)
+            link_html = f'<p style="margin:0;">{links}</p>'
         else:
             link_html = ""
 
@@ -235,38 +257,47 @@ def _render_html(
         summary = _clean_summary(item.get("summary", ""))
         summary_short = summary[:100] + "…" if len(summary) > 100 else summary
         summary_html = (
-            f'<p style="font-size:14px;color:#888;line-height:1.7;margin:0 0 8px;">'
-            f'{summary_short}</p>'
+            f'<p style="font-size:14px;color:#888;line-height:1.75;'
+            f'margin:0 0 10px;">{summary_short}</p>'
             if summary_short else ""
         )
 
         # 编辑点评
-        comment = commentary_list[i] if has_commentary and i < len(commentary_list) else ""
+        comment = (
+            commentary_list[i]
+            if has_commentary and i < len(commentary_list)
+            else ""
+        )
         comment_html = ""
         if comment:
             comment_html = (
-                '<section style="background:#f7f7f7;border-radius:6px;padding:10px 14px;margin:0 0 10px;">'
-                '<p style="font-size:13px;color:#666;line-height:1.75;margin:0;">'
-                '<span style="color:#c0392b;font-weight:bold;margin-right:4px;">编辑观点</span>'
+                '<section style="border-left:3px solid #1e6fff;'
+                'padding:8px 0 8px 14px;margin:0 0 12px;">'
+                '<p style="font-size:13px;color:#555;line-height:1.8;margin:0;">'
+                '<span style="font-size:11px;color:#1e6fff;font-weight:bold;'
+                'letter-spacing:1px;margin-right:2px;">主编说</span>'
                 f'{comment}</p>'
                 '</section>'
             )
 
         items_parts.append(
-            f'<section style="margin:22px 0 0;padding:0 0 20px;border-bottom:1px solid #f0f0f0;">'
-            # 编号 + 来源
-            f'<section style="margin:0 0 10px;">'
-            f'<span style="display:inline-block;background:#c0392b;color:#fff;font-size:11px;'
-            f'font-weight:bold;min-width:20px;height:20px;line-height:20px;text-align:center;'
-            f'border-radius:3px;margin-right:8px;vertical-align:middle;letter-spacing:0;'
-            f'padding:0 4px;white-space:nowrap;">{num}</span>'
-            f'<span style="font-size:12px;color:#999;letter-spacing:1px;vertical-align:middle;">'
-            f'{source_names}</span>'
+            f'<section style="margin:24px 0 0;padding:0 0 22px;'
+            f'border-bottom:1px solid #efefef;">'
+            # 编号 + 短横线 + 来源
+            f'<section style="margin:0 0 12px;">'
+            f'<span style="display:inline-block;font-size:22px;font-weight:bold;'
+            f'color:#1a1a1a;line-height:1;vertical-align:middle;'
+            f'margin-right:10px;letter-spacing:-1px;">{num}</span>'
+            f'<span style="display:inline-block;width:16px;border-top:1px solid #ccc;'
+            f'vertical-align:middle;margin-right:10px;"></span>'
+            f'<span style="font-size:12px;color:#999;letter-spacing:0.5px;'
+            f'vertical-align:middle;">{source_names}</span>'
             f'{merged_tag}'
             f'</section>'
             # 标题
-            f'<p style="font-size:17px;font-weight:bold;color:#1a1a1a;line-height:1.6;'
-            f'margin:0 0 10px;letter-spacing:0.5px;">{item["title"]}</p>'
+            f'<p style="font-size:17px;font-weight:bold;color:#1a1a1a;'
+            f'line-height:1.65;margin:0 0 12px;letter-spacing:0.3px;">'
+            f'{item["title"]}</p>'
             # 点评
             f'{comment_html}'
             # 摘要
@@ -280,15 +311,22 @@ def _render_html(
 
     # ── 尾部 ──
     footer_html = (
-        '<section style="text-align:center;margin:28px 0 16px;">'
-        '<section style="border-top:2px solid #222;width:40px;margin:0 auto 14px;"></section>'
-        '<p style="font-size:11px;color:#bbb;letter-spacing:3px;margin:0;">AI DAILY BRIEFING</p>'
-        '<p style="font-size:11px;color:#ccc;letter-spacing:1px;margin:6px 0 0;">'
-        '自动采集 · Claude 编辑点评 · 每日更新</p>'
+        '<section style="text-align:center;margin:32px 0 20px;">'
+        # 居中粗线装饰（与头部呼应）
+        '<section style="border-top:1px solid #e0e0e0;margin:0;">'
+        '<section style="border-top:2px solid #1a1a1a;'
+        'width:48px;margin:-1px auto 0;"></section>'
+        '</section>'
+        '<p style="font-size:11px;color:#bbb;letter-spacing:3px;'
+        'margin:16px 0 0;">AI DAILY BRIEFING</p>'
+        '<p style="font-size:11px;color:#ccc;letter-spacing:0.5px;'
+        'margin:6px 0 0;">自动采集 · Claude 编辑点评 · 每日更新</p>'
         '</section>'
         # ── AI 内容标注（合规要求） ──
-        '<section style="margin:20px 0 0;padding:12px 0 0;border-top:1px solid #f0f0f0;">'
-        '<p style="font-size:11px;color:#bbb;line-height:1.6;margin:0;text-align:center;">'
+        '<section style="margin:16px 0 0;padding:14px 0 0;'
+        'border-top:1px solid #f0f0f0;">'
+        '<p style="font-size:11px;color:#bbb;line-height:1.6;'
+        'margin:0;text-align:center;">'
         '📌 本文由 AI 辅助采集和整理，经人工审核后发布</p>'
         '</section>'
     )
