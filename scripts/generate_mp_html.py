@@ -64,10 +64,11 @@ def _select_highlights(items_flat: list[dict], total: int = 8) -> list[dict]:
         item for item in items_flat
         if item.get("url") not in guaranteed_urls and item.get("score", 5) >= 6
     ]
-    remaining.sort(key=lambda x: x.get("score", 5), reverse=True)
 
-    highlights = guaranteed + remaining
-    highlights = highlights[:total]
+    # 合并后统一按分数降序排列（保底不强制排前面）
+    candidates = guaranteed + remaining
+    candidates.sort(key=lambda x: x.get("score", 5), reverse=True)
+    highlights = candidates[:total]
 
     # 不足时降低阈值补齐
     if len(highlights) < 3:
