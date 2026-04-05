@@ -101,18 +101,20 @@ def extract_tags(item: dict) -> list[str]:
     return tags
 
 
-def extract_tags_batch_with_claude(
+BATCH_SIZE = 15  # 每批最多处理条数，避免 JSON 过长解析失败
+
+
+def _call_claude_batch(
     items: list[dict],
+    id_offset: int,
     api_key: str,
-    base_url: str = "https://api.anthropic.com",
+    base_url: str,
 ) -> list[dict]:
-    """
-    用 Claude API 批量为文章打标签，同时打重要性分数（0-10）。
-    返回与 items 等长的列表，每项为 {"tags": [...], "score": int}。
-    失败时返回空列表，由调用方降级到关键词匹配。
-    """
+    """调用 Claude 为一批文章打标签+评分，返回与 items 等长的结果列表。"""
+    import anthropic
+
     articles_text = "\n".join(
-        f"{i+1}. 标题：{item.get('title', '')}  摘要：{item.get('summary', '')[:80]}"
+        f"{id_offset + i + 1}. 标题：{item.get('title', '')}  摘要：{item.get('summary', '')[:80]}"
         for i, item in enumerate(items)
     )
     tags_list = "、".join(ALL_TAGS)
@@ -136,43 +138,64 @@ def extract_tags_batch_with_claude(
 - 严格按 JSON 格式返回，不要有任何其他文字
 
 返回格式：
-{{"results": [{{"id": 1, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
+{{"results": [{{"id": {id_offset + 1}, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
 
+    client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+    message = client.messages.create(
+        model="claude-opus-4-6",
+        max_tokens=1024,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    raw = message.content[0].text.strip()
+
+    start = raw.find("{")
+    end = raw.rfind("}") + 1
+    data = json.loads(raw[start:end])
+    results = data.get("results", [])
+
+    tag_set = set(ALL_TAGS)
+    output = [{"tags": [], "score": 5} for _ in items]
+    for r in results:
+        # id 是全局编号，转换为批内下标
+        idx = r.get("id", 0) - id_offset - 1
+        if 0 <= idx < len(items):
+            output[idx] = {
+                "tags": [t for t in r.get("tags", []) if t in tag_set][:MAX_TAGS],
+                "score": int(r.get("score", 5)),
+            }
+    return output
+
+
+def extract_tags_batch_with_claude(
+    items: list[dict],
+    api_key: str,
+    base_url: str = "https://api.anthropic.com",
+) -> list[dict]:
+    """
+    用 Claude API 批量为文章打标签，同时打重要性分数（0-10）。
+    自动分批（每批 BATCH_SIZE 条），避免 JSON 过长解析失败。
+    返回与 items 等长的列表，每项为 {"tags": [...], "score": int}。
+    失败时返回空列表，由调用方降级到关键词匹配。
+    """
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-        message = client.messages.create(
-            model="claude-opus-4-6",
-            max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        raw = message.content[0].text.strip()
+        import anthropic  # noqa: F401
     except ImportError:
         logger.warning("未安装 anthropic 库（pip install anthropic），降级到关键词匹配")
         return []
-    except Exception as e:
-        logger.warning("Claude 打标签失败（%s），降级到关键词匹配", e)
-        return []
 
-    try:
-        start = raw.find("{")
-        end = raw.rfind("}") + 1
-        data = json.loads(raw[start:end])
-        results = data.get("results", [])
+    output: list[dict] = []
+    for batch_start in range(0, len(items), BATCH_SIZE):
+        batch = items[batch_start: batch_start + BATCH_SIZE]
+        try:
+            batch_result = _call_claude_batch(batch, batch_start, api_key, base_url)
+            output.extend(batch_result)
+            logger.debug("批次 %d-%d 打标签完成", batch_start + 1, batch_start + len(batch))
+        except Exception as e:
+            logger.warning("批次 %d-%d 打标签失败（%s），该批降级到关键词匹配",
+                           batch_start + 1, batch_start + len(batch), e)
+            output.extend([{"tags": [], "score": 5} for _ in batch])
 
-        tag_set = set(ALL_TAGS)
-        output = [{"tags": [], "score": 5} for _ in items]
-        for r in results:
-            idx = r.get("id", 0) - 1
-            if 0 <= idx < len(items):
-                output[idx] = {
-                    "tags": [t for t in r.get("tags", []) if t in tag_set][:MAX_TAGS],
-                    "score": int(r.get("score", 5)),
-                }
-        return output
-    except Exception as e:
-        logger.warning("Claude 返回解析失败（%s），降级到关键词匹配", e)
-        return []
+    return output
 
 
 def build_topics(items: list[dict]) -> list[dict]:
