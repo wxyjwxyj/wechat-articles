@@ -163,6 +163,8 @@ v13: pyproject.toml 依赖管理 → 项目规范化
 v14: 接入 ArXiv + GitHub Trending 数据源 → 4源覆盖（微信/HN/ArXiv/GitHub）
 v15: 导读精选多样性保底 + 打标签分批处理 → 内容多样性 + 稳定性提升
 v16: 修复 daily_run.sh 推 GitHub Pages 拉旧 HTML 的 bug
+v17: RSS 接入（TechCrunch/MIT/The Verge），feedparser 通用采集器
+v18: 精选 8条→6条，ArXiv 去保底，内容负担降低
 ```
 
 每一步失败都直接指向了更好的方案。不要怕推翻重来，但要记录为什么失败。
@@ -344,3 +346,39 @@ v16: 修复 daily_run.sh 推 GitHub Pages 拉旧 HTML 的 bug
 - 未登录状态约返回25个仓库（有时更少，周末约8个）
 - 用标准库 HTMLParser 解析，无需 BeautifulSoup
 - 页面结构：每个仓库是 `<article>`，今日 star 数在文本 "343 stars today" 中用 regex 提取
+
+---
+
+## 十五、RSS 接入记录（2026-04-05）
+
+### ✅ 新增数据源
+
+| 源 | commit | 说明 |
+|---|---|---|
+| TechCrunch AI | `b6a8f50` | `https://techcrunch.com/category/artificial-intelligence/feed/` |
+| MIT Technology Review | `b6a8f50` | `https://www.technologyreview.com/feed/` |
+| The Verge AI | `b6a8f50` + `911c8b8` | 全站 RSS + 关键词过滤 |
+
+技术栈：`feedparser`（标准 RSS/Atom 解析库），通用 `RssCollector` 类复用，无需针对每个站点单独处理格式。
+
+现在数据源阵容：**微信9个 + HN + ArXiv + GitHub Trending + RSS×3 = 5类15个源**
+
+### ⚠️ 教训1：分类专属 RSS URL 不一定可靠
+
+- The Verge 的 AI 分类 feed（`/ai-artificial-intelligence/rss/index.xml`）返回不规范 XML，feedparser 报 `not well-formed`
+- **正确做法**：用全站 RSS（`/rss/index.xml`），再靠 AI 关键词过滤，效果一样且格式规范
+- 适用于其他站点：优先用全站或主频道 RSS，用关键词过滤代替依赖分类 URL
+
+### ⚠️ 教训2：RSS published_at 时区差导致 build_bundle 日期过滤漏掉
+
+- RSS 文章实际发布时间是美国时间（如4月4日下午），存入 DB 后 `published_at` = `2026-04-04T16:32:22+00:00`
+- `build_bundle` 按今天（北京时间4月5日）过滤，导致所有 RSS 文章被漏掉（bundle 里 0 条）
+- **正确做法**：`normalize_rss_item` 用 `datetime.now(timezone.utc)` 作为 `published_at`（与 GitHub Trending 保持一致）
+- 原始发布时间保留在 `raw_content["published"]` 中备查
+- commit: `5d50f1f`
+
+### 精选策略调整（同步更新）
+
+- 精选从 8 条 → **6 条**（降低读者负担）
+- 保底范围：HN + GitHub Trending 各1条（ArXiv 去掉保底，靠分数自然竞争）
+- commit: `db165ff`
