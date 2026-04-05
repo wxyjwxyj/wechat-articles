@@ -26,6 +26,7 @@ SOURCES = [
     # ── 海外源 ──
     {"type": "hackernews", "name": "Hacker News", "external_id": "hackernews", "status": "active", "config": {"min_score": 20, "max_stories": 10}},
     {"type": "arxiv", "name": "ArXiv", "external_id": "arxiv", "status": "active", "config": {"max_results": 50, "max_papers": 10, "days_back": 2}},
+    {"type": "github_trending", "name": "GitHub Trending", "external_id": "github_trending", "status": "active", "config": {"since": "daily", "max_repos": 10}},
 ]
 
 

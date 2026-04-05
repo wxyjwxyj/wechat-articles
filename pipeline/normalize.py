@@ -87,6 +87,48 @@ def normalize_hackernews_story(source: dict, raw_story: dict) -> dict:
     }
 
 
+def normalize_github_trending_repo(source: dict, raw_repo: dict) -> dict:
+    """将 GitHubTrendingCollector 返回的仓库字典转换为 ItemPayload 格式。
+
+    raw_repo 字段（来自 GitHubTrendingCollector.fetch_trending_repos）：
+        name, url, description, stars_today, stars_total, fetched_at
+    """
+    name = raw_repo.get("name", "")
+    url = raw_repo.get("url", "")
+    description = raw_repo.get("description", "")
+
+    content_hash = hashlib.sha256(
+        f'github_trending|{name}|{url}'.encode("utf-8")
+    ).hexdigest()
+
+    stars_today = raw_repo.get("stars_today", 0)
+    stars_total = raw_repo.get("stars_total", 0)
+    summary = f"⭐ {stars_today} stars today · {stars_total:,} total · {description}"
+
+    # 使用采集时间作为发布时间（trending 本身没有发布时间）
+    fetched_at = raw_repo.get("fetched_at", "")
+    try:
+        published_at = datetime.fromisoformat(fetched_at)
+    except (ValueError, TypeError):
+        published_at = datetime.now(timezone.utc)
+
+    return {
+        "source_id": source.get("id"),
+        "source_type": "github_trending",
+        "title": name,
+        "url": url,
+        "author": name.split("/")[0] if "/" in name else "",
+        "published_at": published_at.isoformat(),
+        "raw_content": json.dumps(raw_repo, ensure_ascii=False),
+        "summary": summary,
+        "cover": "",
+        "tags": [],
+        "language": "en",
+        "content_hash": content_hash,
+        "status": "raw",
+    }
+
+
 def normalize_arxiv_paper(source: dict, raw_paper: dict) -> dict:
     """将 ArxivCollector 返回的论文字典转换为 ItemPayload 格式。
 

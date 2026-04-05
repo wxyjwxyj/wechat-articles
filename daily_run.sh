@@ -89,6 +89,16 @@ if [ $ARXIV_EXIT -ne 0 ]; then
     ERRORS="${ERRORS}ArXiv:${ARXIV_REASON} "
 fi
 
+# 5.7 采集 GitHub Trending AI 仓库（不依赖 CDP，独立运行）
+log "采集 GitHub Trending AI 仓库..."
+python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1
+GH_EXIT=$?
+if [ $GH_EXIT -ne 0 ]; then
+    GH_REASON=$(describe_exit $GH_EXIT)
+    log "⚠ GitHub Trending 采集失败: $GH_REASON (exit=$GH_EXIT)"
+    ERRORS="${ERRORS}GitHub:${GH_REASON} "
+fi
+
 # 6. 生成 bundle
 log "生成 bundle..."
 python scripts/build_bundle.py >> "$LOG_FILE" 2>&1
