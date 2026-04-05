@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日 AI 资讯速览｜2026-04-05</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0c0c0e;
+      --border:  #222228;
+      --text:    #f0ece2;
+      --muted:   #6b6b7a;
+      --accent:  #f5a623;
+      --accent2: #e8845a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif SC', 'PingFang SC', serif;
+      min-height: 100vh;
+      background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .masthead {
+      max-width: 760px; margin: 0 auto; padding: 60px 32px 0;
+    }
+    .masthead-eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    .masthead-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 56px); font-weight: 900;
+      line-height: 1.08; letter-spacing: -1px;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .masthead-title em { font-style: italic; color: var(--accent); }
+    .masthead-rule {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+    }
+    .masthead-rule::before, .masthead-rule::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .masthead-rule span {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
+    }
+    .masthead-sub {
+      font-size: 13px; color: var(--muted);
+      padding-bottom: 32px; border-bottom: 1px solid var(--border);
+    }
+    .masthead-sub strong { color: var(--accent); font-weight: 600; }
+    .feed { max-width: 760px; margin: 0 auto; padding: 0 32px 80px; }
+    .card {
+      display: grid; grid-template-columns: 52px 1fr; gap: 0 20px;
+      padding: 32px 0; border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateY(16px);
+      animation: rise 0.5s ease forwards;
+    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px; font-weight: 900; color: var(--border);
+      line-height: 1; padding-top: 4px; user-select: none;
+      transition: color 0.2s;
+    }
+    .card:hover .card-num { color: var(--accent); }
+    .card-body { min-width: 0; }
+    .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .source-name {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .merged-tag {
+      font-size: 10px; background: var(--accent2); color: #fff;
+      padding: 1px 6px; border-radius: 3px; letter-spacing: 0.5px;
+    }
+    .score-tag {
+      font-size: 10px; color: var(--accent); border: 1px solid #f5a62344;
+      padding: 1px 6px; border-radius: 3px; margin-left: auto;
+    }
+    .card-title {
+      font-size: 18px; font-weight: 600; line-height: 1.55;
+      color: var(--text); margin-bottom: 14px; transition: color 0.2s;
+    }
+    .card:hover .card-title { color: #fff; }
+    .comment {
+      background: #f5a62309; border-left: 2px solid var(--accent);
+      padding: 10px 14px; margin-bottom: 12px; border-radius: 0 6px 6px 0;
+    }
+    .comment-mark {
+      display: inline-block; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 5px;
+    }
+    .comment p { font-size: 13px; line-height: 1.7; color: #c8c4b8; }
+    .summary { font-size: 13px; line-height: 1.75; color: var(--muted); margin-bottom: 14px; }
+    .card-footer a {
+      font-size: 12px; color: var(--accent); text-decoration: none;
+      letter-spacing: 0.5px; transition: opacity 0.15s;
+    }
+    .card-footer a:hover { opacity: 0.7; }
+    .card-footer a + a { margin-left: 12px; }
+    .page-footer {
+      text-align: center; padding: 24px 32px 48px;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #2e2e38;
+    }
+    @media (max-width: 600px) {
+      .masthead, .feed { padding-left: 20px; padding-right: 20px; }
+      .card { grid-template-columns: 36px 1fr; gap: 0 12px; }
+      .card-num { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="masthead">
+    <div class="masthead-eyebrow">AI Daily Digest</div>
+    <h1 class="masthead-title">今日 <em>AI</em><br>资讯速览</h1>
+    <div class="masthead-rule"><span>2026-04-05</span></div>
+    <p class="masthead-sub">编辑精选 <strong>8 条</strong>重要资讯 &nbsp;·&nbsp; 自动采集 + Claude 导读</p>
+  </div>
+  <div class="feed">
+    
+    <article class="card" style="animation-delay: 0.00s">
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位</span>
+          
+          <span class="score-tag">8分</span>
+        </div>
+        <h2 class="card-title">GPT-6，曝光了</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>奥特曼all in规模战争，GPT-5还没捂热乎，6就来了——这节奏是怕被Claude和Gemini追上。</p>
+      </div>
+        <p class="summary">奥特曼的孤注一掷</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/BLwrThpQYBKVOlJpb4gwvg" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.08s">
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">虎嗅APP</span>
+          
+          <span class="score-tag">8分</span>
+        </div>
+        <h2 class="card-title">AI会感到绝望？Anthropic最新研究给出了一个更吓人的说法</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>所谓"功能性情绪"本质是统计拟合的情绪模式，但Anthropic愿意认真研究这个，比装没看见强。</p>
+      </div>
+        <p class="summary">研究证明Claude有“功能性情绪”</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/AqA_Gu6NEf65DVkkYYUVXw" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.16s">
+      <div class="card-num">03</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">机器之心 · 新智元</span>
+          <span class="merged-tag">多家报道</span>
+          <span class="score-tag">8分</span>
+        </div>
+        <h2 class="card-title">一夜变天：GPT-Image-2流出，昔日王者Nano Banana Pro要被拉下神坛？</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>GPT-Image-2连文字渲染都拉满了，图像生成赛道一夜回到"OpenAI说了算"的剧本。</p>
+      </div>
+        <p class="summary">图像模型「新」天花板。</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/RKoIwheKOldMEYg-PfZoyg" target="_blank">机器之心</a> <a href="https://mp.weixin.qq.com/s/Bn_t4WyNiM0uIYZNuV0Jcw" target="_blank">新智元</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.24s">
+      <div class="card-num">04</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">GitHub Trending</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">block/goose</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>Block出品的开源AI Agent，主打不只写代码还能装环境跑命令，算是Devin的平民替代方案。</p>
+      </div>
+        <p class="summary">⭐ 935 stars today · 35,781 total · an open source, extensible AI agent that goes beyond code suggest…</p>
+        <div class="card-footer"><a href="https://github.com/block/goose" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.32s">
+      <div class="card-num">05</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">ArXiv</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">Batched Contextual Reinforcement: A Task-Scaling Law for Efficient Reasoning</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>用批量上下文强化学习砍推理token，思路很实用——毕竟o1式思维链烧的钱比模型本身还夸张。</p>
+      </div>
+        <p class="summary">Large Language Models employing Chain-of-Thought reasoning achieve strong performance but suffer fro…</p>
+        <div class="card-footer"><a href="https://arxiv.org/abs/2604.02322v1" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.40s">
+      <div class="card-num">06</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">量子位</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">具身龙虾，上车理想</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>理想把具身Agent塞进车里做实时交互，车企卷AI终于从PPT进化到能跑的demo了。</p>
+      </div>
+        <p class="summary">实时交互！具身Agent终于不用看录像了</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/WzrpdgBiqMT1zOCf1bS6XA" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.48s">
+      <div class="card-num">07</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">机器之心</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">告别昂贵账单，Token直降68%，多智能体动态协作编程来了</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>多智能体报错自动换阵容，相当于给编程Agent装了个自动换人的教练，token降68%是真香。</p>
+      </div>
+        <p class="summary">报错自动重组团队</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/4zHXGCcMwuqzh5psYaWGRg" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.56s">
+      <div class="card-num">08</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">新智元</span>
+          
+          <span class="score-tag">7分</span>
+        </div>
+        <h2 class="card-title">游戏引擎被偷家？硅谷AI黑马掀翻游戏圈，世界模型造游戏杀疯了</h2>
+        
+      <div class="comment">
+        <span class="comment-mark">编辑点评</span>
+        <p>World model直接生成可玩游戏，Unity和Unreal还不用慌，但独立游戏原型阶段确实要被革命。</p>
+      </div>
+        <p class="summary">AI游戏迎来大结局？</p>
+        <div class="card-footer"><a href="https://mp.weixin.qq.com/s/Ye_PO6tfbmI1X4JnAL-TkA" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+  </div>
+  <div class="page-footer">AI Daily · 2026-04-05 · Powered by Claude</div>
+</body>
+</html>
