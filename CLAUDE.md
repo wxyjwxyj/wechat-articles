@@ -7,12 +7,26 @@
 ## 主链路
 
 ```
-fetch_wechat_today.py（采集）→ content.db
+fetch_wechat_today.py（微信9个公众号，需CDP）  ┐
+fetch_hackernews_today.py（HN AI热门）         ├→ content.db
+fetch_arxiv_today.py（ArXiv AI论文）           │
+fetch_github_trending_today.py（GitHub Trending）┘
   → build_bundle.py（去重 → 打标签 → bundle）→ bundle_today.json
   → generate_html.py + generate_mp_article.py（输出）
   → publish_to_mp.py（封面图 + 草稿箱）
   → daily_run.sh 步骤13（推 GitHub Pages）
 ```
+
+## 数据源
+
+| 源 | 采集脚本 | 依赖 | 内容类型 |
+|---|---|---|---|
+| 微信公众号（9个） | `fetch_wechat_today.py` | CDP Proxy | 中文行业资讯 |
+| Hacker News | `fetch_hackernews_today.py` | 无 | 海外技术讨论 |
+| ArXiv | `fetch_arxiv_today.py` | 无 | AI学术论文 |
+| GitHub Trending | `fetch_github_trending_today.py` | 无 | 开源项目热度 |
+
+微信公众号列表（9个）：量子位、AI寒武纪、机器之心、数字生命卡兹克、APPSO、36氪、虎嗅APP、新智元、硅星人Pro
 
 ## 一键执行
 
@@ -26,6 +40,9 @@ fetch_wechat_today.py（采集）→ content.db
 | 脚本 | 用途 |
 |------|------|
 | `fetch_wechat_today.py` | CDP Proxy + 同步 XHR 采集今日文章 |
+| `fetch_hackernews_today.py` | Hacker News AI 热门文章采集 |
+| `fetch_arxiv_today.py` | ArXiv AI 论文采集 |
+| `fetch_github_trending_today.py` | GitHub Trending AI/ML 仓库采集 |
 | `scripts/build_bundle.py` | 标准化 → Claude 去重 → 打标签打分 |
 | `generate_html.py` | 生成 today.html 完整版 |
 | `scripts/generate_mp_article.py` | 生成公众号发布稿 JSON |
@@ -51,6 +68,19 @@ fetch_wechat_today.py（采集）→ content.db
 1. 需求不清晰时先问清再动手
 2. 跨多文件改动先列方案
 3. 代码改完后主动执行收尾（测试→提交→更新记忆）
+
+## 错误处理
+
+自定义异常层级在 `utils/errors.py`，所有入口脚本统一 `News1Error → sys.exit(e.exit_code)`：
+
+| exit code | 含义 |
+|-----------|------|
+| 10 | CDP Proxy 未运行 |
+| 11 | 微信登录态过期 |
+| 12 | 采集超时/网络错误 |
+| 13 | AI API 调用失败 |
+| 14 | 草稿提交失败 |
+| 15 | 数据处理失败 |
 
 ## 关键配置
 
