@@ -85,49 +85,65 @@ def _generate_commentary(
     base_url: str,
 ) -> list[str]:
     """
-    调用 Claude 为每篇精选文章生成一句20-30字的编辑点评。
-    失败时返回空列表（调用方降级到无点评模式）。
+    调用 Claude 为每篇精选文章生成一句编辑点评。
+    优先用 Haiku（便宜快速），失败时降级到无点评模式。
     """
     if not api_key:
         return []
 
     articles_text = "\n".join(
-        f"{i+1}. 【{item.get('score','?')}分】{item['title']}"
-        f"  摘要：{_clean_summary(item.get('summary',''))[:80]}"
+        f"{i+1}. 【{item.get('score','?')}分】{item['title']}\n"
+        f"   摘要：{_clean_summary(item.get('summary',''))[:120]}\n"
+        f"   来源：{_get_source_name(item)}"
         for i, item in enumerate(highlights)
     )
 
-    prompt = f"""你是一位科技资讯编辑，正在为 AI 日报撰写导读点评。
+    prompt = f"""你是「AI日报」的主编，每天为读者精选 AI 领域最值得关注的新闻并撰写点评。
 
-以下是今日精选的 {len(highlights)} 条重要资讯，请为每条写一句简短的编辑点评：
-- 字数：20-35字
-- 风格：犀利、有观点，像老编辑写的小评语，而非官方介绍
-- 不要重复标题的内容，要有增量信息或洞见
-- 可以表达态度（重要、值得关注、有意思等）
+你的点评风格：
+- 像资深科技记者跟同行聊天，不是写新闻稿
+- 有观点、有态度，敢说"这很重要"或"这没啥新意"
+- 善用类比让技术变得好懂（比如"相当于给大模型装了后视镜"）
+- 偶尔带点幽默，但不尬
 
-文章列表：
+要求：
+- 每条点评 20-40 字
+- 不要重复标题已有的信息
+- 要补充标题没说的背景、影响、或你的判断
+- 如果多条新闻有关联，可以在点评中串联
+
+今日 {len(highlights)} 条精选：
 {articles_text}
 
 严格按 JSON 格式返回，不要有任何其他文字：
 {{"comments": ["第1条点评", "第2条点评", ...]}}"""
 
-    try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-        message = client.messages.create(
-            model="claude-opus-4-6",
-            max_tokens=512,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        if not message.content:
-            print("  ⚠ Claude 返回空内容（代理限制？），跳过点评生成")
+    # 模型优先级：Haiku（快且便宜）→ Sonnet（兜底）
+    models = ["claude-haiku-4-20250414", "claude-sonnet-4-20250514"]
+
+    for model in models:
+        try:
+            import anthropic
+            client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+            message = client.messages.create(
+                model=model,
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            if not message.content:
+                print(f"  ⚠ {model} 返回空内容，尝试下一个模型")
+                continue
+            raw = message.content[0].text.strip()
+            print(f"  ✓ 使用 {model} 生成点评")
+            break
+        except ImportError:
+            print("  ⚠ 未安装 anthropic 库，跳过点评生成")
             return []
-        raw = message.content[0].text.strip()
-    except ImportError:
-        print("  ⚠ 未安装 anthropic 库，跳过点评生成")
-        return []
-    except Exception as e:
-        print(f"  ⚠ Claude 点评生成失败（{e}），跳过")
+        except Exception as e:
+            print(f"  ⚠ {model} 调用失败（{e}），尝试下一个模型")
+            continue
+    else:
+        print("  ⚠ 所有模型均失败，跳过点评生成")
         return []
 
     try:
@@ -142,6 +158,14 @@ def _generate_commentary(
     except Exception as e:
         print(f"  ⚠ 点评解析失败（{e}），跳过")
         return []
+
+
+def _get_source_name(item: dict) -> str:
+    """从 item 中提取来源名称。"""
+    sources_list = item.get("sources_list", [])
+    if sources_list:
+        return " · ".join(s.get("source_name", "") for s in sources_list if s.get("source_name"))
+    return item.get("source_name", "未知来源")
 
 
 def _render_html(
