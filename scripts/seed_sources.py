@@ -56,7 +56,7 @@ SOURCES = [
         "external_id": "theverge_ai",
         "status": "active",
         "config": {
-            "feed_url": "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
+            "feed_url": "https://www.theverge.com/rss/index.xml",
             "max_items": 8,
             "days_back": 2,
         },
