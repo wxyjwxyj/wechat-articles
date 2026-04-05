@@ -145,14 +145,17 @@ mkdir -p archive
 cp today.html "archive/${TODAY_DATE}.html"
 python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 
-# 13. 切换到 main，把 index.html / today.html / archive/ 带过去，推送
+# 12.5 在 dev 提交今日 HTML（必须先提交，步骤13才能正确拉取）
+git add today.html mp_article_preview.html archive/ >> "$LOG_FILE" 2>&1
+git commit -m "content: ${TODAY_DATE} HTML" >> "$LOG_FILE" 2>&1
+
+# 13. 切换到 main，把 today.html / archive/ / mp_article_preview.html 带过去，推送
 log "推送到 GitHub..."
 git checkout main >> "$LOG_FILE" 2>&1
-git checkout dev -- index.html >> "$LOG_FILE" 2>&1
 git checkout dev -- today.html >> "$LOG_FILE" 2>&1
 git checkout dev -- archive/ >> "$LOG_FILE" 2>&1
 git checkout dev -- mp_article_preview.html >> "$LOG_FILE" 2>&1
-git add index.html today.html archive/ mp_article_preview.html
+git add today.html archive/ mp_article_preview.html
 git commit -m "Update: $(date +%Y-%m-%d) articles" >> "$LOG_FILE" 2>&1
 git push origin main >> "$LOG_FILE" 2>&1 || ERRORS="${ERRORS}GitHub推送失败 "
 
