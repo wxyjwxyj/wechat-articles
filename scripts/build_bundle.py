@@ -11,6 +11,7 @@ from storage.repository import SourceRepository, ItemRepository, BundleRepositor
 from pipeline.dedupe import dedupe_items
 from pipeline.tagging import extract_tags, extract_tags_batch_with_claude
 from pipeline.bundles import build_daily_bundle
+from utils.errors import News1Error, PipelineError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -116,4 +117,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except News1Error as e:
+        logger.error("bundle 生成失败: %s", e)
+        sys.exit(e.exit_code)
+    except Exception as e:
+        logger.error("未预期的错误: %s", e, exc_info=True)
+        sys.exit(1)

@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from publishers.mp_publisher import MpPublisher
+from utils.errors import News1Error, PublishError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -119,10 +120,19 @@ def main() -> None:
         logger.info("草稿创建成功！AppMsgId=%s, 封面=%s", app_msg_id, "有" if cover_fileid else "无")
         logger.info("请到公众号后台草稿箱确认并发布：https://mp.weixin.qq.com/cgi-bin/appmsg?begin=0&count=10&type=77&action=list_card&token=%s&lang=zh_CN", publisher.token)
     else:
-        logger.error("草稿创建失败：%s", result.get('error', '未知错误'))
+        error_msg = result.get('error', '未知错误')
+        logger.error("草稿创建失败：%s", error_msg)
         if "raw" in result:
             logger.error("原始返回：%s", json.dumps(result['raw'], ensure_ascii=False)[:300])
+        raise PublishError(f"草稿创建失败: {error_msg}")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except News1Error as e:
+        logger.error("发布失败: %s", e)
+        sys.exit(e.exit_code)
+    except Exception as e:
+        logger.error("未预期的错误: %s", e, exc_info=True)
+        sys.exit(1)

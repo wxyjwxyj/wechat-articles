@@ -6,6 +6,7 @@
 import requests
 from datetime import datetime, timezone
 
+from utils.errors import CollectorError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -44,7 +45,7 @@ def _is_ai_related(title: str) -> bool:
 
 
 def _fetch_story(story_id: int, timeout: int = 10) -> dict | None:
-    """获取单条 HN story 详情。"""
+    """获取单条 HN story 详情。单条失败只记日志，不中断整体流程。"""
     try:
         resp = requests.get(
             f"{HN_API}/item/{story_id}.json",
@@ -52,7 +53,8 @@ def _fetch_story(story_id: int, timeout: int = 10) -> dict | None:
         )
         resp.raise_for_status()
         return resp.json()
-    except Exception:
+    except requests.RequestException as e:
+        logger.debug("HN story %d 获取失败: %s", story_id, e)
         return None
 
 
@@ -79,17 +81,13 @@ class HackerNewsCollector:
         self.timeout = timeout
 
     def fetch_top_ai_stories(self) -> list[dict]:
-        """
-        获取 HN Top Stories 中与 AI 相关的文章。
+        """获取 HN Top Stories 中与 AI 相关的文章。
 
-        返回列表，每项包含:
-            - id: HN story ID
-            - title: 标题
-            - url: 原文链接（部分 HN 帖子无外链，此时为 HN 讨论页）
-            - score: upvote 分数
-            - comments: 评论数
-            - time: 发布时间（ISO 格式字符串）
-            - hn_url: HN 讨论页链接
+        Raises:
+            CollectorError: 无法获取 Top Stories 列表
+
+        Returns:
+            列表，每项包含 id, title, url, score, comments, time, hn_url, by
         """
         # 获取 Top Stories ID 列表
         try:
@@ -99,9 +97,8 @@ class HackerNewsCollector:
             )
             resp.raise_for_status()
             story_ids = resp.json()[:self.scan_limit]
-        except Exception as e:
-            logger.error("获取 HN Top Stories 失败: %s", e)
-            return []
+        except requests.RequestException as e:
+            raise CollectorError(f"获取 HN Top Stories 失败: {e}") from e
 
         # 逐条获取并筛选
         ai_stories = []

@@ -5,6 +5,7 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 
+from utils.errors import CDPConnectionError, LoginExpiredError, CollectorError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -17,14 +18,18 @@ class WechatCollector:
         self.target_id = target_id
 
     def _resolve_session(self) -> bool:
-        """自动从浏览器标签页中探测 target_id 和 token，优先使用公众平台主页。"""
+        """自动从浏览器标签页中探测 target_id 和 token，优先使用公众平台主页。
+
+        Raises:
+            CDPConnectionError: CDP Proxy 不可达
+            LoginExpiredError: 未找到微信标签页或 token 缺失
+        """
         try:
             resp = requests.get(f"{self.cdp_proxy}/targets", timeout=10)
             resp.raise_for_status()
             targets = resp.json()
         except (requests.RequestException, ValueError) as e:
-            logger.error("获取 targets 失败: %s", e)
-            return False
+            raise CDPConnectionError(f"获取 targets 失败: {e}") from e
 
         # 优先匹配公众平台管理页（含 token 参数），其次匹配任意微信域名
         best_target = None
@@ -45,8 +50,7 @@ class WechatCollector:
                 best_target = t.get("targetId", "")
 
         if not best_target:
-            logger.error("未找到微信公众平台标签页，请先在浏览器中打开 mp.weixin.qq.com 并登录")
-            return False
+            raise LoginExpiredError("未找到微信公众平台标签页，请先在浏览器中打开 mp.weixin.qq.com 并登录")
 
         if not self.target_id:
             self.target_id = best_target
@@ -54,17 +58,21 @@ class WechatCollector:
             self.token = best_token
 
         if not self.token:
-            logger.error("无法从浏览器 URL 获取 token，请确保在微信公众平台管理页（含 token 参数）已登录")
-            return False
+            raise LoginExpiredError("无法从浏览器 URL 获取 token，请确保在微信公众平台管理页（含 token 参数）已登录")
 
         return True
 
     def fetch_articles(self, account_name: str, fakeid: str, count: int = 20) -> list[dict]:
+        """获取指定公众号的最新文章。
+
+        Raises:
+            CDPConnectionError: CDP Proxy 不可达
+            LoginExpiredError: 微信登录态过期
+            CollectorError: CDP 请求失败或数据解析异常
+        """
         # 首次调用时探测 session（后续复用已探测到的值）
         if not self.target_id or not self.token:
-            if not self._resolve_session():
-                logger.error("[%s] 无法获取 target_id / token", account_name)
-                return []
+            self._resolve_session()  # 异常会直接抛出
 
         js_code = f'''
         (() => {{
@@ -79,20 +87,22 @@ class WechatCollector:
             resp.raise_for_status()
             raw_data = resp.json().get("value", {})
         except requests.RequestException as e:
-            logger.error("[%s] CDP 请求失败: %s", account_name, e)
-            return []
+            raise CollectorError(f"[{account_name}] CDP 请求失败: {e}") from e
         except ValueError as e:
-            logger.error("[%s] JSON 解析失败: %s", account_name, e)
-            return []
+            raise CollectorError(f"[{account_name}] JSON 解析失败: {e}") from e
 
         return self._parse_articles(raw_data)
 
     def fetch_articles_by_date(self, account_name: str, fakeid: str, target_date) -> list[dict]:
-        """翻页抓取指定日期的文章，超出该日期范围即停止。target_date 为 date 对象。"""
+        """翻页抓取指定日期的文章，超出该日期范围即停止。target_date 为 date 对象。
+
+        Raises:
+            CDPConnectionError: CDP Proxy 不可达
+            LoginExpiredError: 微信登录态过期
+            CollectorError: CDP 请求失败
+        """
         if not self.target_id or not self.token:
-            if not self._resolve_session():
-                logger.error("[%s] 无法获取 target_id / token", account_name)
-                return []
+            self._resolve_session()  # 异常会直接抛出
 
         articles = []
         begin = 0
@@ -112,8 +122,7 @@ class WechatCollector:
                 resp.raise_for_status()
                 raw_data = resp.json().get("value", {})
             except (requests.RequestException, ValueError) as e:
-                logger.error("[%s] CDP 请求失败: %s", account_name, e)
-                break
+                raise CollectorError(f"[{account_name}] CDP 请求失败: {e}") from e
 
             page_articles, should_stop = self._parse_articles_by_date(raw_data, target_date)
             articles.extend(page_articles)

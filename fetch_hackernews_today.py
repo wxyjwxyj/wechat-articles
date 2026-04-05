@@ -7,6 +7,7 @@ from pipeline.normalize import normalize_hackernews_story
 from pipeline.tagging import extract_tags
 from storage.db import init_db
 from storage.repository import SourceRepository, ItemRepository
+from utils.errors import News1Error, CollectorError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -35,7 +36,7 @@ def main() -> None:
         scan_limit=200,
     )
 
-    stories = collector.fetch_top_ai_stories()
+    stories = collector.fetch_top_ai_stories()  # 可能抛出 CollectorError
     if not stories:
         logger.info("今天暂无 AI 相关热门文章")
         return
@@ -53,4 +54,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except News1Error as e:
+        logger.error("HN 采集失败: %s", e)
+        sys.exit(e.exit_code)
+    except Exception as e:
+        logger.error("未预期的错误: %s", e, exc_info=True)
+        sys.exit(1)

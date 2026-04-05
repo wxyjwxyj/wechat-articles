@@ -9,6 +9,7 @@ from pipeline.normalize import normalize_wechat_article
 from pipeline.tagging import extract_tags
 from storage.db import init_db
 from storage.repository import SourceRepository, ItemRepository
+from utils.errors import News1Error, CDPConnectionError, LoginExpiredError, CollectorError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -42,6 +43,7 @@ def main() -> None:
         return
 
     total = 0
+    errors: list[str] = []
     for source in sources:
         # 解析 config 字段（DB 中以 JSON 字符串存储）
         cfg = source.get("config", {})
@@ -50,7 +52,16 @@ def main() -> None:
         fakeid = cfg.get("fakeid", source["external_id"])
 
         logger.info("抓取: %s (fakeid=%s)", source['name'], fakeid)
-        articles = collector.fetch_articles(source["name"], fakeid)
+        try:
+            articles = collector.fetch_articles(source["name"], fakeid)
+        except (CDPConnectionError, LoginExpiredError):
+            # CDP 或登录态问题影响所有公众号，直接抛出终止
+            raise
+        except CollectorError as e:
+            # 单个公众号采集失败，记录后继续
+            logger.warning("[%s] 采集失败: %s", source['name'], e)
+            errors.append(source['name'])
+            continue
 
         if articles:
             logger.info("  找到 %d 篇", len(articles))
@@ -63,8 +74,18 @@ def main() -> None:
         else:
             logger.info("  今天暂无文章")
 
+    if errors:
+        logger.warning("以下公众号采集失败: %s", ", ".join(errors))
+
     logger.info("采集完成，共写入 %d 篇文章 → %s", total, DB_PATH)
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except News1Error as e:
+        logger.error("采集失败: %s", e)
+        sys.exit(e.exit_code)
+    except Exception as e:
+        logger.error("未预期的错误: %s", e, exc_info=True)
+        sys.exit(1)

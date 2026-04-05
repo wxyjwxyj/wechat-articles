@@ -15,6 +15,20 @@ notify() {
     osascript -e "display notification \"$2\" with title \"$1\"" 2>/dev/null
 }
 
+# exit code → 失败原因映射
+describe_exit() {
+    case "$1" in
+        0)  echo "" ;;
+        10) echo "CDP Proxy 未运行" ;;
+        11) echo "微信登录态过期" ;;
+        12) echo "采集超时/网络错误" ;;
+        13) echo "AI API 调用失败" ;;
+        14) echo "草稿提交失败" ;;
+        15) echo "数据处理失败" ;;
+        *)  echo "未知错误(code=$1)" ;;
+    esac
+}
+
 cd "$PROJECT_DIR" || exit 1
 log "========== 开始每日采集 =========="
 
@@ -22,14 +36,14 @@ log "========== 开始每日采集 =========="
 if ! curl -s "$CDP_PROXY/health" > /dev/null 2>&1; then
     log "❌ CDP Proxy 未运行，跳过今日采集"
     notify "AI日报 ❌" "CDP Proxy 未运行，今日采集跳过"
-    exit 0
+    exit 10
 fi
 
 # 2. 检查微信公众平台标签页
 if ! curl -s "$CDP_PROXY/targets" | grep -q "mp.weixin.qq.com"; then
     log "❌ 未找到微信公众平台标签页，跳过今日采集"
     notify "AI日报 ❌" "未找到微信公众平台标签页，请检查浏览器"
-    exit 0
+    exit 11
 fi
 
 log "✓ CDP Proxy 正常，微信标签页已打开"
@@ -44,17 +58,36 @@ fi
 log "初始化 sources..."
 python scripts/seed_sources.py >> "$LOG_FILE" 2>&1
 
-# 5. 采集今日文章
+# 5. 采集今日微信文章
 log "采集今日微信文章..."
 python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
+WX_EXIT=$?
+if [ $WX_EXIT -ne 0 ]; then
+    WX_REASON=$(describe_exit $WX_EXIT)
+    log "⚠ 微信采集失败: $WX_REASON (exit=$WX_EXIT)"
+    ERRORS="${ERRORS}微信:${WX_REASON} "
+    # CDP/登录问题不影响 HN 采集，但需要记录
+fi
 
 # 5.5 采集 Hacker News AI 文章（不依赖 CDP，独立运行）
 log "采集 Hacker News AI 文章..."
-python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 || { log "⚠ HN 采集失败，继续"; ERRORS="${ERRORS}HN采集失败 "; }
+python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1
+HN_EXIT=$?
+if [ $HN_EXIT -ne 0 ]; then
+    HN_REASON=$(describe_exit $HN_EXIT)
+    log "⚠ HN 采集失败: $HN_REASON (exit=$HN_EXIT)"
+    ERRORS="${ERRORS}HN:${HN_REASON} "
+fi
 
 # 6. 生成 bundle
 log "生成 bundle..."
 python scripts/build_bundle.py >> "$LOG_FILE" 2>&1
+BUNDLE_EXIT=$?
+if [ $BUNDLE_EXIT -ne 0 ]; then
+    BUNDLE_REASON=$(describe_exit $BUNDLE_EXIT)
+    log "⚠ bundle 生成失败: $BUNDLE_REASON (exit=$BUNDLE_EXIT)"
+    ERRORS="${ERRORS}Bundle:${BUNDLE_REASON} "
+fi
 
 # 7. 检查是否有内容
 if [ ! -f "bundle_today.json" ]; then
@@ -77,7 +110,13 @@ python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
 
 # 11. 提交到公众号草稿箱
 log "提交到公众号草稿箱..."
-python scripts/publish_to_mp.py >> "$LOG_FILE" 2>&1 || { log "⚠ 草稿提交失败，继续"; ERRORS="${ERRORS}草稿提交失败 "; }
+python scripts/publish_to_mp.py >> "$LOG_FILE" 2>&1
+PUB_EXIT=$?
+if [ $PUB_EXIT -ne 0 ]; then
+    PUB_REASON=$(describe_exit $PUB_EXIT)
+    log "⚠ 草稿提交失败: $PUB_REASON (exit=$PUB_EXIT)"
+    ERRORS="${ERRORS}草稿:${PUB_REASON} "
+fi
 
 # 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
@@ -107,7 +146,7 @@ if [ -z "$ERRORS" ]; then
     notify "AI日报 ✅" "采集完成：${ARTICLE_COUNT} 条，草稿已提交，GitHub 已推送"
 else
     log "⚠ 完成，但有问题：${ERRORS}"
-    notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条，但：${ERRORS}"
+    notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条 | 问题：${ERRORS}"
 fi
 
 # 16. 清理 30 天前的旧日志
