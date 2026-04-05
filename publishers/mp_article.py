@@ -262,6 +262,11 @@ def _render_html(
         '<p style="font-size:11px;color:#ccc;letter-spacing:1px;margin:6px 0 0;">'
         '自动采集 · Claude 编辑点评 · 每日更新</p>'
         '</section>'
+        # ── AI 内容标注（合规要求） ──
+        '<section style="margin:20px 0 0;padding:12px 0 0;border-top:1px solid #f0f0f0;">'
+        '<p style="font-size:11px;color:#bbb;line-height:1.6;margin:0;text-align:center;">'
+        '📌 本文由 AI 辅助采集和整理，经人工审核后发布</p>'
+        '</section>'
     )
 
     return f"{header_html}\n{items_html}\n{footer_html}"
