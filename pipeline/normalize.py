@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
@@ -81,6 +81,64 @@ def normalize_hackernews_story(source: dict, raw_story: dict) -> dict:
         "summary": summary,
         "cover": "",
         "tags": [],
+        "language": "en",
+        "content_hash": content_hash,
+        "status": "raw",
+    }
+
+
+def normalize_arxiv_paper(source: dict, raw_paper: dict) -> dict:
+    """将 ArxivCollector 返回的论文字典转换为 ItemPayload 格式。
+
+    raw_paper 字段（来自 ArxivCollector.fetch_recent_papers）：
+        arxiv_id, title, summary, url, pdf_url, published,
+        authors, categories, primary_category, comment, score
+    """
+    title = raw_paper.get("title", "")
+    url = raw_paper.get("url", "")
+    arxiv_id = raw_paper.get("arxiv_id", "")
+
+    content_hash = hashlib.sha256(
+        f'arxiv|{arxiv_id}|{title}'.encode("utf-8")
+    ).hexdigest()
+
+    # 摘要：取前 200 字符，避免过长
+    summary_raw = raw_paper.get("summary", "")
+    summary = _clean_text(summary_raw)
+    if len(summary) > 200:
+        summary = summary[:197] + "..."
+
+    # 作者列表：取前 3 个，多的用 et al.
+    authors = raw_paper.get("authors", [])
+    if len(authors) > 3:
+        author_str = ", ".join(authors[:3]) + " et al."
+    else:
+        author_str = ", ".join(authors) if authors else ""
+
+    # 解析发布时间
+    published_str = raw_paper.get("published", "")
+    try:
+        published_at = datetime.fromisoformat(
+            published_str.replace("Z", "+00:00")
+        )
+    except (ValueError, TypeError):
+        published_at = datetime.now(timezone.utc)
+
+    # 分类标签
+    categories = raw_paper.get("categories", [])
+    tags = [cat for cat in categories if cat.startswith(("cs.", "stat."))]
+
+    return {
+        "source_id": source.get("id"),
+        "source_type": "arxiv",
+        "title": title,
+        "url": url,
+        "author": author_str,
+        "published_at": published_at.isoformat(),
+        "raw_content": json.dumps(raw_paper, ensure_ascii=False),
+        "summary": summary,
+        "cover": "",
+        "tags": tags,
         "language": "en",
         "content_hash": content_hash,
         "status": "raw",

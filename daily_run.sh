@@ -79,6 +79,16 @@ if [ $HN_EXIT -ne 0 ]; then
     ERRORS="${ERRORS}HN:${HN_REASON} "
 fi
 
+# 5.6 采集 ArXiv AI 论文（不依赖 CDP，独立运行）
+log "采集 ArXiv AI 论文..."
+python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1
+ARXIV_EXIT=$?
+if [ $ARXIV_EXIT -ne 0 ]; then
+    ARXIV_REASON=$(describe_exit $ARXIV_EXIT)
+    log "⚠ ArXiv 采集失败: $ARXIV_REASON (exit=$ARXIV_EXIT)"
+    ERRORS="${ERRORS}ArXiv:${ARXIV_REASON} "
+fi
+
 # 6. 生成 bundle
 log "生成 bundle..."
 python scripts/build_bundle.py >> "$LOG_FILE" 2>&1
