@@ -45,8 +45,12 @@ log "初始化 sources..."
 python scripts/seed_sources.py >> "$LOG_FILE" 2>&1
 
 # 5. 采集今日文章
-log "采集今日文章..."
+log "采集今日微信文章..."
 python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
+
+# 5.5 采集 Hacker News AI 文章（不依赖 CDP，独立运行）
+log "采集 Hacker News AI 文章..."
+python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 || { log "⚠ HN 采集失败，继续"; ERRORS="${ERRORS}HN采集失败 "; }
 
 # 6. 生成 bundle
 log "生成 bundle..."

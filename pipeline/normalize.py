@@ -42,3 +42,46 @@ def normalize_wechat_article(source: dict, raw_article: dict) -> dict:
         "content_hash": content_hash,
         "status": "raw",
     }
+
+
+def normalize_hackernews_story(source: dict, raw_story: dict) -> dict:
+    """将 HN collector 返回的 story 转换为 ItemPayload 格式。
+
+    raw_story 字段（来自 HackerNewsCollector.fetch_top_ai_stories）:
+        id, title, url, score, comments, time, hn_url, by
+    """
+    title = raw_story.get("title", "")
+    url = raw_story.get("url", "")
+    hn_url = raw_story.get("hn_url", "")
+
+    content_hash = hashlib.sha256(
+        f'hackernews|{title}|{url}'.encode("utf-8")
+    ).hexdigest()
+
+    # 拼接摘要：HN 帖子没有正文摘要，用 score + 评论数作为描述
+    score = raw_story.get("score", 0)
+    comments = raw_story.get("comments", 0)
+    summary = f"HN {score} points · {comments} comments · {hn_url}"
+
+    # 解析发布时间
+    time_str = raw_story.get("time", "")
+    try:
+        published_at = datetime.fromisoformat(time_str)
+    except (ValueError, TypeError):
+        published_at = datetime.now()
+
+    return {
+        "source_id": source.get("id"),
+        "source_type": "hackernews",
+        "title": title,
+        "url": url,
+        "author": raw_story.get("by", ""),
+        "published_at": published_at.isoformat(),
+        "raw_content": json.dumps(raw_story, ensure_ascii=False),
+        "summary": summary,
+        "cover": "",
+        "tags": [],
+        "language": "en",
+        "content_hash": content_hash,
+        "status": "raw",
+    }

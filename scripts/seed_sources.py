@@ -20,6 +20,8 @@ SOURCES = [
     {"type": "wechat", "name": "虎嗅APP", "external_id": "MTQzMjE1NjQwMQ==", "status": "active", "config": {"fakeid": "MTQzMjE1NjQwMQ=="}},
     {"type": "wechat", "name": "新智元", "external_id": "MzI3MTA0MTk1MA==", "status": "active", "config": {"fakeid": "MzI3MTA0MTk1MA=="}},
     {"type": "wechat", "name": "硅星人Pro", "external_id": "MzkyNjU2ODM2NQ==", "status": "active", "config": {"fakeid": "MzkyNjU2ODM2NQ=="}},
+    # ── 海外源 ──
+    {"type": "hackernews", "name": "Hacker News", "external_id": "hackernews", "status": "active", "config": {"min_score": 20, "max_stories": 10}},
 ]
 
 
