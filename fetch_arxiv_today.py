@@ -33,7 +33,7 @@ def main() -> None:
     collector = ArxivCollector(
         max_results=50,
         max_papers=10,
-        days_back=2,
+        days_back=3,
     )
 
     papers = collector.fetch_recent_papers()  # 可能抛出 CollectorError

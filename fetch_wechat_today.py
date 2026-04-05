@@ -36,10 +36,11 @@ def main() -> None:
 
     source_repo = SourceRepository(DB_PATH)
     item_repo = ItemRepository(DB_PATH)
-    sources = source_repo.list_sources()
+    all_sources = source_repo.list_sources()
+    sources = [s for s in all_sources if s.get("type") == "wechat"]
 
     if not sources:
-        logger.warning("sources 表为空，请先运行 python scripts/seed_sources.py")
+        logger.warning("未找到微信 source，请先运行 python scripts/seed_sources.py")
         return
 
     total = 0
