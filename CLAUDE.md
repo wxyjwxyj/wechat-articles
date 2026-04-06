@@ -8,9 +8,10 @@
 
 ```
 fetch_wechat_today.py（微信9个公众号，需CDP）  ┐
-fetch_hackernews_today.py（HN AI热门）         ├→ content.db
-fetch_arxiv_today.py（ArXiv AI论文）           │
-fetch_github_trending_today.py（GitHub Trending）┘
+fetch_hackernews_today.py（HN AI热门）         │
+fetch_arxiv_today.py（ArXiv AI论文）           ├→ content.db
+fetch_github_trending_today.py（GitHub Trending）│
+fetch_rss_today.py（TechCrunch/MIT/The Verge） ┘
   → build_bundle.py（去重 → 打标签 → bundle）→ bundle_today.json
   → generate_html.py + generate_mp_article.py（输出）
   → publish_to_mp.py（封面图 + 草稿箱）
@@ -25,13 +26,14 @@ fetch_github_trending_today.py（GitHub Trending）┘
 | Hacker News | `fetch_hackernews_today.py` | 无 | 海外技术讨论 |
 | ArXiv | `fetch_arxiv_today.py` | 无 | AI学术论文 |
 | GitHub Trending | `fetch_github_trending_today.py` | 无 | 开源项目热度 |
+| RSS（3个） | `fetch_rss_today.py` | 无 | 英文科技媒体（TechCrunch/MIT/The Verge）|
 
 微信公众号列表（9个）：量子位、AI寒武纪、机器之心、数字生命卡兹克、APPSO、36氪、虎嗅APP、新智元、硅星人Pro
 
 ## 一键执行
 
 ```bash
-./daily_run.sh        # 全自动（launchd 每天 9:57 调用）
+./daily_run.sh        # 全自动（launchd 每天 11:30 调用）
 ./run.sh              # 交互式执行
 ```
 
@@ -43,11 +45,14 @@ fetch_github_trending_today.py（GitHub Trending）┘
 | `fetch_hackernews_today.py` | Hacker News AI 热门文章采集 |
 | `fetch_arxiv_today.py` | ArXiv AI 论文采集 |
 | `fetch_github_trending_today.py` | GitHub Trending AI/ML 仓库采集 |
+| `fetch_rss_today.py` | RSS 采集（TechCrunch/MIT/The Verge，feedparser）|
 | `scripts/build_bundle.py` | 标准化 → Claude 去重 → 打标签打分 |
 | `generate_html.py` | 生成 today.html 完整版 |
 | `scripts/generate_mp_article.py` | 生成公众号发布稿 JSON |
+| `scripts/generate_mp_html.py` | 生成导读风 HTML（mp_article_preview.html）|
 | `scripts/publish_to_mp.py` | 封面图生成+上传 → 草稿箱提交（`--dry-run`） |
 | `scripts/seed_sources.py` | 初始化公众号 sources 表 |
+| `api/app.py` | Flask 应用入口（含 Research Hub，`/research`）|
 
 废弃脚本列表见 `.claude/rules/deprecated.md`
 
