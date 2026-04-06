@@ -17,8 +17,9 @@ def render_results_html(topic: str, results: dict) -> str:
     docs = results.get("docs", [])
     articles = results.get("articles", [])
     wechat = results.get("wechat", [])
+    xhs = results.get("xhs", [])
 
-    total = len(papers) + len(repos) + len(discussions) + len(docs) + len(articles) + len(wechat)
+    total = len(papers) + len(repos) + len(discussions) + len(docs) + len(articles) + len(wechat) + len(xhs)
 
     # 渲染各分类
     papers_html = _render_papers(papers)
@@ -27,6 +28,7 @@ def render_results_html(topic: str, results: dict) -> str:
     docs_html = _render_docs(docs)
     articles_html = _render_articles(articles)
     wechat_html = _render_wechat(wechat)
+    xhs_html = _render_xhs(xhs)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -150,6 +152,7 @@ def render_results_html(topic: str, results: dict) -> str:
                 <span class="stat">📖 文档 {len(docs)}</span>
                 <span class="stat">🌐 文章 {len(articles)}</span>
                 <span class="stat">📱 公众号 {len(wechat)}</span>
+                <span class="stat">🍠 小红书 {len(xhs)}</span>
             </div>
         </header>
 
@@ -161,6 +164,7 @@ def render_results_html(topic: str, results: dict) -> str:
         {discussions_html}
         {articles_html}
         {wechat_html}
+        {xhs_html}
     </div>
 </body>
 </html>"""
@@ -353,6 +357,49 @@ def _render_wechat(articles: list[dict]) -> str:
     return f"""
     <div class="section">
         <h2 class="section-title">📱 公众号 ({len(articles)})</h2>
+        {items_html}
+    </div>"""
+
+
+def _render_xhs(notes: list[dict]) -> str:
+    """渲染小红书笔记列表（带封面图）"""
+    if not notes:
+        return ""
+
+    items_html = ""
+    for note in notes:
+        title = note.get("title", "")
+        url = note.get("url", "")
+        score = note.get("score", 0)
+        comment = note.get("comment", "")
+        author = note.get("author", "")
+        cover = note.get("cover", "")
+        liked_count = note.get("liked_count", "0")
+        collected_count = note.get("collected_count", "0")
+        note_type = note.get("type", "normal")
+        type_badge = "🎬 视频" if note_type == "video" else "📝 图文"
+
+        cover_html = f'<img src="{cover}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;flex-shrink:0;" onerror="this.style.display=\'none\'">' if cover else ""
+
+        items_html += f"""
+        <div class="item" style="display:flex;gap:12px;align-items:flex-start;">
+            {cover_html}
+            <div style="flex:1;min-width:0;">
+                <div class="item-title"><a href="{url}" target="_blank">{title}</a></div>
+                <div class="item-meta">
+                    <span class="score">{score}分</span>
+                    <span>{type_badge}</span>
+                    {f'<span>@{author}</span>' if author else ''}
+                    <span>❤️ {liked_count}</span>
+                    <span>⭐ {collected_count}</span>
+                </div>
+                {f'<div class="comment">{comment}</div>' if comment else ''}
+            </div>
+        </div>"""
+
+    return f"""
+    <div class="section">
+        <h2 class="section-title">🍠 小红书 ({len(notes)})</h2>
         {items_html}
     </div>"""
 

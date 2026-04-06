@@ -6,6 +6,7 @@ from research.hn_search import HNSearcher
 from research.doc_library import search_docs
 from research.web_search import WebSearcher
 from research.wechat_search import WechatSearcher
+from research.xhs_search import XhsSearcher
 from research.claude_scorer import ClaudeScorer
 from utils.log import get_logger
 
@@ -27,6 +28,7 @@ class TopicSearcher:
         google_api_key: str = "",
         google_cx: str = "",
         bing_api_key: str = "",
+        max_xhs: int = 10,
     ):
         """
         Args:
@@ -40,6 +42,7 @@ class TopicSearcher:
             google_api_key: Google Custom Search API key（留空则读环境变量）
             google_cx: Google Custom Search Engine ID（留空则读环境变量）
             bing_api_key: Bing Search API key（留空则读环境变量）
+            max_xhs: 小红书最多返回条数
         """
         self.api_key = api_key
         self.base_url = base_url
@@ -51,6 +54,7 @@ class TopicSearcher:
         self.google_api_key = google_api_key
         self.google_cx = google_cx
         self.bing_api_key = bing_api_key
+        self.max_xhs = max_xhs
 
     def search_topic(self, topic: str) -> dict:
         """搜索主题相关的学习资料。
@@ -67,6 +71,7 @@ class TopicSearcher:
                 "docs": [...],         # 官方文档
                 "articles": [...],     # Web 搜索文章
                 "wechat": [...],       # 本地公众号文章
+                "xhs": [...],          # 小红书笔记
             }
             每项资源都包含 score 和 comment 字段（Claude 评分）
         """
@@ -80,9 +85,10 @@ class TopicSearcher:
             "docs": [],
             "articles": [],
             "wechat": [],
+            "xhs": [],
         }
 
-        with ThreadPoolExecutor(max_workers=6) as executor:
+        with ThreadPoolExecutor(max_workers=7) as executor:
             futures = {
                 executor.submit(self._search_arxiv, topic): "papers",
                 executor.submit(self._search_github, topic): "repositories",
@@ -90,6 +96,7 @@ class TopicSearcher:
                 executor.submit(self._search_docs, topic): "docs",
                 executor.submit(self._search_web, topic): "articles",
                 executor.submit(self._search_wechat, topic): "wechat",
+                executor.submit(self._search_xhs, topic): "xhs",
             }
 
             for future in as_completed(futures):
@@ -105,7 +112,7 @@ class TopicSearcher:
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
         scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
 
-        for category in ["papers", "repositories", "discussions", "articles", "wechat"]:
+        for category in ["papers", "repositories", "discussions", "articles", "wechat", "xhs"]:
             if results[category]:
                 try:
                     # 统一格式：确保每项都有 title 和 summary
@@ -120,10 +127,10 @@ class TopicSearcher:
             doc["score"] = 9
             doc["comment"] = "官方文档，权威可靠"
 
-        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d, 文章 %d, 公众号 %d",
+        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d, 文章 %d, 公众号 %d, 小红书 %d",
                     len(results["papers"]), len(results["repositories"]),
                     len(results["discussions"]), len(results["docs"]),
-                    len(results["articles"]), len(results["wechat"]))
+                    len(results["articles"]), len(results["wechat"]), len(results["xhs"]))
 
         return results
 
@@ -169,6 +176,11 @@ class TopicSearcher:
         searcher = WechatSearcher()
         return searcher.search_articles(topic, max_results=self.max_articles)
 
+    def _search_xhs(self, topic: str) -> list[dict]:
+        """搜索小红书笔记（需提前 xhs login）"""
+        searcher = XhsSearcher()
+        return searcher.search_notes(topic, max_results=self.max_xhs)
+
     def _normalize_for_scoring(self, items: list[dict], category: str) -> list[dict]:
         """统一格式以便 Claude 评分"""
         normalized = []
@@ -202,5 +214,11 @@ class TopicSearcher:
                     **item,
                     "title": item.get("title", ""),
                     "summary": item.get("summary", ""),
+                })
+            elif category == "xhs":
+                normalized.append({
+                    **item,
+                    "title": item.get("title", ""),
+                    "summary": f"小红书笔记，❤️{item.get('liked_count', 0)} ⭐{item.get('collected_count', 0)}",
                 })
         return normalized
