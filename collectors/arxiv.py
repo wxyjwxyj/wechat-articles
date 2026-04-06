@@ -224,3 +224,57 @@ class ArxivCollector:
                      len(result), len(papers), self.days_back)
 
         return result
+
+    def search_by_keyword(self, query: str, max_results: int = 10) -> list[dict]:
+        """按关键词搜索 ArXiv 论文。
+
+        Args:
+            query: 搜索关键词（支持中英文，会在标题和摘要中搜索）
+            max_results: 最多返回条数
+
+        Raises:
+            CollectorError: API 请求失败
+
+        Returns:
+            论文列表，格式同 fetch_recent_papers()
+        """
+        # 构建搜索查询：在标题或摘要中搜索关键词
+        search_query = f"ti:{query} OR abs:{query}"
+
+        params = {
+            "search_query": search_query,
+            "start": 0,
+            "max_results": max_results,
+            "sortBy": "relevance",  # 按相关度排序
+            "sortOrder": "descending",
+        }
+
+        logger.info("ArXiv 关键词搜索: %s (max_results=%d)", query, max_results)
+
+        try:
+            resp = requests.get(ARXIV_API, params=params, timeout=self.timeout)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            raise CollectorError(f"ArXiv API 请求失败: {e}") from e
+
+        # 解析 XML
+        try:
+            root = ET.fromstring(resp.text)
+        except ET.ParseError as e:
+            raise CollectorError(f"ArXiv XML 解析失败: {e}") from e
+
+        entries = root.findall("atom:entry", NS)
+        if not entries:
+            logger.info("ArXiv 关键词搜索返回 0 条结果")
+            return []
+
+        logger.info("ArXiv 关键词搜索返回 %d 条结果", len(entries))
+
+        # 解析所有论文
+        papers = []
+        for entry in entries:
+            paper = _parse_entry(entry)
+            paper["score"] = _relevance_score(paper)
+            papers.append(paper)
+
+        return papers
