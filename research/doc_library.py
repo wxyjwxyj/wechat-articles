@@ -154,6 +154,21 @@ DOCS_LIBRARY = {
         "url": "https://www.gradio.app/docs",
         "tags": ["ui", "demo", "机器学习界面"],
     },
+    "mlflow": {
+        "name": "MLflow",
+        "url": "https://mlflow.org/docs/latest/index.html",
+        "tags": ["mlops", "实验跟踪", "模型管理", "机器学习"],
+    },
+    "wandb": {
+        "name": "Weights & Biases",
+        "url": "https://docs.wandb.ai/",
+        "tags": ["mlops", "实验跟踪", "可视化", "机器学习"],
+    },
+    "dvc": {
+        "name": "DVC (Data Version Control)",
+        "url": "https://dvc.org/doc",
+        "tags": ["mlops", "数据版本控制", "模型版本控制", "机器学习"],
+    },
 }
 
 
