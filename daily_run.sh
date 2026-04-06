@@ -62,6 +62,16 @@ python scripts/seed_sources.py >> "$LOG_FILE" 2>&1
 log "采集今日微信文章..."
 python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
 WX_EXIT=$?
+if [ $WX_EXIT -eq 11 ]; then
+    # 登录态过期：自动打开微信公众平台，等待登录后重试
+    log "⚠ 微信登录态过期，自动打开登录页面，60秒后重试..."
+    notify "AI日报 ⚠️" "微信登录态过期，请扫码登录，60秒后自动重试"
+    open -a "Google Chrome" "https://mp.weixin.qq.com"
+    sleep 60
+    log "重试采集微信文章..."
+    python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
+    WX_EXIT=$?
+fi
 if [ $WX_EXIT -ne 0 ]; then
     WX_REASON=$(describe_exit $WX_EXIT)
     log "⚠ 微信采集失败: $WX_REASON (exit=$WX_EXIT)"
