@@ -30,10 +30,25 @@ DOCS_LIBRARY = {
         "url": "https://python.langchain.com/docs/",
         "tags": ["llm", "大模型", "agent", "rag", "链式调用"],
     },
+    "langgraph": {
+        "name": "LangGraph",
+        "url": "https://langchain-ai.github.io/langgraph/",
+        "tags": ["agent", "多智能体", "工作流", "llm", "状态机"],
+    },
+    "autogen": {
+        "name": "AutoGen (Microsoft)",
+        "url": "https://microsoft.github.io/autogen/",
+        "tags": ["agent", "多智能体", "multi-agent", "llm", "自动化"],
+    },
+    "crewai": {
+        "name": "CrewAI",
+        "url": "https://docs.crewai.com/",
+        "tags": ["agent", "多智能体", "multi-agent", "llm", "协作"],
+    },
     "llamaindex": {
         "name": "LlamaIndex",
         "url": "https://docs.llamaindex.ai/",
-        "tags": ["llm", "rag", "检索增强", "索引", "retrieval"],
+        "tags": ["llm", "rag", "检索增强", "索引", "retrieval", "agent"],
     },
     "huggingface": {
         "name": "Hugging Face Transformers",
@@ -43,29 +58,34 @@ DOCS_LIBRARY = {
     "openai": {
         "name": "OpenAI API",
         "url": "https://platform.openai.com/docs/",
-        "tags": ["gpt", "llm", "api", "chatgpt"],
+        "tags": ["gpt", "llm", "api", "chatgpt", "agent"],
+    },
+    "openai-assistants": {
+        "name": "OpenAI Assistants API",
+        "url": "https://platform.openai.com/docs/assistants/overview",
+        "tags": ["agent", "llm", "assistants", "function calling", "openai"],
     },
     "anthropic": {
         "name": "Anthropic Claude API",
         "url": "https://docs.anthropic.com/",
-        "tags": ["claude", "llm", "api"],
+        "tags": ["claude", "llm", "api", "agent"],
     },
 
     # 强化学习
     "stable-baselines3": {
         "name": "Stable-Baselines3",
         "url": "https://stable-baselines3.readthedocs.io/",
-        "tags": ["强化学习", "rl", "reinforcement learning", "policy"],
+        "tags": ["强化学习", "rl", "reinforcement learning", "policy", "agent"],
     },
     "ray-rllib": {
         "name": "Ray RLlib",
         "url": "https://docs.ray.io/en/latest/rllib/",
-        "tags": ["强化学习", "rl", "分布式", "reinforcement learning"],
+        "tags": ["强化学习", "rl", "分布式", "reinforcement learning", "agent"],
     },
     "gymnasium": {
         "name": "Gymnasium (OpenAI Gym)",
         "url": "https://gymnasium.farama.org/",
-        "tags": ["强化学习", "rl", "环境", "environment"],
+        "tags": ["强化学习", "rl", "环境", "environment", "agent"],
     },
 
     # 计算机视觉

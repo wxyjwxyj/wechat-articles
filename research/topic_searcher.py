@@ -106,7 +106,7 @@ class TopicSearcher:
                 try:
                     # 统一格式：确保每项都有 title 和 summary
                     normalized = self._normalize_for_scoring(results[category], category)
-                    scored = scorer.score_resources(normalized)
+                    scored = scorer.score_resources(normalized, topic=topic)
                     results[category] = scored
                 except Exception as e:
                     logger.warning("%s 评分失败: %s", category, e)

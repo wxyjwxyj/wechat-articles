@@ -29,11 +29,12 @@ class ClaudeScorer:
         self.model = model
         self.min_score = min_score
 
-    def score_resources(self, resources: list[dict]) -> list[dict]:
+    def score_resources(self, resources: list[dict], topic: str = "") -> list[dict]:
         """为资源列表打分并生成点评。
 
         Args:
             resources: 资源列表，每项需包含 title 和 summary 字段
+            topic: 搜索主题，用于判断相关性（如"强化学习"、"Agent"）
 
         Raises:
             AIApiError: Claude API 调用失败
@@ -51,14 +52,18 @@ class ClaudeScorer:
             for i, r in enumerate(resources)
         )
 
+        topic_line = f"用户搜索的主题是：**{topic}**\n\n" if topic else ""
+
         prompt = f"""你是一个技术学习资源评估专家。请为以下每个资源打分（1-10分）并写一句中文点评。
 
-评分标准：
-- 9-10分：权威一手资料（顶会论文、官方文档、经典教程）
-- 7-8分：高质量学习资源（优秀开源项目、深度技术文章）
-- 5-6分：普通资源（一般质量的教程、博客）
+{topic_line}评分标准：
+- 9-10分：权威一手资料（顶会论文、官方文档、经典教程），且与主题高度相关
+- 7-8分：高质量学习资源（优秀开源项目、深度技术文章），且与主题相关
+- 5-6分：普通资源（一般质量的教程、博客），与主题有一定关联
 - 3-4分：质量较低（过时内容、浅显介绍）
 - 1-2分：不推荐（广告、无关内容）
+
+⚠️ 重要：如果资源与搜索主题"{topic}"不直接相关，无论质量多高，都必须打 1-2 分。
 
 资源列表：
 {resources_text}
