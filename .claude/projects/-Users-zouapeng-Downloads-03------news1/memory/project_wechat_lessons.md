@@ -382,3 +382,157 @@ v18: 精选 8条→6条，ArXiv 去保底，内容负担降低
 - 精选从 8 条 → **6 条**（降低读者负担）
 - 保底范围：HN + GitHub Trending 各1条（ArXiv 去掉保底，靠分数自然竞争）
 - commit: `db165ff`
+
+---
+
+## 十六、Topic Research Hub 功能规划（2026-04-06）
+
+### 背景
+
+现有系统是**定时拉取实时新闻**（今天有什么新内容），新需求是**按需检索学习资料**（这个主题有什么好资料）。
+
+### 需求确认
+
+用户提出：输入一个主题（如"强化学习"、"RAG"），找出高质量的一手学习资料。
+
+经过 6 个关键问题确认：
+1. **资料类型**：学术论文 + 官方文档 + 经典教程 + 高质量博客 + 代码仓库（全要）
+2. **使用场景**：先自己用，后期可做内容来源
+3. **输出形式**：先 HTML，后续可扩展
+4. **质量筛选**：引用量 + Star 数 + 作者权威性 + Claude 评分
+5. **输入方式**：简单 Web 界面输入框
+6. **结果数量**：Claude 打分后，质量高的都保留（≥6分）
+
+### 技术方案
+
+**数据源（4类）：**
+- **ArXiv**：按关键词搜索论文（扩展现有 ArxivCollector）
+- **GitHub Search**：按关键词搜索仓库，按 star 排序
+- **HN Search**：使用 Algolia API 搜索讨论
+- **内置文档库**：预设100个框架官方文档 URL，主题匹配后返回（方案A优先，后期可升级方案B用搜索API）
+
+**核心流程：**
+```
+用户输入主题 → Claude 拆解关键词 → 并行检索4个数据源 
+→ Claude 批量评分（1-10分）+ 写点评 → 过滤低分（<6分）
+→ 按类型分组渲染 HTML（论文区/代码区/文档区/讨论区）
+```
+
+**Web 界面：**
+- 极简搜索页：一个输入框 + 提交按钮 + 示例标签
+- 结果页：按类型分区展示，每条显示标题、来源、分值、Claude点评
+
+### 实现计划
+
+已完成详细实现计划，保存在：
+`docs/superpowers/plans/2026-04-06-topic-research-hub.md`
+
+**规模：** 2445 行，9 个任务，每个任务包含完整的测试代码、实现代码、运行命令
+
+**任务列表：**
+1. 创建 research 模块和文档库（30个框架预设）
+2. 扩展 ArXiv 支持关键词搜索（新增 `search_by_keyword()` 方法）
+3. 创建 GitHub Search 模块
+4. 创建 HN Search 模块
+5. 创建 Claude 评分器（批量打分+点评）
+6. 创建主题搜索聚合器（并行调用，ThreadPoolExecutor）
+7. 创建结果渲染器（HTML 生成）
+8. 创建 Flask 路由和搜索界面
+9. 集成测试和文档
+
+**新增文件：**
+- `research/` 模块（7个文件）
+- `api/research_routes.py`
+- `tests/research/` 测试（6个文件）
+
+**修改文件：**
+- `collectors/arxiv.py` - 新增关键词搜索方法
+- `api/routes.py` - 注册 research 路由
+
+### 与现有系统的关系
+
+- **独立功能**：不修改现有采集 pipeline，新功能完全独立
+- **复用组件**：复用 ArxivCollector、Flask app、Claude API 调用、错误处理体系
+- **数据隔离**：不写 content.db，每次搜索实时检索，结果不持久化
+
+### 下一步
+
+等用户回来后，可以选择：
+1. 自己按计划实现
+2. 让 Claude 用 `executing-plans` 或 `subagent-driven-development` skill 执行计划
+
+### 教训
+
+- 需求讨论阶段要问清楚 6W（What/Why/Who/When/Where/hoW），避免做完发现方向错了
+- 实现计划要包含完整代码（不是伪代码），每个测试步骤要有具体命令和预期输出
+- 计划写作过程中遇到工具调用问题（Write 工具一直报错），最后用 Bash heredoc 成功写入文件
+
+
+### 计划更新（2026-04-06 下午）
+
+用户提出 Task 10（Web Search）应该覆盖中文技术文章，原计划只有 Bing。
+
+**讨论结果：**
+- Google Custom Search 质量更好（100次/天）
+- Bing Search 作为降级备份（1000次/月）
+- 国内访问 Google 需要代理，但搜索质量值得
+
+**最终方案：**
+- 优先尝试 Google
+- Google 失败或未配置时降级到 Bing
+- 都未配置则跳过 Web 搜索
+
+Task 10 已更新为双引擎版本，计划从 2937 行增加到 **3099 行**。
+
+### 并行执行记录（2026-04-06 下午）
+
+为避免 token 预算爆炸（计划 3099 行，执行可能需 50-100k tokens），采用**并行后台 agent** 策略。
+
+**第一批（Task 1-5）：** 5 个 agent 并行执行，已全部完成 ✅
+
+| Task | Agent ID | 状态 | Commit | 测试结果 |
+|------|----------|------|--------|----------|
+| Task 1: 文档库 | a4d86d3caa744356a | ✅ 完成 | `99fdd21` | 5/5 通过 |
+| Task 2: ArXiv 扩展 | add4806d8021a8fcb | ✅ 完成 | `93ff374` | 2/2 通过 |
+| Task 3: GitHub Search | a795c6a9314ac232d | ✅ 完成 | `18bbd94` | 3/3 通过 |
+| Task 4: HN Search | a4b9d8279cfb7975e | ✅ 完成 | `1607e42` | 3/3 通过 |
+| Task 5: Claude 评分器 | ad8769e41e9844dda | ✅ 完成 | `abc80a2` | 3/3 通过 |
+
+**总计：** 5 个模块，16 个测试，全部通过，5 个 commit
+
+**第二批（Task 6-10）：** 全部完成 ✅
+
+| Task | 状态 | 说明 |
+|------|------|------|
+| Task 6: 主题搜索聚合器 | ✅ 完成 | `research/topic_searcher.py`，并行调用5个数据源，ThreadPoolExecutor |
+| Task 7: 结果渲染器 | ✅ 完成 | `research/result_renderer.py`，分区 HTML 展示 |
+| Task 8: Flask 路由 | ✅ 完成 | `api/research_routes.py`，搜索界面 + API 端点 |
+| Task 9: 集成测试+文档 | ✅ 完成 | `research/README.md`，模块说明+配置+使用方式 |
+| Task 10: Web Search | ✅ 完成 | `research/web_search.py`，Google 优先 + Bing 降级 |
+
+**Task 10 遗留补丁（2026-04-06，当前 session 完成）：**
+- `topic_searcher.py`：补接 WebSearcher，加 `max_articles`/`google_api_key`/`google_cx`/`bing_api_key` 参数，评分和归一化覆盖 `articles` 类型
+- `result_renderer.py`：加 `articles` 解析、stats 徽章、`_render_articles()` 函数，页面展示技术文章板块
+- `api/research_routes.py` 的 `post_research` 路由已提前写好3个 Web Search 环境变量传参，无需改动
+
+**Web Search 引擎升级（2026-04-06）：**
+
+原方案 Google→Bing 都需要 API key，实际无法零配置使用。
+升级为三级降级策略：**Google → Bing → DuckDuckGo（零配置兜底）**
+
+- DuckDuckGo 使用 `ddgs` 库（`pip install ddgs`），无需任何 key
+- 搜索质量：中文结果返回正常，`region="cn-zh"` 优先中文内容
+- `web_search.py` 新增 `_search_ddg()` 方法，`search_articles()` 改为三级降级
+- `topic_searcher.py` 的 `_search_web()` 注释从"未配置跳过"改为"失败才跳过"
+
+**Topic Research Hub 全部完成，Flask 已启动，访问 http://localhost:5000/research**
+
+**教训：**
+- 大型实现计划（3000+ 行）不要内联执行，会耗尽 token 预算
+- 并行后台 agent 可将执行时间从 20-30 分钟压缩到实际 ~4 分钟
+- 每个 agent 独立运行，失败不影响其他任务
+- agent 完成后要人工 review 接口对接是否一致，本次发现 topic_searcher 遗漏了 web_search 接入
+- 新功能设计时要考虑**零配置可用性**：依赖外部 API key 的功能必须有免费兜底方案，否则开箱即用体验差
+- DuckDuckGo (`ddgs`) 是好用的免费 Web 搜索兜底，无需注册，中文支持好，适合内部工具
+- 注意：`duckduckgo_search` 已更名为 `ddgs`，安装要用 `pip install ddgs`
+
