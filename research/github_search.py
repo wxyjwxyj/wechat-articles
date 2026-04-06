@@ -65,7 +65,7 @@ class GitHubSearcher:
                 timeout=self.timeout,
             )
             resp.raise_for_status()
-        except requests.RequestException as e:
+        except Exception as e:
             raise CollectorError(f"GitHub Search API 请求失败: {e}") from e
 
         try:
