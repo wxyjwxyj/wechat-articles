@@ -1,4 +1,4 @@
-"""Web 搜索 API 封装，支持 Google 和 Bing，用于查找中文技术文章和教程。"""
+"""Web 搜索 API 封装，支持 DuckDuckGo（无需 key）、Google 和 Bing，用于查找中文技术文章和教程。"""
 import os
 import requests
 from utils.errors import CollectorError
@@ -39,27 +39,21 @@ class WebSearcher:
     ) -> list[dict]:
         """搜索技术文章和教程。
 
-        优先使用 Google，失败则降级到 Bing。
+        优先级：Google → Bing → DuckDuckGo（无需 key，零配置）
 
         Args:
             topic: 搜索主题
             max_results: 最多返回条数
 
-        Raises:
-            CollectorError: 所有搜索引擎都失败或未配置任何 API key
-
         Returns:
             文章列表，每项包含 title, url, snippet, published_date
         """
-        if not self.google_api_key and not self.bing_api_key:
-            raise CollectorError("未配置搜索引擎 API key（GOOGLE_SEARCH_API_KEY 或 BING_SEARCH_API_KEY）")
-
         # 优先尝试 Google
         if self.google_api_key and self.google_cx:
             try:
                 results = self._search_google(topic, max_results)
                 logger.info("使用 Google Search，返回 %d 条结果", len(results))
-                return results  # 即使为空也直接返回，不降级
+                return results
             except Exception as e:
                 logger.warning("Google Search 失败: %s，尝试降级到 Bing", e)
 
@@ -70,10 +64,15 @@ class WebSearcher:
                 logger.info("使用 Bing Search，返回 %d 条结果", len(results))
                 return results
             except Exception as e:
-                logger.error("Bing Search 也失败: %s", e)
-                raise CollectorError(f"Web 搜索失败: {e}") from e
+                logger.warning("Bing Search 失败: %s，尝试降级到 DuckDuckGo", e)
 
-        raise CollectorError("所有搜索引擎都不可用")
+        # 最终降级：DuckDuckGo（无需 key）
+        try:
+            results = self._search_ddg(topic, max_results)
+            logger.info("使用 DuckDuckGo，返回 %d 条结果", len(results))
+            return results
+        except Exception as e:
+            raise CollectorError(f"所有搜索引擎都失败: {e}") from e
 
     def _search_google(self, topic: str, max_results: int) -> list[dict]:
         """使用 Google Custom Search API 搜索"""
@@ -173,6 +172,33 @@ class WebSearcher:
             reverse=True
         )
         return all_results
+
+    def _search_ddg(self, topic: str, max_results: int) -> list[dict]:
+        """使用 DuckDuckGo 搜索（无需 API key）"""
+        try:
+            from ddgs import DDGS
+        except ImportError:
+            raise CollectorError("ddgs 未安装，请运行: pip install ddgs")
+
+        query = f"{topic} 教程"
+        logger.info("DuckDuckGo 搜索: %s", query)
+
+        results = []
+        with DDGS() as ddgs:
+            for item in ddgs.text(query, region="cn-zh", max_results=max_results):
+                results.append({
+                    "title": item.get("title", ""),
+                    "url": item.get("href", ""),
+                    "snippet": item.get("body", ""),
+                    "published_date": "",
+                })
+
+        # 中文内容排前面
+        results.sort(
+            key=lambda x: self._is_chinese(x["title"] + x["snippet"]),
+            reverse=True
+        )
+        return results
 
     def _is_chinese(self, text: str) -> bool:
         """判断文本是否包含中文字符"""

@@ -147,7 +147,7 @@ class TopicSearcher:
         return docs
 
     def _search_web(self, topic: str) -> list[dict]:
-        """搜索 Web 文章（Google 优先，降级 Bing）"""
+        """搜索 Web 文章（Google 优先 → Bing 降级 → DuckDuckGo 兜底）"""
         searcher = WebSearcher(
             google_api_key=self.google_api_key,
             google_cx=self.google_cx,
@@ -156,7 +156,7 @@ class TopicSearcher:
         try:
             articles = searcher.search_articles(topic, max_results=self.max_articles)
         except Exception as e:
-            logger.warning("Web 搜索不可用（未配置 API key 或请求失败）: %s", e)
+            logger.warning("Web 搜索失败: %s", e)
             articles = []
         return articles
 

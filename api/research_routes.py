@@ -1,11 +1,24 @@
 """主题研究功能的 Flask 路由。"""
+import json
 import os
+from pathlib import Path
 from flask import request, jsonify
 from research.topic_searcher import TopicSearcher
 from research.result_renderer import render_results_html
 from utils.log import get_logger
 
 logger = get_logger(__name__)
+
+CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+
+
+def _load_config() -> dict:
+    """从 config.json 读取配置。"""
+    try:
+        with open(CONFIG_PATH) as f:
+            return json.load(f)
+    except Exception:
+        return {}
 
 
 def register_research_routes(app):
@@ -163,13 +176,17 @@ def register_research_routes(app):
 
         logger.info("收到搜索请求: %s", topic)
 
-        api_key = os.getenv("ANTHROPIC_API_KEY", "")
+        cfg = _load_config()
+        api_key = cfg.get("claude_api_key") or os.getenv("ANTHROPIC_API_KEY", "")
+        base_url = cfg.get("claude_base_url", "https://api.anthropic.com")
+
         if not api_key:
-            return jsonify({"error": "未配置 ANTHROPIC_API_KEY"}), 500
+            return jsonify({"error": "未配置 claude_api_key（config.json 或 ANTHROPIC_API_KEY）"}), 500
 
         try:
             searcher = TopicSearcher(
                 api_key=api_key,
+                base_url=base_url,
                 google_api_key=os.getenv("GOOGLE_SEARCH_API_KEY", ""),
                 google_cx=os.getenv("GOOGLE_SEARCH_CX", ""),
                 bing_api_key=os.getenv("BING_SEARCH_API_KEY", ""),
