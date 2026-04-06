@@ -6,7 +6,7 @@ def render_results_html(topic: str, results: dict) -> str:
 
     Args:
         topic: 搜索主题
-        results: 搜索结果字典（包含 papers, repositories, discussions, docs）
+        results: 搜索结果字典（包含 papers, repositories, discussions, docs, articles）
 
     Returns:
         完整的 HTML 页面字符串
@@ -15,14 +15,16 @@ def render_results_html(topic: str, results: dict) -> str:
     repos = results.get("repositories", [])
     discussions = results.get("discussions", [])
     docs = results.get("docs", [])
+    articles = results.get("articles", [])
 
-    total = len(papers) + len(repos) + len(discussions) + len(docs)
+    total = len(papers) + len(repos) + len(discussions) + len(docs) + len(articles)
 
     # 渲染各分类
     papers_html = _render_papers(papers)
     repos_html = _render_repos(repos)
     discussions_html = _render_discussions(discussions)
     docs_html = _render_docs(docs)
+    articles_html = _render_articles(articles)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -144,6 +146,7 @@ def render_results_html(topic: str, results: dict) -> str:
                 <span class="stat">💻 代码 {len(repos)}</span>
                 <span class="stat">💬 讨论 {len(discussions)}</span>
                 <span class="stat">📖 文档 {len(docs)}</span>
+                <span class="stat">🌐 文章 {len(articles)}</span>
             </div>
         </header>
 
@@ -153,6 +156,7 @@ def render_results_html(topic: str, results: dict) -> str:
         {papers_html}
         {repos_html}
         {discussions_html}
+        {articles_html}
     </div>
 </body>
 </html>"""
@@ -281,6 +285,37 @@ def _render_docs(docs: list[dict]) -> str:
     return f"""
     <div class="section">
         <h2 class="section-title">📖 官方文档 ({len(docs)})</h2>
+        {items_html}
+    </div>"""
+
+
+def _render_articles(articles: list[dict]) -> str:
+    """渲染 Web 搜索文章列表"""
+    if not articles:
+        return ""
+
+    items_html = ""
+    for article in articles:
+        title = article.get("title", "")
+        url = article.get("url", "")
+        score = article.get("score", 0)
+        comment = article.get("comment", "")
+        snippet = article.get("snippet", "")
+        published_date = article.get("published_date", "")
+
+        items_html += f"""
+        <div class="item">
+            <div class="item-title"><a href="{url}" target="_blank">{title}</a></div>
+            <div class="item-meta">
+                <span class="score">{score}分</span>
+                {f'<span>{published_date}</span>' if published_date else ''}
+            </div>
+            {f'<div class="comment">{comment}</div>' if comment else f'<div class="comment">{snippet}</div>'}
+        </div>"""
+
+    return f"""
+    <div class="section">
+        <h2 class="section-title">🌐 技术文章 ({len(articles)})</h2>
         {items_html}
     </div>"""
 

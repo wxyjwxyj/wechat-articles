@@ -4,6 +4,7 @@ from collectors.arxiv import ArxivCollector
 from research.github_search import GitHubSearcher
 from research.hn_search import HNSearcher
 from research.doc_library import search_docs
+from research.web_search import WebSearcher
 from research.claude_scorer import ClaudeScorer
 from utils.log import get_logger
 
@@ -21,15 +22,23 @@ class TopicSearcher:
         max_repos: int = 10,
         max_discussions: int = 10,
         max_docs: int = 10,
+        max_articles: int = 10,
+        google_api_key: str = "",
+        google_cx: str = "",
+        bing_api_key: str = "",
     ):
         """
         Args:
             api_key: Claude API key（用于评分）
             base_url: Claude API base URL
-            max_papers: 每个数据源最多返回条数
+            max_papers: ArXiv 论文最多返回条数
             max_repos: GitHub 最多返回条数
             max_discussions: HN 最多返回条数
             max_docs: 文档库最多返回条数
+            max_articles: Web 搜索文章最多返回条数
+            google_api_key: Google Custom Search API key（留空则读环境变量）
+            google_cx: Google Custom Search Engine ID（留空则读环境变量）
+            bing_api_key: Bing Search API key（留空则读环境变量）
         """
         self.api_key = api_key
         self.base_url = base_url
@@ -37,6 +46,10 @@ class TopicSearcher:
         self.max_repos = max_repos
         self.max_discussions = max_discussions
         self.max_docs = max_docs
+        self.max_articles = max_articles
+        self.google_api_key = google_api_key
+        self.google_cx = google_cx
+        self.bing_api_key = bing_api_key
 
     def search_topic(self, topic: str) -> dict:
         """搜索主题相关的学习资料。
@@ -51,6 +64,7 @@ class TopicSearcher:
                 "repositories": [...], # GitHub 仓库
                 "discussions": [...],  # HN 讨论
                 "docs": [...],         # 官方文档
+                "articles": [...],     # Web 搜索文章
             }
             每项资源都包含 score 和 comment 字段（Claude 评分）
         """
@@ -62,14 +76,16 @@ class TopicSearcher:
             "repositories": [],
             "discussions": [],
             "docs": [],
+            "articles": [],
         }
 
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=5) as executor:
             futures = {
                 executor.submit(self._search_arxiv, topic): "papers",
                 executor.submit(self._search_github, topic): "repositories",
                 executor.submit(self._search_hn, topic): "discussions",
                 executor.submit(self._search_docs, topic): "docs",
+                executor.submit(self._search_web, topic): "articles",
             }
 
             for future in as_completed(futures):
@@ -85,7 +101,7 @@ class TopicSearcher:
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
         scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
 
-        for category in ["papers", "repositories", "discussions"]:
+        for category in ["papers", "repositories", "discussions", "articles"]:
             if results[category]:
                 try:
                     # 统一格式：确保每项都有 title 和 summary
@@ -100,9 +116,10 @@ class TopicSearcher:
             doc["score"] = 9
             doc["comment"] = "官方文档，权威可靠"
 
-        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d",
+        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d, 文章 %d",
                     len(results["papers"]), len(results["repositories"]),
-                    len(results["discussions"]), len(results["docs"]))
+                    len(results["discussions"]), len(results["docs"]),
+                    len(results["articles"]))
 
         return results
 
@@ -129,6 +146,20 @@ class TopicSearcher:
         docs = search_docs(topic, max_results=self.max_docs)
         return docs
 
+    def _search_web(self, topic: str) -> list[dict]:
+        """搜索 Web 文章（Google 优先，降级 Bing）"""
+        searcher = WebSearcher(
+            google_api_key=self.google_api_key,
+            google_cx=self.google_cx,
+            bing_api_key=self.bing_api_key,
+        )
+        try:
+            articles = searcher.search_articles(topic, max_results=self.max_articles)
+        except Exception as e:
+            logger.warning("Web 搜索不可用（未配置 API key 或请求失败）: %s", e)
+            articles = []
+        return articles
+
     def _normalize_for_scoring(self, items: list[dict], category: str) -> list[dict]:
         """统一格式以便 Claude 评分"""
         normalized = []
@@ -150,5 +181,11 @@ class TopicSearcher:
                     **item,
                     "title": item.get("title", ""),
                     "summary": f"HN讨论，{item.get('score', 0)}分，{item.get('comments', 0)}条评论",
+                })
+            elif category == "articles":
+                normalized.append({
+                    **item,
+                    "title": item.get("title", ""),
+                    "summary": item.get("snippet", ""),
                 })
         return normalized
