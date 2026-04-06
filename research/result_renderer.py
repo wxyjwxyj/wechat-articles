@@ -16,8 +16,9 @@ def render_results_html(topic: str, results: dict) -> str:
     discussions = results.get("discussions", [])
     docs = results.get("docs", [])
     articles = results.get("articles", [])
+    wechat = results.get("wechat", [])
 
-    total = len(papers) + len(repos) + len(discussions) + len(docs) + len(articles)
+    total = len(papers) + len(repos) + len(discussions) + len(docs) + len(articles) + len(wechat)
 
     # 渲染各分类
     papers_html = _render_papers(papers)
@@ -25,6 +26,7 @@ def render_results_html(topic: str, results: dict) -> str:
     discussions_html = _render_discussions(discussions)
     docs_html = _render_docs(docs)
     articles_html = _render_articles(articles)
+    wechat_html = _render_wechat(wechat)
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -147,6 +149,7 @@ def render_results_html(topic: str, results: dict) -> str:
                 <span class="stat">💬 讨论 {len(discussions)}</span>
                 <span class="stat">📖 文档 {len(docs)}</span>
                 <span class="stat">🌐 文章 {len(articles)}</span>
+                <span class="stat">📱 公众号 {len(wechat)}</span>
             </div>
         </header>
 
@@ -157,6 +160,7 @@ def render_results_html(topic: str, results: dict) -> str:
         {repos_html}
         {discussions_html}
         {articles_html}
+        {wechat_html}
     </div>
 </body>
 </html>"""
@@ -316,6 +320,39 @@ def _render_articles(articles: list[dict]) -> str:
     return f"""
     <div class="section">
         <h2 class="section-title">🌐 技术文章 ({len(articles)})</h2>
+        {items_html}
+    </div>"""
+
+
+def _render_wechat(articles: list[dict]) -> str:
+    """渲染公众号文章列表"""
+    if not articles:
+        return ""
+
+    items_html = ""
+    for article in articles:
+        title = article.get("title", "")
+        url = article.get("url", "")
+        score = article.get("score", 0)
+        comment = article.get("comment", "")
+        author = article.get("author", "")
+        published_at = article.get("published_at", "")
+        summary = article.get("summary", "")
+
+        items_html += f"""
+        <div class="item">
+            <div class="item-title"><a href="{url}" target="_blank">{title}</a></div>
+            <div class="item-meta">
+                <span class="score">{score}分</span>
+                {f'<span>📱 {author}</span>' if author else ''}
+                {f'<span>{published_at}</span>' if published_at else ''}
+            </div>
+            {f'<div class="comment">{comment}</div>' if comment else f'<div class="comment">{summary}</div>'}
+        </div>"""
+
+    return f"""
+    <div class="section">
+        <h2 class="section-title">📱 公众号 ({len(articles)})</h2>
         {items_html}
     </div>"""
 

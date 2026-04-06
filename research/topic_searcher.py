@@ -5,6 +5,7 @@ from research.github_search import GitHubSearcher
 from research.hn_search import HNSearcher
 from research.doc_library import search_docs
 from research.web_search import WebSearcher
+from research.wechat_search import WechatSearcher
 from research.claude_scorer import ClaudeScorer
 from utils.log import get_logger
 
@@ -65,6 +66,7 @@ class TopicSearcher:
                 "discussions": [...],  # HN 讨论
                 "docs": [...],         # 官方文档
                 "articles": [...],     # Web 搜索文章
+                "wechat": [...],       # 本地公众号文章
             }
             每项资源都包含 score 和 comment 字段（Claude 评分）
         """
@@ -77,15 +79,17 @@ class TopicSearcher:
             "discussions": [],
             "docs": [],
             "articles": [],
+            "wechat": [],
         }
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=6) as executor:
             futures = {
                 executor.submit(self._search_arxiv, topic): "papers",
                 executor.submit(self._search_github, topic): "repositories",
                 executor.submit(self._search_hn, topic): "discussions",
                 executor.submit(self._search_docs, topic): "docs",
                 executor.submit(self._search_web, topic): "articles",
+                executor.submit(self._search_wechat, topic): "wechat",
             }
 
             for future in as_completed(futures):
@@ -101,7 +105,7 @@ class TopicSearcher:
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
         scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
 
-        for category in ["papers", "repositories", "discussions", "articles"]:
+        for category in ["papers", "repositories", "discussions", "articles", "wechat"]:
             if results[category]:
                 try:
                     # 统一格式：确保每项都有 title 和 summary
@@ -116,10 +120,10 @@ class TopicSearcher:
             doc["score"] = 9
             doc["comment"] = "官方文档，权威可靠"
 
-        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d, 文章 %d",
+        logger.info("搜索完成：论文 %d, 仓库 %d, 讨论 %d, 文档 %d, 文章 %d, 公众号 %d",
                     len(results["papers"]), len(results["repositories"]),
                     len(results["discussions"]), len(results["docs"]),
-                    len(results["articles"]))
+                    len(results["articles"]), len(results["wechat"]))
 
         return results
 
@@ -160,6 +164,11 @@ class TopicSearcher:
             articles = []
         return articles
 
+    def _search_wechat(self, topic: str) -> list[dict]:
+        """搜索本地公众号文章（content.db）"""
+        searcher = WechatSearcher()
+        return searcher.search_articles(topic, max_results=self.max_articles)
+
     def _normalize_for_scoring(self, items: list[dict], category: str) -> list[dict]:
         """统一格式以便 Claude 评分"""
         normalized = []
@@ -187,5 +196,11 @@ class TopicSearcher:
                     **item,
                     "title": item.get("title", ""),
                     "summary": item.get("snippet", ""),
+                })
+            elif category == "wechat":
+                normalized.append({
+                    **item,
+                    "title": item.get("title", ""),
+                    "summary": item.get("summary", ""),
                 })
         return normalized
