@@ -39,11 +39,17 @@ if ! curl -s "$CDP_PROXY/health" > /dev/null 2>&1; then
     exit 10
 fi
 
-# 2. 检查微信公众平台标签页
+# 2. 检查微信公众平台标签页，没有则自动打开
 if ! curl -s "$CDP_PROXY/targets" | grep -q "mp.weixin.qq.com"; then
-    log "❌ 未找到微信公众平台标签页，跳过今日采集"
-    notify "AI日报 ❌" "未找到微信公众平台标签页，请检查浏览器"
-    exit 11
+    log "⚠ 未找到微信标签页，自动打开..."
+    curl -s "$CDP_PROXY/new?url=https://mp.weixin.qq.com" > /dev/null 2>&1
+    sleep 5
+    # 再检查一次
+    if ! curl -s "$CDP_PROXY/targets" | grep -q "mp.weixin.qq.com"; then
+        log "❌ 微信标签页打开失败，跳过今日采集"
+        notify "AI日报 ❌" "微信标签页打开失败，请检查 Chrome"
+        exit 11
+    fi
 fi
 
 log "✓ CDP Proxy 正常，微信标签页已打开"
