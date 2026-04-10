@@ -82,6 +82,22 @@
 - exit code 78 = 脚本未运行（非业务错误，检查 launchd 配置）
 - **不补跑**：机器睡眠期间错过的任务直接跳过
 
+### ⚠️ 关键教训：launchd 沙箱权限问题
+- **问题**：launchd 启动的任务运行在沙箱环境中，没有用户目录（如 `~/Downloads/`）的完整访问权限，导致脚本无法读写项目文件而失败
+- **解决方案**：在 `~/` 下创建包装脚本 `news1_daily.sh`，plist 指向包装脚本而非直接调用项目目录中的 `daily_run.sh`
+- **包装脚本要点**：
+  - 显式 `export HOME=/Users/zouapeng`（launchd 不继承 shell 环境变量）
+  - 手动设置 PATH（含 miniconda3）、LANG、代理等环境变量
+  - WorkingDirectory 设为 `/Users/zouapeng`（home 目录，非项目深层路径）
+  - 日志重定向到 `~/news1_launchd.log` 方便排查
+- **教训总结**：launchd 不等同于终端登录 shell，必须假设它什么环境变量都没有、什么目录权限都不一定有，一切显式声明
+
+### ⚠️ 关键教训：未提交的改动会阻塞 GitHub Pages 推送
+- **问题**：`daily_run.sh` 有未 commit 的修改 → 步骤13 `git checkout main` 失败（Git 拒绝切换分支以保护未提交的改动）→ 整个 GitHub Pages 推送跳过，但脚本仍报 `✅ 完成`
+- **根因**：2026-04-09 发现，`daily_run.sh` 被修改（自动打开微信标签页功能）但未提交，导致连续多天推送失败
+- **解决**：确保 dev 分支上没有未提交的改动再跑 daily_run.sh；或在步骤13前加 `git stash / git stash pop` 保护
+- **教训总结**：日志显示"推送到 GitHub"不代表推送成功，需要检查 main 分支是否真的有新 commit
+
 ### 教训：脚本要幂等
 - 同一天多次运行不应产生重复数据
 - 采集脚本用日期过滤 + 数据库去重保证幂等性
