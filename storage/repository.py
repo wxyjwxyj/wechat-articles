@@ -186,12 +186,15 @@ class BundleRepository:
 
     def replace_bundle_items(self, bundle_id: int, item_ids: list[int]) -> None:
         """替换 bundle 关联的 item 列表（先删后插）。"""
+        # 保序去重，防止重复 item_id 触发唯一约束
+        seen = set()
+        unique_ids = [x for x in item_ids if not (x in seen or seen.add(x))]
         with closing(get_connection(self.db_path)) as conn:
             with conn:
                 conn.execute("delete from bundle_items where bundle_id = ?", (bundle_id,))
                 conn.executemany(
                     "insert into bundle_items(bundle_id, item_id, sort_order) values (?, ?, ?)",
-                    [(bundle_id, item_id, i) for i, item_id in enumerate(item_ids)],
+                    [(bundle_id, item_id, i) for i, item_id in enumerate(unique_ids)],
                 )
 
     def replace_bundle_topics(self, bundle_id: int, topic_ids: list[int]) -> None:
