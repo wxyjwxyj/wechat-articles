@@ -101,16 +101,11 @@ def test_search_articles_returns_bing_results():
 
 
 def test_search_articles_handles_no_api_key():
-    """未配置 API key 应抛出异常"""
-    from utils.errors import CollectorError
-
+    """未配置 API key 时降级到 DuckDuckGo，不抛异常"""
     searcher = WebSearcher()
-
-    try:
-        searcher.search_articles("test")
-        assert False, "应该抛出异常"
-    except CollectorError as e:
-        assert "API key" in str(e)
+    results = searcher.search_articles("test")
+    # DuckDuckGo 作为无 key fallback，应返回列表
+    assert isinstance(results, list)
 
 
 def test_search_articles_prefers_chinese_content():

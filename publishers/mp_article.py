@@ -147,7 +147,7 @@ def _generate_commentary(
 {{"comments": ["第1条点评", "第2条点评", ...]}}"""
 
     # 模型优先级：Haiku（快且便宜）→ Sonnet（兜底）
-    models = ["claude-haiku-4-6", "claude-opus-4-6"]
+    models = ["claude-haiku-4-5-20251001", "claude-opus-4-6"]
 
     for model in models:
         try:

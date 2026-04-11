@@ -4,7 +4,10 @@ import feedparser
 import pytest
 
 # 模拟一个 feedparser entry 对象
-def _make_entry(title, url, summary, published="2026-04-05T09:00:00+00:00"):
+def _make_entry(title, url, summary, published=None):
+    from datetime import datetime, timezone
+    if published is None:
+        published = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
     entry = MagicMock()
     entry.title = title
     entry.link = url
@@ -12,7 +15,8 @@ def _make_entry(title, url, summary, published="2026-04-05T09:00:00+00:00"):
     entry.get.side_effect = lambda k, d="": {"published": published}.get(k, d)
     # feedparser 把时间解析为 struct_time
     import time
-    entry.published_parsed = time.strptime("2026-04-05 09:00:00", "%Y-%m-%d %H:%M:%S")
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    entry.published_parsed = time.strptime(now_str, "%Y-%m-%d %H:%M:%S")
     entry.tags = []
     return entry
 
