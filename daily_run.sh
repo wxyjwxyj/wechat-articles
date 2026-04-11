@@ -67,6 +67,33 @@ fi
 log "初始化 sources..."
 python scripts/seed_sources.py >> "$LOG_FILE" 2>&1
 
+# 4.5 检查 Claude API 可用性（不可用时提前通知，build_bundle 会降级为关键词方案）
+CLAUDE_OK=$(python -c "
+from utils.config import get_claude_config
+import sys
+try:
+    import anthropic
+except ImportError:
+    print('no_sdk'); sys.exit()
+key, base_url = get_claude_config()
+if not key:
+    print('no_key'); sys.exit()
+try:
+    client = anthropic.Anthropic(api_key=key, base_url=base_url)
+    # models.list 不计费，仅验证认证是否有效
+    client.models.list()
+    print('ok')
+except Exception as e:
+    print(f'fail:{str(e)[:80]}')
+" 2>>"$LOG_FILE")
+if [ "$CLAUDE_OK" = "ok" ]; then
+    log "✓ Claude API 可用"
+else
+    log "⚠ Claude API 不可用（$CLAUDE_OK），build_bundle 将降级为关键词方案"
+    CLAUDE_MSG=$(echo "$CLAUDE_OK" | head -c 80 | tr '"' "'")
+    notify "AI日报 ⚠️" "Claude API 不可用：$CLAUDE_MSG"
+fi
+
 # 5. 采集今日微信文章
 log "采集今日微信文章..."
 python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
@@ -88,44 +115,38 @@ if [ $WX_EXIT -ne 0 ]; then
     # CDP/登录问题不影响 HN 采集，但需要记录
 fi
 
-# 5.5 采集 Hacker News AI 文章（不依赖 CDP，独立运行）
-log "采集 Hacker News AI 文章..."
-python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1
-HN_EXIT=$?
+# 5.5-5.8 并行采集（HN / ArXiv / GitHub / RSS 互相独立）
+log "并行采集 HN / ArXiv / GitHub Trending / RSS..."
+python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
+PID_HN=$!
+python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
+PID_ARXIV=$!
+python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
+PID_GH=$!
+python fetch_rss_today.py >> "$LOG_FILE" 2>&1 &
+PID_RSS=$!
+
+wait $PID_HN;    HN_EXIT=$?
+wait $PID_ARXIV; ARXIV_EXIT=$?
+wait $PID_GH;    GH_EXIT=$?
+wait $PID_RSS;   RSS_EXIT=$?
+log "并行采集完成 HN=$HN_EXIT ArXiv=$ARXIV_EXIT GH=$GH_EXIT RSS=$RSS_EXIT"
+
 if [ $HN_EXIT -ne 0 ]; then
-    HN_REASON=$(describe_exit $HN_EXIT)
-    log "⚠ HN 采集失败: $HN_REASON (exit=$HN_EXIT)"
-    ERRORS="${ERRORS}HN:${HN_REASON} "
+    log "⚠ HN 采集失败: $(describe_exit $HN_EXIT) (exit=$HN_EXIT)"
+    ERRORS="${ERRORS}HN:$(describe_exit $HN_EXIT) "
 fi
-
-# 5.6 采集 ArXiv AI 论文（不依赖 CDP，独立运行）
-log "采集 ArXiv AI 论文..."
-python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1
-ARXIV_EXIT=$?
 if [ $ARXIV_EXIT -ne 0 ]; then
-    ARXIV_REASON=$(describe_exit $ARXIV_EXIT)
-    log "⚠ ArXiv 采集失败: $ARXIV_REASON (exit=$ARXIV_EXIT)"
-    ERRORS="${ERRORS}ArXiv:${ARXIV_REASON} "
+    log "⚠ ArXiv 采集失败: $(describe_exit $ARXIV_EXIT) (exit=$ARXIV_EXIT)"
+    ERRORS="${ERRORS}ArXiv:$(describe_exit $ARXIV_EXIT) "
 fi
-
-# 5.7 采集 GitHub Trending AI 仓库（不依赖 CDP，独立运行）
-log "采集 GitHub Trending AI 仓库..."
-python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1
-GH_EXIT=$?
 if [ $GH_EXIT -ne 0 ]; then
-    GH_REASON=$(describe_exit $GH_EXIT)
-    log "⚠ GitHub Trending 采集失败: $GH_REASON (exit=$GH_EXIT)"
-    ERRORS="${ERRORS}GitHub:${GH_REASON} "
+    log "⚠ GitHub Trending 采集失败: $(describe_exit $GH_EXIT) (exit=$GH_EXIT)"
+    ERRORS="${ERRORS}GitHub:$(describe_exit $GH_EXIT) "
 fi
-
-# 5.8 采集 RSS 文章（不依赖 CDP，独立运行）
-log "采集 RSS 文章..."
-python fetch_rss_today.py >> "$LOG_FILE" 2>&1
-RSS_EXIT=$?
 if [ $RSS_EXIT -ne 0 ]; then
-    RSS_REASON=$(describe_exit $RSS_EXIT)
-    log "⚠ RSS 采集失败: $RSS_REASON (exit=$RSS_EXIT)"
-    ERRORS="${ERRORS}RSS:${RSS_REASON} "
+    log "⚠ RSS 采集失败: $(describe_exit $RSS_EXIT) (exit=$RSS_EXIT)"
+    ERRORS="${ERRORS}RSS:$(describe_exit $RSS_EXIT) "
 fi
 
 # 6. 生成 bundle
