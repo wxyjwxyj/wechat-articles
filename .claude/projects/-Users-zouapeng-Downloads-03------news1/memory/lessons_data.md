@@ -43,7 +43,11 @@
 | JustOneAPI | 💰 待评估 | 价格未知，需注册后查看 |
 
 **待尝试的技术点（从 WeChat-Article-Harvester 发现）**：
-- [ ] **m2w 工具**（`wechatmp2markdown`）：无需 Cookie 渲染微信文章正文，如需采集正文可用
+- [x] **m2w 工具**（`wechatmp2markdown`）：无需 Cookie 渲染微信文章正文，M 系列 Mac 通过 Rosetta 可用
+  - 下载：`https://github.com/fengxxc/wechatmp2markdown/releases/download/v1.1.11/wechatmp2markdown-v1.1.11_osx_amd64`
+  - 用法：`./m2w <url> <output_dir> --image url`，输出 Markdown，按文章标题建子目录
+  - 验证：2026-04-12 测试通过，无需登录态，正文完整
+  - 当前用途：暂不集成（日报只用摘要不用正文），**将来如需正文内容供 Claude 分析时启用**
 - [ ] **appmsg_token 获取**：从 `mp.weixin.qq.com/cgi-bin/appmsg` 页面 HTML 正则提取，可调用 `/mp/getappmsgext` 获取阅读量
 - [ ] **文章删除检测**：检测 ghost/dead/内容违规关键词判断文章是否失效
 
