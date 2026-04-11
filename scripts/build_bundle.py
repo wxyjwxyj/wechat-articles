@@ -120,6 +120,12 @@ def main() -> None:
     # 打标签（Claude 优先，降级到关键词匹配）
     _tag_items(items, api_key, base_url)
 
+    # 多来源加成：每多一家报道 +0.5，上限 10（无论打标签是否用 Claude）
+    for item in items:
+        source_count = len(item.get("sources_list", []))
+        if source_count > 1 and item.get("score") is not None:
+            item["score"] = min(10, item["score"] + (source_count - 1) * 0.5)
+
     # 翻译海外源标题/摘要
     _translate_overseas_items(items, api_key, base_url)
 
@@ -149,6 +155,7 @@ def main() -> None:
             "sources_list": item.get("sources_list", [{
                 "source_name": item.get("source_name", ""),
                 "url": item.get("url", ""),
+                "source_type": item.get("source_type", ""),
             }]),
             "tags": item.get("tags", []),
             "score": item.get("score", 5),

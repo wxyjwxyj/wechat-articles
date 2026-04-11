@@ -95,10 +95,10 @@ def test_collector_filters_and_sorts():
             resp.json.return_value = story
         return resp
 
-    with patch("collectors.hackernews._session") as mock_session:
-        mock_session.get.side_effect = mock_get
-        collector = HackerNewsCollector(min_score=20, max_stories=10, scan_limit=10)
-        results = collector.fetch_top_ai_stories()
+    collector = HackerNewsCollector(min_score=20, max_stories=10, scan_limit=10)
+    collector._session = MagicMock()
+    collector._session.get.side_effect = mock_get
+    results = collector.fetch_top_ai_stories()
 
     # 应只返回 AI 相关文章（排除 PostgreSQL）
     titles = [r["title"] for r in results]

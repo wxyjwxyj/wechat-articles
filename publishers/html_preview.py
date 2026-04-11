@@ -107,8 +107,10 @@ def render_bundle_html(bundle: dict) -> str:
     for item in items_flat:
         for s in item.get("sources_list", []):
             name = s.get("source_name", "")
+            # 优先用 sources_list 里自带的 source_type，没有则用主条目的
+            stype = s.get("source_type") or item.get("source_type", "")
             if name and name not in name_to_type:
-                name_to_type[name] = item.get("source_type", "")
+                name_to_type[name] = stype
     for item in items_flat:
         for s in item.get("sources_list", [{"source_name": item.get("source_name", "")}]):
             name = s.get("source_name", "")

@@ -77,6 +77,7 @@ def _merge_group(group: list[dict]) -> dict:
             sources_list.append({
                 "source_name": name,
                 "url": item.get("url", ""),
+                "source_type": item.get("source_type", ""),
             })
 
     merged["sources_list"] = sources_list
@@ -134,6 +135,7 @@ def _keyword_dedupe(items: list[dict], sim_threshold: float = 0.4) -> list[dict]
             item.setdefault("sources_list", [{
                 "source_name": item.get("source_name", item.get("author", "")),
                 "url": item.get("url", ""),
+                "source_type": item.get("source_type", ""),
             }])
             result.append(item)
         else:
@@ -200,6 +202,9 @@ def _claude_dedupe(
     try:
         start = raw.find("{")
         end = raw.rfind("}") + 1
+        if start == -1 or end == 0:
+            logger.warning("Claude 去重响应不含 JSON 对象，降级到关键词方案")
+            return None
         data = json.loads(raw[start:end])
         groups = data.get("groups", [])
         # 验证格式：每组是下标列表，下标在合法范围内
@@ -252,6 +257,7 @@ def dedupe_items(
             item.setdefault("sources_list", [{
                 "source_name": item.get("source_name", ""),
                 "url": item.get("url", ""),
+                "source_type": item.get("source_type", ""),
             }])
         return exact_deduped
 
@@ -278,6 +284,7 @@ def dedupe_items(
             item.setdefault("sources_list", [{
                 "source_name": item.get("source_name", ""),
                 "url": item.get("url", ""),
+                "source_type": item.get("source_type", ""),
             }])
             result.append(item)
         else:

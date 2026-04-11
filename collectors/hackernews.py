@@ -4,6 +4,7 @@
 筛选逻辑：标题匹配 AI 关键词 + score 阈值过滤。
 """
 import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from utils.errors import CollectorError
@@ -13,8 +14,6 @@ from utils.log import get_logger
 logger = get_logger(__name__)
 
 HN_API = "https://hacker-news.firebaseio.com/v0"
-
-_session = retry_session()
 
 # AI 相关关键词（不区分大小写匹配）
 AI_KEYWORDS = [
@@ -47,10 +46,10 @@ def _is_ai_related(title: str) -> bool:
     return any(kw in title_lower for kw in AI_KEYWORDS)
 
 
-def _fetch_story(story_id: int, timeout: int = 10) -> dict | None:
+def _fetch_story(story_id: int, session, timeout: int = 10) -> dict | None:
     """获取单条 HN story 详情。单条失败只记日志，不中断整体流程。"""
     try:
-        resp = _session.get(
+        resp = session.get(
             f"{HN_API}/item/{story_id}.json",
             timeout=timeout,
         )
@@ -82,6 +81,7 @@ class HackerNewsCollector:
         self.max_stories = max_stories
         self.scan_limit = scan_limit
         self.timeout = timeout
+        self._session = retry_session()
 
     def fetch_top_ai_stories(self) -> list[dict]:
         """获取 HN Top Stories 中与 AI 相关的文章。
@@ -94,7 +94,7 @@ class HackerNewsCollector:
         """
         # 获取 Top Stories ID 列表
         try:
-            resp = _session.get(
+            resp = self._session.get(
                 f"{HN_API}/topstories.json",
                 timeout=self.timeout,
             )
@@ -103,43 +103,33 @@ class HackerNewsCollector:
         except requests.RequestException as e:
             raise CollectorError(f"获取 HN Top Stories 失败: {e}") from e
 
-        # 逐条获取并筛选
+        # 并发获取所有 story 详情
         ai_stories = []
-        for story_id in story_ids:
-            story = _fetch_story(story_id, self.timeout)
-            if not story or story.get("type") != "story":
-                continue
+        with ThreadPoolExecutor(max_workers=min(len(story_ids), 20)) as executor:
+            futures = {executor.submit(_fetch_story, sid, self._session, self.timeout): sid for sid in story_ids}
+            for future in as_completed(futures):
+                story = future.result()
+                if not story or story.get("type") != "story":
+                    continue
+                title = story.get("title", "")
+                score = story.get("score", 0)
+                if not _is_ai_related(title) or score < self.min_score:
+                    continue
+                ts = story.get("time", 0)
+                pub_time = datetime.fromtimestamp(ts, tz=timezone.utc)
+                story_id = story["id"]
+                hn_url = f"https://news.ycombinator.com/item?id={story_id}"
+                ai_stories.append({
+                    "id": story_id,
+                    "title": title,
+                    "url": story.get("url", hn_url),
+                    "score": score,
+                    "comments": story.get("descendants", 0),
+                    "time": pub_time.isoformat(),
+                    "hn_url": hn_url,
+                    "by": story.get("by", ""),
+                })
 
-            title = story.get("title", "")
-            score = story.get("score", 0)
-
-            # 筛选：AI 相关 + score 达标
-            if not _is_ai_related(title):
-                continue
-            if score < self.min_score:
-                continue
-
-            # 发布时间
-            ts = story.get("time", 0)
-            pub_time = datetime.fromtimestamp(ts, tz=timezone.utc)
-
-            hn_url = f"https://news.ycombinator.com/item?id={story_id}"
-            url = story.get("url", hn_url)  # 无外链时用 HN 讨论页
-
-            ai_stories.append({
-                "id": story_id,
-                "title": title,
-                "url": url,
-                "score": score,
-                "comments": story.get("descendants", 0),
-                "time": pub_time.isoformat(),
-                "hn_url": hn_url,
-                "by": story.get("by", ""),
-            })
-
-            if len(ai_stories) >= self.max_stories:
-                break
-
-        # 按 score 降序排列
+        # 按 score 降序，取前 max_stories 条
         ai_stories.sort(key=lambda x: x["score"], reverse=True)
-        return ai_stories
+        return ai_stories[:self.max_stories]
