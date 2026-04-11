@@ -85,7 +85,7 @@ class ItemRepository:
 
     def upsert_item(self, payload: ItemPayload) -> None:
         """
-        插入或更新条目。如果 url 已存在则更新所有字段。
+        插入或更新条目。如果 content_hash 已存在则更新可变字段（url 允许更新以修正采集错误）。
         """
         now = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with closing(get_connection(self.db_path)) as conn:
@@ -99,8 +99,9 @@ class ItemRepository:
                         created_at, updated_at
                     )
                     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    on conflict(url) do update set
+                    on conflict(content_hash) do update set
                       title=excluded.title,
+                      url=excluded.url,
                       author=excluded.author,
                       published_at=excluded.published_at,
                       raw_content=excluded.raw_content,
@@ -108,7 +109,6 @@ class ItemRepository:
                       cover=excluded.cover,
                       tags=excluded.tags,
                       language=excluded.language,
-                      content_hash=excluded.content_hash,
                       status=excluded.status,
                       updated_at=excluded.updated_at
                     """,
@@ -132,15 +132,15 @@ class ItemRepository:
                 )
 
     def list_items_by_date(self, date_str: str) -> list[dict]:
-        """返回指定日期的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。"""
+        """返回指定日期采集或发布的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。"""
         start = f"{date_str}T00:00:00"
         end = f"{date_str}T23:59:59"
         with closing(get_connection(self.db_path)) as conn:
             rows = [
                 dict(row)
                 for row in conn.execute(
-                    "select * from items where published_at between ? and ? order by published_at desc",
-                    (start, end),
+                    "select * from items where (created_at between ? and ?) or (published_at between ? and ?) order by published_at desc",
+                    (start, end, start, end),
                 ).fetchall()
             ]
         return rows
