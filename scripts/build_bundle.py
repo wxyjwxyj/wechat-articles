@@ -25,9 +25,14 @@ DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
 
 
-def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) -> None:
-    """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh。"""
-    targets = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
+def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, item_repo) -> None:
+    """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh 并回写 DB。"""
+    targets = [
+        i for i in items
+        if i.get("source_type") != "wechat"
+        and i.get("language", "en") != "zh"
+        and not i.get("title_zh")  # 已有翻译则跳过
+    ]
     if not targets or not api_key:
         return
     client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
@@ -49,8 +54,13 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) ->
                 if start == -1:
                     raise ValueError("无 JSON 对象")
                 r = json.loads(raw[start:end])
-                item["title_zh"] = r.get("title_zh", "")
+                item["title_zh"] = r.get("title_zh", "") or item["title"]  # 空时兜底原标题，防止重复翻译
                 item["summary_zh"] = r.get("summary_zh", "")
+                # 回写 DB（有 id 的条目才能回写）
+                if item.get("id"):
+                    item_repo.update_item_translations(item["id"], item["title_zh"], item["summary_zh"])
+                else:
+                    logger.warning("item 缺少 id，跳过回写: %s", item["title"][:30])
                 return True
             except anthropic.RateLimitError:
                 if attempt < 2:
@@ -113,8 +123,6 @@ def main() -> None:
 
     # 读取 Claude 配置（去重和打标签共用）
     api_key, base_url = get_claude_config()
-
-    # 去重（Claude 优先，降级到关键词匹配）
     items = dedupe_items(raw_items, api_key=api_key, base_url=base_url)
 
     # 打标签（Claude 优先，降级到关键词匹配）
@@ -126,8 +134,8 @@ def main() -> None:
         if source_count > 1 and item.get("score") is not None:
             item["score"] = min(10, item["score"] + (source_count - 1) * 0.5)
 
-    # 翻译海外源标题/摘要
-    _translate_overseas_items(items, api_key, base_url)
+    # 翻译海外源标题/摘要（已有翻译的跳过，翻译结果回写 DB）
+    _translate_overseas_items(items, api_key, base_url, item_repo)
 
     # 生成 bundle
     bundle = build_daily_bundle(today, items)

@@ -25,6 +25,8 @@ create table if not exists items (
   language text not null default 'zh',
   content_hash text not null unique,
   status text not null default 'raw',
+  title_zh text not null default '',
+  summary_zh text not null default '',
   created_at text not null,
   updated_at text not null,
   foreign key(source_id) references sources(id)

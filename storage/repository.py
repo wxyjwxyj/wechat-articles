@@ -30,6 +30,8 @@ class ItemPayload(TypedDict):
     language: str
     content_hash: str
     status: str
+    title_zh: Optional[str]
+    summary_zh: Optional[str]
 
 
 class SourceRepository:
@@ -129,6 +131,16 @@ class ItemRepository:
                         now,
                         now,
                     ),
+                )
+
+    def update_item_translations(self, item_id: int, title_zh: str, summary_zh: str) -> None:
+        """回写翻译结果到数据库。"""
+        now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute(
+                    "update items set title_zh=?, summary_zh=?, updated_at=? where id=?",
+                    (title_zh, summary_zh, now, item_id),
                 )
 
     def list_items_by_date(self, date_str: str) -> list[dict]:
