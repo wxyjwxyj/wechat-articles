@@ -18,6 +18,14 @@ v22: 系统安全与可靠性加固 + code review 体系
 
 ## 架构决策
 
+### 可用模型：只有 claude-opus-4-6（2026-04-11）
+
+**背景：** 本机 API 环境（CodeWhisperer 代理）不支持 haiku 模型，`claude-haiku-4-5` 和 `claude-haiku-4-5-20251001` 均返回 `INVALID_MODEL_ID`。
+
+**决策：** 所有 Claude API 调用统一用 `claude-opus-4-6`，不做 haiku fallback。
+
+**不要：** 在代码里加 haiku 作为首选或 fallback，会直接失败。
+
 ### 密钥管理：环境变量优先，config.json 降级（2026-04-11）
 
 **背景：** claude_api_key 明文存在 config.json，虽然 .gitignore 排除了但文件系统可读。
@@ -68,6 +76,7 @@ v22: 系统安全与可靠性加固 + code review 体系
 | 2026-04-10 | v19-v21 | bundle_items 保序去重修复（UNIQUE约束），微信标签页未打开时自动创建 |
 | 2026-04-11 | v22 | 系统安全与可靠性加固（密钥→.env/SQLite WAL/retry session/Claude 429重试/DB索引/封面图兜底） |
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
+| 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
 
 ---
 
