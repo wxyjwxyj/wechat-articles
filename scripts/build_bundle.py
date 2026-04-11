@@ -2,6 +2,7 @@
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
 
@@ -25,13 +26,13 @@ OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
 
 
 def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) -> None:
-    """为非 wechat 条目逐条翻译 title/summary，写入 title_zh/summary_zh。"""
+    """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh。"""
     targets = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
     if not targets or not api_key:
         return
     client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-    success = 0
-    for item in targets:
+
+    def _translate_one(item: dict) -> bool:
         prompt = (
             f'将以下标题和摘要翻译成中文，用 JSON 返回，格式：{{"title_zh": "...", "summary_zh": "..."}}，'
             f'引号用「」代替，不要用双引号。\n'
@@ -50,8 +51,7 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) ->
                 r = json.loads(raw[start:end])
                 item["title_zh"] = r.get("title_zh", "")
                 item["summary_zh"] = r.get("summary_zh", "")
-                success += 1
-                break
+                return True
             except anthropic.RateLimitError:
                 if attempt < 2:
                     time.sleep(2 ** (attempt + 1))
@@ -60,6 +60,14 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) ->
             except Exception as e:
                 logger.warning("翻译失败（%s）: %s", item["title"][:30], e)
                 break
+        return False
+
+    success = 0
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {executor.submit(_translate_one, item): item for item in targets}
+        for future in as_completed(futures):
+            if future.result():
+                success += 1
     logger.info("翻译完成（%d/%d 条）", success, len(targets))
 
 
