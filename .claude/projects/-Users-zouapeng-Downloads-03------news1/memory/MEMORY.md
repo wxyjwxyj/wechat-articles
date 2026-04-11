@@ -20,6 +20,7 @@ v25: 系统高频问题专项修复
 v26: 翻译结果持久化到 DB
      items 表加 title_zh/summary_zh / 重跑 build_bundle 跳过已翻译条目
      翻译后回写 DB，build_bundle 从 2 分钟→秒级
+     build_bundle 支持 --date 参数 / 日志中文括号乱码修复
 ```
 
 ---
