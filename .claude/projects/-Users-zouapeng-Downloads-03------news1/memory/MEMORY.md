@@ -77,6 +77,7 @@ v22: 系统安全与可靠性加固 + code review 体系
 | 2026-04-11 | v22 | 系统安全与可靠性加固（密钥→.env/SQLite WAL/retry session/Claude 429重试/DB索引/封面图兜底） |
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
+| 2026-04-11 | v24 | HN采集串行→20并发（1-2分钟→8秒）、RSS并发、多来源分数加成、daily_run日期字段修复、plist改为11:30+17:30双次 |
 
 ---
 
