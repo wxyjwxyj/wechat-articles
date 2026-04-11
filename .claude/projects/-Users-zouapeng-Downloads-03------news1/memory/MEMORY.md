@@ -1,127 +1,93 @@
-# 项目状态快照
+# 项目经验沉淀
 
-> 每次 session 结束后更新。详细踩坑记录见 `project_wechat_lessons.md`。
+> 状态快照在 CLAUDE.local.md，踩坑经验在各 lessons 文件。
 
 ---
 
 ## 当前版本：v22
 
 ```
-v20: Topic Research Hub 第6数据源（本地公众号搜索）
-     + doc_library 扩充 Agent 框架（1→10条）
-     + Claude 评分器加主题相关性约束
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
-     + wrapper exit code 修复
-     + haiku 模型名修正
-     + 3 个测试修复
-v22: 系统安全与可靠性加固（P0-P2 共 9 项修复）
-     + 密钥迁移到环境变量（.env）
-     + SQLite WAL + busy_timeout 解决并发竞态
-     + 全部采集脚本加 retry session（指数退避）
-     + Claude API 429 重试
-     + DB 索引（published_at / source_id）
-     + 异常捕获细化 + 配置校验 + 封面图兜底 + bundle 失败清理
+v22: 系统安全与可靠性加固 + code review 体系
+     密钥→.env / SQLite WAL / retry session / Claude 429 重试
+     DB 索引 / 异常细化 / 配置校验 / 封面图兜底
+     test-runner + code-reviewer agents / finish v2
 ```
 
 ---
 
-## 系统状态
+## 架构决策
 
-| 组件 | 状态 | 备注 |
-|------|------|------|
-| 日报采集 | ✅ 运行中 | launchd 每天 **11:30** 自动执行 |
-| 微信采集 | ✅ 正常 | 登录态过期时自动打开 Chrome 重试 |
-| HN / ArXiv / GitHub Trending / RSS | ✅ 正常 | 无需 CDP |
-| GitHub Pages | ✅ 已推送 | https://wxyjwxyj.github.io/wechat-articles/ |
-| 公众号草稿箱 | ✅ 自动提交 | 含封面图，人工审核后发布 |
-| Research Hub | ✅ 可用 | `python -m flask --app api.app run` → http://localhost:5000/research |
+### 密钥管理：环境变量优先，config.json 降级（2026-04-11）
 
----
+**背景：** claude_api_key 明文存在 config.json，虽然 .gitignore 排除了但文件系统可读。
 
-## 数据源
+**决策：** `utils/config.py` 统一读取，`ANTHROPIC_API_KEY` 环境变量优先，config.json 降级兜底。`daily_run.sh` 启动时 `source .env`。
 
-| 源 | 脚本 | 依赖 |
-|----|------|------|
-| 微信公众号（9个） | `fetch_wechat_today.py` | CDP Proxy + Chrome 登录 |
-| Hacker News | `fetch_hackernews_today.py` | 无 |
-| ArXiv | `fetch_arxiv_today.py` | 无 |
-| GitHub Trending | `fetch_github_trending_today.py` | 无 |
-| RSS（TechCrunch/MIT/The Verge）| `fetch_rss_today.py` | 无 |
+**不要：** 把密钥放回 config.json，也不要在代码里直接读 config.json 的 claude_api_key。
 
----
+### SQLite 并发：WAL + busy_timeout（2026-04-11）
 
-## Research Hub 数据源（6个并行）
+**背景：** daily_run.sh 同时跑 5 个采集脚本写 content.db，偶发 `database is locked`。
 
-| 源 | 模块 | 备注 |
-|----|------|------|
-| ArXiv 论文 | `research/arxiv_search.py` | |
-| GitHub 仓库 | `research/github_search.py` | |
-| HN 讨论 | `research/hn_search.py` | |
-| 官方文档库 | `research/doc_library.py` | 30+ 框架，本地匹配 |
-| Web 搜索 | `research/web_search.py` | Google→Bing→DuckDuckGo 三级降级 |
-| 本地公众号 | `research/wechat_search.py` | 查 content.db |
+**决策：** `storage/db.py` 的 `get_connection()` 统一设置 `journal_mode=WAL` + `busy_timeout=5000` + `timeout=10`。
+
+**不要：** 在各脚本里单独设置 PRAGMA，统一在 get_connection 一处管理。
+
+### 网络请求：统一 retry session（2026-04-11）
+
+**背景：** 采集脚本裸调 requests，网络抖动一次就整个失败。
+
+**决策：** `utils/http.py` 的 `retry_session()` 返回带指数退避的 Session（3 次重试，覆盖 429/5xx）。所有 collector 用 `self._session` 替代 `requests`。
+
+**不要：** 在各脚本里自己写重试逻辑，统一用 retry_session()。
 
 ---
 
-## 近期改动（按时间倒序）
+## 经验索引
 
-| 日期 | 改动 | commit |
-|------|------|--------|
-| 2026-04-11 | 系统安全与可靠性加固 v22（9项修复） | 待提交 |
-| 2026-04-11 | daily_run.sh 健壮性改进（5项） | 待提交 |
-| 2026-04-06 | Research Hub 第6源（公众号本地搜索） | `3fe2dc5` |
-| 2026-04-06 | doc_library 扩充 Agent 框架 1→10条 | `9319534` |
-| 2026-04-06 | Claude 评分器加主题相关性约束 | `9319534` |
-| 2026-04-06 | Web Search 升级三级降级（加 DuckDuckGo）| `1cc4bad` |
-| 2026-04-06 | daily_run.sh 微信登录过期自动重试 | `313b3cd` |
-| 2026-04-05 | RSS 接入（TechCrunch/MIT/The Verge）| `b6a8f50` |
-| 2026-04-05 | Topic Research Hub 实现（Task 1-10）| 多个 commit |
-| 2026-04-05 | ArXiv + GitHub Trending 数据源 | `cb37a64` |
+| 文件 | 内容 |
+|------|------|
+| `lessons_engineering.md` | 工程化配置、hooks、代码质量、密钥管理、SQLite 并发、网络重试 |
+| `lessons_data.md` | 数据采集、管道、公众号发布经验 |
+| `lessons_frontend.md` | 前端、分支、GitHub Pages 经验 |
+| `lessons_research_hub.md` | Research Hub 经验 |
+| `project_wechat_lessons.md` | 早期项目历史 |
+
+---
+
+## 会话历史（关键里程碑）
+
+| 日期 | 版本 | 主要工作 |
+|------|------|----------|
+| 2026-04-04 | v1-v10 | 初始化项目，微信CDP采集、去重打标签、bundle pipeline、HTML生成、公众号稿件生成 |
+| 2026-04-05 | v11 | 接入 RSS 数据源（TechCrunch/MIT/The Verge），today.html 来源分组+话题优化 |
+| 2026-04-06 | v12-v14 | Topic Research Hub 核心功能（HN/GitHub/ArXiv/Claude评分/文档库/Web Search/DuckDuckGo兜底） |
+| 2026-04-06 | v15 | 接入小红书数据源（Research Hub 第7个），公众号本地搜索数据源，微信登录态过期自动重试 |
+| 2026-04-07 | v16-v18 | launchd 定时任务调试，daily_run.sh 健壮性改进（stash保护/bundle失败跳过/日期校验） |
+| 2026-04-10 | v19-v21 | bundle_items 保序去重修复（UNIQUE约束），微信标签页未打开时自动创建 |
+| 2026-04-11 | v22 | 系统安全与可靠性加固（密钥→.env/SQLite WAL/retry session/Claude 429重试/DB索引/封面图兜底） |
+| 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 
 ---
 
 ## 待观察 / 下一步
 
-- [ ] 跑几天看微信自动重试是否稳定
-- [ ] 跑几天验证 daily_run.sh 健壮性改进效果（stash/bundle跳过/日期校验）
-- [ ] Research Hub 搜索质量评估（ArXiv 有时 429 限流）
-- [ ] 轮换 Claude API Key（旧 key 曾明文存在 config.json）
-- [ ] 类型提示完善（mypy）- P1 待做
-- [ ] 测试覆盖提升 - P1 待做
+- [ ] retry session 对采集成功率的提升效果
+- [ ] SQLite WAL 下多进程写入是否还有锁问题
+- [ ] Claude API 429 重试是否够用（当前 3 次）
+- [ ] 类型提示完善（mypy）
+- [ ] 测试覆盖提升
 
 ---
 
-## 关键路径
+## 常用命令
 
 ```bash
-# 手动跑日报
-./daily_run.sh
-
-# 只跑采集
-python fetch_wechat_today.py
-python fetch_hackernews_today.py
-
-# 重建 bundle + HTML
-python scripts/build_bundle.py
-python generate_html.py bundle_today.json
-
-# 启动 Research Hub
-python -m flask --app api.app run
-
-# 推 GitHub Pages（手动）
-git checkout main
-git checkout dev -- today.html archive/ mp_article_preview.html
-git add today.html archive/ mp_article_preview.html
-git commit -m "Update: $(date +%Y-%m-%d)"
-git push origin main
-git checkout dev
+./daily_run.sh                              # 全自动日报
+python fetch_wechat_today.py                # 只跑微信采集
+python scripts/build_bundle.py              # 重建 bundle
+python generate_html.py bundle_today.json   # 重建 HTML
+python -m flask --app api.app run           # Research Hub
+pytest tests/ -v                            # 全量测试
 ```
-
----
-
-## 注意事项
-
-- `index.html` 是手写门户页，**绝对不能被脚本覆盖**
-- CDP Proxy 需要提前启动：`http://localhost:3456`
-- launchd 时间是 **11:30**（不是 9:57）
-- dev 分支放代码，main 分支只放前端产物

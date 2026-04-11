@@ -1,8 +1,11 @@
 """执行"标准化 → 去重 → 标签 → bundle"流水线，并将结果写入数据库与 bundle_today.json。"""
 import json
 import sys
+import time
 from datetime import date
 from pathlib import Path
+
+import anthropic
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -19,6 +22,45 @@ logger = get_logger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
+
+
+def _translate_overseas_items(items: list[dict], api_key: str, base_url: str) -> None:
+    """为非 wechat 条目逐条翻译 title/summary，写入 title_zh/summary_zh。"""
+    targets = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
+    if not targets or not api_key:
+        return
+    client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+    success = 0
+    for item in targets:
+        prompt = (
+            f'将以下标题和摘要翻译成中文，用 JSON 返回，格式：{{"title_zh": "...", "summary_zh": "..."}}，'
+            f'引号用「」代替，不要用双引号。\n'
+            f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
+        )
+        for attempt in range(3):
+            try:
+                resp = client.messages.create(
+                    model="claude-opus-4-6", max_tokens=512,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                raw = resp.content[0].text.strip()
+                start, end = raw.find("{"), raw.rfind("}") + 1
+                if start == -1:
+                    raise ValueError("无 JSON 对象")
+                r = json.loads(raw[start:end])
+                item["title_zh"] = r.get("title_zh", "")
+                item["summary_zh"] = r.get("summary_zh", "")
+                success += 1
+                break
+            except anthropic.RateLimitError:
+                if attempt < 2:
+                    time.sleep(2 ** (attempt + 1))
+                else:
+                    logger.warning("翻译 429 重试耗尽（%s）", item["title"][:30])
+            except Exception as e:
+                logger.warning("翻译失败（%s）: %s", item["title"][:30], e)
+                break
+    logger.info("翻译完成（%d/%d 条）", success, len(targets))
 
 
 def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
@@ -70,6 +112,9 @@ def main() -> None:
     # 打标签（Claude 优先，降级到关键词匹配）
     _tag_items(items, api_key, base_url)
 
+    # 翻译海外源标题/摘要
+    _translate_overseas_items(items, api_key, base_url)
+
     # 生成 bundle
     bundle = build_daily_bundle(today, items)
 
@@ -86,7 +131,9 @@ def main() -> None:
     bundle["items_flat"] = [
         {
             "title": item["title"],
+            "title_zh": item.get("title_zh", ""),
             "summary": item.get("summary", ""),
+            "summary_zh": item.get("summary_zh", ""),
             "published_at": item["published_at"],
             "url": item.get("url", ""),
             "source_name": item.get("source_name", ""),

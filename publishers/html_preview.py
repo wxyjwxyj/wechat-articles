@@ -1,4 +1,6 @@
 """根据 bundle 数据生成 HTML 预览页。"""
+import html as _html
+from collections import OrderedDict
 from datetime import datetime
 
 
@@ -21,13 +23,13 @@ def _source_badges_html(sources_list: list[dict]) -> str:
     """将 sources_list 渲染为带颜色的来源徽章。"""
     parts = []
     for s in sources_list:
-        if not s.get("url"):
+        if not s.get("url") or not s.get("source_name"):
             continue
         color = _source_color(s["source_name"])
         parts.append(
-            f"<a href='{s['url']}' target='_blank' class='source-badge' "
+            f"<a href='{_html.escape(s['url'])}' target='_blank' class='source-badge' "
             f"style='background:{color}22;color:{color};border-color:{color}44'>"
-            f"{s['source_name']}</a>"
+            f"{_html.escape(s['source_name'])}</a>"
         )
     return "".join(parts)
 
@@ -62,7 +64,6 @@ def render_bundle_html(bundle: dict) -> str:
     _MERGE_TO_OTHER = {"学术", "编程工具"}
 
     # 按分类归组，学术/编程工具 remap 到 宽泛
-    from collections import OrderedDict
     cat_groups: dict[str, list] = OrderedDict((c, []) for c in _CAT_ORDER)
     for topic in bundle.get("topics", []):
         cat = topic.get("category", "宽泛")
@@ -82,10 +83,11 @@ def render_bundle_html(bundle: dict) -> str:
         color = _CAT_COLORS.get(cat, "#6b7280")
         tags_html = ""
         for topic in sorted(group, key=lambda x: x.get("count", 0), reverse=True):
+            tn = _html.escape(topic['name'])
             tags_html += (
-                f"<span class='topic-tag' data-tag='{topic['name']}' "
+                f"<span class='topic-tag' data-tag='{tn}' "
                 f"style='background:{color}22;color:{color};border-color:{color}66'>"
-                f"{topic['name']} <em>{topic['count']}</em></span>"
+                f"{tn} <em>{topic['count']}</em></span>"
             )
         # 第一行默认显示，后续行加 collapsible-group 类默认隐藏
         extra_class = "" if first_group else " collapsible-group"
@@ -93,17 +95,20 @@ def render_bundle_html(bundle: dict) -> str:
         first_group = False
 
     # 收集所有来源（去重，保持顺序），按 source_type 分两组
+    # 公众号固定顺序，没有内容的置灰排末尾
+    _WECHAT_ORDER = ["量子位", "AI寒武纪", "机器之心", "数字生命卡兹克", "APPSO", "36氪", "虎嗅APP", "新智元", "硅星人Pro"]
+    _OVERSEAS_ORDER = ["Hacker News", "ArXiv", "GitHub Trending", "TechCrunch AI", "MIT Technology Review", "The Verge AI"]
     wechat_sources: list[str] = []
+    wechat_inactive: list[str] = []
     other_sources: list[str] = []
     seen_sources: set[str] = set()
-    # 建立 source_name → source_type 的映射（用 items_flat 主条目判断）
+    # 用单来源条目建立准确的 source_name → source_type 映射
     name_to_type: dict[str, str] = {}
     for item in items_flat:
-        stype = item.get("source_type", "")
-        for s in item.get("sources_list", [{"source_name": item.get("source_name", "")}]):
+        for s in item.get("sources_list", []):
             name = s.get("source_name", "")
             if name and name not in name_to_type:
-                name_to_type[name] = stype
+                name_to_type[name] = item.get("source_type", "")
     for item in items_flat:
         for s in item.get("sources_list", [{"source_name": item.get("source_name", "")}]):
             name = s.get("source_name", "")
@@ -114,26 +119,41 @@ def render_bundle_html(bundle: dict) -> str:
                 wechat_sources.append(name)
             else:
                 other_sources.append(name)
+    # 按固定顺序排列公众号，未出现的置灰追加末尾
+    wechat_inactive = [n for n in _WECHAT_ORDER if n not in wechat_sources]
+    wechat_sources = [n for n in _WECHAT_ORDER if n in wechat_sources] + \
+                     [n for n in wechat_sources if n not in _WECHAT_ORDER]
+    # 按固定顺序排列海外源，未出现的置灰追加末尾
+    other_inactive = [n for n in _OVERSEAS_ORDER if n not in other_sources]
+    other_sources = [n for n in _OVERSEAS_ORDER if n in other_sources] + \
+                    [n for n in other_sources if n not in _OVERSEAS_ORDER]
 
-    def _filter_chips(names: list[str]) -> str:
+    def _filter_chips(names: list[str], inactive: set[str] | None = None) -> str:
         html = ""
         for name in names:
             color = _source_color(name)
-            html += (
-                f"<span class='source-filter' data-source='{name}' "
-                f"style='background:{color}22;color:{color};border-color:{color}66'>"
-                f"{name}</span>\n"
-            )
+            if inactive and name in inactive:
+                html += (
+                    f"<span class='source-filter inactive' data-source='{name}' "
+                    f"style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>"
+                    f"{name}</span>\n"
+                )
+            else:
+                html += (
+                    f"<span class='source-filter' data-source='{name}' "
+                    f"style='background:{color}22;color:{color};border-color:{color}66'>"
+                    f"{name}</span>\n"
+                )
         return html
 
     # 两行：公众号一行，海外/RSS源一行
     sources_filter_html = (
         f"<div class='source-row'>"
         f"<span class='source-row-label'>公众号</span>"
-        f"{_filter_chips(wechat_sources)}</div>\n"
+        f"{_filter_chips(wechat_sources + wechat_inactive, inactive=set(wechat_inactive))}</div>\n"
         f"<div class='source-row'>"
         f"<span class='source-row-label'>海外源</span>"
-        f"{_filter_chips(other_sources)}</div>\n"
+        f"{_filter_chips(other_sources + other_inactive, inactive=set(other_inactive))}</div>\n"
     )
 
     # 文章行
@@ -144,7 +164,8 @@ def render_bundle_html(bundle: dict) -> str:
             "url": item.get("url", ""),
         }])
         badges = _source_badges_html(sources_list)
-        summary = item.get("summary", "")
+        title_display = item.get("title_zh") or item["title"]
+        summary = item.get("summary_zh") or item.get("summary", "")
         # 截断过长的 summary（超过 120 字折叠显示）
         summary_short = summary[:120] + "…" if len(summary) > 120 else summary
         summary_html = f"<div class='digest'>{summary_short}</div>" if summary_short else "<div class='digest no-digest'>暂无摘要</div>"
@@ -162,12 +183,13 @@ def render_bundle_html(bundle: dict) -> str:
         merged_badge = "<span class='merged-badge'>多家</span>" if merged else ""
 
         # data-tags / data-sources 供 JS 过滤使用
-        tags_attr = " ".join(item.get("tags", []))
-        sources_attr = "|".join(s.get("source_name", "") for s in sources_list)
+        tags_attr = _html.escape(" ".join(item.get("tags", [])))
+        sources_attr = _html.escape("|".join(s.get("source_name", "") for s in sources_list))
+        title_display = _html.escape(title_display)
         rows_html += f"""<tr class='article-row{"" if not merged else " merged"}' data-tags='{tags_attr}' data-sources='{sources_attr}'>
   <td class='col-title'>
     {merged_badge}{score_badge}
-    <span class='title-text'>{item['title']}</span>
+    <span class='title-text'>{title_display}</span>
   </td>
   <td class='col-digest'>{summary_html}</td>
   <td class='col-sources'>{badges}</td>
@@ -627,6 +649,7 @@ def render_bundle_html(bundle: dict) -> str:
     }});
 
     sourceBtns.forEach(btn => {{
+      if (btn.classList.contains('inactive')) return;
       btn.addEventListener('click', () => {{
         const name = btn.dataset.source;
         activeSource = (activeSource === name) ? null : name;
