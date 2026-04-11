@@ -4,7 +4,7 @@
 
 ---
 
-## 当前版本：v25
+## 当前版本：v26
 
 ```
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
@@ -17,6 +17,9 @@ v24: HN采集串行→20并发、RSS并发、多来源分数加成、plist 11:30
 v25: 系统高频问题专项修复
      HN url 改为 hn_url（讨论页）/ SQL OR 加括号 / 采集脚本并行化
      items 冲突键 url→content_hash / Claude API 启动探测
+v26: 翻译结果持久化到 DB
+     items 表加 title_zh/summary_zh / 重跑 build_bundle 跳过已翻译条目
+     翻译后回写 DB，build_bundle 从 2 分钟→秒级
 ```
 
 ---
