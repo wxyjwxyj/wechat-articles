@@ -44,7 +44,8 @@ def test_normalize_hackernews_story_maps_fields():
     assert item["source_id"] == 99
     assert item["source_type"] == "hackernews"
     assert item["title"] == "Claude 4 achieves SOTA on coding benchmarks"
-    assert item["url"] == "https://example.com/claude4"
+    assert item["url"] == "https://news.ycombinator.com/item?id=12345"
+    assert "https://example.com/claude4" in item["summary"]
     assert item["author"] == "testuser"
     assert item["language"] == "en"
     assert item["status"] == "raw"

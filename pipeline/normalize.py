@@ -61,7 +61,8 @@ def normalize_hackernews_story(source: dict, raw_story: dict) -> dict:
     # 拼接摘要：HN 帖子没有正文摘要，用 score + 评论数作为描述
     score = raw_story.get("score", 0)
     comments = raw_story.get("comments", 0)
-    summary = f"HN {score} points · {comments} comments · {hn_url}"
+    # 原文链接放摘要里，url 字段用 HN 讨论页（用户点击来源徽章跳 HN）
+    summary = f"HN {score} points · {comments} comments · {url}" if url != hn_url else f"HN {score} points · {comments} comments"
 
     # 解析发布时间
     time_str = raw_story.get("time", "")
@@ -74,7 +75,7 @@ def normalize_hackernews_story(source: dict, raw_story: dict) -> dict:
         "source_id": source.get("id"),
         "source_type": "hackernews",
         "title": title,
-        "url": url,
+        "url": hn_url,
         "author": raw_story.get("by", ""),
         "published_at": published_at.isoformat(),
         "raw_content": json.dumps(raw_story, ensure_ascii=False),
