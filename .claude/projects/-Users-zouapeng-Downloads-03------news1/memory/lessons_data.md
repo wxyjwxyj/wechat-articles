@@ -26,6 +26,27 @@
 - exit=11 时：发通知 → `open -a "Google Chrome" "https://mp.weixin.qq.com"` → sleep 60 → 重试
 - 仍失败才记录错误继续，不阻断其他采集源
 
+### 微信公众号采集方案调研（2026-04）
+
+**结论：CDP + 公众平台内部 API 是 2026 年最优的免费自建方案，不需要换。**
+
+已调研并排除的方案：
+
+| 方案 | 状态 | 原因 |
+|------|------|------|
+| 搜狗微信搜索 | ❌ 已死 | 2023年关闭 |
+| RSSHub 微信路由 | ❌ 已死 | 依赖搜狗 |
+| Playwright 模拟登录 | ❌ 已废弃 | 微信网页版对大量账号已关闭 |
+| WeWeRSS（微信读书接口） | ⚠️ 可用但不稳定 | 账号 12-24h 失效需扫码，项目维护停滞 |
+| WeChat-Article-Harvester | ⚠️ 参考价值有限 | Star=1，交互式 CLI，凭证 2h 过期 |
+| 新榜/清博付费 API | 💰 企业级 | 成本高，面向媒体机构 |
+| JustOneAPI | 💰 待评估 | 价格未知，需注册后查看 |
+
+**待尝试的技术点（从 WeChat-Article-Harvester 发现）**：
+- [ ] **m2w 工具**（`wechatmp2markdown`）：无需 Cookie 渲染微信文章正文，如需采集正文可用
+- [ ] **appmsg_token 获取**：从 `mp.weixin.qq.com/cgi-bin/appmsg` 页面 HTML 正则提取，可调用 `/mp/getappmsgext` 获取阅读量
+- [ ] **文章删除检测**：检测 ghost/dead/内容违规关键词判断文章是否失效
+
 ### launchd 注意事项
 | 问题 | 说明 |
 |------|------|
