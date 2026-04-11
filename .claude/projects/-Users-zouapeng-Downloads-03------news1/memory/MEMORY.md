@@ -4,7 +4,7 @@
 
 ---
 
-## 当前版本：v22
+## 当前版本：v25
 
 ```
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
@@ -12,6 +12,11 @@ v22: 系统安全与可靠性加固 + code review 体系
      密钥→.env / SQLite WAL / retry session / Claude 429 重试
      DB 索引 / 异常细化 / 配置校验 / 封面图兜底
      test-runner + code-reviewer agents / finish v2
+v23: today.html 来源分类修复、海外源中文翻译、全面 XSS 防护
+v24: HN采集串行→20并发、RSS并发、多来源分数加成、plist 11:30+17:30双次
+v25: 系统高频问题专项修复
+     HN url 改为 hn_url（讨论页）/ SQL OR 加括号 / 采集脚本并行化
+     items 冲突键 url→content_hash / Claude API 启动探测
 ```
 
 ---
@@ -50,9 +55,15 @@ v22: 系统安全与可靠性加固 + code review 体系
 
 **不要：** 在各脚本里自己写重试逻辑，统一用 retry_session()。
 
----
+### items 冲突键：content_hash 而非 url（2026-04-11）
 
-## 经验索引
+**背景：** url 语义变化时（如 HN 从原文链接改为讨论页），旧数据无法被 upsert 覆盖，产生重复记录，bundle 选了旧的。
+
+**决策：** `items` 表冲突键改为 `content_hash unique`，url 改为可更新字段。迁移脚本：`scripts/migrate_items_hash_key.py`。
+
+**不要：** 用 url 做 upsert 冲突键，url 是可变的展示字段。
+
+---
 
 | 文件 | 内容 |
 |------|------|
@@ -77,7 +88,7 @@ v22: 系统安全与可靠性加固 + code review 体系
 | 2026-04-11 | v22 | 系统安全与可靠性加固（密钥→.env/SQLite WAL/retry session/Claude 429重试/DB索引/封面图兜底） |
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
-| 2026-04-11 | v24 | HN采集串行→20并发（1-2分钟→8秒）、RSS并发、多来源分数加成、daily_run日期字段修复、plist改为11:30+17:30双次 |
+| 2026-04-11 | v25 | 系统高频问题专项修复：HN url→hn_url、SQL OR 加括号、采集并行化、items冲突键→content_hash、API启动探测 |
 
 ---
 
