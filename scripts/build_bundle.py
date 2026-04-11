@@ -101,7 +101,11 @@ def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
 
 
 def main() -> None:
-    today = date.today().isoformat()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--date", default=date.today().isoformat(), help="指定日期 YYYY-MM-DD")
+    args = parser.parse_args()
+    today = args.date
     init_db(DB_PATH)
 
     # 读取当日 item
