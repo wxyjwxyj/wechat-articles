@@ -173,7 +173,7 @@ if [ -z "$SKIP_GENERATE" ]; then
     BUNDLE_DATE=$(python -c "import json; print(json.load(open('bundle_today.json')).get('bundle_date',''))" 2>/dev/null)
     TODAY_DATE=$(date +%Y-%m-%d)
     if [ "$BUNDLE_DATE" != "$TODAY_DATE" ]; then
-        log "⚠ bundle 日期不匹配（bundle=$BUNDLE_DATE, today=$TODAY_DATE），跳过生成"
+        log "⚠ bundle 日期不匹配(bundle=$BUNDLE_DATE, today=$TODAY_DATE)，跳过生成"
         ERRORS="${ERRORS}Bundle:日期不匹配 "
         SKIP_GENERATE=1
     fi
