@@ -4,13 +4,23 @@
 
 ---
 
-## 当前版本：v20
+## 当前版本：v22
 
 ```
-v19: daily_run.sh 微信登录过期自动打开 Chrome + 60s 重试
 v20: Topic Research Hub 第6数据源（本地公众号搜索）
      + doc_library 扩充 Agent 框架（1→10条）
      + Claude 评分器加主题相关性约束
+v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
+     + wrapper exit code 修复
+     + haiku 模型名修正
+     + 3 个测试修复
+v22: 系统安全与可靠性加固（P0-P2 共 9 项修复）
+     + 密钥迁移到环境变量（.env）
+     + SQLite WAL + busy_timeout 解决并发竞态
+     + 全部采集脚本加 retry session（指数退避）
+     + Claude API 429 重试
+     + DB 索引（published_at / source_id）
+     + 异常捕获细化 + 配置校验 + 封面图兜底 + bundle 失败清理
 ```
 
 ---
@@ -57,6 +67,8 @@ v20: Topic Research Hub 第6数据源（本地公众号搜索）
 
 | 日期 | 改动 | commit |
 |------|------|--------|
+| 2026-04-11 | 系统安全与可靠性加固 v22（9项修复） | 待提交 |
+| 2026-04-11 | daily_run.sh 健壮性改进（5项） | 待提交 |
 | 2026-04-06 | Research Hub 第6源（公众号本地搜索） | `3fe2dc5` |
 | 2026-04-06 | doc_library 扩充 Agent 框架 1→10条 | `9319534` |
 | 2026-04-06 | Claude 评分器加主题相关性约束 | `9319534` |
@@ -71,8 +83,9 @@ v20: Topic Research Hub 第6数据源（本地公众号搜索）
 ## 待观察 / 下一步
 
 - [ ] 跑几天看微信自动重试是否稳定
+- [ ] 跑几天验证 daily_run.sh 健壮性改进效果（stash/bundle跳过/日期校验）
 - [ ] Research Hub 搜索质量评估（ArXiv 有时 429 限流）
-- [ ] 配置文件统一（dataclass）- P1 待做
+- [ ] 轮换 Claude API Key（旧 key 曾明文存在 config.json）
 - [ ] 类型提示完善（mypy）- P1 待做
 - [ ] 测试覆盖提升 - P1 待做
 

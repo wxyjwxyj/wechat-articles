@@ -6,16 +6,16 @@ def test_search_by_keyword_builds_correct_query():
     """关键词搜索应构建正确的查询字符串"""
     collector = ArxivCollector()
 
-    with patch('collectors.arxiv.requests.get') as mock_get:
+    with patch.object(collector, '_session') as mock_session:
         mock_resp = MagicMock()
         mock_resp.text = '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom"></feed>'
         mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+        mock_session.get.return_value = mock_resp
 
         collector.search_by_keyword("reinforcement learning", max_results=5)
 
         # 验证调用参数
-        call_args = mock_get.call_args
+        call_args = mock_session.get.call_args
         params = call_args[1]['params']
         assert 'reinforcement learning' in params['search_query']
         assert params['max_results'] == 5
@@ -36,11 +36,11 @@ def test_search_by_keyword_returns_papers():
         </entry>
     </feed>'''
 
-    with patch('collectors.arxiv.requests.get') as mock_get:
+    with patch.object(collector, '_session') as mock_session:
         mock_resp = MagicMock()
         mock_resp.text = mock_xml
         mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+        mock_session.get.return_value = mock_resp
 
         results = collector.search_by_keyword("reinforcement learning")
 

@@ -10,21 +10,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from publishers.mp_article import build_mp_article_payload
+from utils.config import get_claude_config
 from utils.log import get_logger
 
 logger = get_logger(__name__)
 
 DEFAULT_BUNDLE = Path(__file__).parent.parent / "bundle_today.json"
 OUTPUT_PATH = Path(__file__).parent.parent / "mp_article_preview.json"
-CONFIG_PATH = Path(__file__).parent.parent / "config.json"
-
-
-def _load_claude_config() -> tuple[str, str]:
-    try:
-        cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        return cfg.get("claude_api_key", ""), cfg.get("claude_base_url", "https://api.anthropic.com")
-    except Exception:
-        return "", "https://api.anthropic.com"
 
 
 def main() -> None:
@@ -37,7 +29,7 @@ def main() -> None:
     with open(bundle_path, "r", encoding="utf-8") as f:
         bundle = json.load(f)
 
-    api_key, base_url = _load_claude_config()
+    api_key, base_url = get_claude_config()
     if api_key:
         logger.info("使用 Claude 生成编辑点评...")
     else:

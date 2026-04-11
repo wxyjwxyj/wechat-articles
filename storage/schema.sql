@@ -82,3 +82,7 @@ create table if not exists publish_tasks (
   updated_at text not null,
   foreign key(bundle_id) references bundles(id)
 );
+
+-- 索引：加速按日期查询和按来源筛选
+create index if not exists idx_items_published_at on items(published_at);
+create index if not exists idx_items_source_id on items(source_id);

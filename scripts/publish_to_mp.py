@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from publishers.mp_publisher import MpPublisher
+from utils.config import load_project_config
 from utils.errors import News1Error, PublishError
 from utils.log import get_logger
 
@@ -22,14 +23,7 @@ logger = get_logger(__name__)
 
 PROJECT_DIR = Path(__file__).parent.parent
 DEFAULT_PREVIEW = PROJECT_DIR / "mp_article_preview.json"
-CONFIG_PATH = PROJECT_DIR / "config.json"
 COVER_PATH = PROJECT_DIR / "cover_today.png"
-
-
-def load_config() -> dict:
-    if CONFIG_PATH.exists():
-        return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    return {}
 
 
 def main() -> None:
@@ -70,7 +64,7 @@ def main() -> None:
         return
 
     # 连接公众号后台
-    config = load_config()
+    config = load_project_config()
     cdp_proxy = config.get("cdp_proxy", "http://localhost:3456")
     publisher = MpPublisher(cdp_proxy=cdp_proxy)
 
@@ -89,7 +83,12 @@ def main() -> None:
         )
         logger.info("封面图 → %s", COVER_PATH)
     except Exception as e:
-        logger.warning("封面图生成失败（%s），将创建无封面草稿", e)
+        logger.warning("封面图生成失败（%s），使用纯色兜底封面", e)
+        try:
+            from PIL import Image
+            Image.new("RGB", (900, 383), "#1a1a2e").save(str(COVER_PATH), "PNG")
+        except Exception:
+            logger.warning("兜底封面也失败，将创建无封面草稿")
 
     # 上传封面图
     cover_fileid = ""

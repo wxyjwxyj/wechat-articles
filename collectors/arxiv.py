@@ -10,6 +10,7 @@ from datetime import datetime, timezone, timedelta
 import requests
 
 from utils.errors import CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -155,6 +156,7 @@ class ArxivCollector:
         self.max_papers = max_papers
         self.days_back = days_back
         self.timeout = timeout
+        self._session = retry_session()
 
     def fetch_recent_papers(self) -> list[dict]:
         """采集最近的 AI 论文。
@@ -178,7 +180,7 @@ class ArxivCollector:
         logger.info("查询 ArXiv: %s (max_results=%d)", query[:60], self.max_results)
 
         try:
-            resp = requests.get(ARXIV_API, params=params, timeout=self.timeout)
+            resp = self._session.get(ARXIV_API, params=params, timeout=self.timeout)
             resp.raise_for_status()
         except requests.RequestException as e:
             raise CollectorError(f"ArXiv API 请求失败: {e}") from e
@@ -252,7 +254,7 @@ class ArxivCollector:
         logger.info("ArXiv 关键词搜索: %s (max_results=%d)", query, max_results)
 
         try:
-            resp = requests.get(ARXIV_API, params=params, timeout=self.timeout)
+            resp = self._session.get(ARXIV_API, params=params, timeout=self.timeout)
             resp.raise_for_status()
         except requests.RequestException as e:
             raise CollectorError(f"ArXiv API 请求失败: {e}") from e

@@ -6,6 +6,7 @@ from urllib.parse import urlparse, parse_qs
 import requests
 
 from utils.errors import CDPConnectionError, LoginExpiredError, CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -16,6 +17,7 @@ class WechatCollector:
         self.cdp_proxy = cdp_proxy
         self.token = token
         self.target_id = target_id
+        self._session = retry_session()
 
     def _resolve_session(self) -> bool:
         """自动从浏览器标签页中探测 target_id 和 token，优先使用公众平台主页。
@@ -25,7 +27,7 @@ class WechatCollector:
             LoginExpiredError: 未找到微信标签页或 token 缺失
         """
         try:
-            resp = requests.get(f"{self.cdp_proxy}/targets", timeout=10)
+            resp = self._session.get(f"{self.cdp_proxy}/targets", timeout=10)
             resp.raise_for_status()
             targets = resp.json()
         except (requests.RequestException, ValueError) as e:
@@ -83,7 +85,7 @@ class WechatCollector:
         }})()
         '''
         try:
-            resp = requests.post(f"{self.cdp_proxy}/eval?target={self.target_id}", data=js_code, timeout=10)
+            resp = self._session.post(f"{self.cdp_proxy}/eval?target={self.target_id}", data=js_code, timeout=10)
             resp.raise_for_status()
             raw_data = resp.json().get("value", {})
         except requests.RequestException as e:
@@ -118,7 +120,7 @@ class WechatCollector:
             }})()
             '''
             try:
-                resp = requests.post(f"{self.cdp_proxy}/eval?target={self.target_id}", data=js_code, timeout=10)
+                resp = self._session.post(f"{self.cdp_proxy}/eval?target={self.target_id}", data=js_code, timeout=10)
                 resp.raise_for_status()
                 raw_data = resp.json().get("value", {})
             except (requests.RequestException, ValueError) as e:

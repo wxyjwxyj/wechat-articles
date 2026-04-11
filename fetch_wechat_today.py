@@ -1,7 +1,6 @@
 """微信公众号当日文章采集入口。从 content.db sources 表读取账号，抓取今日文章并存入 DB。"""
 import json
 import sys
-import os
 from pathlib import Path
 
 from collectors.wechat_collector import WechatCollector
@@ -9,25 +8,17 @@ from pipeline.normalize import normalize_wechat_article
 from pipeline.tagging import extract_tags
 from storage.db import init_db
 from storage.repository import SourceRepository, ItemRepository
+from utils.config import load_project_config
 from utils.errors import News1Error, CDPConnectionError, LoginExpiredError, CollectorError
 from utils.log import get_logger
 
 logger = get_logger(__name__)
 
-CONFIG_PATH = Path(__file__).parent / "config.json"
 DB_PATH = Path(__file__).parent / "content.db"
 
 
-def load_config() -> dict:
-    if not os.path.exists(CONFIG_PATH):
-        logger.error("找不到 config.json，请复制 config.example.json 为 config.json 并填写配置")
-        sys.exit(1)
-    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
 def main() -> None:
-    config = load_config()
+    config = load_project_config()
     init_db(DB_PATH)
 
     collector = WechatCollector(

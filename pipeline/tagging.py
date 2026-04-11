@@ -8,6 +8,7 @@
 # 分类用于 topics 排序：同分类内按文章数降序，分类间按固定顺序
 #
 import json
+import time
 
 from utils.log import get_logger
 
@@ -141,11 +142,19 @@ def _call_claude_batch(
 {{"results": [{{"id": {id_offset + 1}, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
 
     client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-    message = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    for attempt in range(3):
+        try:
+            message = client.messages.create(
+                model="claude-opus-4-6",
+                max_tokens=1024,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            break
+        except anthropic.RateLimitError:
+            if attempt < 2:
+                time.sleep(2 ** (attempt + 1))
+                continue
+            raise
     raw = message.content[0].text.strip()
 
     start = raw.find("{")
@@ -190,7 +199,7 @@ def extract_tags_batch_with_claude(
             batch_result = _call_claude_batch(batch, batch_start, api_key, base_url)
             output.extend(batch_result)
             logger.debug("批次 %d-%d 打标签完成", batch_start + 1, batch_start + len(batch))
-        except Exception as e:
+        except (anthropic.APIError, json.JSONDecodeError, KeyError, IndexError) as e:
             logger.warning("批次 %d-%d 打标签失败（%s），该批降级到关键词匹配",
                            batch_start + 1, batch_start + len(batch), e)
             output.extend([{"tags": [], "score": 5} for _ in batch])

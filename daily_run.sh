@@ -9,6 +9,9 @@ LOG_FILE="$LOG_DIR/$(date +%Y-%m-%d).log"
 CDP_PROXY="http://localhost:3456"
 ERRORS=""
 
+# 从 .env 加载环境变量（ANTHROPIC_API_KEY 等）
+[ -f "$PROJECT_DIR/.env" ] && set -a && source "$PROJECT_DIR/.env" && set +a
+
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 notify() {
     # macOS 通知：$1=标题 $2=内容
@@ -133,14 +136,29 @@ if [ $BUNDLE_EXIT -ne 0 ]; then
     BUNDLE_REASON=$(describe_exit $BUNDLE_EXIT)
     log "⚠ bundle 生成失败: $BUNDLE_REASON (exit=$BUNDLE_EXIT)"
     ERRORS="${ERRORS}Bundle:${BUNDLE_REASON} "
+    log "⚠ 跳过 HTML/草稿生成（bundle 失败）"
+    # 删除旧 bundle 防止后续步骤误用过期数据
+    rm -f bundle_today.json
+    SKIP_GENERATE=1
 fi
 
-# 7. 检查是否有内容
+# 7. 检查是否有内容 + 日期校验
 if [ ! -f "bundle_today.json" ]; then
     log "⚠ 今日无内容，跳过 HTML 生成"
     notify "AI日报 ⚠" "今日无内容，跳过生成"
     exit 0
 fi
+if [ -z "$SKIP_GENERATE" ]; then
+    BUNDLE_DATE=$(python -c "import json; print(json.load(open('bundle_today.json')).get('date',''))" 2>/dev/null)
+    TODAY_DATE=$(date +%Y-%m-%d)
+    if [ "$BUNDLE_DATE" != "$TODAY_DATE" ]; then
+        log "⚠ bundle 日期不匹配（bundle=$BUNDLE_DATE, today=$TODAY_DATE），跳过生成"
+        ERRORS="${ERRORS}Bundle:日期不匹配 "
+        SKIP_GENERATE=1
+    fi
+fi
+
+if [ -z "$SKIP_GENERATE" ]; then
 
 # 8. 在 dev 分支生成 HTML
 log "生成 HTML..."
@@ -164,6 +182,8 @@ if [ $PUB_EXIT -ne 0 ]; then
     ERRORS="${ERRORS}草稿:${PUB_REASON} "
 fi
 
+fi  # SKIP_GENERATE
+
 # 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"
@@ -175,8 +195,10 @@ python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 git add today.html mp_article_preview.html archive/ >> "$LOG_FILE" 2>&1
 git commit -m "content: ${TODAY_DATE} HTML" >> "$LOG_FILE" 2>&1
 
-# 13. 切换到 main，把 today.html / archive/ / mp_article_preview.html 带过去，推送
+# 13. stash 保护 → 切 main → 推送
 log "推送到 GitHub..."
+git stash --include-untracked >> "$LOG_FILE" 2>&1
+STASHED=$?
 git checkout main >> "$LOG_FILE" 2>&1
 git checkout dev -- today.html >> "$LOG_FILE" 2>&1
 git checkout dev -- archive/ >> "$LOG_FILE" 2>&1
@@ -185,8 +207,9 @@ git add today.html archive/ mp_article_preview.html
 git commit -m "Update: $(date +%Y-%m-%d) articles" >> "$LOG_FILE" 2>&1
 git push origin main >> "$LOG_FILE" 2>&1 || ERRORS="${ERRORS}GitHub推送失败 "
 
-# 14. 切回 dev
+# 14. 切回 dev + 恢复 stash
 git checkout dev >> "$LOG_FILE" 2>&1
+[ $STASHED -eq 0 ] && git stash pop >> "$LOG_FILE" 2>&1
 
 # 15. 统计结果并通知
 ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "?")

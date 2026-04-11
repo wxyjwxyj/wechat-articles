@@ -11,6 +11,7 @@ from storage.repository import SourceRepository, ItemRepository, BundleRepositor
 from pipeline.dedupe import dedupe_items
 from pipeline.tagging import extract_tags, extract_tags_batch_with_claude
 from pipeline.bundles import build_daily_bundle
+from utils.config import get_claude_config
 from utils.errors import News1Error, PipelineError
 from utils.log import get_logger
 
@@ -18,16 +19,6 @@ logger = get_logger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
-CONFIG_PATH = Path(__file__).parent.parent / "config.json"
-
-
-def _load_claude_config() -> tuple[str, str]:
-    """从 config.json 读取 Claude API 配置，返回 (api_key, base_url)。"""
-    try:
-        cfg = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        return cfg.get("claude_api_key", ""), cfg.get("claude_base_url", "https://api.anthropic.com")
-    except Exception:
-        return "", "https://api.anthropic.com"
 
 
 def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
@@ -71,7 +62,7 @@ def main() -> None:
             item["tags"] = json.loads(item["tags"])
 
     # 读取 Claude 配置（去重和打标签共用）
-    api_key, base_url = _load_claude_config()
+    api_key, base_url = get_claude_config()
 
     # 去重（Claude 优先，降级到关键词匹配）
     items = dedupe_items(raw_items, api_key=api_key, base_url=base_url)

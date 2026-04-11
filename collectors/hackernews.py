@@ -7,11 +7,14 @@ import requests
 from datetime import datetime, timezone
 
 from utils.errors import CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
 
 HN_API = "https://hacker-news.firebaseio.com/v0"
+
+_session = retry_session()
 
 # AI 相关关键词（不区分大小写匹配）
 AI_KEYWORDS = [
@@ -47,7 +50,7 @@ def _is_ai_related(title: str) -> bool:
 def _fetch_story(story_id: int, timeout: int = 10) -> dict | None:
     """获取单条 HN story 详情。单条失败只记日志，不中断整体流程。"""
     try:
-        resp = requests.get(
+        resp = _session.get(
             f"{HN_API}/item/{story_id}.json",
             timeout=timeout,
         )
@@ -91,7 +94,7 @@ class HackerNewsCollector:
         """
         # 获取 Top Stories ID 列表
         try:
-            resp = requests.get(
+            resp = _session.get(
                 f"{HN_API}/topstories.json",
                 timeout=self.timeout,
             )

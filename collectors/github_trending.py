@@ -11,6 +11,7 @@ from html.parser import HTMLParser
 import requests
 
 from utils.errors import CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -131,6 +132,7 @@ class GitHubTrendingCollector:
         self.language = language
         self.max_repos = max_repos
         self.timeout = timeout
+        self._session = retry_session()
 
     def fetch_trending_repos(self) -> list[dict]:
         """采集 GitHub Trending AI/ML 仓库。
@@ -160,7 +162,7 @@ class GitHubTrendingCollector:
                     self.since, self.language or "all")
 
         try:
-            resp = requests.get(
+            resp = self._session.get(
                 url, params=params, headers=headers, timeout=self.timeout
             )
             resp.raise_for_status()

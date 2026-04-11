@@ -1,5 +1,6 @@
 import json
 import re
+import time
 
 from utils.log import get_logger
 
@@ -169,11 +170,19 @@ def _claude_dedupe(
     try:
         import anthropic
         client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-        message = client.messages.create(
-            model="claude-opus-4-6",
-            max_tokens=512,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        for attempt in range(3):
+            try:
+                message = client.messages.create(
+                    model="claude-opus-4-6",
+                    max_tokens=512,
+                    messages=[{"role": "user", "content": prompt}],
+                )
+                break
+            except anthropic.RateLimitError:
+                if attempt < 2:
+                    time.sleep(2 ** (attempt + 1))
+                    continue
+                raise
         if not message.content:
             logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
@@ -181,8 +190,11 @@ def _claude_dedupe(
     except ImportError:
         logger.warning("未安装 anthropic 库，降级到关键词方案")
         return None
-    except Exception as e:
-        logger.warning("Claude 去重失败（%s），降级到关键词方案", e)
+    except anthropic.APIError as e:
+        logger.warning("Claude 去重 API 错误（%s），降级到关键词方案", e)
+        return None
+    except (json.JSONDecodeError, KeyError, IndexError) as e:
+        logger.warning("Claude 去重响应解析失败（%s），降级到关键词方案", e)
         return None
 
     try:
