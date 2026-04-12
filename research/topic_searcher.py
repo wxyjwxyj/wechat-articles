@@ -265,8 +265,10 @@ class TopicSearcher:
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = resp.content[0].text.strip()
+            logger.info("Query 扩展原始响应: %s", raw[:200])
             start, end = raw.find("["), raw.rfind("]") + 1
             if start == -1:
+                logger.warning("Query 扩展：响应中未找到 JSON 数组，原始内容: %s", raw[:200])
                 return []
             queries = json.loads(raw[start:end])
             logger.info("Query 扩展：%s → %s", topic, queries)

@@ -48,33 +48,34 @@ class ClaudeScorer:
 
         # 构建批量评分 prompt
         resources_text = "\n".join(
-            f"{i+1}. 标题：{r.get('title', '')}  简介：{r.get('summary', '')[:150]}"
+            f"{i+1}. Title: {r.get('title', '')}  Summary: {r.get('summary', '')[:150]}"
             for i, r in enumerate(resources)
         )
 
-        topic_line = f"用户搜索的主题是：**{topic}**\n\n" if topic else ""
+        topic_line = f"The user is searching for: {topic}\n\n" if topic else ""
 
-        prompt = f"""你是一个技术学习资源评估专家。请为以下每个资源打分（1-10分）并写一句中文点评。
+        prompt = f"""You are a technical learning resource evaluator. Score each resource (1-10) and write a brief Chinese comment.
 
-{topic_line}评分标准：
-- 9-10分：权威一手资料（顶会论文、官方文档、经典教程），且与主题高度相关
-- 7-8分：高质量学习资源（优秀开源项目、深度技术文章），且与主题相关
-- 5-6分：普通资源（一般质量的教程、博客），与主题有一定关联
-- 3-4分：质量较低（过时内容、浅显介绍）
-- 1-2分：不推荐（广告、无关内容）
+{topic_line}Scoring criteria:
+- 9-10: Authoritative primary sources (top conference papers, official docs, classic tutorials), highly relevant to topic
+- 7-8: High-quality resources (excellent open source projects, in-depth technical articles), relevant to topic
+- 5-6: Average resources (general tutorials, blogs), somewhat related to topic
+- 3-4: Low quality (outdated content, superficial introductions)
+- 1-2: Not recommended (ads, irrelevant content)
 
-⚠️ 重要：如果资源与搜索主题"{topic}"不直接相关，无论质量多高，都必须打 1-2 分。
+Important: If a resource is not directly related to the topic "{topic}", score it 1-2 regardless of quality.
 
-资源列表：
+Resources:
 {resources_text}
 
-要求：
-- 点评简洁（10-20字），说明为什么值得学习
-- 严格按 JSON 格式返回，不要有任何其他文字
+Requirements:
+- Comment should be concise (10-20 Chinese characters), explain why it's worth learning
+- Return strictly in JSON format, no other text
 
-返回格式：
+Format:
 {{"results": [{{"id": 1, "score": 8, "comment": "PyTorch官方文档，权威全面"}}, ...]}}"""
 
+        raw = ""
         try:
             client = anthropic.Anthropic(api_key=self.api_key, base_url=self.base_url)
             message = client.messages.create(
@@ -88,6 +89,7 @@ class ClaudeScorer:
             start = raw.find("{")
             end = raw.rfind("}") + 1
             if start == -1 or end == 0:
+                logger.warning("评分原始响应（未找到JSON）: %s", raw[:300])
                 raise AIApiError("Claude 返回格式错误：未找到 JSON")
 
             data = json.loads(raw[start:end])
@@ -98,8 +100,10 @@ class ClaudeScorer:
         except anthropic.APIError as e:
             raise AIApiError(f"Claude API 调用失败: {e}") from e
         except (json.JSONDecodeError, KeyError) as e:
+            logger.warning("评分解析失败，原始响应: %s", raw[:300])
             raise AIApiError(f"Claude 返回解析失败: {e}") from e
         except Exception as e:
+            logger.warning("评分异常，原始响应: %s", raw[:300])
             raise AIApiError(f"评分过程出错: {e}") from e
 
         # 合并评分结果到原资源
