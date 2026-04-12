@@ -27,13 +27,12 @@ OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
 
 def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, item_repo) -> None:
     """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh 并回写 DB。"""
-    targets = [
-        i for i in items
-        if i.get("source_type") != "wechat"
-        and i.get("language", "en") != "zh"
-        and not i.get("title_zh")  # 已有翻译则跳过
-    ]
+    overseas = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
+    targets = [i for i in overseas if not i.get("title_zh")]  # 已有翻译则跳过
+    skipped = len(overseas) - len(targets)
     if not targets or not api_key:
+        if overseas:
+            logger.info("翻译跳过（全部已缓存，共 %d 条）", len(overseas))
         return
     client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
 
@@ -78,7 +77,7 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, it
         for future in as_completed(futures):
             if future.result():
                 success += 1
-    logger.info("翻译完成（%d/%d 条）", success, len(targets))
+    logger.info("翻译完成（新翻译 %d 条，缓存复用 %d 条）", success, skipped)
 
 
 def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
