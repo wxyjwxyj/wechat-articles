@@ -80,6 +80,19 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, it
     logger.info("翻译完成（新翻译 %d 条，缓存复用 %d 条）", success, skipped)
 
 
+def _is_wechat_source(s: dict) -> bool:
+    """判断 source 是否为微信公众号（type=wechat 或 config.is_wechat=True）。"""
+    if s.get("type") == "wechat":
+        return True
+    cfg = s.get("config", {})
+    if isinstance(cfg, str):
+        try:
+            cfg = json.loads(cfg)
+        except Exception:
+            cfg = {}
+    return bool(cfg.get("is_wechat"))
+
+
 def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
     """为 items 打标签，优先用 Claude，无 key 或失败时降级到关键词匹配。"""
     if api_key:
@@ -123,6 +136,20 @@ def main() -> None:
         # tags 在 DB 中存为 JSON 字符串，需要反序列化
         if isinstance(item.get("tags"), str):
             item["tags"] = json.loads(item["tags"])
+
+    # 微信公众号严格按发布日期过滤：只保留采集日当天发布的文章
+    # 判断条件：source_type=wechat 或 config.is_wechat=True
+    wechat_source_ids = {s["id"] for s in sources.values() if _is_wechat_source(s)}
+    logger.debug("识别到微信源 %d 个: %s", len(wechat_source_ids), wechat_source_ids)
+    before = len(raw_items)
+    raw_items = [
+        item for item in raw_items
+        if item.get("source_id") not in wechat_source_ids
+        or item.get("published_at", "")[:10] == today
+    ]
+    filtered = before - len(raw_items)
+    if filtered:
+        logger.info("微信公众号日期过滤：移除 %d 条非采集日文章（采集日=%s）", filtered, today)
 
     # 读取 Claude 配置（去重和打标签共用）
     api_key, base_url = get_claude_config()
