@@ -34,6 +34,9 @@ v28: 微信公众号采集 CDP→RSS 迁移
      use_original_time=True 用 RSS 原始发布时间（公众号时区无偏差）
      is_wechat=True 标记微信 RSS 源，html_preview 按此分类到公众号行
      build_bundle 严格日期过滤：微信源只保留采集日当天发布的文章
+     Research Hub Web 搜索升级：Exa AI 优先 + Claude query 扩展
+     topic → 4个中英双语子查询 → 5路并行 Exa → 去重合并（~5x 结果量）
+     Claude prompt 用英文，避免中文 prompt 被代理拦截返回"I can't discuss that"
 ```
 
 ---
@@ -106,7 +109,7 @@ v28: 微信公众号采集 CDP→RSS 迁移
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
 | 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
-| 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移（5个公众号改走免费RSS，CDP 只负责4个）；is_wechat 标记 + 严格日期过滤（当天对当天） |
+| 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移；is_wechat 标记 + 严格日期过滤；Research Hub Exa + Claude query 扩展 |
 
 ---
 
