@@ -90,3 +90,12 @@ create index if not exists idx_items_published_at on items(published_at);
 create index if not exists idx_items_source_id on items(source_id);
 create index if not exists idx_items_created_at_date on items(date(created_at));
 create index if not exists idx_items_published_at_date on items(date(published_at));
+
+-- Research Hub 搜索历史
+create table if not exists research_sessions (
+  id integer primary key autoincrement,
+  topic text not null,
+  results_json text not null default '{}',
+  created_at text not null default (datetime('now'))
+);
+create index if not exists idx_research_sessions_created_at on research_sessions(created_at);

@@ -1,13 +1,28 @@
 """主题研究功能的 Flask 路由。"""
+import html as _html
 import os
 from flask import request, jsonify
 from research.topic_searcher import TopicSearcher
 from research.result_renderer import render_results_html
+from storage.research_repository import ResearchRepository
 from utils.config import get_claude_config
 from utils.log import get_logger
 
 logger = get_logger(__name__)
 
+DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "content.db")
+
+
+def _make_searcher() -> TopicSearcher:
+    """创建 TopicSearcher 实例（复用配置读取逻辑）。"""
+    api_key, base_url = get_claude_config()
+    return TopicSearcher(
+        api_key=api_key,
+        base_url=base_url,
+        google_api_key=os.getenv("GOOGLE_SEARCH_API_KEY", ""),
+        google_cx=os.getenv("GOOGLE_SEARCH_CX", ""),
+        bing_api_key=os.getenv("BING_SEARCH_API_KEY", ""),
+    )
 
 def register_research_routes(app):
     """注册研究功能路由。"""
@@ -101,21 +116,7 @@ def register_research_routes(app):
         async function search() {
             const topic = input.value.trim();
             if (!topic) { alert('请输入搜索主题'); return; }
-            loading.classList.add('show');
-            try {
-                const response = await fetch('/api/research', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ topic })
-                });
-                if (!response.ok) throw new Error('搜索失败');
-                const data = await response.json();
-                sessionStorage.setItem('searchResults', JSON.stringify(data));
-                window.location.href = '/research/results?topic=' + encodeURIComponent(topic);
-            } catch (error) {
-                alert('搜索出错：' + error.message);
-                loading.classList.remove('show');
-            }
+            window.location.href = '/research/results?topic=' + encodeURIComponent(topic);
         }
     </script>
 </body>
@@ -124,32 +125,25 @@ def register_research_routes(app):
 
     @app.get("/research/results")
     def get_research_results():
-        """显示搜索结果页面"""
-        topic = request.args.get('topic', '未知主题')
-        html = f"""<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{topic} - 学习资料</title>
-</head>
-<body>
-    <div id="results"></div>
-    <script>
-        const results = JSON.parse(sessionStorage.getItem('searchResults') || '{{}}');
-        const topic = decodeURIComponent('{topic}');
-        fetch('/api/research/render', {{
-            method: 'POST',
-            headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify({{ topic, results }})
-        }})
-        .then(r => r.text())
-        .then(html => {{ document.body.innerHTML = html; }})
-        .catch(e => {{ document.body.innerHTML = '<h1>加载失败</h1><p>' + e.message + '</p>'; }});
-    </script>
-</body>
-</html>"""
-        return html
+        """显示搜索结果页面——直接渲染，不依赖 sessionStorage"""
+        topic = request.args.get('topic', '').strip()
+        if not topic:
+            return '<h1>缺少 topic 参数</h1>', 400
+
+        api_key, _ = get_claude_config()
+        if not api_key:
+            return '<h1>未配置 ANTHROPIC_API_KEY</h1>', 500
+
+        try:
+            results = _make_searcher().search_topic(topic)
+            # 保存搜索历史
+            repo = ResearchRepository(DB_PATH)
+            session_id = repo.save_session(topic, results)
+            logger.info("搜索历史已保存 session_id=%d topic=%s", session_id, topic)
+            return render_results_html(topic, results, session_id=session_id)
+        except Exception as e:
+            logger.error("搜索失败: %s", e, exc_info=True)
+            return f'<h1>搜索出错</h1><p>{_html.escape(str(e))}</p>', 500
 
     @app.post("/api/research")
     def post_research():
@@ -164,20 +158,12 @@ def register_research_routes(app):
 
         logger.info("收到搜索请求: %s", topic)
 
-        api_key, base_url = get_claude_config()
-
+        api_key, _ = get_claude_config()
         if not api_key:
             return jsonify({"error": "未配置 ANTHROPIC_API_KEY 环境变量"}), 500
 
         try:
-            searcher = TopicSearcher(
-                api_key=api_key,
-                base_url=base_url,
-                google_api_key=os.getenv("GOOGLE_SEARCH_API_KEY", ""),
-                google_cx=os.getenv("GOOGLE_SEARCH_CX", ""),
-                bing_api_key=os.getenv("BING_SEARCH_API_KEY", ""),
-            )
-            results = searcher.search_topic(topic)
+            results = _make_searcher().search_topic(topic)
             return jsonify(results)
         except Exception as e:
             logger.error("搜索失败: %s", e, exc_info=True)
@@ -191,3 +177,48 @@ def register_research_routes(app):
         results = data.get('results', {})
         html = render_results_html(topic, results)
         return html
+
+    @app.get("/research/history")
+    def get_research_history():
+        """搜索历史列表页"""
+        repo = ResearchRepository(DB_PATH)
+        sessions = repo.list_sessions(limit=50)
+        rows_html = "".join(
+            f'<tr><td>{s["id"]}</td>'
+            f'<td><a href="/research/history/{s["id"]}">{_html.escape(s["topic"])}</a></td>'
+            f'<td>{s["created_at"][:16]}</td></tr>'
+            for s in sessions
+        ) or "<tr><td colspan='3'>暂无搜索记录</td></tr>"
+        return f"""<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><title>搜索历史</title>
+<style>
+  body {{ font-family: -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }}
+  h1 {{ font-size: 1.5em; margin-bottom: 20px; }}
+  table {{ width: 100%; border-collapse: collapse; }}
+  th, td {{ padding: 10px 12px; text-align: left; border-bottom: 1px solid #eee; }}
+  th {{ background: #f5f7fa; font-weight: 600; }}
+  a {{ color: #667eea; text-decoration: none; }}
+  a:hover {{ text-decoration: underline; }}
+  .back {{ margin-bottom: 16px; display: inline-block; color: #718096; }}
+</style>
+</head>
+<body>
+  <a class="back" href="/research">← 返回搜索</a>
+  <h1>搜索历史</h1>
+  <table>
+    <thead><tr><th>#</th><th>主题</th><th>时间</th></tr></thead>
+    <tbody>{rows_html}</tbody>
+  </table>
+</body>
+</html>"""
+
+    @app.get("/research/history/<int:session_id>")
+    def get_research_history_detail(session_id: int):
+        """从历史记录直接渲染结果，不重新搜索"""
+        repo = ResearchRepository(DB_PATH)
+        session = repo.get_session(session_id)
+        if not session:
+            return '<h1>记录不存在</h1>', 404
+        return render_results_html(session["topic"], session["results"], session_id=session_id)
+

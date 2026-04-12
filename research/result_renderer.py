@@ -1,7 +1,7 @@
 """渲染主题搜索结果为 HTML 页面。"""
 
 
-def render_results_html(topic: str, results: dict) -> str:
+def render_results_html(topic: str, results: dict, session_id: int | None = None) -> str:
     """渲染搜索结果为 HTML。
 
     Args:
@@ -144,7 +144,11 @@ def render_results_html(topic: str, results: dict) -> str:
     <div class="container">
         <header>
             <h1>📚 {topic}</h1>
-            <p class="subtitle">学习资料汇总</p>
+            <p class="subtitle">学习资料汇总
+              {'&nbsp;·&nbsp;<a href="/research/history/' + str(session_id) + '" style="color:#667eea;font-size:0.9em">永久链接 #' + str(session_id) + '</a>' if session_id else ''}
+              &nbsp;·&nbsp;<a href="/research/history" style="color:#718096;font-size:0.9em">搜索历史</a>
+              &nbsp;·&nbsp;<a href="/research" style="color:#718096;font-size:0.9em">新搜索</a>
+            </p>
             <div class="stats">
                 <span class="stat">📄 论文 {len(papers)}</span>
                 <span class="stat">💻 代码 {len(repos)}</span>
@@ -310,6 +314,11 @@ def _render_articles(articles: list[dict]) -> str:
         comment = article.get("comment", "")
         snippet = article.get("snippet", "")
         published_date = article.get("published_date", "")
+        # 过滤掉 "N/A" 和空值，只显示真实日期（取年月日部分）
+        if published_date and published_date != "N/A":
+            published_date = published_date[:10]
+        else:
+            published_date = ""
 
         items_html += f"""
         <div class="item">
