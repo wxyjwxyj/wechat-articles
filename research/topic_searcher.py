@@ -1,4 +1,6 @@
 """主题搜索聚合器，并行调用多个数据源。"""
+import json
+import anthropic
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collectors.arxiv import ArxivCollector
 from research.github_search import GitHubSearcher
@@ -77,7 +79,6 @@ class TopicSearcher:
         """
         logger.info("开始搜索主题: %s", topic)
 
-        # 并行调用各数据源
         results = {
             "papers": [],
             "repositories": [],
@@ -88,16 +89,23 @@ class TopicSearcher:
             "xhs": [],
         }
 
-        with ThreadPoolExecutor(max_workers=7) as executor:
+        # 并行：query 扩展与其他数据源同时启动
+        with ThreadPoolExecutor(max_workers=8) as executor:
+            # 先提交 query 扩展（与其他源并行）
+            expand_future = executor.submit(self._expand_queries, topic)
+
             futures = {
                 executor.submit(self._search_arxiv, topic): "papers",
                 executor.submit(self._search_github, topic): "repositories",
                 executor.submit(self._search_hn, topic): "discussions",
                 executor.submit(self._search_docs, topic): "docs",
-                executor.submit(self._search_web, topic): "articles",
                 executor.submit(self._search_wechat, topic): "wechat",
                 executor.submit(self._search_xhs, topic): "xhs",
             }
+
+            # 等 query 扩展完成，再提交 web 搜索（依赖扩展结果）
+            extra_queries = expand_future.result() or []
+            futures[executor.submit(self._search_web, topic, extra_queries)] = "articles"
 
             for future in as_completed(futures):
                 category = futures[future]
@@ -157,19 +165,47 @@ class TopicSearcher:
         docs = search_docs(topic, max_results=self.max_docs)
         return docs
 
-    def _search_web(self, topic: str) -> list[dict]:
-        """搜索 Web 文章（Google 优先 → Bing 降级 → DuckDuckGo 兜底）"""
+    def _search_web(self, topic: str, extra_queries: list[str] | None = None) -> list[dict]:
+        """搜索 Web 文章（Exa 优先，支持多 query 扩展）"""
         searcher = WebSearcher(
             google_api_key=self.google_api_key,
             google_cx=self.google_cx,
             bing_api_key=self.bing_api_key,
         )
         try:
-            articles = searcher.search_articles(topic, max_results=self.max_articles)
+            articles = searcher.search_articles(topic, max_results=self.max_articles, extra_queries=extra_queries or [])
         except Exception as e:
             logger.warning("Web 搜索失败: %s", e)
             articles = []
         return articles
+
+    def _expand_queries(self, topic: str) -> list[str]:
+        """用 Claude 将 topic 扩展为中英双语子查询，提升搜索召回率。"""
+        if not self.api_key:
+            return []
+        prompt = (
+            f'Given the technical topic "{topic}", generate 4 related search phrases to find relevant resources:\n'
+            f'- 2 English phrases (for papers, docs, GitHub)\n'
+            f'- 2 Chinese phrases (for Chinese tech articles)\n'
+            f'- Each phrase should be 3-6 words\n'
+            f'Return only a JSON array: ["phrase1", "phrase2", "phrase3", "phrase4"]'
+        )
+        try:
+            client = anthropic.Anthropic(api_key=self.api_key, base_url=self.base_url)
+            resp = client.messages.create(
+                model="claude-opus-4-6", max_tokens=256,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            raw = resp.content[0].text.strip()
+            start, end = raw.find("["), raw.rfind("]") + 1
+            if start == -1:
+                return []
+            queries = json.loads(raw[start:end])
+            logger.info("Query 扩展：%s → %s", topic, queries)
+            return [q for q in queries if isinstance(q, str) and q.strip()]
+        except Exception as e:
+            logger.warning("Query 扩展失败: %s", e)
+            return []
 
     def _search_wechat(self, topic: str) -> list[dict]:
         """搜索本地公众号文章（content.db）"""
