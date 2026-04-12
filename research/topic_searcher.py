@@ -1,5 +1,6 @@
 """主题搜索聚合器，并行调用多个数据源。"""
 import json
+import re
 import anthropic
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collectors.arxiv import ArxivCollector
@@ -144,6 +145,14 @@ class TopicSearcher:
             new_items = [item for item in data if item.get(key) not in seen]
             results[main].extend(new_items)
             logger.info("%s 扩展补充 %d 条（去重后）", main, len(new_items))
+
+        # 采集端初筛：过滤明显不相关的结果，减少 Claude token 消耗
+        for category in ["papers", "repositories", "discussions", "articles", "wechat", "xhs"]:
+            before = len(results[category])
+            results[category] = self._prefilter(results[category], topic, category)
+            after = len(results[category])
+            if before != after:
+                logger.info("%s 初筛：%d → %d 条", category, before, after)
 
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
         scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
@@ -344,3 +353,71 @@ class TopicSearcher:
                     "summary": f"小红书笔记，❤️{item.get('liked_count', 0)} ⭐{item.get('collected_count', 0)}",
                 })
         return normalized
+
+    def _prefilter(self, items: list[dict], topic: str, category: str) -> list[dict]:
+        """采集端初筛：过滤明显不相关的结果，减少 Claude token 消耗。
+
+        策略：
+        - 关键词命中：英文按空格拆词，中文整体匹配 title/summary（宽松匹配，保留召回率）
+        - 元数据阈值：GitHub star >= 1000，HN score >= 50
+        - 保底：过滤结果为空时取前 5 条，避免某类别完全空掉
+        """
+        if not items:
+            return items
+
+        # 将 topic 拆成关键词（支持中英文混合）
+        topic_lower = topic.lower()
+        # 英文按空格拆取 2 字以上的词；中文不拆单字，直接用整体 topic 匹配
+        en_words = [w for w in re.split(r'\s+', topic_lower) if w and len(w) > 1]
+        keywords = list(set(en_words + [topic_lower]))
+
+        def _hits_topic(text: str) -> bool:
+            t = text.lower()
+            return any(kw in t for kw in keywords)
+
+        def _score_item(item: dict) -> int:
+            """返回初筛分数，0 = 不相关。"""
+            title = item.get("title", "")
+            if category == "papers":
+                summary = item.get("summary", "")
+                if _hits_topic(title) or _hits_topic(summary):
+                    return 1
+                # ArXiv 核心 AI 分类也保留
+                if item.get("primary_category") in ("cs.AI", "cs.CL", "cs.LG", "cs.CV", "cs.MA"):
+                    return 1
+                return 0
+            elif category == "repositories":
+                desc = item.get("description", "")
+                if _hits_topic(title) or _hits_topic(desc):
+                    return 1
+                try:
+                    if int(item.get("stars", 0) or 0) >= 1000:
+                        return 1
+                except (ValueError, TypeError):
+                    pass
+                return 0
+            elif category == "discussions":
+                if _hits_topic(title):
+                    return 1
+                try:
+                    if int(item.get("score", 0) or 0) >= 50:
+                        return 1
+                except (ValueError, TypeError):
+                    pass
+                return 0
+            elif category == "articles":
+                snippet = item.get("snippet", "")
+                if _hits_topic(title) or _hits_topic(snippet):
+                    return 1
+                return 0
+            else:  # wechat / xhs
+                summary = item.get("summary", "")
+                if _hits_topic(title) or _hits_topic(summary):
+                    return 1
+                return 0
+
+        scored = [(item, _score_item(item)) for item in items]
+        passed = [item for item, s in scored if s > 0]
+
+        # 保底：过滤结果为空时取前 5 条，避免某个类别完全空掉
+        return passed or items[:5]
