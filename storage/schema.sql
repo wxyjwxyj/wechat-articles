@@ -88,3 +88,5 @@ create table if not exists publish_tasks (
 -- 索引：加速按日期查询和按来源筛选
 create index if not exists idx_items_published_at on items(published_at);
 create index if not exists idx_items_source_id on items(source_id);
+create index if not exists idx_items_created_at_date on items(date(created_at));
+create index if not exists idx_items_published_at_date on items(date(published_at));
