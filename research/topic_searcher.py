@@ -261,16 +261,15 @@ class TopicSearcher:
         if not self.api_key:
             return []
         prompt = (
-            f'Given the technical topic "{topic}", generate 4 related search phrases to find relevant resources:\n'
-            f'- 2 English phrases (for papers, docs, GitHub)\n'
-            f'- 2 Chinese phrases (for Chinese tech articles)\n'
-            f'- Each phrase should be 3-6 words\n'
-            f'Return only a JSON array: ["phrase1", "phrase2", "phrase3", "phrase4"]'
+            f'I want to search for learning resources about "{topic}". '
+            f'Please suggest 4 search phrases: 2 in English and 2 in Chinese, each 3-6 words. '
+            f'Reply with only a JSON array, for example: ["phrase1", "phrase2", "phrase3", "phrase4"]'
         )
+        raw = ""
         try:
             client = anthropic.Anthropic(api_key=self.api_key, base_url=self.base_url)
             resp = client.messages.create(
-                model="claude-opus-4-6", max_tokens=256,
+                model="claude-haiku-4-5-20251001", max_tokens=256,
                 messages=[{"role": "user", "content": prompt}],
             )
             raw = resp.content[0].text.strip()
@@ -282,6 +281,9 @@ class TopicSearcher:
             queries = json.loads(raw[start:end])
             logger.info("Query 扩展：%s → %s", topic, queries)
             return [q for q in queries if isinstance(q, str) and q.strip()]
+        except json.JSONDecodeError as e:
+            logger.warning("Query 扩展：JSON 解析失败: %s，原始内容: %s", e, raw[:200])
+            return []
         except Exception as e:
             logger.warning("Query 扩展失败: %s", e)
             return []
