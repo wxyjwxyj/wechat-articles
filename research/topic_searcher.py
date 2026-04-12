@@ -388,13 +388,18 @@ class TopicSearcher:
                 return 0
             elif category == "repositories":
                 desc = item.get("description", "")
+                try:
+                    stars = int(item.get("stars", 0) or 0)
+                except (ValueError, TypeError):
+                    stars = 0
+                # star 太少的直接过滤，不管关键词是否命中
+                if stars < 50:
+                    return 0
                 if _hits_topic(title) or _hits_topic(desc):
                     return 1
-                try:
-                    if int(item.get("stars", 0) or 0) >= 1000:
-                        return 1
-                except (ValueError, TypeError):
-                    pass
+                # star 很高的通用工具也保留
+                if stars >= 1000:
+                    return 1
                 return 0
             elif category == "discussions":
                 if _hits_topic(title):
