@@ -89,8 +89,10 @@ class TopicSearcher:
             "xhs": [],
         }
 
+        extra_data: dict[str, list] = {}
+
         # 并行：query 扩展与其他数据源同时启动
-        with ThreadPoolExecutor(max_workers=8) as executor:
+        with ThreadPoolExecutor(max_workers=12) as executor:
             # 先提交 query 扩展（与其他源并行）
             expand_future = executor.submit(self._expand_queries, topic)
 
@@ -103,19 +105,45 @@ class TopicSearcher:
                 executor.submit(self._search_xhs, topic): "xhs",
             }
 
-            # 等 query 扩展完成，再提交 web 搜索（依赖扩展结果）
+            # 等 query 扩展完成，再提交依赖扩展结果的搜索
             extra_queries = expand_future.result() or []
             futures[executor.submit(self._search_web, topic, extra_queries)] = "articles"
+            futures[executor.submit(self._search_arxiv_multi, topic, extra_queries)] = "papers_extra"
+            futures[executor.submit(self._search_github_multi, topic, extra_queries)] = "repos_extra"
+            futures[executor.submit(self._search_hn_multi, topic, extra_queries)] = "discussions_extra"
+            futures[executor.submit(self._search_wechat_multi, topic, extra_queries)] = "wechat_extra"
+            futures[executor.submit(self._search_xhs_multi, topic, extra_queries)] = "xhs_extra"
 
             for future in as_completed(futures):
                 category = futures[future]
                 try:
                     data = future.result()
-                    results[category] = data
-                    logger.info("%s: 获取 %d 条结果", category, len(data))
+                    if category in ("papers_extra", "repos_extra", "discussions_extra", "wechat_extra", "xhs_extra"):
+                        extra_data[category] = data
+                    else:
+                        results[category] = data
+                        logger.info("%s: 获取 %d 条结果", category, len(data))
                 except Exception as e:
                     logger.warning("%s 搜索失败: %s", category, e)
-                    results[category] = []
+                    if category not in ("papers_extra", "repos_extra", "discussions_extra", "wechat_extra", "xhs_extra"):
+                        results[category] = []
+
+        # 所有主结果就绪后，合并扩展 query 的补充结果
+        _dedup_key = {
+            "papers_extra": "arxiv_id", "repos_extra": "full_name",
+            "discussions_extra": "id", "wechat_extra": "url", "xhs_extra": "url",
+        }
+        _main_cat = {
+            "papers_extra": "papers", "repos_extra": "repositories",
+            "discussions_extra": "discussions", "wechat_extra": "wechat", "xhs_extra": "xhs",
+        }
+        for cat, data in extra_data.items():
+            key = _dedup_key[cat]
+            main = _main_cat[cat]
+            seen = {item.get(key) for item in results[main]}
+            new_items = [item for item in data if item.get(key) not in seen]
+            results[main].extend(new_items)
+            logger.info("%s 扩展补充 %d 条（去重后）", main, len(new_items))
 
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
         scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
@@ -142,23 +170,63 @@ class TopicSearcher:
 
         return results
 
+    def _search_multi(self, search_fn, queries: list[str], dedup_key: str) -> list[dict]:
+        """通用多 query 并行搜索，按 dedup_key 去重后返回合并结果。"""
+        if not queries:
+            return []
+        seen: set = set()
+        results: list[dict] = []
+        with ThreadPoolExecutor(max_workers=min(len(queries), 4)) as ex:
+            futures = [ex.submit(search_fn, q) for q in queries]
+            for f in as_completed(futures):
+                try:
+                    for item in f.result():
+                        key = item.get(dedup_key)
+                        if key and key not in seen:
+                            seen.add(key)
+                            results.append(item)
+                except Exception as e:
+                    logger.warning("扩展查询失败: %s", e)
+        return results
+
     def _search_arxiv(self, topic: str) -> list[dict]:
         """搜索 ArXiv 论文"""
         collector = ArxivCollector()
-        papers = collector.search_by_keyword(topic, max_results=self.max_papers)
-        return papers
+        return collector.search_by_keyword(topic, max_results=self.max_papers)
+
+    def _search_arxiv_multi(self, topic: str, extra_queries: list[str]) -> list[dict]:
+        """用扩展 query 并行搜索 ArXiv，返回补充结果。"""
+        collector = ArxivCollector()
+        return self._search_multi(
+            lambda q: collector.search_by_keyword(q, self.max_papers),
+            extra_queries, "arxiv_id",
+        )
 
     def _search_github(self, topic: str) -> list[dict]:
         """搜索 GitHub 仓库"""
         searcher = GitHubSearcher()
-        repos = searcher.search_repositories(topic, max_results=self.max_repos)
-        return repos
+        return searcher.search_repositories(topic, max_results=self.max_repos)
+
+    def _search_github_multi(self, topic: str, extra_queries: list[str]) -> list[dict]:
+        """用扩展 query 并行搜索 GitHub，返回补充结果。"""
+        searcher = GitHubSearcher()
+        return self._search_multi(
+            lambda q: searcher.search_repositories(q, self.max_repos),
+            extra_queries, "full_name",
+        )
 
     def _search_hn(self, topic: str) -> list[dict]:
         """搜索 HN 讨论"""
         searcher = HNSearcher()
-        stories = searcher.search_stories(topic, max_results=self.max_discussions)
-        return stories
+        return searcher.search_stories(topic, max_results=self.max_discussions)
+
+    def _search_hn_multi(self, topic: str, extra_queries: list[str]) -> list[dict]:
+        """用扩展 query 并行搜索 HN，返回补充结果。"""
+        searcher = HNSearcher()
+        return self._search_multi(
+            lambda q: searcher.search_stories(q, self.max_discussions),
+            extra_queries, "id",
+        )
 
     def _search_docs(self, topic: str) -> list[dict]:
         """搜索文档库"""
@@ -212,10 +280,26 @@ class TopicSearcher:
         searcher = WechatSearcher()
         return searcher.search_articles(topic, max_results=self.max_articles)
 
+    def _search_wechat_multi(self, topic: str, extra_queries: list[str]) -> list[dict]:
+        """用扩展 query 并行搜索本地公众号，返回补充结果。"""
+        searcher = WechatSearcher()
+        return self._search_multi(
+            lambda q: searcher.search_articles(q, self.max_articles),
+            extra_queries, "url",
+        )
+
     def _search_xhs(self, topic: str) -> list[dict]:
         """搜索小红书笔记（需提前 xhs login）"""
         searcher = XhsSearcher()
         return searcher.search_notes(topic, max_results=self.max_xhs)
+
+    def _search_xhs_multi(self, topic: str, extra_queries: list[str]) -> list[dict]:
+        """用扩展 query 并行搜索小红书，返回补充结果。"""
+        searcher = XhsSearcher()
+        return self._search_multi(
+            lambda q: searcher.search_notes(q, self.max_xhs),
+            extra_queries, "url",
+        )
 
     def _normalize_for_scoring(self, items: list[dict], category: str) -> list[dict]:
         """统一格式以便 Claude 评分"""
