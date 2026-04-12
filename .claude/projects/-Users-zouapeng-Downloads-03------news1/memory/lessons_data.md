@@ -48,8 +48,57 @@
   - 用法：`./m2w <url> <output_dir> --image url`，输出 Markdown，按文章标题建子目录
   - 验证：2026-04-12 测试通过，无需登录态，正文完整
   - 当前用途：暂不集成（日报只用摘要不用正文），**将来如需正文内容供 Claude 分析时启用**
-- [ ] **appmsg_token 获取**：从 `mp.weixin.qq.com/cgi-bin/appmsg` 页面 HTML 正则提取，可调用 `/mp/getappmsgext` 获取阅读量
+- [x] **appmsg_token / 阅读量调研**（2026-04-12）：
+  - `getappmsgext` 不返回阅读量，只返回广告/相关视频等
+  - 文章页面阅读量只在微信客户端内显示，网页端 `read_num` 为空
+  - **他人文章阅读量无法通过任何公开接口获取**
+  - **自己日报的阅读量** ✅ 可获取：`appmsgpublish?sub=list` 接口返回 `appmsg_info[].read_num/like_num/comment_num/share_num`
+  - CDP eval 接口正确用法：`POST /eval?target=<targetId>`，body 是纯 JS 表达式字符串（非 JSON），返回 `{"value": ...}`
 - [ ] **文章删除检测**：检测 ghost/dead/内容违规关键词判断文章是否失效
+
+### wechat-download-api 源码调研（2026-04-12）
+
+项目地址：https://github.com/tmwgsicp/wechat-download-api
+
+**核心原理**：扫码登录微信公众号后台 → 拿 token+cookie → 调后台管理 API 拉文章列表（不爬文章页面）。
+
+**值得借鉴的技术点**：
+
+| 技术点 | 实现方式 | 对我们的价值 |
+|--------|---------|-------------|
+| TLS 指纹伪装 | `curl_cffi` + `impersonate="chrome120"` | 无头 HTTP 采集时绕过微信 TLS 检测，比普通 requests 抗封 |
+| 代理池 | 轮转 + 120s 冷却 + 直连兜底 | 参考 `utils/proxy_pool.py` 设计，给 RSS 采集加代理支持 |
+| 凭证过期分级告警 | 每 6h 检查，提前 24h/6h 发 webhook | 我们目前等跑失败才知道过期，可加主动检测 |
+| 区分验证页 vs 文章删除 | `has_article_content()` + `is_article_unavailable()` | 验证页（IP 风控）可重试，文章删除不重试，减少误判 |
+| 微信后台 API 拉文章列表 | `GET /cgi-bin/appmsgpublish?sub=list&fakeid=xxx&token=xxx` | 返回结构化 JSON，风控风险极低，比 CDP 爬页面稳定 |
+
+**关键接口**（他们用的，我们 CDP 方案也可以直接调）：
+```
+# 文章列表（结构化 JSON，无风控）
+GET https://mp.weixin.qq.com/cgi-bin/appmsgpublish
+    ?sub=list&fakeid=xxx&token=xxx&count=10&type=101_1&sub_action=list_ex
+
+# 搜索公众号获取 fakeid
+GET https://mp.weixin.qq.com/cgi-bin/searchbiz?query=xxx&token=xxx
+```
+
+**SaaS 版**：https://wechatrss.waytomaster.com（免费 2 个公众号，¥9.9/月 20 个）
+- 已验证：RSS 接口可用，返回标准 RSS 2.0，可直接接入 `fetch_rss_today.py`
+- 免费额度不够（我们需要 9 个公众号），暂不替换 CDP 方案
+
+### Wechat2RSS 免费 RSS（ttttmr，2021年起运营，稳定）
+
+我们 9 个公众号中有 3 个已收录，可直接用免费 RSS 替代 CDP 采集：
+
+| 公众号 | RSS 地址 |
+|--------|---------|
+| 量子位 | https://wechat2rss.xlab.app/feed/7131b577c61365cb47e81000738c10d872685908.xml |
+| 机器之心 | https://wechat2rss.xlab.app/feed/51e92aad2728acdd1fda7314be32b16639353001.xml |
+| 新智元 | https://wechat2rss.xlab.app/feed/ede30346413ea70dbef5d485ea5cbb95cca446e7.xml |
+
+其余 6 个（AI寒武纪、数字生命卡兹克、APPSO、36氪、虎嗅APP、硅星人Pro）未收录，继续走 CDP。
+
+注意：同批次文章时间戳相同（如都是 09:05:00），排序时会并列，不影响日期过滤。
 
 ### launchd 注意事项
 | 问题 | 说明 |
@@ -99,7 +148,7 @@
 - **重要性打分**：基于标题和摘要给文章打分排序
 
 ### 教训：AI 调用要有成本意识
-- 每次 build_bundle 都调用 Claude 做��重和打分，日均成本可控（20 条左右）
+- 每次 build_bundle 都调用 Claude 做去重和打分，日均成本可控（20 条左右）
 - 量级增大时需要考虑缓存或批量处理
 
 ---

@@ -4,7 +4,7 @@
 
 ---
 
-## 当前版本：v27
+## 当前版本：v28
 
 ```
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
@@ -26,6 +26,11 @@ v27: 测试覆盖提升 + bug 修复
      list_items_by_date 用 date() 函数修复时区后缀兼容问题
      schema.sql 补表达式索引 idx_items_created_at_date / published_at_date
      翻译日志区分新翻译和缓存复用数量
+v28: 微信公众号采集 CDP→RSS 迁移
+     量子位/机器之心/新智元 → Wechat2RSS 免费 RSS
+     APPSO/数字生命卡兹克 → wechatrss.waytomaster.com RSS
+     CDP 只负责剩余 4 个（AI寒武纪/36氪/虎嗅APP/硅星人Pro）
+     normalize_rss_item 支持从 source config 读取 language
 ```
 
 ---
@@ -98,6 +103,7 @@ v27: 测试覆盖提升 + bug 修复
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
 | 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
+| 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移（5个公众号改走免费RSS，CDP 只负责4个） |
 
 ---
 

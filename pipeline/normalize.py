@@ -209,6 +209,13 @@ def normalize_rss_item(source: dict, raw_item: dict) -> dict:
     # 原始发布时间已保存在 raw_content["published"] 中
     published_at = datetime.now(timezone.utc)
 
+    cfg = source.get("config", {})
+    if isinstance(cfg, str):
+        try:
+            cfg = json.loads(cfg)
+        except Exception:
+            cfg = {}
+
     return {
         "source_id": source.get("id"),
         "source_type": "rss",
@@ -220,7 +227,7 @@ def normalize_rss_item(source: dict, raw_item: dict) -> dict:
         "summary": summary,
         "cover": "",
         "tags": [],
-        "language": "en",
+        "language": cfg.get("language", "en"),
         "content_hash": content_hash,
         "status": "raw",
     }

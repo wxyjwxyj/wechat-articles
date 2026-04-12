@@ -14,15 +14,18 @@ logger = get_logger(__name__)
 DB_PATH = Path(__file__).parent.parent / "content.db"
 
 SOURCES = [
-    {"type": "wechat", "name": "量子位", "external_id": "MzIzNjc1NzUzMw==", "status": "active", "config": {"fakeid": "MzIzNjc1NzUzMw=="}},
+    # ── 微信公众号（CDP 采集）──
     {"type": "wechat", "name": "AI寒武纪", "external_id": "Mzg3MTkxMjYzOA==", "status": "active", "config": {"fakeid": "Mzg3MTkxMjYzOA=="}},
-    {"type": "wechat", "name": "机器之心", "external_id": "MzA3MzI4MjgzMw==", "status": "active", "config": {"fakeid": "MzA3MzI4MjgzMw=="}},
-    {"type": "wechat", "name": "数字生命卡兹克", "external_id": "MzIyMzA5NjEyMA==", "status": "active", "config": {"fakeid": "MzIyMzA5NjEyMA=="}},
-    {"type": "wechat", "name": "APPSO", "external_id": "MjM5MjAyNDUyMA==", "status": "active", "config": {"fakeid": "MjM5MjAyNDUyMA=="}},
     {"type": "wechat", "name": "36氪", "external_id": "MzI2NDk5NzA0Mw==", "status": "active", "config": {"fakeid": "MzI2NDk5NzA0Mw=="}},
     {"type": "wechat", "name": "虎嗅APP", "external_id": "MTQzMjE1NjQwMQ==", "status": "active", "config": {"fakeid": "MTQzMjE1NjQwMQ=="}},
-    {"type": "wechat", "name": "新智元", "external_id": "MzI3MTA0MTk1MA==", "status": "active", "config": {"fakeid": "MzI3MTA0MTk1MA=="}},
     {"type": "wechat", "name": "硅星人Pro", "external_id": "MzkyNjU2ODM2NQ==", "status": "active", "config": {"fakeid": "MzkyNjU2ODM2NQ=="}},
+    # ── 微信公众号（Wechat2RSS 免费 RSS）──
+    {"type": "rss", "name": "量子位", "external_id": "wechat_qbitai", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/7131b577c61365cb47e81000738c10d872685908.xml", "max_items": 10, "days_back": 2, "language": "zh"}},
+    {"type": "rss", "name": "机器之心", "external_id": "wechat_synced", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/51e92aad2728acdd1fda7314be32b16639353001.xml", "max_items": 10, "days_back": 2, "language": "zh"}},
+    {"type": "rss", "name": "新智元", "external_id": "wechat_aiysjy", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/ede30346413ea70dbef5d485ea5cbb95cca446e7.xml", "max_items": 10, "days_back": 2, "language": "zh"}},
+    # ── 微信公众号（wechatrss.waytomaster.com）──
+    {"type": "rss", "name": "APPSO", "external_id": "wechat_appso", "status": "active", "config": {"feed_url": "https://wechatrss.waytomaster.com/api/rss/MjM5MjAyNDUyMA==?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjYiLCJ0eXBlIjoicnNzIn0.gt9W9A_sdYmfnamvSobqyhLklPBOHVMQEyOYLyI3n6Y", "max_items": 10, "days_back": 2, "language": "zh"}},
+    {"type": "rss", "name": "数字生命卡兹克", "external_id": "wechat_kazke", "status": "active", "config": {"feed_url": "https://wechatrss.waytomaster.com/api/rss/MzIyMzA5NjEyMA==?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjYiLCJ0eXBlIjoicnNzIn0.gt9W9A_sdYmfnamvSobqyhLklPBOHVMQEyOYLyI3n6Y", "max_items": 10, "days_back": 2, "language": "zh"}},
     # ── 海外源 ──
     {"type": "hackernews", "name": "Hacker News", "external_id": "hackernews", "status": "active", "config": {"min_score": 20, "max_stories": 10}},
     {"type": "arxiv", "name": "ArXiv", "external_id": "arxiv", "status": "active", "config": {"max_results": 50, "max_papers": 10, "days_back": 2}},
