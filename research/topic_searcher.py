@@ -32,6 +32,7 @@ class TopicSearcher:
         google_cx: str = "",
         bing_api_key: str = "",
         max_xhs: int = 10,
+        db_path: str = "",
     ):
         """
         Args:
@@ -46,6 +47,7 @@ class TopicSearcher:
             google_cx: Google Custom Search Engine ID（留空则读环境变量）
             bing_api_key: Bing Search API key（留空则读环境变量）
             max_xhs: 小红书最多返回条数
+            db_path: SQLite 数据库路径，用于评分缓存（留空则不缓存）
         """
         self.api_key = api_key
         self.base_url = base_url
@@ -58,6 +60,7 @@ class TopicSearcher:
         self.google_cx = google_cx
         self.bing_api_key = bing_api_key
         self.max_xhs = max_xhs
+        self.db_path = db_path
 
     def search_topic(self, topic: str) -> dict:
         """搜索主题相关的学习资料。
@@ -155,7 +158,7 @@ class TopicSearcher:
                 logger.info("%s 初筛：%d → %d 条", category, before, after)
 
         # Claude 评分（除了 docs，因为 docs 是预设的权威资源）
-        scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url)
+        scorer = ClaudeScorer(api_key=self.api_key, base_url=self.base_url, db_path=self.db_path or None)
 
         for category in ["papers", "repositories", "discussions", "articles", "wechat", "xhs"]:
             if results[category]:

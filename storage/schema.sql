@@ -99,3 +99,14 @@ create table if not exists research_sessions (
   created_at text not null default (datetime('now'))
 );
 create index if not exists idx_research_sessions_created_at on research_sessions(created_at);
+
+-- Research Hub 评分缓存（url + topic 为 key，避免重复调用 Claude）
+create table if not exists research_score_cache (
+  id integer primary key autoincrement,
+  url text not null,
+  topic text not null,
+  score integer not null,
+  comment text not null default '',
+  created_at text not null default (datetime('now')),
+  unique(url, topic)
+);

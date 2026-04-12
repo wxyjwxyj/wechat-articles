@@ -22,6 +22,7 @@ def _make_searcher() -> TopicSearcher:
         google_api_key=os.getenv("GOOGLE_SEARCH_API_KEY", ""),
         google_cx=os.getenv("GOOGLE_SEARCH_CX", ""),
         bing_api_key=os.getenv("BING_SEARCH_API_KEY", ""),
+        db_path=DB_PATH,
     )
 
 def register_research_routes(app):
