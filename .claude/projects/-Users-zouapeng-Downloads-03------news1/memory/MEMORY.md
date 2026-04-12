@@ -4,7 +4,7 @@
 
 ---
 
-## 当前版本：v26
+## 当前版本：v27
 
 ```
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
@@ -21,6 +21,11 @@ v26: 翻译结果持久化到 DB
      items 表加 title_zh/summary_zh / 重跑 build_bundle 跳过已翻译条目
      翻译后回写 DB，build_bundle 从 2 分钟→秒级
      build_bundle 支持 --date 参数 / 日志中文括号乱码修复
+v27: 测试覆盖提升 + bug 修复
+     新增 test_repository / test_github_trending / test_config（共 +10 个测试）
+     list_items_by_date 用 date() 函数修复时区后缀兼容问题
+     schema.sql 补表达式索引 idx_items_created_at_date / published_at_date
+     翻译日志区分新翻译和缓存复用数量
 ```
 
 ---
@@ -92,7 +97,7 @@ v26: 翻译结果持久化到 DB
 | 2026-04-11 | v22 | 系统安全与可靠性加固（密钥→.env/SQLite WAL/retry session/Claude 429重试/DB索引/封面图兜底） |
 | 2026-04-11 | v22+ | code review 体系（test-runner + code-reviewer agents，finish v2），CLAUDE.md 精简重构 |
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
-| 2026-04-11 | v25 | 系统高频问题专项修复：HN url→hn_url、SQL OR 加括号、采集并行化、items冲突键→content_hash、API启动探测 |
+| 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
 
 ---
 
@@ -102,7 +107,6 @@ v26: 翻译结果持久化到 DB
 - [ ] SQLite WAL 下多进程写入是否还有锁问题
 - [ ] Claude API 429 重试是否够用（当前 3 次）
 - [ ] 类型提示完善（mypy）
-- [ ] 测试覆盖提升
 
 ---
 
