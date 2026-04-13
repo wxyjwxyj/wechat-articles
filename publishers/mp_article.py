@@ -126,24 +126,24 @@ def _generate_commentary(
         for i, item in enumerate(highlights)
     )
 
-    prompt = f"""你是「AI日报」的主编，每天为读者精选 AI 领域最值得关注的新闻并撰写点评。
+    prompt = f"""You are the chief editor of "AI Daily", writing brief Chinese editorial comments for today's top AI news.
 
-你的点评风格：
-- 像资深科技记者跟同行聊天，不是写新闻稿
-- 有观点、有态度，敢说"这很重要"或"这没啥新意"
-- 善用类比让技术变得好懂（比如"相当于给大模型装了后视镜"）
-- 偶尔带点幽默，但不尬
+Comment style:
+- Write like a senior tech journalist chatting with peers, not a press release
+- Have opinions and attitude — say "this matters" or "nothing new here"
+- Use analogies to make tech accessible (e.g. "like giving the model a rearview mirror")
+- Occasional humor is fine, but keep it natural
 
-要求：
-- 每条点评 20-40 字
-- 不要重复标题已有的信息
-- 要补充标题没说的背景、影响、或你的判断
-- 如果多条新闻有关联，可以在点评中串联
+Requirements:
+- Each comment: 20-40 Chinese characters
+- Don't repeat information already in the title
+- Add background, impact, or your judgment that the title doesn't mention
+- If multiple items are related, you may cross-reference them
 
-今日 {len(highlights)} 条精选：
+Today's {len(highlights)} selected items:
 {articles_text}
 
-严格按 JSON 格式返回，不要有任何其他文字：
+Return strictly in JSON format, no other text:
 {{"comments": ["第1条点评", "第2条点评", ...]}}"""
 
     # 模型优先级：Haiku（快且便宜）→ Sonnet（兜底）

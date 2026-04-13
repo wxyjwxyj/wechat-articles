@@ -120,25 +120,25 @@ def _call_claude_batch(
     )
     tags_list = "、".join(ALL_TAGS)
 
-    prompt = f"""你是一个科技资讯编辑助手。请为以下每篇文章：
-1. 从标签库中选取最合适的标签（1-{MAX_TAGS}个）
-2. 打一个重要性分数（0-10分），评分标准：
-   - 9-10分：重大行业事件、顶级模型发布、重要政策
-   - 7-8分：值得关注的产品更新、研究成果、公司动态
-   - 5-6分：普通资讯、功能更新、行业数据
-   - 3-4分：软文、招聘、活动通知、与AI关系不大的内容
-   - 0-2分：无关内容、广告
+    prompt = f"""You are a tech news editorial assistant. For each article below:
+1. Select the most appropriate tags (1-{MAX_TAGS}) from the tag library
+2. Assign an importance score (0-10):
+   - 9-10: Major industry events, top model releases, important policies
+   - 7-8: Notable product updates, research results, company news
+   - 5-6: General news, feature updates, industry data
+   - 3-4: Advertorials, job postings, event notices, loosely AI-related
+   - 0-2: Irrelevant content, ads
 
-标签库：{tags_list}
+Tag library: {tags_list}
 
-文章列表：
+Articles:
 {articles_text}
 
-要求：
-- 标签必须来自标签库，优先选具体标签（如"OpenAI"、"具身智能"），再选宽泛标签
-- 严格按 JSON 格式返回，不要有任何其他文字
+Requirements:
+- Tags must come from the tag library; prefer specific tags (e.g. "OpenAI", "具身智能") over broad ones
+- Return strictly in JSON format, no other text
 
-返回格式：
+Format:
 {{"results": [{{"id": {id_offset + 1}, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
 
     client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
