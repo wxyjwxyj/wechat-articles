@@ -126,10 +126,9 @@ def _generate_commentary(
         for i, item in enumerate(highlights)
     )
 
-    prompt = f"""You are the chief editor of "AI Daily", writing brief Chinese editorial comments for today's top AI news.
+    prompt = f"""Write brief Chinese editorial comments for today's top AI news items, in the style of a senior tech journalist chatting with peers (not a press release).
 
 Comment style:
-- Write like a senior tech journalist chatting with peers, not a press release
 - Have opinions and attitude — say "this matters" or "nothing new here"
 - Use analogies to make tech accessible (e.g. "like giving the model a rearview mirror")
 - Occasional humor is fine, but keep it natural
@@ -162,7 +161,7 @@ Return strictly in JSON format, no other text:
                 logger.warning("%s 返回空内容，尝试下一个模型", model)
                 continue
             raw = message.content[0].text.strip()
-            logger.info("使用 %s 生成点评", model)
+            logger.info("使用 %s 生成点评，原始响应: %s", model, raw[:300])
             break
         except ImportError:
             logger.warning("未安装 anthropic 库，跳过点评生成")

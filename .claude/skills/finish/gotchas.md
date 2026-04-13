@@ -62,6 +62,21 @@
 - 所有改动（代码 + 文档）一次性提交
 - 不要分多次 commit
 
+## Claude API Prompt
+
+### 所有 prompt 指令部分必须用英文
+- cckeys.top 代理会拦截中文指令性 prompt，返回无关内容（"I can't discuss that" 或 "I'm Kiro..."）
+- 受影响的场景：翻译、去重、评分、query 扩展等所有调用 Claude API 的地方
+- **输出内容可以是中文**（如"翻译成中文"、"写中文点评"），但 prompt 的指令框架要用英文
+- **"You are..."角色扮演句式也会被拦截**，改为直接描述任务（如 "Write brief comments..." 而不是 "You are the chief editor..."）
+- 排查方法：加 `logger.info("原始响应: %s", raw[:300])` 看代理实际返回了什么
+
+### 已修复的文件
+- `pipeline/dedupe.py` - 去重 prompt
+- `scripts/build_bundle.py` - 翻译 prompt
+- `research/claude_scorer.py` - 评分 prompt
+- `research/topic_searcher.py` - query 扩展 prompt
+
 ## MEMORY 更新
 
 ### 不要写重复内容

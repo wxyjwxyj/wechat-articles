@@ -4,7 +4,7 @@
 
 ---
 
-## 当前版本：v28
+## 当前版本：v29
 
 ```
 v21: daily_run.sh 健壮性改进（stash 保护 + bundle 失败跳过 + 日期校验）
@@ -37,6 +37,14 @@ v28: 微信公众号采集 CDP→RSS 迁移
      Research Hub Web 搜索升级：Exa AI 优先 + Claude query 扩展
      topic → 4个中英双语子查询 → 5路并行 Exa → 去重合并（~5x 结果量）
      Claude prompt 用英文，避免中文 prompt 被代理拦截返回"I can't discuss that"
+v29: cckeys.top 代理拦截问题全面修复
+     所有 Claude API prompt 指令部分改为英文（翻译/去重/打标签/点评/评分/query扩展）
+     "You are..." 角色扮演句式也会被拦截，改为直接描述任务
+     去重 JSON 解析改为取最后一个对象（处理 Claude 自我纠正场景）
+     去重 prompt 加正反示例，区分"同一事件"和"仅共享关键词"
+     Research Hub 评分缓存（research_score_cache 表，url+topic 为 key）
+     采集端初筛（_prefilter）减少 Claude token 消耗
+     新增测试：dedupe 误合并防护、Claude 自我纠正场景
 ```
 
 ---
@@ -83,6 +91,20 @@ v28: 微信公众号采集 CDP→RSS 迁移
 
 **不要：** 用 url 做 upsert 冲突键，url 是可变的展示字段。
 
+### cckeys.top 代理拦截规律（2026-04-13）
+
+**背景：** 代理会拦截特定 prompt 模式，返回 "I'm Kiro" 或 "I can't discuss that"，导致翻译/去重/点评全部失败。
+
+**规律：**
+- 中文指令性 prompt → 拦截
+- `"You are [角色]..."` 角色扮演句式 → 拦截
+- 英文直接描述任务（"Translate...", "Write...", "Score..."）→ 正常
+- 输出内容可以是中文，只要指令框架是英文
+
+**排查方法：** 加 `logger.info("原始响应: %s", raw[:300])` 看实际返回。
+
+**不要：** 用中文写 prompt 指令，也不要用 "You are..." 开头。
+
 ---
 
 | 文件 | 内容 |
@@ -110,6 +132,7 @@ v28: 微信公众号采集 CDP→RSS 迁移
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
 | 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
 | 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移；is_wechat 标记 + 严格日期过滤；Research Hub Exa + Claude query 扩展 |
+| 2026-04-13 | v29 | cckeys.top 代理拦截全面修复（所有 prompt 改英文，去掉 You are 句式）；去重取最后 JSON + 正反示例；评分缓存；采集端初筛 |
 
 ---
 
