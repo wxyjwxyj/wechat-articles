@@ -82,6 +82,11 @@
 - 直接 `python scripts/xxx.py` 会出现"未配置 claude_api_key"
 - 正确姿势：`set -a && source .env && set +a && python scripts/xxx.py`
 
+### 改完要手工跑一下验证，不要等明天定时任务
+- 采集类改动：跑 `python fetch_wechat_today.py` / `python fetch_rss_today.py` 等
+- pipeline 改动：跑 `set -a && source .env && set +a && python scripts/build_bundle.py`
+- 不要只跑测试就算完，测试 mock 了外部依赖，真实环境可能有问题
+
 ## MEMORY 更新
 
 ### 不要写重复内容
