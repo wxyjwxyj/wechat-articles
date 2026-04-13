@@ -204,17 +204,22 @@ def normalize_rss_item(source: dict, raw_item: dict) -> dict:
 
     summary = _clean_text(raw_item.get("summary", ""))
 
-    # 用采集时间作为 published_at（与 GitHub Trending 保持一致）
-    # RSS 文章实际发布时间可能是美国时区的昨天，直接用原始时间会被 build_bundle 的今日过滤漏掉
-    # 原始发布时间已保存在 raw_content["published"] 中
-    published_at = datetime.now(timezone.utc)
-
     cfg = source.get("config", {})
     if isinstance(cfg, str):
         try:
             cfg = json.loads(cfg)
         except Exception:
             cfg = {}
+
+    # use_original_time=True 时用 RSS 原始发布时间（适合中文公众号，时区无偏差）
+    # 默认用采集时间，避免海外 RSS 美国时区导致被今日过滤漏掉
+    if cfg.get("use_original_time") and raw_item.get("published"):
+        try:
+            published_at = datetime.fromisoformat(raw_item["published"])
+        except Exception:
+            published_at = datetime.now(timezone.utc)
+    else:
+        published_at = datetime.now(timezone.utc)
 
     return {
         "source_id": source.get("id"),

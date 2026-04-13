@@ -117,7 +117,7 @@ def render_bundle_html(bundle: dict) -> str:
             if not name or name in seen_sources:
                 continue
             seen_sources.add(name)
-            if name_to_type.get(name) == "wechat":
+            if name_to_type.get(name) == "wechat" or name in _WECHAT_ORDER:
                 wechat_sources.append(name)
             else:
                 other_sources.append(name)
