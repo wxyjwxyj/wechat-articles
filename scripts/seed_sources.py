@@ -19,11 +19,10 @@ SOURCES = [
     {"type": "wechat", "name": "36氪", "external_id": "MzI2NDk5NzA0Mw==", "status": "active", "config": {"fakeid": "MzI2NDk5NzA0Mw=="}},
     {"type": "wechat", "name": "虎嗅APP", "external_id": "MTQzMjE1NjQwMQ==", "status": "active", "config": {"fakeid": "MTQzMjE1NjQwMQ=="}},
     {"type": "wechat", "name": "硅星人Pro", "external_id": "MzkyNjU2ODM2NQ==", "status": "active", "config": {"fakeid": "MzkyNjU2ODM2NQ=="}},
-    # ── 微信公众号（Wechat2RSS 免费 RSS）──
-    {"type": "rss", "name": "量子位", "external_id": "wechat_qbitai", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/7131b577c61365cb47e81000738c10d872685908.xml", "max_items": 10, "days_back": 2, "language": "zh", "use_original_time": True, "is_wechat": True}},
-    {"type": "rss", "name": "机器之心", "external_id": "wechat_synced", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/51e92aad2728acdd1fda7314be32b16639353001.xml", "max_items": 10, "days_back": 2, "language": "zh", "use_original_time": True, "is_wechat": True}},
-    {"type": "rss", "name": "新智元", "external_id": "wechat_aiysjy", "status": "active", "config": {"feed_url": "https://wechat2rss.xlab.app/feed/ede30346413ea70dbef5d485ea5cbb95cca446e7.xml", "max_items": 10, "days_back": 2, "language": "zh", "use_original_time": True, "is_wechat": True}},
-    # ── 微信公众号（wechatrss.waytomaster.com）──
+    {"type": "wechat", "name": "量子位", "external_id": "MzIzNjc1NzUzMw==", "status": "active", "config": {"fakeid": "MzIzNjc1NzUzMw=="}},
+    {"type": "wechat", "name": "机器之心", "external_id": "MzA3MzI4MjgzMw==", "status": "active", "config": {"fakeid": "MzA3MzI4MjgzMw=="}},
+    {"type": "wechat", "name": "新智元", "external_id": "MzI3MTA0MTk1MA==", "status": "active", "config": {"fakeid": "MzI3MTA0MTk1MA=="}},
+    # ── 微信公众号（wechatrss.waytomaster.com RSS）──
     {"type": "rss", "name": "APPSO", "external_id": "wechat_appso", "status": "active", "config": {"feed_url": "https://wechatrss.waytomaster.com/api/rss/MjM5MjAyNDUyMA==?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjYiLCJ0eXBlIjoicnNzIn0.gt9W9A_sdYmfnamvSobqyhLklPBOHVMQEyOYLyI3n6Y", "max_items": 10, "days_back": 2, "language": "zh", "use_original_time": True, "is_wechat": True}},
     {"type": "rss", "name": "数字生命卡兹克", "external_id": "wechat_kazke", "status": "active", "config": {"feed_url": "https://wechatrss.waytomaster.com/api/rss/MzIyMzA5NjEyMA==?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjYiLCJ0eXBlIjoicnNzIn0.gt9W9A_sdYmfnamvSobqyhLklPBOHVMQEyOYLyI3n6Y", "max_items": 10, "days_back": 2, "language": "zh", "use_original_time": True, "is_wechat": True}},
     # ── 海外源 ──
