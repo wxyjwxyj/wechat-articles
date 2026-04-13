@@ -164,8 +164,10 @@ def _claude_dedupe(
         "Rules:\n"
         "- Same event: different media outlets reporting on the EXACT same news/release/announcement\n"
         "- Articles must share the same core fact to be grouped (e.g. both report 'Company X released product Y')\n"
-        "- Merely sharing a keyword or topic is NOT enough — the reported event must be identical\n"
+        "- Merely sharing a keyword, product name, or topic is NOT enough — the reported event must be identical\n"
         "- Different angles, opinions, analyses, or aspects of the same subject are NOT the same event\n"
+        "- Example of NOT same event: 'GPT-5 technical details' vs 'Trump officials encourage banks to test GPT-5' — both mention GPT-5 but report different events\n"
+        "- Example of SAME event: 'OpenAI launches GPT-5' vs 'OpenAI发布GPT-5' — same announcement, different languages\n"
         "- When in doubt, keep articles in separate groups\n"
         "- Articles with no duplicates should be in their own group\n\n"
         f"Article list:\n{titles_text}\n\n"
@@ -193,7 +195,7 @@ def _claude_dedupe(
             logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
         raw = message.content[0].text.strip()
-        logger.info("Claude 去重原始响应: %s", raw[:200])
+        logger.info("Claude 去重原始响应: %s", raw[:500])
     except ImportError:
         logger.warning("未安装 anthropic 库，降级到关键词方案")
         return None
@@ -205,8 +207,9 @@ def _claude_dedupe(
         return None
 
     try:
-        start = raw.find("{")
+        # 取最后一个完整 JSON 对象（Claude 有时会先输出错误答案再自我纠正）
         end = raw.rfind("}") + 1
+        start = raw.rfind("{", 0, end)
         if start == -1 or end == 0:
             logger.warning("Claude 去重响应不含 JSON 对象，降级到关键词方案")
             return None
