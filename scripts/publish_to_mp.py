@@ -3,6 +3,7 @@
 用法：
   python scripts/publish_to_mp.py                  # 正常提交
   python scripts/publish_to_mp.py --dry-run         # 只预览不提交
+  python scripts/publish_to_mp.py --force           # 忽略已有草稿强制重建
   python scripts/publish_to_mp.py path/to/preview.json  # 指定稿件文件
 
 读取 mp_article_preview.json，自动生成封面图并上传，
@@ -29,6 +30,7 @@ COVER_PATH = PROJECT_DIR / "cover_today.png"
 def main() -> None:
     # 解析参数
     dry_run = "--dry-run" in sys.argv
+    force = "--force" in sys.argv
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     preview_path = Path(args[0]) if args else DEFAULT_PREVIEW
 
@@ -70,8 +72,11 @@ def main() -> None:
 
     # 检查是否已有同日草稿
     if bundle_date and publisher.has_today_draft(bundle_date):
-        logger.warning("草稿箱中已存在包含 %s 的草稿，跳过创建（如需重新创建请先删除旧草稿）", bundle_date)
-        return
+        if force:
+            logger.info("--force 模式，忽略已有草稿，继续创建")
+        else:
+            logger.warning("草稿箱中已存在包含 %s 的草稿，跳过创建（如需重新创建请先删除旧草稿或加 --force）", bundle_date)
+            return
 
     # 生成封面图
     logger.info("生成封面图...")
