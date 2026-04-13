@@ -239,7 +239,7 @@ def register_research_routes(app):
 
 The report has two main dimensions:
 
-### Part 1: Longitudinal Analysis (Diachronic)
+PART 1 - Longitudinal Analysis (Diachronic):
 Trace the full history of 「{topic}」from its origin to today:
 1. Origin: background, founding team, initial technology/concept, industry context at the time
 2. Birth milestone: first release/founding date and initial positioning
@@ -247,7 +247,7 @@ Trace the full history of 「{topic}」from its origin to today:
 4. Decision logic: at each key milestone, explain WHY — what constraints existed, why option A over option B
 5. Narrative style: write as a compelling story with cause-and-effect, not a dry timeline
 
-### Part 2: Horizontal Analysis (Synchronic)
+PART 2 - Horizontal Analysis (Synchronic):
 Compare 「{topic}」with competitors/peers at the current moment:
 - First assess: no competitors (Scene A) / few competitors (Scene B) / many competitors (Scene C)
 - Compare on: technical approach, product form, target users, core strengths/weaknesses, pricing
@@ -255,21 +255,21 @@ Compare 「{topic}」with competitors/peers at the current moment:
 - Ecosystem position: what niche does it occupy in the landscape
 - Trend: competitive trajectory, opportunities and risks
 
-### Writing style requirements:
+Writing style requirements:
 - Readable like a quality long-form tech article, not a consulting report
 - Narrative-driven, not list-driven — the longitudinal part needs story arcs
 - Opinions welcome but must be grounded in facts; label speculation clearly
 - Plain language — avoid buzzwords
 - Warm comparisons — explain what each competitor "became", not just feature diffs
 
-### Length:
+Length requirements:
 - Longitudinal: 3000-8000 Chinese characters
 - Horizontal: 1500-5000 Chinese characters
-- Final synthesis (横纵交汇): 800-1500 Chinese characters combining both dimensions
+- Final synthesis: 800-1500 Chinese characters combining both dimensions
 
-### Output format:
+Output format:
 1. Longitudinal analysis first, then horizontal
-2. End with 「横纵交汇」synthesis giving your judgment on 「{topic}」's current position and future trajectory
+2. End with a synthesis section titled "横纵交汇" giving your judgment on 「{topic}」's current position and future trajectory
 3. Write the full report in Chinese
 4. Label sources/dates where possible; label speculation explicitly"""
 
@@ -277,12 +277,16 @@ Compare 「{topic}」with competitors/peers at the current moment:
             try:
                 import anthropic
                 client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+                first_chunk = True
                 with client.messages.stream(
                     model="claude-sonnet-4-6",
                     max_tokens=8192,
                     messages=[{"role": "user", "content": prompt}],
                 ) as stream:
                     for text in stream.text_stream:
+                        if first_chunk:
+                            logger.info("深度研究首个 chunk: %s", repr(text[:200]))
+                            first_chunk = False
                         yield f"data: {json.dumps({'chunk': text})}\n\n"
                 yield "data: [DONE]\n\n"
             except Exception as e:
