@@ -77,6 +77,11 @@
 - `research/claude_scorer.py` - 评分 prompt
 - `research/topic_searcher.py` - query 扩展 prompt
 
+### 手动跑脚本读不到 API key
+- 项目没有 `load_dotenv()`，依赖 shell `source .env` 注入环境变量
+- 直接 `python scripts/xxx.py` 会出现"未配置 claude_api_key"
+- 正确姿势：`set -a && source .env && set +a && python scripts/xxx.py`
+
 ## MEMORY 更新
 
 ### 不要写重复内容

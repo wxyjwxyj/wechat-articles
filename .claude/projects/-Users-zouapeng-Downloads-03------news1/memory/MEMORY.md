@@ -105,6 +105,19 @@ v29: cckeys.top 代理拦截问题全面修复
 
 **不要：** 用中文写 prompt 指令，也不要用 "You are..." 开头。
 
+### 手动跑脚本读不到 API key（2026-04-13）
+
+**背景：** 项目用 `.env` 存密钥，`daily_run.sh` 里 `source .env` 后跑脚本没问题。但直接 `python scripts/xxx.py` 时读不到 `ANTHROPIC_API_KEY`，出现"未配置 claude_api_key"。
+
+**原因：** 项目代码里没有 `load_dotenv()`，完全依赖 shell 的 `source .env` 注入环境变量。
+
+**手动跑的正确姿势：**
+```bash
+set -a && source .env && set +a && python scripts/xxx.py
+```
+
+**不要：** 直接 `python scripts/xxx.py`，也不要用 `python -c "from dotenv import load_dotenv; load_dotenv(); ..."` 绕过（容易忘）。如果频繁手动跑，考虑在 `utils/config.py` 的 `get_claude_config()` 里加 `load_dotenv()`。
+
 ---
 
 | 文件 | 内容 |
