@@ -159,13 +159,14 @@ def _claude_dedupe(
     )
 
     prompt = (
-        "你是一位编辑助手。以下是今日采集的文章标题，请找出「报道同一事件」的文章并分组。\n\n"
-        "规则：\n"
-        "- 同一事件：不同媒体对同一条新闻/发布/公告的报道\n"
-        "- 不同角度的评论、分析不算同一事件（即使主题相关）\n"
-        "- 没有重复的文章单独一组\n\n"
-        f"文章列表：\n{titles_text}\n\n"
-        "严格按 JSON 格式返回，不要有任何其他文字：\n"
+        "You are an editorial assistant. Below are today's article titles collected from various sources. "
+        "Please identify articles that report on the same event and group them together.\n\n"
+        "Rules:\n"
+        "- Same event: different media outlets reporting on the same news/release/announcement\n"
+        "- Different angles, opinions, or analyses are NOT the same event (even if on the same topic)\n"
+        "- Articles with no duplicates should be in their own group\n\n"
+        f"Article list:\n{titles_text}\n\n"
+        "Return strictly in JSON format, no other text:\n"
         '{"groups": [[1,2], [3], [4,5,6], ...]}'
     )
 
@@ -189,6 +190,7 @@ def _claude_dedupe(
             logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
         raw = message.content[0].text.strip()
+        logger.info("Claude 去重原始响应: %s", raw[:200])
     except ImportError:
         logger.warning("未安装 anthropic 库，降级到关键词方案")
         return None
