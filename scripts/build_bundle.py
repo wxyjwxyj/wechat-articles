@@ -38,8 +38,9 @@ def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, it
 
     def _translate_one(item: dict) -> bool:
         prompt = (
-            f'将以下标题和摘要翻译成中文，用 JSON 返回，格式：{{"title_zh": "...", "summary_zh": "..."}}，'
-            f'引号用「」代替，不要用双引号。\n'
+            f'Translate the following title and summary into Chinese. '
+            f'Return JSON only, format: {{"title_zh": "...", "summary_zh": "..."}}. '
+            f'Use 「」instead of double quotes within translated text. Do not use " in the output.\n'
             f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
         )
         for attempt in range(3):
