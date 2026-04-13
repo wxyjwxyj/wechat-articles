@@ -1,4 +1,5 @@
 """渲染主题搜索结果为 HTML 页面。"""
+import json as _json
 
 
 def render_results_html(topic: str, results: dict, session_id: int | None = None) -> str:
@@ -138,6 +139,74 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
             border-radius: 6px;
             font-size: 0.95em;
         }}
+        .deep-research-btn {{
+            display: inline-block;
+            margin-top: 16px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5a623 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }}
+        .deep-research-btn:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(240, 147, 251, 0.4);
+        }}
+        .deep-research-btn:disabled {{
+            opacity: 0.6; cursor: not-allowed; transform: none;
+        }}
+        .dr-section {{
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: none;
+        }}
+        .dr-section.show {{ display: block; }}
+        .dr-title {{
+            font-size: 1.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }}
+        .dr-content {{
+            font-size: 0.95em;
+            line-height: 1.8;
+            color: #2d3748;
+            white-space: normal;
+            word-break: break-word;
+        }}
+        .dr-content h1, .dr-content h2, .dr-content h3 {{
+            margin: 1.2em 0 0.5em;
+            color: #1a202c;
+        }}
+        .dr-content h1 {{ font-size: 1.4em; }}
+        .dr-content h2 {{ font-size: 1.2em; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }}
+        .dr-content h3 {{ font-size: 1.05em; }}
+        .dr-content p {{ margin-bottom: 0.8em; }}
+        .dr-content strong {{ color: #1a202c; }}
+        .dr-content ul, .dr-content ol {{ padding-left: 1.5em; margin-bottom: 0.8em; }}
+        .dr-content li {{ margin-bottom: 0.3em; }}
+        .dr-cursor {{
+            display: inline-block;
+            width: 2px; height: 1em;
+            background: #667eea;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }}
+        @keyframes blink {{ 50% {{ opacity: 0; }} }}
+        .dr-status {{
+            font-size: 0.85em;
+            color: #718096;
+            margin-top: 12px;
+        }}
     </style>
 </head>
 <body>
@@ -158,7 +227,91 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
                 <span class="stat">📱 公众号 {len(wechat)}</span>
                 <span class="stat">🍠 小红书 {len(xhs)}</span>
             </div>
+            <div>
+                <button class="deep-research-btn" id="drBtn" onclick="startDeepResearch()">🔬 深度研究</button>
+            </div>
         </header>
+
+        <!-- 深度研究结果区 -->
+        <div class="dr-section" id="drSection">
+            <h2 class="dr-title">🔬 横纵深度研究报告</h2>
+            <div class="dr-content" id="drContent"></div>
+            <div class="dr-status" id="drStatus"></div>
+        </div>
+
+        <script>
+        function startDeepResearch() {{
+            const topic = {_json.dumps(topic)};
+            const btn = document.getElementById('drBtn');
+            const section = document.getElementById('drSection');
+            const content = document.getElementById('drContent');
+            const status = document.getElementById('drStatus');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ 研究中...';
+            section.classList.add('show');
+            content.innerHTML = '<span class="dr-cursor"></span>';
+            status.textContent = '正在调用 Claude 深度研究，预计需要 1-3 分钟...';
+
+            // 滚动到结果区
+            section.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+
+            const es = new EventSource('/research/deep?topic=' + encodeURIComponent(topic));
+            let text = '';
+
+            es.onmessage = function(e) {{
+                if (e.data === '[DONE]') {{
+                    es.close();
+                    btn.disabled = false;
+                    btn.textContent = '🔬 重新研究';
+                    content.innerHTML = renderMarkdown(text);
+                    status.textContent = '研究完成，共 ' + text.length + ' 字';
+                    return;
+                }}
+                try {{
+                    const d = JSON.parse(e.data);
+                    if (d.error) {{
+                        es.close();
+                        btn.disabled = false;
+                        btn.textContent = '🔬 深度研究';
+                        content.textContent = '出错了：' + d.error;
+                        status.textContent = '';
+                        return;
+                    }}
+                    if (d.chunk) {{
+                        text += d.chunk;
+                        content.innerHTML = renderMarkdown(text) + '<span class="dr-cursor"></span>';
+                    }}
+                }} catch(err) {{}}
+            }};
+
+            es.onerror = function() {{
+                es.close();
+                btn.disabled = false;
+                btn.textContent = '🔬 深度研究';
+                status.textContent = text ? '连接中断，内容可能不完整' : '连接失败，请检查服务是否正常';
+            }};
+        }}
+
+        function renderMarkdown(text) {{
+            const escaped = text
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return escaped.split(/\n\n+/).map(block => {{
+                if (/^#{1,3} /.test(block)) {{
+                    return block
+                        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+                        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+                        .replace(/^# (.+)$/gm, '<h1>$1</h1>');
+                }}
+                if (/^[-*] /m.test(block)) {{
+                    const items = block.replace(/^[-*] (.+)$/gm, '<li>$1</li>');
+                    return '<ul>' + items + '</ul>';
+                }}
+                const inline = block.replace(/[*][*](.+?)[*][*]/g, '<strong>$1</strong>');
+                return '<p>' + inline + '</p>';
+            }}).join('\n');
+        }}
+        </script>
 
         {_render_empty_message(total) if total == 0 else ""}
 

@@ -1,7 +1,8 @@
 """主题研究功能的 Flask 路由。"""
 import html as _html
+import json
 import os
-from flask import request, jsonify
+from flask import request, jsonify, Response, stream_with_context
 from research.topic_searcher import TopicSearcher
 from research.result_renderer import render_results_html
 from storage.research_repository import ResearchRepository
@@ -222,4 +223,78 @@ def register_research_routes(app):
         if not session:
             return '<h1>记录不存在</h1>', 404
         return render_results_html(session["topic"], session["results"], session_id=session_id)
+
+    @app.get("/research/deep")
+    def get_research_deep():
+        """SSE 流式深度研究：横纵分析法 + Claude API"""
+        topic = request.args.get('topic', '').strip()[:200]
+        if not topic:
+            return jsonify({"error": "缺少 topic 参数"}), 400
+
+        api_key, base_url = get_claude_config()
+        if not api_key:
+            return jsonify({"error": "未配置 ANTHROPIC_API_KEY"}), 500
+
+        prompt = f"""Produce a complete deep research report on「{topic}」using the Horizontal-Vertical Analysis Method.
+
+The report has two main dimensions:
+
+### Part 1: Longitudinal Analysis (Diachronic)
+Trace the full history of 「{topic}」from its origin to today:
+1. Origin: background, founding team, initial technology/concept, industry context at the time
+2. Birth milestone: first release/founding date and initial positioning
+3. Evolution: all key milestones in chronological order — major version updates, funding rounds, team changes, strategic pivots, architecture changes, user growth milestones, partnerships, controversies
+4. Decision logic: at each key milestone, explain WHY — what constraints existed, why option A over option B
+5. Narrative style: write as a compelling story with cause-and-effect, not a dry timeline
+
+### Part 2: Horizontal Analysis (Synchronic)
+Compare 「{topic}」with competitors/peers at the current moment:
+- First assess: no competitors (Scene A) / few competitors (Scene B) / many competitors (Scene C)
+- Compare on: technical approach, product form, target users, core strengths/weaknesses, pricing
+- User perspective: real user feedback, actual usage vs official positioning
+- Ecosystem position: what niche does it occupy in the landscape
+- Trend: competitive trajectory, opportunities and risks
+
+### Writing style requirements:
+- Readable like a quality long-form tech article, not a consulting report
+- Narrative-driven, not list-driven — the longitudinal part needs story arcs
+- Opinions welcome but must be grounded in facts; label speculation clearly
+- Plain language — avoid buzzwords
+- Warm comparisons — explain what each competitor "became", not just feature diffs
+
+### Length:
+- Longitudinal: 3000-8000 Chinese characters
+- Horizontal: 1500-5000 Chinese characters
+- Final synthesis (横纵交汇): 800-1500 Chinese characters combining both dimensions
+
+### Output format:
+1. Longitudinal analysis first, then horizontal
+2. End with 「横纵交汇」synthesis giving your judgment on 「{topic}」's current position and future trajectory
+3. Write the full report in Chinese
+4. Label sources/dates where possible; label speculation explicitly"""
+
+        def generate():
+            try:
+                import anthropic
+                client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+                with client.messages.stream(
+                    model="claude-sonnet-4-6",
+                    max_tokens=8192,
+                    messages=[{"role": "user", "content": prompt}],
+                ) as stream:
+                    for text in stream.text_stream:
+                        yield f"data: {json.dumps({'chunk': text})}\n\n"
+                yield "data: [DONE]\n\n"
+            except Exception as e:
+                logger.error("深度研究失败: %s", e, exc_info=True)
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+        return Response(
+            stream_with_context(generate()),
+            mimetype="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+            },
+        )
 
