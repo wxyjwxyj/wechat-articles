@@ -1,8 +1,9 @@
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 
 from storage.db import init_db
 from storage.repository import ItemRepository, SourceRepository
-from pipeline.dedupe import dedupe_items
+from pipeline.dedupe import dedupe_items, _keyword_dedupe, _merge_group
 
 
 def test_dedupe_items_keeps_only_unique_urls(tmp_path: Path):
@@ -52,3 +53,39 @@ def test_item_repository_inserts_only_once_for_same_url(tmp_path: Path):
 
     rows = repo.list_items_by_date("2026-04-03")
     assert len(rows) == 1
+
+
+def test_keyword_dedupe_does_not_merge_different_events_sharing_keyword():
+    """仅共享关键词（如 Mythos）但报道不同事件的文章不应被合并。"""
+    items = [
+        {
+            "url": "https://wechat/a",
+            "title": "史上最有故事感的技术报告——Claude最强模型Mythos 7个极其精彩的细节",
+            "summary": "介绍 Anthropic Mythos 模型的技术细节",
+            "source_name": "硅星人Pro",
+            "source_type": "wechat",
+        },
+        {
+            "url": "https://techcrunch/b",
+            "title": "Trump officials may be encouraging banks to test Anthropic's Mythos model",
+            "summary": "Trump officials encouraging banks to test Mythos",
+            "source_name": "TechCrunch AI",
+            "source_type": "rss",
+        },
+    ]
+    result = _keyword_dedupe(items)
+    assert len(result) == 2, "不同事件不应被合并，即使共享 Mythos 关键词"
+
+
+def test_dedupe_falls_back_to_keyword_when_claude_returns_none():
+    """Claude 去重返回 None 时应降级到关键词方案，不丢失文章。"""
+    items = [
+        {"url": "https://a", "title": "OpenAI releases GPT-5", "summary": "GPT-5 released", "source_name": "A", "source_type": "rss"},
+        {"url": "https://b", "title": "OpenAI 发布 GPT-5", "summary": "GPT-5 发布", "source_name": "B", "source_type": "wechat"},
+        {"url": "https://c", "title": "GitHub Trending today", "summary": "trending repos", "source_name": "C", "source_type": "rss"},
+    ]
+    with patch("pipeline.dedupe._claude_dedupe", return_value=None) as mock_claude:
+        result = dedupe_items(items, api_key="fake-key")
+    mock_claude.assert_called_once()
+    # GPT-5 两篇标题相似应被合并为 1 条，GitHub Trending 独立 1 条
+    assert len(result) == 2
