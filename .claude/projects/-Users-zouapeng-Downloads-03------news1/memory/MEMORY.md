@@ -45,6 +45,12 @@ v29: cckeys.top 代理拦截问题全面修复
      Research Hub 评分缓存（research_score_cache 表，url+topic 为 key）
      采集端初筛（_prefilter）减少 Claude token 消耗
      新增测试：dedupe 误合并防护、Claude 自我纠正场景
+     publish_to_mp 新增 --force 参数跳过已有同日草稿检查
+v30: Research Hub 深度研究功能
+     新增 /research/deep SSE 接口，流式输出横纵分析报告
+     result_renderer.py 新增深度研究按钮和流式展示区
+     全面修复渲染层 XSS：_html.escape 所有外部字段、_safe_url 过滤 javascript: 协议
+     JS 嵌入 topic 用 json.dumps().replace("</", "<\\/") 防 </script> 注入
 ```
 
 ---
@@ -66,6 +72,18 @@ v29: cckeys.top 代理拦截问题全面修复
 **决策：** `utils/config.py` 统一读取，`ANTHROPIC_API_KEY` 环境变量优先，config.json 降级兜底。`daily_run.sh` 启动时 `source .env`。
 
 **不要：** 把密钥放回 config.json，也不要在代码里直接读 config.json 的 claude_api_key。
+
+### Python f-string 里嵌 JS 代码的转义陷阱（2026-04-14）
+
+**背景：** `result_renderer.py` 用 f-string 生成含 `<script>` 块的 HTML，JS 正则里的 `\n` 在 Python f-string 里是真实换行，导致 JS 语法错误；`\*` 是无效 Python 转义序列。
+
+**决策：**
+- JS 正则中的 `\n` 写成 `\\n`（Python 转义后输出字面量 `\n`）
+- `join('\n')` 写成 `join('\\n')`
+- `\*\*` 写成 `[*][*]`（避免无效转义）
+- 用户输入嵌入 JS 字符串：`json.dumps(value).replace("</", "<\\/")` 防 `</script>` 注入
+
+**不要：** 在 f-string 里直接写 JS 正则的 `\n`、`\*` 等转义序列，会被 Python 先解释。
 
 ### SQLite 并发：WAL + busy_timeout（2026-04-11）
 
@@ -145,7 +163,7 @@ set -a && source .env && set +a && python scripts/xxx.py
 | 2026-04-11 | v23 | today.html 来源分类修复、海外源中文翻译（claude-opus-4-6 逐条翻译）、全面 XSS 防护 |
 | 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
 | 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移；is_wechat 标记 + 严格日期过滤；Research Hub Exa + Claude query 扩展 |
-| 2026-04-13 | v29 | cckeys.top 代理拦截全面修复（所有 prompt 改英文，去掉 You are 句式）；去重取最后 JSON + 正反示例；评分缓存；采集端初筛 |
+| 2026-04-13 | v29 | cckeys.top 代理拦截全面修复（所有 prompt 改英文，去掉 You are 句式）；去重取最后 JSON + 正反示例；评分缓存；采集端初筛；量子位/机器之心/新智元 改回 CDP；publish_to_mp 新增 --force 参数 |
 
 ---
 
@@ -165,6 +183,6 @@ set -a && source .env && set +a && python scripts/xxx.py
 python fetch_wechat_today.py                # 只跑微信采集
 python scripts/build_bundle.py              # 重建 bundle
 python generate_html.py bundle_today.json   # 重建 HTML
-python -m flask --app api.app run           # Research Hub
+python scripts/publish_to_mp.py --force     # 强制重新提交草稿（忽略已有同日草稿）
 pytest tests/ -v                            # 全量测试
 ```

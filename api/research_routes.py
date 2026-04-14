@@ -2,6 +2,8 @@
 import html as _html
 import json
 import os
+import time
+import anthropic
 from flask import request, jsonify, Response, stream_with_context
 from research.topic_searcher import TopicSearcher
 from research.result_renderer import render_results_html
@@ -175,7 +177,9 @@ def register_research_routes(app):
     def post_research_render():
         """渲染搜索结果为 HTML"""
         data = request.get_json()
-        topic = data.get('topic', '未知主题')
+        if not data:
+            return '<h1>请求体必须为 JSON</h1>', 400
+        topic = data.get('topic', '未知主题')[:200]
         results = data.get('results', {})
         html = render_results_html(topic, results)
         return html
@@ -235,12 +239,15 @@ def register_research_routes(app):
         if not api_key:
             return jsonify({"error": "未配置 ANTHROPIC_API_KEY"}), 500
 
-        prompt = f"""Produce a complete deep research report on「{topic}」using the Horizontal-Vertical Analysis Method.
+        # 清洗 topic，防止书名号闭合导致 prompt injection
+        topic_safe = topic.replace('「', '').replace('」', '')
+
+        prompt = f"""Produce a complete deep research report on「{topic_safe}」using the Horizontal-Vertical Analysis Method.
 
 The report has two main dimensions:
 
 PART 1 - Longitudinal Analysis (Diachronic):
-Trace the full history of 「{topic}」from its origin to today:
+Trace the full history of 「{topic_safe}」from its origin to today:
 1. Origin: background, founding team, initial technology/concept, industry context at the time
 2. Birth milestone: first release/founding date and initial positioning
 3. Evolution: all key milestones in chronological order — major version updates, funding rounds, team changes, strategic pivots, architecture changes, user growth milestones, partnerships, controversies
@@ -248,7 +255,7 @@ Trace the full history of 「{topic}」from its origin to today:
 5. Narrative style: write as a compelling story with cause-and-effect, not a dry timeline
 
 PART 2 - Horizontal Analysis (Synchronic):
-Compare 「{topic}」with competitors/peers at the current moment:
+Compare 「{topic_safe}」with competitors/peers at the current moment:
 - First assess: no competitors (Scene A) / few competitors (Scene B) / many competitors (Scene C)
 - Compare on: technical approach, product form, target users, core strengths/weaknesses, pricing
 - User perspective: real user feedback, actual usage vs official positioning
@@ -269,29 +276,33 @@ Length requirements:
 
 Output format:
 1. Longitudinal analysis first, then horizontal
-2. End with a synthesis section titled "横纵交汇" giving your judgment on 「{topic}」's current position and future trajectory
+2. End with a synthesis section titled "横纵交汇" giving your judgment on 「{topic_safe}」's current position and future trajectory
 3. Write the full report in Chinese
 4. Label sources/dates where possible; label speculation explicitly"""
 
         def generate():
             try:
-                import anthropic
                 client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
                 first_chunk = True
+                t_start = time.time()
+                char_count = 0
                 with client.messages.stream(
-                    model="claude-sonnet-4-6",
+                    model="claude-opus-4-6",
                     max_tokens=8192,
                     messages=[{"role": "user", "content": prompt}],
                 ) as stream:
                     for text in stream.text_stream:
                         if first_chunk:
-                            logger.info("深度研究首个 chunk: %s", repr(text[:200]))
+                            logger.info("深度研究首个 chunk（%.1fs）: %s", time.time() - t_start, repr(text[:100]))
                             first_chunk = False
+                        char_count += len(text)
                         yield f"data: {json.dumps({'chunk': text})}\n\n"
+                logger.info("深度研究完成：%.1fs，共 %d 字", time.time() - t_start, char_count)
                 yield "data: [DONE]\n\n"
             except Exception as e:
                 logger.error("深度研究失败: %s", e, exc_info=True)
                 yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                yield "data: [DONE]\n\n"
 
         return Response(
             stream_with_context(generate()),

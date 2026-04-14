@@ -1,4 +1,5 @@
 """渲染主题搜索结果为 HTML 页面。"""
+import html as _html
 import json as _json
 
 
@@ -12,6 +13,7 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
     Returns:
         完整的 HTML 页面字符串
     """
+    topic_escaped = _html.escape(topic)
     papers = results.get("papers", [])
     repos = results.get("repositories", [])
     discussions = results.get("discussions", [])
@@ -36,7 +38,7 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{topic} - 学习资料</title>
+    <title>{topic_escaped} - 学习资料</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -212,7 +214,7 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
 <body>
     <div class="container">
         <header>
-            <h1>📚 {topic}</h1>
+            <h1>📚 {topic_escaped}</h1>
             <p class="subtitle">学习资料汇总
               {'&nbsp;·&nbsp;<a href="/research/history/' + str(session_id) + '" style="color:#667eea;font-size:0.9em">永久链接 #' + str(session_id) + '</a>' if session_id else ''}
               &nbsp;·&nbsp;<a href="/research/history" style="color:#718096;font-size:0.9em">搜索历史</a>
@@ -239,9 +241,20 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
             <div class="dr-status" id="drStatus"></div>
         </div>
 
+        {_render_empty_message(total) if total == 0 else ""}
+
+        {docs_html}
+        {papers_html}
+        {repos_html}
+        {discussions_html}
+        {articles_html}
+        {wechat_html}
+        {xhs_html}
+    </div>
+
         <script>
         function startDeepResearch() {{
-            const topic = {_json.dumps(topic)};
+            const topic = {_json.dumps(topic).replace("</", "<\\/")};
             const btn = document.getElementById('drBtn');
             const section = document.getElementById('drSection');
             const content = document.getElementById('drContent');
@@ -296,7 +309,7 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
         function renderMarkdown(text) {{
             const escaped = text
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return escaped.split(/\n\n+/).map(block => {{
+            return escaped.split(/\\n\\n+/).map(block => {{
                 if (/^#{1,3} /.test(block)) {{
                     return block
                         .replace(/^### (.+)$/gm, '<h3>$1</h3>')
@@ -309,24 +322,20 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
                 }}
                 const inline = block.replace(/[*][*](.+?)[*][*]/g, '<strong>$1</strong>');
                 return '<p>' + inline + '</p>';
-            }}).join('\n');
+            }}).join('\\n');
         }}
         </script>
-
-        {_render_empty_message(total) if total == 0 else ""}
-
-        {docs_html}
-        {papers_html}
-        {repos_html}
-        {discussions_html}
-        {articles_html}
-        {wechat_html}
-        {xhs_html}
-    </div>
 </body>
 </html>"""
 
     return html
+
+
+def _safe_url(url: str) -> str:
+    """只允许 http/https 协议，防止 javascript: 注入。"""
+    if url and url.startswith(("http://", "https://")):
+        return _html.escape(url)
+    return "#"
 
 
 def _render_papers(papers: list[dict]) -> str:
@@ -336,13 +345,13 @@ def _render_papers(papers: list[dict]) -> str:
 
     items_html = ""
     for paper in papers:
-        title = paper.get("title", "")
-        url = paper.get("url", "")
+        title = _html.escape(paper.get("title", ""))
+        url = _safe_url(paper.get("url", ""))
         score = paper.get("score", 0)
-        comment = paper.get("comment", "")
+        comment = _html.escape(paper.get("comment", ""))
         authors = paper.get("authors", [])
-        author_str = ", ".join(authors[:3])
-        if len(authors) > 3:
+        author_str = _html.escape(", ".join(authors[:3]))
+        if len(paper.get("authors", [])) > 3:
             author_str += " et al."
 
         items_html += f"""
@@ -369,12 +378,12 @@ def _render_repos(repos: list[dict]) -> str:
 
     items_html = ""
     for repo in repos:
-        name = repo.get("full_name", repo.get("name", ""))
-        url = repo.get("url", "")
+        name = _html.escape(repo.get("full_name", repo.get("name", "")))
+        url = _safe_url(repo.get("url", ""))
         score = repo.get("score", 0)
-        comment = repo.get("comment", "")
+        comment = _html.escape(repo.get("comment", ""))
         stars = repo.get("stars", 0)
-        language = repo.get("language", "")
+        language = _html.escape(repo.get("language", ""))
 
         items_html += f"""
         <div class="item">
@@ -401,10 +410,10 @@ def _render_discussions(discussions: list[dict]) -> str:
 
     items_html = ""
     for disc in discussions:
-        title = disc.get("title", "")
-        url = disc.get("hn_url", disc.get("url", ""))
+        title = _html.escape(disc.get("title", ""))
+        url = _safe_url(disc.get("hn_url", disc.get("url", "")))
         score = disc.get("score", 0)
-        comment = disc.get("comment", "")
+        comment = _html.escape(disc.get("comment", ""))
         points = disc.get("score", 0)  # HN 的 score 字段是点赞数
         comments_count = disc.get("comments", 0)
 
@@ -433,10 +442,10 @@ def _render_docs(docs: list[dict]) -> str:
 
     items_html = ""
     for doc in docs:
-        name = doc.get("name", "")
-        url = doc.get("url", "")
+        name = _html.escape(doc.get("name", ""))
+        url = _safe_url(doc.get("url", ""))
         score = doc.get("score", 9)
-        comment = doc.get("comment", "官方文档，权威可靠")
+        comment = _html.escape(doc.get("comment", "官方文档，权威可靠"))
 
         items_html += f"""
         <div class="item">
@@ -461,15 +470,15 @@ def _render_articles(articles: list[dict]) -> str:
 
     items_html = ""
     for article in articles:
-        title = article.get("title", "")
-        url = article.get("url", "")
+        title = _html.escape(article.get("title", ""))
+        url = _safe_url(article.get("url", ""))
         score = article.get("score", 0)
-        comment = article.get("comment", "")
-        snippet = article.get("snippet", "")
+        comment = _html.escape(article.get("comment", ""))
+        snippet = _html.escape(article.get("snippet", ""))
         published_date = article.get("published_date", "")
         # 过滤掉 "N/A" 和空值，只显示真实日期（取年月日部分）
         if published_date and published_date != "N/A":
-            published_date = published_date[:10]
+            published_date = _html.escape(published_date[:10])
         else:
             published_date = ""
 
@@ -497,13 +506,13 @@ def _render_wechat(articles: list[dict]) -> str:
 
     items_html = ""
     for article in articles:
-        title = article.get("title", "")
-        url = article.get("url", "")
+        title = _html.escape(article.get("title", ""))
+        url = _safe_url(article.get("url", ""))
         score = article.get("score", 0)
-        comment = article.get("comment", "")
-        author = article.get("author", "")
-        published_at = article.get("published_at", "")
-        summary = article.get("summary", "")
+        comment = _html.escape(article.get("comment", ""))
+        author = _html.escape(article.get("author", ""))
+        published_at = _html.escape(article.get("published_at", ""))
+        summary = _html.escape(article.get("summary", ""))
 
         items_html += f"""
         <div class="item">
@@ -530,18 +539,18 @@ def _render_xhs(notes: list[dict]) -> str:
 
     items_html = ""
     for note in notes:
-        title = note.get("title", "")
-        url = note.get("url", "")
+        title = _html.escape(note.get("title", ""))
+        url = _safe_url(note.get("url", ""))
         score = note.get("score", 0)
-        comment = note.get("comment", "")
-        author = note.get("author", "")
-        cover = note.get("cover", "")
-        liked_count = note.get("liked_count", "0")
-        collected_count = note.get("collected_count", "0")
+        comment = _html.escape(note.get("comment", ""))
+        author = _html.escape(note.get("author", ""))
+        cover = _safe_url(note.get("cover", ""))
+        liked_count = _html.escape(str(note.get("liked_count", "0")))
+        collected_count = _html.escape(str(note.get("collected_count", "0")))
         note_type = note.get("type", "normal")
         type_badge = "🎬 视频" if note_type == "video" else "📝 图文"
 
-        cover_html = f'<img src="{cover}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;flex-shrink:0;" onerror="this.style.display=\'none\'">' if cover else ""
+        cover_html = f'<img src="{cover}" style="width:80px;height:80px;object-fit:cover;border-radius:6px;flex-shrink:0;" onerror="this.style.display=\'none\'">' if cover and cover != "#" else ""
 
         items_html += f"""
         <div class="item" style="display:flex;gap:12px;align-items:flex-start;">
