@@ -76,6 +76,23 @@ def register_research_routes(app):
         }
         button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-row { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-deep {
+            flex: 1; padding: 16px 20px; font-size: 1.05em; font-weight: 600;
+            color: white; background: linear-gradient(135deg, #f093fb 0%, #f5a623 100%);
+            border: none; border-radius: 12px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-deep:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(240,147,251,0.4); }
+        .btn-copy {
+            padding: 16px 20px; font-size: 1.05em; font-weight: 600;
+            color: #764ba2; background: #f3e8ff;
+            border: 2px solid #d8b4fe; border-radius: 12px; cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-copy:hover { background: #e9d5ff; }
+        .copy-tip { text-align: center; font-size: 0.85em; color: #48bb78; min-height: 1.2em; margin-top: -10px; margin-bottom: 10px; }
         .examples { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .example {
             padding: 8px 16px; background: #edf2f7; border-radius: 20px;
@@ -100,6 +117,10 @@ def register_research_routes(app):
             <input type="text" id="topicInput" placeholder="例如：强化学习、RAG、Transformer..." />
             <button onclick="search()">搜索</button>
         </div>
+        <div class="btn-row">
+            <button class="btn-copy" onclick="copyPrompt()" title="复制横纵分析提示词，粘贴到任意 AI 使用">📋 复制深度研究提示词</button>
+        </div>
+        <div class="copy-tip" id="copyTip"></div>
         <div class="examples">
             <span class="example" onclick="fillExample('强化学习')">强化学习</span>
             <span class="example" onclick="fillExample('RAG')">RAG</span>
@@ -121,6 +142,54 @@ def register_research_routes(app):
             const topic = input.value.trim();
             if (!topic) { alert('请输入搜索主题'); return; }
             window.location.href = '/research/results?topic=' + encodeURIComponent(topic);
+        }
+        function copyPrompt() {
+            const topic = document.getElementById('topicInput').value.trim() || '你的主题';
+            const prompt = buildDeepResearchPrompt(topic);
+            navigator.clipboard.writeText(prompt).then(() => {
+                const tip = document.getElementById('copyTip');
+                tip.textContent = '✅ 已复制！粘贴到任意 AI 即可使用';
+                setTimeout(() => { tip.textContent = ''; }, 3000);
+            });
+        }
+        function buildDeepResearchPrompt(topic) {
+            return `请用横纵分析法，对「${topic}」撰写一份完整的深度研究报告。
+
+报告分两个维度：
+
+【纵轴：历时分析】
+从起源到今天，完整追溯「${topic}」的发展历程：
+1. 起源：背景、创始团队、初始技术/概念、当时的行业环境
+2. 诞生节点：首次发布/成立时间与初始定位
+3. 演进：按时间顺序列出所有关键里程碑——重大版本更新、融资轮次、团队变化、战略转型、架构调整、用户增长节点、合作关系、争议事件
+4. 决策逻辑：每个关键节点，解释"为什么"——当时有哪些约束，为何选A而非B
+5. 叙事风格：写成有因果逻辑的故事，而非干燥的时间线
+
+【横轴：共时分析】
+在当下时间截面，将「${topic}」与竞品/同类进行系统对比：
+- 先判断竞争格局：无竞品（场景A）/ 少量竞品（场景B）/ 众多竞品（场景C）
+- 对比维度：技术路线、产品形态、目标用户、核心优劣势、定价策略
+- 用户视角：真实用户反馈，实际使用体验 vs 官方定位
+- 生态位：在整个行业版图中占据什么位置
+- 趋势：竞争走向、机会与风险
+
+写作风格要求：
+- 像一篇优质长文，而非咨询报告
+- 叙事驱动，纵轴部分要有故事弧线，不要堆砌列表
+- 欢迎有观点，但必须有事实支撑；推测内容需明确标注
+- 语言平实，避免空洞的行业黑话
+- 对竞品的描述要有温度，说清楚它们"成了什么"，而不只是功能对比
+
+篇幅要求：
+- 纵轴：3000-8000字
+- 横轴：1500-5000字
+- 最终综合：800-1500字
+
+输出格式：
+1. 先写纵轴，再写横轴
+2. 最后以"横纵交汇"为标题，给出你对「${topic}」当前处境与未来走向的判断
+3. 全文用中文撰写
+4. 尽量标注信息来源和时间；推测内容明确标注`;
         }
     </script>
 </body>
@@ -242,43 +311,43 @@ def register_research_routes(app):
         # 清洗 topic，防止书名号闭合导致 prompt injection
         topic_safe = topic.replace('「', '').replace('」', '')
 
-        prompt = f"""Produce a complete deep research report on「{topic_safe}」using the Horizontal-Vertical Analysis Method.
+        prompt = f"""请用横纵分析法，对「{topic_safe}」撰写一份完整的深度研究报告。
 
-The report has two main dimensions:
+报告分两个维度：
 
-PART 1 - Longitudinal Analysis (Diachronic):
-Trace the full history of 「{topic_safe}」from its origin to today:
-1. Origin: background, founding team, initial technology/concept, industry context at the time
-2. Birth milestone: first release/founding date and initial positioning
-3. Evolution: all key milestones in chronological order — major version updates, funding rounds, team changes, strategic pivots, architecture changes, user growth milestones, partnerships, controversies
-4. Decision logic: at each key milestone, explain WHY — what constraints existed, why option A over option B
-5. Narrative style: write as a compelling story with cause-and-effect, not a dry timeline
+【纵轴：历时分析】
+从起源到今天，完整追溯「{topic_safe}」的发展历程：
+1. 起源：背景、创始团队、初始技术/概念、当时的行业环境
+2. 诞生节点：首次发布/成立时间与初始定位
+3. 演进：按时间顺序列出所有关键里程碑——重大版本更新、融资轮次、团队变化、战略转型、架构调整、用户增长节点、合作关系、争议事件
+4. 决策逻辑：每个关键节点，解释"为什么"——当时有哪些约束，为何选A而非B
+5. 叙事风格：写成有因果逻辑的故事，而非干燥的时间线
 
-PART 2 - Horizontal Analysis (Synchronic):
-Compare 「{topic_safe}」with competitors/peers at the current moment:
-- First assess: no competitors (Scene A) / few competitors (Scene B) / many competitors (Scene C)
-- Compare on: technical approach, product form, target users, core strengths/weaknesses, pricing
-- User perspective: real user feedback, actual usage vs official positioning
-- Ecosystem position: what niche does it occupy in the landscape
-- Trend: competitive trajectory, opportunities and risks
+【横轴：共时分析】
+在当下时间截面，将「{topic_safe}」与竞品/同类进行系统对比：
+- 先判断竞争格局：无竞品（场景A）/ 少量竞品（场景B）/ 众多竞品（场景C）
+- 对比维度：技术路线、产品形态、目标用户、核心优劣势、定价策略
+- 用户视角：真实用户反馈，实际使用体验 vs 官方定位
+- 生态位：在整个行业版图中占据什么位置
+- 趋势：竞争走向、机会与风险
 
-Writing style requirements:
-- Readable like a quality long-form tech article, not a consulting report
-- Narrative-driven, not list-driven — the longitudinal part needs story arcs
-- Opinions welcome but must be grounded in facts; label speculation clearly
-- Plain language — avoid buzzwords
-- Warm comparisons — explain what each competitor "became", not just feature diffs
+写作风格要求：
+- 像一篇优质长文，而非咨询报告
+- 叙事驱动，纵轴部分要有故事弧线，不要堆砌列表
+- 欢迎有观点，但必须有事实支撑；推测内容需明确标注
+- 语言平实，避免空洞的行业黑话
+- 对竞品的描述要有温度，说清楚它们"成了什么"，而不只是功能对比
 
-Length requirements:
-- Longitudinal: 3000-8000 Chinese characters
-- Horizontal: 1500-5000 Chinese characters
-- Final synthesis: 800-1500 Chinese characters combining both dimensions
+篇幅要求：
+- 纵轴：3000-8000字
+- 横轴：1500-5000字
+- 最终综合：800-1500字
 
-Output format:
-1. Longitudinal analysis first, then horizontal
-2. End with a synthesis section titled "横纵交汇" giving your judgment on 「{topic_safe}」's current position and future trajectory
-3. Write the full report in Chinese
-4. Label sources/dates where possible; label speculation explicitly"""
+输出格式：
+1. 先写纵轴，再写横轴
+2. 最后以"横纵交汇"为标题，给出你对「{topic_safe}」当前处境与未来走向的判断
+3. 全文用中文撰写
+4. 尽量标注信息来源和时间；推测内容明确标注"""
 
         def generate():
             try:

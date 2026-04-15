@@ -209,6 +209,25 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
             color: #718096;
             margin-top: 12px;
         }}
+        .btn-copy-prompt {{
+            padding: 8px 16px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #764ba2;
+            background: #f3e8ff;
+            border: 2px solid #d8b4fe;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }}
+        .btn-copy-prompt:hover {{ background: #e9d5ff; }}
+        .copy-prompt-tip {{
+            font-size: 0.82em;
+            color: #48bb78;
+            margin-top: 8px;
+            min-height: 1.2em;
+        }}
     </style>
 </head>
 <body>
@@ -236,9 +255,13 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
 
         <!-- 深度研究结果区 -->
         <div class="dr-section" id="drSection">
-            <h2 class="dr-title">🔬 横纵深度研究报告</h2>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid #e2e8f0;">
+                <h2 class="dr-title" style="margin:0;border:none;padding:0;">🔬 横纵深度研究报告</h2>
+                <button class="btn-copy-prompt" id="copyPromptBtn" onclick="copyPrompt()" title="复制提示词，粘贴到任意 AI 使用">📋 复制提示词</button>
+            </div>
             <div class="dr-content" id="drContent"></div>
             <div class="dr-status" id="drStatus"></div>
+            <div class="copy-prompt-tip" id="copyPromptTip"></div>
         </div>
 
         {_render_empty_message(total) if total == 0 else ""}
@@ -253,6 +276,52 @@ def render_results_html(topic: str, results: dict, session_id: int | None = None
     </div>
 
         <script>
+        function copyPrompt() {{
+            const topic = {_json.dumps(topic).replace("</", "<\\/")};
+            const prompt = `请用横纵分析法，对「${{topic}}」撰写一份完整的深度研究报告。
+
+报告分两个维度：
+
+【纵轴：历时分析】
+从起源到今天，完整追溯「${{topic}}」的发展历程：
+1. 起源：背景、创始团队、初始技术/概念、当时的行业环境
+2. 诞生节点：首次发布/成立时间与初始定位
+3. 演进：按时间顺序列出所有关键里程碑——重大版本更新、融资轮次、团队变化、战略转型、架构调整、用户增长节点、合作关系、争议事件
+4. 决策逻辑：每个关键节点，解释"为什么"——当时有哪些约束，为何选A而非B
+5. 叙事风格：写成有因果逻辑的故事，而非干燥的时间线
+
+【横轴：共时分析】
+在当下时间截面，将「${{topic}}」与竞品/同类进行系统对比：
+- 先判断竞争格局：无竞品（场景A）/ 少量竞品（场景B）/ 众多竞品（场景C）
+- 对比维度：技术路线、产品形态、目标用户、核心优劣势、定价策略
+- 用户视角：真实用户反馈，实际使用体验 vs 官方定位
+- 生态位：在整个行业版图中占据什么位置
+- 趋势：竞争走向、机会与风险
+
+写作风格要求：
+- 像一篇优质长文，而非咨询报告
+- 叙事驱动，纵轴部分要有故事弧线，不要堆砌列表
+- 欢迎有观点，但必须有事实支撑；推测内容需明确标注
+- 语言平实，避免空洞的行业黑话
+- 对竞品的描述要有温度，说清楚它们"成了什么"，而不只是功能对比
+
+篇幅要求：
+- 纵轴：3000-8000字
+- 横轴：1500-5000字
+- 最终综合：800-1500字
+
+输出格式：
+1. 先写纵轴，再写横轴
+2. 最后以"横纵交汇"为标题，给出你对「${{topic}}」当前处境与未来走向的判断
+3. 全文用中文撰写
+4. 尽量标注信息来源和时间；推测内容明确标注`;
+            navigator.clipboard.writeText(prompt).then(() => {{
+                const tip = document.getElementById('copyPromptTip');
+                tip.textContent = '✅ 已复制！粘贴到任意 AI 即可使用';
+                setTimeout(() => {{ tip.textContent = ''; }}, 3000);
+            }});
+        }}
+
         function startDeepResearch() {{
             const topic = {_json.dumps(topic).replace("</", "<\\/")};
             const btn = document.getElementById('drBtn');
