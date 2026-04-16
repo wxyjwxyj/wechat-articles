@@ -193,15 +193,6 @@ python scripts/generate_mp_article.py bundle_today.json >> "$LOG_FILE" 2>&1
 log "生成导读风 HTML..."
 python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
 
-# 11. 提交到公众号草稿箱
-log "提交到公众号草稿箱..."
-python scripts/publish_to_mp.py >> "$LOG_FILE" 2>&1
-PUB_EXIT=$?
-if [ $PUB_EXIT -ne 0 ]; then
-    PUB_REASON=$(describe_exit $PUB_EXIT)
-    log "⚠ 草稿提交失败: $PUB_REASON (exit=$PUB_EXIT)"
-    ERRORS="${ERRORS}草稿:${PUB_REASON} "
-fi
 
 fi  # SKIP_GENERATE
 
@@ -236,7 +227,7 @@ git checkout dev >> "$LOG_FILE" 2>&1
 ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "?")
 if [ -z "$ERRORS" ]; then
     log "✅ 完成！共 ${ARTICLE_COUNT} 条"
-    notify "AI日报 ✅" "采集完成：${ARTICLE_COUNT} 条，草稿已提交，GitHub 已推送"
+    notify "AI日报 ✅" "采集完成：${ARTICLE_COUNT} 条，GitHub 已推送"
 else
     log "⚠ 完成，但有问题：${ERRORS}"
     notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条 | 问题：${ERRORS}"
