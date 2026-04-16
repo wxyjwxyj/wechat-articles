@@ -77,6 +77,28 @@ def test_keyword_dedupe_does_not_merge_different_events_sharing_keyword():
     assert len(result) == 2, "不同事件不应被合并，即使共享 Mythos 关键词"
 
 
+def test_keyword_dedupe_does_not_merge_claude_related_but_distinct():
+    """同一话题（Claude实名认证）但角度不同的文章不应被合并。回归测试：阈值0.4时误合并。"""
+    items = [
+        {
+            "url": "https://wechat/a",
+            "title": "Claude实名认证引众怒！要求真人手持证件自拍",
+            "summary": "强制验证是为了更精准封号，Opus自己都看不下去",
+            "source_name": "新智元",
+            "source_type": "wechat",
+        },
+        {
+            "url": "https://wechat/b",
+            "title": "Claude半个月连崩7次！全球宕机3小时，强制实名精准封号",
+            "summary": "服务稳定性问题与实名认证封号争议",
+            "source_name": "量子位",
+            "source_type": "wechat",
+        },
+    ]
+    result = _keyword_dedupe(items)
+    assert len(result) == 2, "主题相关但角度不同的文章不应被合并"
+
+
 def test_dedupe_falls_back_to_keyword_when_claude_returns_none():
     """Claude 去重返回 None 时应降级到关键词方案，不丢失文章。"""
     items = [
