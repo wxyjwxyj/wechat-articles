@@ -86,7 +86,7 @@ def _merge_group(group: list[dict]) -> dict:
     return merged
 
 
-def _keyword_dedupe(items: list[dict], sim_threshold: float = 0.4) -> list[dict]:
+def _keyword_dedupe(items: list[dict], sim_threshold: float = 0.55) -> list[dict]:
     """
     基于标题关键词的去重聚合（兜底方案）。
     两轮聚合：
@@ -235,7 +235,7 @@ def _claude_dedupe(
 
 def dedupe_items(
     items: list[dict],
-    sim_threshold: float = 0.4,
+    sim_threshold: float = 0.55,
     api_key: str = "",
     base_url: str = "https://api.anthropic.com",
 ) -> list[dict]:
