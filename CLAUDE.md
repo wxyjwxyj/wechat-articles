@@ -31,6 +31,7 @@ fetch_rss_today.py（TechCrunch/MIT/The Verge） ┘
 
 | 规则文件 | 内容 |
 |----------|------|
+| `design.md` | **设计决策**（改动前必读：为什么这么设计、踩过的坑） |
 | `code-style.md` | PEP 8、模块职责边界、技术要点 |
 | `testing.md` | 测试命名、mock 路径、全量验证要求 |
 | `git.md` | 提交格式、分支约定、GitHub Pages 流程 |

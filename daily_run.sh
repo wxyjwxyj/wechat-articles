@@ -15,12 +15,7 @@ ERRORS=""
 log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 notify() {
     # macOS 通知：$1=标题 $2=内容
-    # terminal-notifier 在 launchd 环境下也能弹通知
-    if command -v terminal-notifier &>/dev/null; then
-        terminal-notifier -title "$1" -message "$2" -sound default 2>/dev/null
-    else
-        osascript -e "display notification \"$2\" with title \"$1\"" 2>/dev/null
-    fi
+    osascript -e "display notification \"$2\" with title \"$1\" sound name \"default\"" 2>/dev/null
 }
 
 # exit code → 失败原因映射
