@@ -15,15 +15,14 @@ if [ -z "$COMMAND" ]; then
   exit 0
 fi
 
-DANGEROUS_PATTERNS=(
-  "rm -rf /"
+# 子串匹配模式（包含即拦截）
+SUBSTRING_PATTERNS=(                                                                                                                  
   "rm -rf ~"
-  "rm -rf \$HOME"
-  "rm -rf /*"
-  "> /dev/sd"
-  "mkfs."
+  "rm -rf \$HOME"                                                                                                                     
+  "> /dev/sd"   
+  "mkfs."                                                                                                                             
   "dd if="
-  ":(){:|:&};:"
+  ":(){:|:&};:"                                                                                                                       
   "chmod -R 777 /"
   "git push --force origin main"
   "git push --force origin master"
@@ -35,8 +34,30 @@ DANGEROUS_PATTERNS=(
   "DROP TABLE"
 )
 
-for pattern in "${DANGEROUS_PATTERNS[@]}"; do
+# 正则匹配模式（精确语义，避免误判正常路径）
+REGEX_PATTERNS=(
+  "rm -rf /[[:space:]]*$"
+  "rm -rf /\*"
+)
+
+for pattern in "${SUBSTRING_PATTERNS[@]}"; do
   if [[ "$COMMAND" == *"$pattern"* ]]; then
+    echo "BLOCKED: command matches dangerous pattern '$pattern'" >&2
+    cat <<EOF                                                                                                                         
+{
+  "hookSpecificOutput": {                                                                                                             
+    "hookEventName": "PreToolUse",
+    "permissionDecision": "deny",
+    "permissionDecisionReason": "Blocked dangerous command: $pattern"
+  }
+}
+EOF
+    exit 2
+  fi
+done
+
+for pattern in "${REGEX_PATTERNS[@]}"; do
+  if [[ "$COMMAND" =~ $pattern ]]; then
     echo "BLOCKED: command matches dangerous pattern '$pattern'" >&2
     cat <<EOF
 {
@@ -50,5 +71,6 @@ EOF
     exit 2
   fi
 done
+
 
 exit 0
