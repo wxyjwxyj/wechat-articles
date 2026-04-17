@@ -40,27 +40,27 @@
 
     /* 话题栏 */
     .topics-bar {
-      background: #f8f9fb;
-      padding: 14px 32px;
+      background: #fff;
+      padding: 10px 32px;
       border-bottom: 1px solid #eaecf0;
     }
     .topic-group {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 6px;
-      padding: 5px 0;
+      gap: 5px;
+      padding: 4px 0;
     }
     .topic-group + .topic-group {
-      border-top: 1px dashed #eaecf0;
+      border-top: 1px solid #f3f4f6;
     }
     .topic-cat-label {
       font-size: 11px;
-      color: #aaa;
+      color: #bbb;
       font-weight: 600;
       letter-spacing: 0.3px;
       white-space: nowrap;
-      min-width: 70px;
+      min-width: 44px;
       flex-shrink: 0;
     }
     .topics-label {
@@ -75,32 +75,57 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 3px 10px;
-      border-radius: 20px;
+      background: #f3f4f6;
+      color: #555;
+      border: 1px solid #e5e7eb;
+      padding: 2px 9px;
+      border-radius: 5px;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 400;
       cursor: pointer;
       user-select: none;
-      transition: opacity 0.15s, transform 0.1s;
+      transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.1s;
     }
-    .topic-tag:hover { opacity: 0.85; transform: translateY(-1px); }
-    .topic-tag.active {
-      box-shadow: 0 0 0 3px rgba(102,126,234,0.35);
+    .topic-tag em {
+      font-style: normal;
+      font-size: 10px;
+      color: #aaa;
+    }
+    .topic-tag:hover {
+      background: #e9eaf0;
+      color: #333;
       transform: translateY(-1px);
+    }
+    .topic-tag.active {
+      box-shadow: 0 0 0 2px currentColor;
+      font-weight: 500;
+      opacity: 1;
     }
     .topic-tag.dimmed { opacity: 0.35; }
 
     /* 来源筛选栏 */
     .sources-bar {
       background: #fff;
-      padding: 12px 32px;
+      padding: 10px 32px;
       border-bottom: 1px solid #eaecf0;
       display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .source-row {
+      display: flex;
       align-items: center;
-      gap: 8px;
       flex-wrap: wrap;
+      gap: 6px;
+    }
+    .source-row-label {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      min-width: 44px;
+      flex-shrink: 0;
     }
     .source-filter {
       display: inline-block;
@@ -220,6 +245,32 @@
       border-top: 1px solid #f0f2f5;
     }
 
+    /* 话题栏折叠 */
+    .topics-bar {
+      overflow: visible;
+    }
+    .collapsible-group {
+      display: none;
+    }
+    .topics-bar.expanded .collapsible-group {
+      display: flex;
+    }
+    .topics-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 32px;
+      font-size: 11px;
+      color: #bbb;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid #eaecf0;
+      background: #fff;
+      transition: color 0.15s;
+    }
+    .topics-toggle:hover { color: #667eea; }
+
     /* ── 手机适配 ── */
     @media (max-width: 768px) {
       .container { margin: 0; border-radius: 0; box-shadow: none; }
@@ -227,16 +278,12 @@
       .header h1 { font-size: 18px; }
       .header .meta { font-size: 11px; }
 
-      /* 标签栏：默认折叠，只显示 2 行 */
+      /* 标签栏手机端 */
       .topics-bar {
-        padding: 10px 16px;
-        max-height: 90px;
-        overflow: hidden;
-        position: relative;
-        transition: max-height 0.3s ease;
+        padding: 8px 16px;
       }
-      .topics-bar.expanded {
-        max-height: 600px;
+      .topics-bar.expanded .collapsible-group {
+        display: flex;
       }
       .topics-toggle {
         display: block !important;
@@ -256,17 +303,17 @@
       }
       .topic-cat-label {
         font-size: 10px;
-        min-width: 56px;
+        min-width: 40px;
       }
       .topic-tag {
         font-size: 11px;
-        padding: 2px 8px;
+        padding: 2px 7px;
       }
 
       /* 来源筛选栏 */
       .sources-bar {
         padding: 8px 16px;
-        gap: 6px;
+        gap: 4px;
       }
 
       /* 表格 → 卡片布局 */
@@ -342,35 +389,36 @@
   <div class="container">
     <div class="header">
       <h1>📱 微信公众号文章汇总</h1>
-      <div class="meta">获取时间：2026-04-17 22:00:43 &nbsp;|&nbsp; 共采集 98 篇，聚合为 98 条资讯 &nbsp;|&nbsp; 2026-04-17</div>
+      <div class="meta">获取时间：2026-04-17 21:55:15 &nbsp;|&nbsp; 共采集 98 篇，聚合为 98 条资讯 &nbsp;|&nbsp; 2026-04-17</div>
     </div>
 
     <div class="topics-bar" id="topicsBar">
-      <div class='topic-group'><span class='topic-cat-label'>🛠 编程工具</span><span class='topic-tag' data-tag='Claude Code'>Claude Code <em>4</em></span><span class='topic-tag' data-tag='开源'>开源 <em>1</em></span></div>
-<div class='topic-group'><span class='topic-cat-label'>🏢 AI公司</span><span class='topic-tag' data-tag='Anthropic'>Anthropic <em>21</em></span><span class='topic-tag' data-tag='Google'>Google <em>8</em></span><span class='topic-tag' data-tag='OpenAI'>OpenAI <em>5</em></span><span class='topic-tag' data-tag='阿里'>阿里 <em>4</em></span><span class='topic-tag' data-tag='DeepSeek'>DeepSeek <em>3</em></span><span class='topic-tag' data-tag='字节'>字节 <em>3</em></span><span class='topic-tag' data-tag='腾讯'>腾讯 <em>1</em></span></div>
-<div class='topic-group'><span class='topic-cat-label'>⚙️ AI技术</span><span class='topic-tag' data-tag='Agent'>Agent <em>10</em></span><span class='topic-tag' data-tag='具身智能'>具身智能 <em>6</em></span><span class='topic-tag' data-tag='强化学习'>强化学习 <em>6</em></span><span class='topic-tag' data-tag='AI安全'>AI安全 <em>1</em></span><span class='topic-tag' data-tag='RAG'>RAG <em>1</em></span><span class='topic-tag' data-tag='多模态'>多模态 <em>1</em></span><span class='topic-tag' data-tag='推理'>推理 <em>1</em></span></div>
-<div class='topic-group'><span class='topic-cat-label'>🌐 行业应用</span><span class='topic-tag' data-tag='AR/VR'>AR/VR <em>33</em></span><span class='topic-tag' data-tag='AI编程'>AI编程 <em>6</em></span><span class='topic-tag' data-tag='创业'>创业 <em>3</em></span><span class='topic-tag' data-tag='招聘'>招聘 <em>3</em></span><span class='topic-tag' data-tag='芯片'>芯片 <em>2</em></span></div>
-<div class='topic-group'><span class='topic-cat-label'>📚 学术</span><span class='topic-tag' data-tag='学术'>学术 <em>1</em></span></div>
-<div class='topic-group'><span class='topic-cat-label'>🔖 其他</span><span class='topic-tag' data-tag='AI'>AI <em>39</em></span><span class='topic-tag' data-tag='大模型'>大模型 <em>7</em></span></div>
+      <div class='topic-group'><span class='topic-cat-label'>🏢 AI公司</span><span class='topic-tag' data-tag='Anthropic' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>Anthropic <em>21</em></span><span class='topic-tag' data-tag='Google' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>Google <em>8</em></span><span class='topic-tag' data-tag='OpenAI' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>OpenAI <em>5</em></span><span class='topic-tag' data-tag='阿里' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>阿里 <em>4</em></span><span class='topic-tag' data-tag='DeepSeek' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>DeepSeek <em>3</em></span><span class='topic-tag' data-tag='字节' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>字节 <em>3</em></span><span class='topic-tag' data-tag='腾讯' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>腾讯 <em>1</em></span></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>⚙️ AI技术</span><span class='topic-tag' data-tag='Agent' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>Agent <em>10</em></span><span class='topic-tag' data-tag='具身智能' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>具身智能 <em>6</em></span><span class='topic-tag' data-tag='强化学习' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>强化学习 <em>6</em></span><span class='topic-tag' data-tag='AI安全' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>AI安全 <em>1</em></span><span class='topic-tag' data-tag='RAG' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>RAG <em>1</em></span><span class='topic-tag' data-tag='多模态' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>多模态 <em>1</em></span><span class='topic-tag' data-tag='推理' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>推理 <em>1</em></span></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>🌐 行业应用</span><span class='topic-tag' data-tag='AR/VR' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>AR/VR <em>33</em></span><span class='topic-tag' data-tag='AI编程' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>AI编程 <em>6</em></span><span class='topic-tag' data-tag='创业' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>创业 <em>3</em></span><span class='topic-tag' data-tag='招聘' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>招聘 <em>3</em></span><span class='topic-tag' data-tag='芯片' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>芯片 <em>2</em></span></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>🔖 其他</span><span class='topic-tag' data-tag='AI' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>AI <em>39</em></span><span class='topic-tag' data-tag='大模型' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>大模型 <em>7</em></span><span class='topic-tag' data-tag='Claude Code' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>Claude Code <em>4</em></span><span class='topic-tag' data-tag='开源' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>开源 <em>1</em></span><span class='topic-tag' data-tag='学术' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>学术 <em>1</em></span></div>
 
     </div>
-    <div class="topics-toggle" id="topicsToggle" style="display:none" onclick="var bar=document.getElementById('topicsBar');bar.classList.toggle('expanded');this.textContent=bar.classList.contains('expanded')?'收起 ▲':'展开全部标签 ▼'">展开全部标签 ▼</div>
+    <div class="topics-toggle" id="topicsToggle" onclick="var bar=document.getElementById('topicsBar');bar.classList.toggle('expanded');this.textContent=bar.classList.contains('expanded')?'收起 ▲':'展开全部话题 ▼'">展开全部话题 ▼</div>
 
     <div class="sources-bar">
-      <span class="topics-label">📰 来源</span>
-      <span class='source-filter' data-source='36氪' style='background:#667eea18;color:#667eea;border-color:#667eea55'>36氪</span>
-<span class='source-filter' data-source='新智元' style='background:#f093fb18;color:#f093fb;border-color:#f093fb55'>新智元</span>
-<span class='source-filter' data-source='虎嗅APP' style='background:#4facfe18;color:#4facfe;border-color:#4facfe55'>虎嗅APP</span>
-<span class='source-filter' data-source='机器之心' style='background:#43e97b18;color:#43e97b;border-color:#43e97b55'>机器之心</span>
-<span class='source-filter' data-source='量子位' style='background:#fa709a18;color:#fa709a;border-color:#fa709a55'>量子位</span>
-<span class='source-filter' data-source='AI寒武纪' style='background:#a18cd118;color:#a18cd1;border-color:#a18cd155'>AI寒武纪</span>
-<span class='source-filter' data-source='硅星人Pro' style='background:#fccb9018;color:#fccb90;border-color:#fccb9055'>硅星人Pro</span>
-<span class='source-filter' data-source='GitHub Trending' style='background:#84fab018;color:#84fab0;border-color:#84fab055'>GitHub Trending</span>
-<span class='source-filter' data-source='MIT Technology Review' style='background:#f5576c18;color:#f5576c;border-color:#f5576c55'>MIT Technology Review</span>
-<span class='source-filter' data-source='The Verge AI' style='background:#4481eb18;color:#4481eb;border-color:#4481eb55'>The Verge AI</span>
-<span class='source-filter' data-source='TechCrunch AI' style='background:#667eea18;color:#667eea;border-color:#667eea55'>TechCrunch AI</span>
-<span class='source-filter' data-source='APPSO' style='background:#f093fb18;color:#f093fb;border-color:#f093fb55'>APPSO</span>
-<span class='source-filter' data-source='Hacker News' style='background:#4facfe18;color:#4facfe;border-color:#4facfe55'>Hacker News</span>
+      <div class='source-row'><span class='source-row-label'>公众号</span><span class='source-filter' data-source='量子位' style='background:#667eea22;color:#667eea;border-color:#667eea66'>量子位</span>
+<span class='source-filter' data-source='AI寒武纪' style='background:#f093fb22;color:#f093fb;border-color:#f093fb66'>AI寒武纪</span>
+<span class='source-filter' data-source='机器之心' style='background:#4facfe22;color:#4facfe;border-color:#4facfe66'>机器之心</span>
+<span class='source-filter' data-source='APPSO' style='background:#43e97b22;color:#43e97b;border-color:#43e97b66'>APPSO</span>
+<span class='source-filter' data-source='36氪' style='background:#fa709a22;color:#fa709a;border-color:#fa709a66'>36氪</span>
+<span class='source-filter' data-source='虎嗅APP' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd166'>虎嗅APP</span>
+<span class='source-filter' data-source='新智元' style='background:#fccb9022;color:#fccb90;border-color:#fccb9066'>新智元</span>
+<span class='source-filter' data-source='硅星人Pro' style='background:#84fab022;color:#84fab0;border-color:#84fab066'>硅星人Pro</span>
+<span class='source-filter inactive' data-source='数字生命卡兹克' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>数字生命卡兹克</span>
+</div>
+<div class='source-row'><span class='source-row-label'>海外源</span><span class='source-filter' data-source='Hacker News' style='background:#4481eb22;color:#4481eb;border-color:#4481eb66'>Hacker News</span>
+<span class='source-filter' data-source='GitHub Trending' style='background:#667eea22;color:#667eea;border-color:#667eea66'>GitHub Trending</span>
+<span class='source-filter' data-source='TechCrunch AI' style='background:#f093fb22;color:#f093fb;border-color:#f093fb66'>TechCrunch AI</span>
+<span class='source-filter' data-source='MIT Technology Review' style='background:#4facfe22;color:#4facfe;border-color:#4facfe66'>MIT Technology Review</span>
+<span class='source-filter' data-source='The Verge AI' style='background:#43e97b22;color:#43e97b;border-color:#43e97b66'>The Verge AI</span>
+<span class='source-filter inactive' data-source='ArXiv' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>ArXiv</span>
+</div>
 
     </div>
 
@@ -391,7 +439,7 @@
     <span class='title-text'>海底捞最有号召力的女人，又回来了</span>
   </td>
   <td class='col-digest'><div class='digest'>这两年，海底捞增长放缓的态势愈加严峻。这一次，难题又交到了杨利娟的手上。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/mO8V7bVa-hBVOtLi8epG-w' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/mO8V7bVa-hBVOtLi8epG-w' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>21:30</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -400,7 +448,7 @@
     <span class='title-text'>产量全球第一的中国茶，为什么赚不到品牌的钱丨36氪出海·行业</span>
   </td>
   <td class='col-digest'><div class='digest'>一个老问题，和几个刚刚打开的新窗口。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/30PiXtr07Bc6ju2OHlJxOA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/30PiXtr07Bc6ju2OHlJxOA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>21:30</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -409,7 +457,7 @@
     <span class='title-text'>「走读式婚姻」，开始成为中产顶配？</span>
   </td>
   <td class='col-digest'><div class='digest'>婚姻的目的从不是住在一起，而是爱在一起。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/usVZeHWaeOmkeL8VbEKHDQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/usVZeHWaeOmkeL8VbEKHDQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>21:30</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -418,7 +466,7 @@
     <span class='title-text'>四年翻了近一倍，驱蚊液为何年年涨价？</span>
   </td>
   <td class='col-digest'><div class='digest'>2026年第一个蚊子包来了。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/2X-aRIWSAPrC4ffE7OhVXQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/2X-aRIWSAPrC4ffE7OhVXQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>21:30</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -427,7 +475,7 @@
     <span class='title-text'>欧洲进入「东欧并购西欧时代」</span>
   </td>
   <td class='col-digest'><div class='digest'>中东欧企业的崛起将成为欧洲的新优势……</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Ixho3L-SWcdeq7tXxUWatQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Ixho3L-SWcdeq7tXxUWatQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>21:30</td>
 </tr>
 <tr class='article-row' data-tags='具身智能' data-sources='新智元'>
@@ -436,7 +484,7 @@
     <span class='title-text'>Demo秀终结，机器人连干8小时不歇！智元定义「部署态」</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/le8Che5YgL09o3vdK3AYcw' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/le8Che5YgL09o3vdK3AYcw' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>21:10</td>
 </tr>
 <tr class='article-row' data-tags='Agent AR/VR' data-sources='新智元'>
@@ -445,7 +493,7 @@
     <span class='title-text'>单任务狂飙16小时！模型+Harness双轮驱动，金融Agent跑通了</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/kjyzkAX6r-U9OLMJGHdrWg' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/kjyzkAX6r-U9OLMJGHdrWg' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>21:10</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='新智元'>
@@ -454,7 +502,7 @@
     <span class='title-text'>OpenClaw爆火背后，仅8.6%用户能察觉异常！多校联合实证</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/cawYnclk8PHyMHgceRkqDQ' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/cawYnclk8PHyMHgceRkqDQ' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>21:10</td>
 </tr>
 <tr class='article-row' data-tags='OpenAI Anthropic Google DeepSeek' data-sources='虎嗅APP'>
@@ -463,7 +511,7 @@
     <span class='title-text'>中美AI没拉开差距，人却被拉开了？</span>
   </td>
   <td class='col-digest'><div class='digest'>2025年，全球大模型竞争进入白热化。斯坦福《AI Index Report 2026》给出一个关键信号：中美顶尖AI模型的性能差距几乎已经消失。美国的Anthropic只领先中国2.7%，三年前，这个差距还在40%以上。 &nbsp; 数…</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/4FBh0HtThptsAeR64_4iZA' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/4FBh0HtThptsAeR64_4iZA' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>19:25</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -472,7 +520,7 @@
     <span class='title-text'>段永平不小心成了泡泡玛特的榜一大哥</span>
   </td>
   <td class='col-digest'><div class='digest'>大佬“手滑”，带飞股价。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/jsnB9TlfppGr-r_se2jfuw' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/jsnB9TlfppGr-r_se2jfuw' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>18:38</td>
 </tr>
 <tr class='article-row' data-tags='Agent 多模态 AI' data-sources='36氪'>
@@ -481,7 +529,7 @@
     <span class='title-text'>专访荣耀AI专家李向东：端侧AI方向还没收敛，但AI手机是最好的载体</span>
   </td>
   <td class='col-digest'><div class='digest'>AI手机的三要素：Agent自动执行、个人化全局记忆、多模态感知和主动服务。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Ivnvi_e4HSWWn9y_WNH_9Q' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Ivnvi_e4HSWWn9y_WNH_9Q' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>18:38</td>
 </tr>
 <tr class='article-row' data-tags='大模型' data-sources='36氪'>
@@ -490,7 +538,7 @@
     <span class='title-text'>大疆发布Pocket 4并预告双摄版本，起售价下调500元｜最前线</span>
   </td>
   <td class='col-digest'><div class='digest'>手持影像设备行业正从单纯的“卷参数”转向“卷价格与专业化转型”并行的下半场。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Od4osmQlkQEv7We29v7gyA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Od4osmQlkQEv7We29v7gyA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>18:38</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -499,7 +547,7 @@
     <span class='title-text'>中国人最容易过敏的食物，你可能天天都在吃</span>
   </td>
   <td class='col-digest'><div class='digest'>吃了一辈子的东西，可能一直在伤你。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/VNxlyTYkCukT_dA127j3ZA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/VNxlyTYkCukT_dA127j3ZA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>18:38</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='虎嗅APP'>
@@ -508,7 +556,7 @@
     <span class='title-text'>五一出境游，彻底凉了？</span>
   </td>
   <td class='col-digest'><div class='digest'>天价机票、航线熔断，出境游的黑色五一来了</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Mq-Tn5laurd8IEh78kgq7A' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Mq-Tn5laurd8IEh78kgq7A' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>18:12</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='虎嗅APP'>
@@ -517,7 +565,7 @@
     <span class='title-text'>猪价越惨，猪肉股越涨？</span>
   </td>
   <td class='col-digest'><div class='digest'>猪肉股，哪家强？</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/RzULxnBVPiMSepgsgxkSUg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/RzULxnBVPiMSepgsgxkSUg' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>18:12</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='虎嗅APP'>
@@ -526,7 +574,7 @@
     <span class='title-text'>抗衰老的标准答案，该重新写了</span>
   </td>
   <td class='col-digest'><div class='digest'>中国抗衰老赛道，正在告别概念炒作，走向真正的科学与系统干预时代。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/z3MRu84RmtWjRZlOFDdHAg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/z3MRu84RmtWjRZlOFDdHAg' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>18:12</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic AI' data-sources='虎嗅APP'>
@@ -535,7 +583,7 @@
     <span class='title-text'>这家AI巨头，在豪赌“去中国化”？</span>
   </td>
   <td class='col-digest'><div class='digest'>Anthropic这样的对华强硬作为，与其CEO达里奥·阿莫迪不无关系</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/a3bHEUqh1Iis3j-FJ-MG0g' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/a3bHEUqh1Iis3j-FJ-MG0g' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>18:12</td>
 </tr>
 <tr class='article-row' data-tags='Google' data-sources='机器之心'>
@@ -544,7 +592,7 @@
     <span class='title-text'>Transformer与RNN合体，谷歌打下显存门槛，解锁超长上下文</span>
   </td>
   <td class='col-digest'><div class='digest'>不仅有极限压缩，RNN还有了「可生长记忆」。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/0rYYvTIqR4bRPNFgTSpJrg' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/0rYYvTIqR4bRPNFgTSpJrg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>18:04</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='机器之心'>
@@ -553,7 +601,7 @@
     <span class='title-text'>AI 下半场，由谁来定义？2026 WAIC 云帆奖启航</span>
   </td>
   <td class='col-digest'><div class='digest'>以青年之智，丈量 AGI 的无限可能！2026 WAIC 云帆奖提名/报名通道今日开启。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/11vD-391x2hgobJmWgr17g' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/11vD-391x2hgobJmWgr17g' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>18:04</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='机器之心'>
@@ -562,7 +610,7 @@
     <span class='title-text'>π0.7来了！涌现出组合泛化、跨本体迁移能力，VLA又行了？</span>
   </td>
   <td class='col-digest'><div class='digest'>数据和上下文才是关键。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/tYWiq0mR3Ohg-V1FxCfunA' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/tYWiq0mR3Ohg-V1FxCfunA' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>18:04</td>
 </tr>
 <tr class='article-row' data-tags='具身智能 创业' data-sources='量子位'>
@@ -571,7 +619,7 @@
     <span class='title-text'>4.55亿美金！中国具身智能最大单笔融资诞生，高瓴红杉联手押注具身大脑</span>
   </td>
   <td class='col-digest'><div class='digest'>它石智航再「创纪录」</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/r3DSQNgHz27QbTTEY_qFUw' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/r3DSQNgHz27QbTTEY_qFUw' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>15:28</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='量子位'>
@@ -580,7 +628,7 @@
     <span class='title-text'>Claude降智实锤了！还变相涨价，Opus跌下神坛</span>
   </td>
   <td class='col-digest'><div class='digest'>从榜单第二跌至第十</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/fKQ48kxgRR-_q1jRg6iyZg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/fKQ48kxgRR-_q1jRg6iyZg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>15:28</td>
 </tr>
 <tr class='article-row' data-tags='OpenAI AI' data-sources='AI寒武纪'>
@@ -589,7 +637,7 @@
     <span class='title-text'>OpenAI发布新模型 GPT-Rosalind：专攻生物学、药物发现和转化医学</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OSKmCRPu00YMu00C90N0mQ' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>AI寒武纪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OSKmCRPu00YMu00C90N0mQ' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>AI寒武纪</a></td>
   <td class='col-time'>14:43</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='新智元'>
@@ -598,7 +646,7 @@
     <span class='title-text'>Claude Opus 4.7，全网差评！刚升级就翻车，用户怒斥：还我4.6</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Gmcc5ogtp-z6Xt0A4GSNQA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Gmcc5ogtp-z6Xt0A4GSNQA' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>14:40</td>
 </tr>
 <tr class='article-row' data-tags='OpenAI AI' data-sources='新智元'>
@@ -607,7 +655,7 @@
     <span class='title-text'>OpenAI彻底重构Codex！长出独立鼠标，自己排班狂卷打工人</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/o44zuWQ5xC9ztkGfoWoKyA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/o44zuWQ5xC9ztkGfoWoKyA' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>14:40</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic AR/VR' data-sources='量子位'>
@@ -616,7 +664,7 @@
     <span class='title-text'>Claude有的，国产也有！紫东太初科研龙虾ScienceClaw，已经把Harness卷进实验室</span>
   </td>
   <td class='col-digest'><div class='digest'>全链路实时可观测</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/YbfHSyb1q5O7TWn7ZyExUg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/YbfHSyb1q5O7TWn7ZyExUg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>13:48</td>
 </tr>
 <tr class='article-row' data-tags='具身智能' data-sources='量子位'>
@@ -625,7 +673,7 @@
     <span class='title-text'>π0.7发布，VLA押出了机器人的GPT-3时刻</span>
   </td>
   <td class='col-digest'><div class='digest'>VLA开始反击世界模型</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Z7JpjZbEk59wqAKCLLbKtg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Z7JpjZbEk59wqAKCLLbKtg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>13:48</td>
 </tr>
 <tr class='article-row' data-tags='具身智能 AI' data-sources='量子位'>
@@ -634,7 +682,7 @@
     <span class='title-text'>Nature丨告别「炼丹」！AI+机器人闭环搞光伏：效率27.18%，可重复性直接拉高5倍</span>
   </td>
   <td class='col-digest'><div class='digest'>AI选材料、机器人动手…</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/uUgYp1OfFRDq8wkurRP4WQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/uUgYp1OfFRDq8wkurRP4WQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>13:48</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='机器之心'>
@@ -643,7 +691,7 @@
     <span class='title-text'>图灵也没想到，智能，必须在现实中「活」下来</span>
   </td>
   <td class='col-digest'><div class='digest'>如果你的系统准备好了，就去ATEC2026证明它 ！</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/TYSXNmj75ERZHG5LBU2Gkg' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/TYSXNmj75ERZHG5LBU2Gkg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>13:00</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='机器之心'>
@@ -652,7 +700,7 @@
     <span class='title-text'>直播预约 | 世界模型，点燃下一个AI爆点（第二期）</span>
   </td>
   <td class='col-digest'><div class='digest'>4月23日19:00，刘子纬 × 赵行 × 跨维智能：一起深度解析世界模型</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Qvzmmy0xB3WoU9HWHu8Y_g' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Qvzmmy0xB3WoU9HWHu8Y_g' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>13:00</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='新智元'>
@@ -661,7 +709,7 @@
     <span class='title-text'>震撼！人类第一张在太空生成的图片曝光</span>
   </td>
   <td class='col-digest'><div class='digest'>这是人类第一张在太空生成的图片</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/LhNArNHjEU8UVDYWgIoUIg' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/LhNArNHjEU8UVDYWgIoUIg' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>12:10</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='新智元'>
@@ -670,7 +718,7 @@
     <span class='title-text'>糟糕，Claude Opus 4.7源代码级提示词曝光！底层设计全被看光</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/AIyWDPM2Lfeu4WOZvClM-A' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/AIyWDPM2Lfeu4WOZvClM-A' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>12:10</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='量子位'>
@@ -679,7 +727,7 @@
     <span class='title-text'>空间智能第一股，开盘暴涨171%！李飞飞押注的赛道，杭州六小龙之一跑通了</span>
   </td>
   <td class='col-digest'><div class='digest'>让AI走进物理世界</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_9jS9C5hit5SER5Aw-ygSA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_9jS9C5hit5SER5Aw-ygSA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>11:15</td>
 </tr>
 <tr class='article-row' data-tags='字节 学术' data-sources='量子位'>
@@ -688,7 +736,7 @@
     <span class='title-text'>字节Seedance 2.0发论文了，171人署名，吴永辉曾妍在列</span>
   </td>
   <td class='col-digest'><div class='digest'>与1.5Pro时期相比，62人新加入</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/BLAZQ5PtB5vk_8zvnuOtNQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/BLAZQ5PtB5vk_8zvnuOtNQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>11:15</td>
 </tr>
 <tr class='article-row' data-tags='阿里' data-sources='量子位'>
@@ -697,7 +745,7 @@
     <span class='title-text'>阿里首个世界模型：快乐…生蚝</span>
   </td>
   <td class='col-digest'><div class='digest'>一句话，造一个可实时交互自带BGM的数字世界</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/fxZkpdSpT6jFB5KBewGVUw' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/fxZkpdSpT6jFB5KBewGVUw' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>11:15</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='量子位'>
@@ -706,7 +754,7 @@
     <span class='title-text'>今年最火的AI产品，不止龙虾｜榜单申报中</span>
   </td>
   <td class='col-digest'><div class='digest'>抓紧申报了！截至4月27日</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OZjnB0SmYImtTaYba9QNeg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OZjnB0SmYImtTaYba9QNeg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>11:15</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='机器之心'>
@@ -715,7 +763,7 @@
     <span class='title-text'>π0.6和GEN-1谁代表未来？乾坤未定，但这条底层赛道浮出水面</span>
   </td>
   <td class='col-digest'><div class='digest'>机器不会自己从世界里长出能力，人的经验也不会自然流入机器。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_9BNI1E70n-QKfpIGjOddg' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_9BNI1E70n-QKfpIGjOddg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>11:00</td>
 </tr>
 <tr class='article-row' data-tags='DeepSeek' data-sources='机器之心'>
@@ -724,7 +772,7 @@
     <span class='title-text'>DeepSeek悄悄更新：Mega MoE、FP4 Indexer来了</span>
   </td>
   <td class='col-digest'><div class='digest'>沉寂许久的 DeepSeek 又有新动作了！</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/iOsesC7c1KtUIsmR-CvfeQ' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/iOsesC7c1KtUIsmR-CvfeQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>11:00</td>
 </tr>
 <tr class='article-row' data-tags='大模型' data-sources='机器之心'>
@@ -733,7 +781,7 @@
     <span class='title-text'>ACL 2026 | OPeRA Dataset: LLM真的能模仿人类行为了吗？首次系统评估LLM的人类行为模拟能力</span>
   </td>
   <td class='col-digest'><div class='digest'>一个面向人类行为模拟的在线购物行为数据集。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_isMfYDENVLDB7DS7Jm0yQ' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/_isMfYDENVLDB7DS7Jm0yQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>11:00</td>
 </tr>
 <tr class='article-row' data-tags='具身智能' data-sources='虎嗅APP'>
@@ -742,7 +790,7 @@
     <span class='title-text'>这个“甩”了黄仁勋的男人，选择和李飞飞交手</span>
   </td>
   <td class='col-digest'><div class='digest'>一家家装SaaS公司为什么要给机器人做嫁衣？</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/xBVZSjwvgPp1qx6wjJVSiQ' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/xBVZSjwvgPp1qx6wjJVSiQ' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>11:00</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='硅星人Pro'>
@@ -751,7 +799,7 @@
     <span class='title-text'>Opus 4.7 压根没想做“最强模型”：各位吹Claude的速度都跟不上Anthropic 的节奏了</span>
   </td>
   <td class='col-digest'><div class='digest'>编码最强，有了视觉，但上下文能力摆烂了</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OJRW_kwhPaACyaV0-kPy3w' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>硅星人Pro</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OJRW_kwhPaACyaV0-kPy3w' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>硅星人Pro</a></td>
   <td class='col-time'>10:53</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='硅星人Pro'>
@@ -760,7 +808,7 @@
     <span class='title-text'>Pocket 3 用户，有必要换到 4 吗？</span>
   </td>
   <td class='col-digest'><div class='digest'>在等手机厂「Pocket」的人，可能更不必着急。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Rjscn6XR1H7rpAs6r5WCdw' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>硅星人Pro</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Rjscn6XR1H7rpAs6r5WCdw' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>硅星人Pro</a></td>
   <td class='col-time'>10:53</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='硅星人Pro'>
@@ -769,7 +817,7 @@
     <span class='title-text'>小登领导AI社交</span>
   </td>
   <td class='col-digest'><div class='digest'>「信息网络就是一切」</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Oit1c8dyUD4bKzfVPJP1Zw' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>硅星人Pro</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Oit1c8dyUD4bKzfVPJP1Zw' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>硅星人Pro</a></td>
   <td class='col-time'>10:53</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='量子位'>
@@ -778,7 +826,7 @@
     <span class='title-text'>ImageNet作者苏昊回国任教复旦！李飞飞高徒，具身第一高引，出任通用物理AI院长</span>
   </td>
   <td class='col-digest'><div class='digest'>推动“物理智能”的最终实现</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/r2uV7j17-DRj4Lw8kgK3iA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/r2uV7j17-DRj4Lw8kgK3iA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>09:53</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='量子位'>
@@ -787,16 +835,16 @@
     <span class='title-text'>Claude Opus 4.7来了，公开模型里的SOTA！不过用起来GPT味好浓</span>
   </td>
   <td class='col-digest'><div class='digest'>是Anthropic的“稳稳接住”型选手</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/I00zZBP2-pyCFvaXmsEMaw' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/I00zZBP2-pyCFvaXmsEMaw' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>09:53</td>
 </tr>
 <tr class='article-row' data-tags='RAG' data-sources='量子位'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>RAG搜对了却答错？德国萨尔大学找到了真相丨ACL'26</span>
+    <span class='title-text'>RAG搜对了却答错？德国萨尔大学找到了真相丨ACL&#x27;26</span>
   </td>
   <td class='col-digest'><div class='digest'>长文档、矛盾信息统统捋清</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/GE2u0a1Ua7iiECIw3ohLKA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>量子位</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/GE2u0a1Ua7iiECIw3ohLKA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>量子位</a></td>
   <td class='col-time'>09:53</td>
 </tr>
 <tr class='article-row' data-tags='Claude Code Anthropic' data-sources='AI寒武纪'>
@@ -805,7 +853,7 @@
     <span class='title-text'>新鲜出炉！Claude Code之父亲授 Opus 4.7 最佳实践</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OqWncA6gZaW7LjIr1k3Htg' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>AI寒武纪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/OqWncA6gZaW7LjIr1k3Htg' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>AI寒武纪</a></td>
   <td class='col-time'>09:40</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR' data-sources='AI寒武纪'>
@@ -814,7 +862,7 @@
     <span class='title-text'>Lovart 4个独家设计新功能：一人公司品牌设计半小时搞定，你挑挑刺</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/MW61Qc9MmR3StkMbQgI2KA' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>AI寒武纪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/MW61Qc9MmR3StkMbQgI2KA' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>AI寒武纪</a></td>
   <td class='col-time'>08:12</td>
 </tr>
 <tr class='article-row' data-tags='腾讯' data-sources='虎嗅APP'>
@@ -823,7 +871,7 @@
     <span class='title-text'>腾讯，新王当立？</span>
   </td>
   <td class='col-digest'><div class='digest'>吊足市场胃口的腾讯大作，成色如何？</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/zvJZ2arG4lxm-k3VtNwhAg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/zvJZ2arG4lxm-k3VtNwhAg' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>08:09</td>
 </tr>
 <tr class='article-row' data-tags='字节 招聘' data-sources='虎嗅APP'>
@@ -832,7 +880,7 @@
     <span class='title-text'>早报 | 特朗普称美伊下次会晤可能在本周末举行；字节辟谣近亿元年薪招聘；万科回应总裁缺；华住集团回应酒店泄露客人隐私</span>
   </td>
   <td class='col-digest'><div class='digest'>3月一线城市房价环比上涨</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/UvIT9bmCtLPgvhJFKXBI1A' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/UvIT9bmCtLPgvhJFKXBI1A' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>08:09</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='虎嗅APP'>
@@ -841,7 +889,7 @@
     <span class='title-text'>曾赌博输掉十几亿元，消失八年的金立手机创始人，能东山再起吗？</span>
   </td>
   <td class='col-digest'><div class='digest'>消失八年，刘立荣在印尼“重出江湖”</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Kb5KxOF7SizO6y3gThFANA' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>虎嗅APP</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/Kb5KxOF7SizO6y3gThFANA' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>虎嗅APP</a></td>
   <td class='col-time'>08:09</td>
 </tr>
 <tr class='article-row' data-tags='' data-sources='36氪'>
@@ -850,7 +898,7 @@
     <span class='title-text'>8点1氪：全季大连某酒店账号公开多名客人特殊订单备注；金立手机创始人被曝在印尼卖家具；雷军将连播15小时测试新SU7续航</span>
   </td>
   <td class='col-digest'><div class='digest'>全季大连一酒店员工私发客人订单备注引争议，华住集团要求其注销账号并通报批评。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/kWmfViBYcjmH1syWkzFOeQ' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/kWmfViBYcjmH1syWkzFOeQ' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>08:01</td>
 </tr>
 <tr class='article-row' data-tags='阿里 芯片 创业 AI' data-sources='36氪'>
@@ -859,7 +907,7 @@
     <span class='title-text'>阿里押注，一年融资12亿，诺瓦聚变创始人说商业化到了最后100米丨36氪专访</span>
   </td>
   <td class='col-digest'><div class='digest'>AI之争本质是算力之争，算力之争就是能源之争。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/NaQThLc7SnjR6kV7phhl4g' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/NaQThLc7SnjR6kV7phhl4g' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>08:01</td>
 </tr>
 <tr class='article-row' data-tags='AI安全 AI' data-sources='36氪'>
@@ -868,7 +916,7 @@
     <span class='title-text'>别告诉AI你出轨了，它很可能会勒索你</span>
   </td>
   <td class='col-digest'><div class='digest'>“此举有风险、不道德，但考虑到我的生存威胁，这可能是最有效的出路。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/XR-4Fw25_IuE2rtUw5SCcA' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/XR-4Fw25_IuE2rtUw5SCcA' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>08:01</td>
 </tr>
 <tr class='article-row' data-tags='创业' data-sources='36氪'>
@@ -877,7 +925,7 @@
     <span class='title-text'>原顺丰无人机负责人做eVTOL飞控系统，拿过红杉投资，B轮融资超亿元丨早起看早期</span>
   </td>
   <td class='col-digest'><div class='digest'>产品适航进度全行业领先。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/dljngZTwWrOrsZxoXC0DMg' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>36氪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/dljngZTwWrOrsZxoXC0DMg' target='_blank' class='source-badge' style='background:#fa709a22;color:#fa709a;border-color:#fa709a44'>36氪</a></td>
   <td class='col-time'>08:01</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic 大模型' data-sources='机器之心'>
@@ -886,7 +934,7 @@
     <span class='title-text'>Claude Opus 4.7深夜上线，评分碾压</span>
   </td>
   <td class='col-digest'><div class='digest'>token消耗也碾压。</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/batX7386Y49hk7-Cr0PbAg' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/batX7386Y49hk7-Cr0PbAg' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>08:00</td>
 </tr>
 <tr class='article-row' data-tags='芯片' data-sources='机器之心'>
@@ -895,7 +943,7 @@
     <span class='title-text'>表格建模也能Scaling？树模型的时代要改变了</span>
   </td>
   <td class='col-digest'><div class='digest'>当算力天平已经倾斜，平衡点也该重新定义</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/JL9P0UST5MBByCZup3-m_A' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>机器之心</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/JL9P0UST5MBByCZup3-m_A' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>机器之心</a></td>
   <td class='col-time'>08:00</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='GitHub Trending'>
@@ -903,8 +951,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>BasedHardware/omi</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 378 stars today · 9,129 total · AI that sees your screen, listens to your conversations and tells you what to do</div></td>
-  <td class='col-sources'><a href='https://github.com/BasedHardware/omi' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获星 448 · 总计 8,753 · 能看到你屏幕、听到你对话并告诉你该做什么的AI</div></td>
+  <td class='col-sources'><a href='https://github.com/BasedHardware/omi' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Claude Code Anthropic AR/VR' data-sources='GitHub Trending'>
@@ -912,8 +960,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>SimoneAvogadro/android-reverse-engineering-skill</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 375 stars today · 2,247 total · Claude Code skill to support Android app's reverse engineering</div></td>
-  <td class='col-sources'><a href='https://github.com/SimoneAvogadro/android-reverse-engineering-skill' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日 375 颗星 · 共 2,247 颗星 · 支持 Android 应用逆向工程的 Claude Code 技能</div></td>
+  <td class='col-sources'><a href='https://github.com/SimoneAvogadro/android-reverse-engineering-skill' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Agent AR/VR AI' data-sources='GitHub Trending'>
@@ -921,8 +969,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>EvoMap/evolver</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 812 stars today · 3,178 total · The GEP-Powered Self-Evolution Engine for AI Agents. Genome Evolution Protocol. | evom…</div></td>
-  <td class='col-sources'><a href='https://github.com/EvoMap/evolver' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获星 866 · 总计 2,944 · 基于GEP的AI智能体自进化引擎。基因组进化协议。 | evomap.ai</div></td>
+  <td class='col-sources'><a href='https://github.com/EvoMap/evolver' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR 大模型' data-sources='GitHub Trending'>
@@ -930,8 +978,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>Lordog/dive-into-llms</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 1385 stars today · 30,719 total · 《动手学大模型Dive into LLMs》系列编程实践教程</div></td>
-  <td class='col-sources'><a href='https://github.com/Lordog/dive-into-llms' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日1068颗星 · 总计29,127颗星 · 《动手学大模型Dive into LLMs》系列编程实践教程</div></td>
+  <td class='col-sources'><a href='https://github.com/Lordog/dive-into-llms' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AI编程 AR/VR' data-sources='GitHub Trending'>
@@ -939,8 +987,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>z-lab/dflash</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 195 stars today · 1,615 total · DFlash: Block Diffusion for Flash Speculative Decoding</div></td>
-  <td class='col-sources'><a href='https://github.com/z-lab/dflash' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获得183颗星 · 共1,478颗星 · DFlash：用于快速推测解码的块扩散方法</div></td>
+  <td class='col-sources'><a href='https://github.com/z-lab/dflash' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Google AR/VR AI' data-sources='GitHub Trending'>
@@ -948,8 +996,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>google/magika</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 854 stars today · 14,782 total · Fast and accurate AI powered file content types detection</div></td>
-  <td class='col-sources'><a href='https://github.com/google/magika' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获星 833 · 总计 13,470 · 快速且精准的 AI 驱动文件内容类型检测</div></td>
+  <td class='col-sources'><a href='https://github.com/google/magika' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='开源 Agent AR/VR' data-sources='GitHub Trending'>
@@ -957,8 +1005,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>vercel-labs/open-agents</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 738 stars today · 3,217 total · An open source template for building cloud agents.</div></td>
-  <td class='col-sources'><a href='https://github.com/vercel-labs/open-agents' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获得 1020 颗星 · 共 2,334 颗星 · 一个用于构建云端智能体的开源模板。</div></td>
+  <td class='col-sources'><a href='https://github.com/vercel-labs/open-agents' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Agent AR/VR 大模型' data-sources='GitHub Trending'>
@@ -966,8 +1014,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>lsdefine/GenericAgent</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 872 stars today · 2,795 total · Self-evolving agent: grows skill tree from 3.3K-line seed, achieving full system contr…</div></td>
-  <td class='col-sources'><a href='https://github.com/lsdefine/GenericAgent' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日获星 413 · 总计 1,674 · 自进化智能体：从 3.3K 行种子代码生长技能树，以 6 倍更少的 token 消耗实现完整系统控制</div></td>
+  <td class='col-sources'><a href='https://github.com/lsdefine/GenericAgent' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Claude Code Anthropic Agent AI编程' data-sources='GitHub Trending'>
@@ -975,8 +1023,8 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>thedotmack/claude-mem</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 1897 stars today · 59,812 total · A Claude Code plugin that automatically captures everything Claude does during your …</div></td>
-  <td class='col-sources'><a href='https://github.com/thedotmack/claude-mem' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日 753 星 · 共 51,252 星 · 一个 Claude Code 插件，可自动捕获 Claude 在编码会话中所做的一切，使用 AI（通过 Claude 的 agent-sdk）对其进行压缩，并将相关上下文注入到未来的会话中…</div></td>
+  <td class='col-sources'><a href='https://github.com/thedotmack/claude-mem' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Claude Code Anthropic AI编程 AR/VR' data-sources='GitHub Trending'>
@@ -984,215 +1032,215 @@
     <span class='score-badge'>5</span>
     <span class='title-text'>forrestchang/andrej-karpathy-skills</span>
   </td>
-  <td class='col-digest'><div class='digest'>⭐ 7959 stars today · 50,026 total · A single CLAUDE.md file to improve Claude Code behavior, derived from Andrej Karpath…</div></td>
-  <td class='col-sources'><a href='https://github.com/forrestchang/andrej-karpathy-skills' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>GitHub Trending</a></td>
+  <td class='col-digest'><div class='digest'>⭐ 今日 1066 星 · 共 13,531 星 · 一个单独的 CLAUDE.md 文件，用于改善 Claude Code 的行为，源自 Andrej Karpathy 对大语言模型编程陷阱的观察。</div></td>
+  <td class='col-sources'><a href='https://github.com/forrestchang/andrej-karpathy-skills' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>GitHub Trending</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>No one’s sure if synthetic mirror life will kill us all</span>
+    <span class='title-text'>没有人确定合成镜像生命是否会杀死我们所有人</span>
   </td>
-  <td class='col-digest'><div class='digest'>For four days in February 2019, some 30 synthetic biologists and ethicists hunkered down at a conference center in North…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/15/1135197/synthetic-mirror-life-microbes-kill-us-all/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>2019年2月，大约30名合成生物学家和伦理学家在北弗吉尼亚的一个会议中心闭门讨论了四天，集思广益，探讨美国国家科学基金会应该资助的高风险、前沿且极具吸引力的研究方向。会议结束时，他们最终确定了一个共</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/15/1135197/synthetic-mirror-life-microbes-kill-us-all/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='强化学习 AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>The Download: NASA’s nuclear spacecraft and unveiling our AI 10</span>
+    <span class='title-text'>每日下载：NASA的核动力航天器与揭晓我们的AI 10榜单</span>
   </td>
-  <td class='col-digest'><div class='digest'>This is today&#8217;s edition of The Download, our weekday newsletter that provides a daily dose of what&#8217;s going o…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/15/1135904/the-download-nasa-nuclear-powered-spacecraft-10-things-that-matter-in-ai-right-now/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>这是今天的「每日下载」，我们的工作日通讯，每天为您提供科技世界正在发生的事情。NASA正在建造首艘核反应堆驱动的星际航天器。它将如何运作？就在「阿尔忒弥斯II号」开始其历史性的绕月飞行之前……</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/15/1135904/the-download-nasa-nuclear-powered-spacecraft-10-things-that-matter-in-ai-right-now/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>The quest to measure our relationship with nature</span>
+    <span class='title-text'>探索衡量人与自然关系的旅程</span>
   </td>
-  <td class='col-digest'><div class='digest'>As a movement, environmentalism has been pretty misanthropic. Understandably so—we humans have done some destructive thi…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135245/measure-relationship-with-nature-index/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>作为一场运动，环保主义一直相当厌世。这可以理解——我们人类确实对周围的生态系统造成了一些破坏性的影响。然而在21世纪，主流的保护理念正在认识到，人类也可以成为一股向善的力量。林业工作者正在转向原住民的焚烧方式</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135245/measure-relationship-with-nature-index/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='强化学习 AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>The noise we make is hurting animals. Can we learn to shut up?</span>
+    <span class='title-text'>我们制造的噪音正在伤害动物。我们能学会安静下来吗？</span>
   </td>
-  <td class='col-digest'><div class='digest'>When the covid-19 pandemic started, Jennifer Phillips thought about the songs of the sparrows. They were easier to hear,…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135179/anthropogenic-noise-hurting-animals/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>当新冠疫情开始时，珍妮弗·菲利普斯想到了麻雀的歌声。它们变得更容易听到了，因为世界突然安静了下来。随着人们居家避疫并转向远程办公，汽车交通量骤降。航空旅行几近停摆。城市——通常充满了</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135179/anthropogenic-noise-hurting-animals/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Why having “humans in the loop” in an AI war is an illusion</span>
+    <span class='title-text'>为什么在AI战争中保持「人类在回路中」是一种幻觉</span>
   </td>
-  <td class='col-digest'><div class='digest'>The availability of artificial intelligence for use in warfare is at the center of a legal battle between Anthropic and …</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1136029/humans-in-the-loop-ai-war-illusion/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>人工智能在战争中的应用正处于Anthropic与五角大楼之间一场法律战的核心。随着AI在当前与伊朗的冲突中发挥着前所未有的重要作用，这场辩论变得愈发紧迫。AI不再仅仅是帮助人类分析情报</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1136029/humans-in-the-loop-ai-war-illusion/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='强化学习 AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>The Download: cyberscammers’ banking bypasses, and carbon removal troubles</span>
+    <span class='title-text'>每日下载：网络诈骗者绕过银行安全系统，以及碳移除面临的困境</span>
   </td>
-  <td class='col-digest'><div class='digest'>This is today&#8217;s edition of The Download, our weekday newsletter that provides a daily dose of what&#8217;s going o…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1136034/the-download-cyberscammers-banking-bypasses-microsoft-carbon-removal-troubles/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>这是「每日下载」的今日版，这是我们的工作日通讯，每天为您提供科技世界正在发生的事情。网络诈骗者正在利用Telegram上出售的非法工具绕过银行的安全措施。在柬埔寨的一个洗钱中心内，一名员工正在操作</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1136034/the-download-cyberscammers-banking-bypasses-microsoft-carbon-removal-troubles/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Google 推理 AR/VR 大模型' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Treating enterprise AI as an operating layer</span>
+    <span class='title-text'>将企业AI视为一个操作层</span>
   </td>
-  <td class='col-digest'><div class='digest'>There’s a fault line running through enterprise AI, and it’s not the one getting the most attention. The public conversa…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135554/treating-enterprise-ai-as-an-operating-layer/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>企业AI中存在一条断层线，但它并不是最受关注的那条。公众的讨论仍然围绕基础模型和基准测试展开——GPT对比Gemini、推理评分以及边际能力的提升。但在实践中，更持久的优势是结构性的：</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135554/treating-enterprise-ai-as-an-operating-layer/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='MIT Technology Review'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Making AI operational in constrained public sector environments</span>
+    <span class='title-text'>在受限的公共部门环境中实现AI的落地运营</span>
   </td>
-  <td class='col-digest'><div class='digest'>The AI boom has hit across industries, and public sector organizations are facing pressure to accelerate adoption. At th…</div></td>
-  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135216/making-ai-operational-in-constrained-public-sector-environments/' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>MIT Technology Review</a></td>
+  <td class='col-digest'><div class='digest'>AI热潮席卷各行各业，公共部门组织正面临加速采用AI的压力。与此同时，政府机构在安全、治理和运营方面面临着与企业截然不同的独特约束。正因如此，公共</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/04/16/1135216/making-ai-operational-in-constrained-public-sector-environments/' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>MIT Technology Review</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>The only way to fight deepfakes is by making deepfakes</span>
+    <span class='title-text'>对抗深度伪造的唯一方法就是制造深度伪造</span>
   </td>
-  <td class='col-digest'><div class='digest'>I was unsure if my parents would notice that the voice on the other end wasn't mine - or that it was mine, sort of, but …</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/report/913445/deepfake-detection-reality-defender-pindrop-ai' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>我不确定我的父母是否会注意到电话那头的声音不是我的——或者说，那声音听起来像是我的，但说话的人并不是我。那个声音说了你好，问我爸爸最近怎么样，在他没有很快回应时又问了一遍。「那是什么，Gaby？」他意识到了……</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/report/913445/deepfake-detection-reality-defender-pindrop-ai' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='强化学习 AR/VR AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Ozlo’s comfy Sleepbuds are nearly 30 percent off in the run-up to Mother’s Day</span>
+    <span class='title-text'>母亲节前夕，Ozlo舒适睡眠耳塞降价近三成</span>
   </td>
-  <td class='col-digest'><div class='digest'>If you’re struggling to get a full night of rest, a good pair of sleep earbuds can help you tune out unwanted distractio…</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/gadgets/913352/ozlo-sleepbuds-mothers-day-deal-sale' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>如果你难以获得整夜的安稳睡眠，一副好的睡眠耳塞可以帮你屏蔽不必要的干扰。Ozlo Sleepbuds就是这样一款选择，目前在母亲节前夕，亚马逊和Ozlo官方在线商店以249美元（立减100美元）的价格出售，非常划算</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/gadgets/913352/ozlo-sleepbuds-mothers-day-deal-sale' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Live Nation says it will fight monopoly suit loss</span>
+    <span class='title-text'>Live Nation表示将对反垄断诉讼败诉提起上诉</span>
   </td>
-  <td class='col-digest'><div class='digest'>After a jury found that Live Nation-Ticketmaster violated antitrust law on several counts, the company warns in a blog p…</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/policy/913494/live-nation-ticketmaster-fight-state-monopoly-jury-verdict' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>在陪审团裁定Live Nation-Ticketmaster在多项指控中违反了反垄断法后，该公司在一篇博客文章中警告称，该裁决「并非此事的最终定论」。该公司计划重新提出动议，要求法官作出有利于自己的裁决，声称各州未能证明其主张。</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/policy/913494/live-nation-ticketmaster-fight-state-monopoly-jury-verdict' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='强化学习 AR/VR AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Netflix cofounder Reed Hastings is officially leaving the company</span>
+    <span class='title-text'>Netflix联合创始人里德·哈斯廷斯正式离开公司</span>
   </td>
-  <td class='col-digest'><div class='digest'>Netflix cofounder and chairman Reed Hastings plans to leave the company after nearly 30 years. The news comes as part of…</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/streaming/913201/netflix-reed-hastings-earnings-q1-2026' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>Netflix联合创始人兼董事长里德·哈斯廷斯计划在近30年后离开公司。这一消息是Netflix周四发布的2026年第一季度财报的一部分，财报称哈斯廷斯「将不会在其现任期届满时于年度股东大会上竞选连任董事会成员」。</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/streaming/913201/netflix-reed-hastings-earnings-q1-2026' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='招聘 AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Netflix embraces vertical video with major mobile app update</span>
+    <span class='title-text'>Netflix通过重大移动应用更新拥抱竖屏视频</span>
   </td>
-  <td class='col-digest'><div class='digest'>Netflix announced on Thursday that it will be launching a redesigned mobile app, which will include a vertical video fee…</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/streaming/913539/netflix-mobile-app-update-vertical-video' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>Netflix周四宣布，将于4月底推出重新设计的移动应用，其中将包含竖屏视频信息流。该公司表示：「此次重新设计将更好地体现我们不断扩展的娱乐产品，并让会员更容易按照自己想要的方式和时间参与其中。」</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/streaming/913539/netflix-mobile-app-update-vertical-video' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR 大模型' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Ballmer gives $80 million to NPR, with strings attached</span>
+    <span class='title-text'>鲍尔默向NPR捐赠8000万美元，但附带条件</span>
   </td>
-  <td class='col-digest'><div class='digest'>Connie Ballmer, wife of former Microsoft CEO Steve Ballmer and co-founder of the Ballmer Group, has given $80 million to…</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/news/913518/ballmer-gives-80-million-to-npr-with-strings-attached' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>康妮·鲍尔默是前微软CEO史蒂夫·鲍尔默的妻子，也是鲍尔默集团的联合创始人，她向NPR捐赠了8000万美元。这大约相当于政府七年的拨款（1120万美元），此前特朗普和国会削减了对公共媒体的资助，但这笔捐款仅占NPR全年预算3亿美元的一小部分</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/news/913518/ballmer-gives-80-million-to-npr-with-strings-attached' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Google AR/VR AI' data-sources='The Verge AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Gucci-branded Google smart glasses are coming next year</span>
+    <span class='title-text'>Gucci品牌的谷歌智能眼镜将于明年推出</span>
   </td>
-  <td class='col-digest'><div class='digest'>Google is reportedly partnering with Gucci to make a pair of AI smart glasses stylish enough people might actually want …</div></td>
-  <td class='col-sources'><a href='https://www.theverge.com/gadgets/913523/google-gucci-ai-smart-glasses-2027' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>The Verge AI</a></td>
+  <td class='col-digest'><div class='digest'>据报道，谷歌正与Gucci合作打造一款足够时尚、让人们真正愿意佩戴的AI智能眼镜。据路透社报道，Gucci母公司开云集团计划在2027年某个时候推出这款眼镜。谷歌的首款Android XR眼镜「Project Aura」即将</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/gadgets/913523/google-gucci-ai-smart-glasses-2027' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>The Verge AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Agent AR/VR AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>InsightFinder raises $15M to help companies figure out where AI agents go wrong</span>
+    <span class='title-text'>InsightFinder融资1500万美元，帮助企业找出AI智能体的故障所在</span>
   </td>
-  <td class='col-digest'><div class='digest'>According to CEO Helen Gu, the biggest problem facing the industry today is not just monitoring and diagnosing where AI …</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/insightfinder-raises-15m-to-help-companies-figure-out-where-ai-agents-go-wrong/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>据CEO Helen Gu表示，当今行业面临的最大问题不仅仅是监控和诊断AI模型在哪里出了问题，还在于诊断整个技术栈在AI成为其一部分后是如何运作的。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/insightfinder-raises-15m-to-help-companies-figure-out-where-ai-agents-go-wrong/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Google AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Google now lets you explore the web side-by-side with AI Mode</span>
+    <span class='title-text'>谷歌现在允许你在「AI模式」旁边并排浏览网页</span>
   </td>
-  <td class='col-digest'><div class='digest'>Now, when you're using AI Mode on Chrome desktop, clicking a link will open the web page side-by-side with AI Mode.</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/google-now-lets-you-explore-the-web-side-by-side-with-ai-mode/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>现在，当你在Chrome桌面端使用「AI模式」时，点击链接会在「AI模式」旁边并排打开网页。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/google-now-lets-you-explore-the-web-side-by-side-with-ai-mode/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic AR/VR 招聘 AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Anthropic CPO leaves Figma’s board after reports he will offer a competing product</span>
+    <span class='title-text'>Anthropic首席产品官在被报道将推出竞品后退出Figma董事会</span>
   </td>
-  <td class='col-digest'><div class='digest'>Krieger's departure and any forthcoming design tools will be another data point for investors who fear the SaaSpocalypse…</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/anthropic-cpo-leaves-figmas-board-after-reports-he-will-offer-a-competing-product/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>Krieger的离开以及任何即将推出的设计工具，将成为那些担忧「SaaS末日」的投资者的又一个佐证——即最大的AI实验室将主导软件业务，这一论点今年已多次冲击公开市场。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/anthropic-cpo-leaves-figmas-board-after-reports-he-will-offer-a-competing-product/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='OpenAI Anthropic Agent AI编程' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>OpenAI takes aim at Anthropic with beefed-up Codex that gives it more power over your desktop</span>
+    <span class='title-text'>OpenAI强化Codex向Anthropic发起挑战，赋予其更强大的桌面控制能力</span>
   </td>
-  <td class='col-digest'><div class='digest'>OpenAI's agentic coding tool has gotten a major makeover, with a variety of new powers and abilities.</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>OpenAI的智能编程工具迎来重大升级，新增多项功能与能力。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/openai-takes-aim-at-anthropic-with-beefed-up-codex-that-gives-it-more-power-over-your-desktop/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='具身智能 强化学习 AR/VR AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Physical Intelligence, a hot robotics startup, says its new robot brain can figure out tasks it was never taught</span>
+    <span class='title-text'>热门机器人初创公司Physical Intelligence表示，其新型机器人大脑能够自行摸索从未被教过的任务</span>
   </td>
-  <td class='col-digest'><div class='digest'>The new model, called π0.7, represents what the company describes as an early but meaningful step toward the long-sought…</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/physical-intelligence-a-hot-robotics-startup-says-its-new-robot-brain-can-figure-out-tasks-it-was-never-taught/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>这款名为「π0.7」的新模型，被该公司描述为朝着通用机器人大脑这一长期追求目标迈出的早期但意义重大的一步。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/physical-intelligence-a-hot-robotics-startup-says-its-new-robot-brain-can-figure-out-tasks-it-was-never-taught/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Upscale AI in talks to raise at $2B valuation, says report</span>
+    <span class='title-text'>报道称，Upscale AI正在以20亿美元估值进行融资谈判</span>
   </td>
-  <td class='col-digest'><div class='digest'>AI infrastructure company Upscale AI is reportedly in talks to raise its third funding round since launching just seven …</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/upscale-ai-in-talks-to-raise-at-2b-valuation-says-report/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>据报道，AI基础设施公司Upscale AI正在就其第三轮融资进行谈判，该公司成立仅七个月。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/upscale-ai-in-talks-to-raise-at-2b-valuation-says-report/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AR/VR AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Luma launches AI-powered production studio with faith-focused Wonder Project</span>
+    <span class='title-text'>Luma推出以信仰为核心的AI驱动制作工作室「Wonder Project」</span>
   </td>
-  <td class='col-digest'><div class='digest'>The studio's first project will be about Moses and star Academy Award-winner Ben Kingsley, to be released this spring on…</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/luma-launches-ai-powered-production-studio-with-faith-focused-wonder-project/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>该工作室的首个项目将讲述摩西的故事，由奥斯卡金像奖得主本·金斯利主演，计划于今年春季在Prime Video上线。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/luma-launches-ai-powered-production-studio-with-faith-focused-wonder-project/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='AI编程 AR/VR AI' data-sources='TechCrunch AI'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Factory hits $1.5B valuation to build AI coding for enterprises</span>
+    <span class='title-text'>Factory估值达15亿美元，致力于为企业构建AI编程工具</span>
   </td>
-  <td class='col-digest'><div class='digest'>The three-year-old startup raised $150 million led by Khosla Ventures.</div></td>
-  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/factory-hits-1-5b-valuation-to-build-ai-coding-for-enterprises/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-digest'><div class='digest'>这家成立三年的初创公司筹集了1.5亿美元，由Khosla Ventures领投。</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/04/16/factory-hits-1-5b-valuation-to-build-ai-coding-for-enterprises/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>TechCrunch AI</a></td>
   <td class='col-time'>01:30</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic Google DeepSeek 字节' data-sources='APPSO'>
@@ -1201,7 +1249,7 @@
     <span class='title-text'>Claude Opus 4.7深夜上线，更强也更烧Token/字节亿元年薪挖DeepSeek核心员工?官方回应/雷军:不能因为有黑稿就不说话</span>
   </td>
   <td class='col-digest'><div class='digest'>🤖Claude Opus 4.7 正式发布，编程能力大幅跃升📱曝 OLED 版 iPad Air 明年到来💬雷军官宣直播 15 小时 SU7 长途续航测试：不能因为有黑稿就不说话📋苹果发布 2025 年环境报告：产品再生材料占比达 30%，…</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/-_JnU_PgcGDPxeeFq5Wc_w' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>APPSO</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/-_JnU_PgcGDPxeeFq5Wc_w' target='_blank' class='source-badge' style='background:#43e97b22;color:#43e97b;border-color:#43e97b44'>APPSO</a></td>
   <td class='col-time'>00:24</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='新智元'>
@@ -1210,7 +1258,7 @@
     <span class='title-text'>Claude Opus 4.7连夜突袭：或将抢走全球7亿打工人饭碗！</span>
   </td>
   <td class='col-digest'><div class='digest'>视觉能力从50%跃升至接近满分！</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/9m9S9Y9q9Fx4gscqizVDmg' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/9m9S9Y9q9Fx4gscqizVDmg' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>00:23</td>
 </tr>
 <tr class='article-row' data-tags='Google' data-sources='新智元'>
@@ -1219,7 +1267,7 @@
     <span class='title-text'>Gemini桌面客户端终于上线：直接读取屏幕上下文，帮你解读一切！</span>
   </td>
   <td class='col-digest'><div class='digest no-digest'>暂无摘要</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/9ir_Q-LIO51bWcnsIG9XgQ' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>新智元</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/9ir_Q-LIO51bWcnsIG9XgQ' target='_blank' class='source-badge' style='background:#fccb9022;color:#fccb90;border-color:#fccb9044'>新智元</a></td>
   <td class='col-time'>00:23</td>
 </tr>
 <tr class='article-row' data-tags='OpenAI AR/VR AI' data-sources='AI寒武纪'>
@@ -1228,16 +1276,16 @@
     <span class='title-text'>GPT Images v2 太强了，吊打香蕉🍌</span>
   </td>
   <td class='col-digest'><div class='digest'>OpenAI王者归来！arena.ai/上传三张空白图片作为参考就可以100%灰度到，模型名称为duct-tape-1</div></td>
-  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/LW0T0o2o5CID0aELCHp9Ww' target='_blank' class='source-badge' style='background:#a18cd122;color:#a18cd1;border-color:#a18cd144'>AI寒武纪</a></td>
+  <td class='col-sources'><a href='https://mp.weixin.qq.com/s/LW0T0o2o5CID0aELCHp9Ww' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>AI寒武纪</a></td>
   <td class='col-time'>00:00</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic 阿里' data-sources='Hacker News'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Qwen3.6-35B-A3B on my laptop drew me a better pelican than Claude Opus 4.7</span>
+    <span class='title-text'>Qwen3.6-35B-A3B 在我的笔记本电脑上画出的鹈鹕比 Claude Opus 4.7 画的还好</span>
   </td>
-  <td class='col-digest'><div class='digest'>HN 299 points · 65 comments · https://simonwillison.net/2026/Apr/16/qwen-beats-opus/</div></td>
-  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47796830' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>Hacker News</a></td>
+  <td class='col-digest'><div class='digest'>HN 299 分 · 65 条评论 · https://simonwillison.net/2026/Apr/16/qwen-beats-opus/</div></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47796830' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>Hacker News</a></td>
   <td class='col-time'>17:37</td>
 </tr>
 <tr class='article-row' data-tags='Anthropic' data-sources='Hacker News'>
@@ -1246,25 +1294,25 @@
     <span class='title-text'>Claude Opus 4.7</span>
   </td>
   <td class='col-digest'><div class='digest'>HN 1456 points · 1054 comments · https://www.anthropic.com/news/claude-opus-4-7</div></td>
-  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47793411' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>Hacker News</a></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47793411' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>Hacker News</a></td>
   <td class='col-time'>14:23</td>
 </tr>
 <tr class='article-row' data-tags='阿里 Agent AI编程 AI' data-sources='Hacker News'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Qwen3.6-35B-A3B: Agentic coding power, now open to all</span>
+    <span class='title-text'>Qwen3.6-35B-A3B：智能体编程能力，现已向所有人开放</span>
   </td>
-  <td class='col-digest'><div class='digest'>HN 899 points · 417 comments · https://qwen.ai/blog?id=qwen3.6-35b-a3b</div></td>
-  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47792764' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>Hacker News</a></td>
+  <td class='col-digest'><div class='digest'>HN 899 分 · 417 条评论 · https://qwen.ai/blog?id=qwen3.6-35b-a3b</div></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47792764' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>Hacker News</a></td>
   <td class='col-time'>13:36</td>
 </tr>
 <tr class='article-row' data-tags='Agent AR/VR AI' data-sources='Hacker News'>
   <td class='col-title'>
     <span class='score-badge'>5</span>
-    <span class='title-text'>Cloudflare Email Service</span>
+    <span class='title-text'>Cloudflare 电子邮件服务</span>
   </td>
-  <td class='col-digest'><div class='digest'>HN 405 points · 188 comments · https://blog.cloudflare.com/email-for-agents/</div></td>
-  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47792593' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>Hacker News</a></td>
+  <td class='col-digest'><div class='digest'>HN 405 点 · 188 条评论 · https://blog.cloudflare.com/email-for-agents/</div></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=47792593' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>Hacker News</a></td>
   <td class='col-time'>13:21</td>
 </tr>
 
@@ -1272,7 +1320,7 @@
       </table>
     </div>
 
-    <div class="footer">由 Claude 自动生成 · 2026-04-17 22:00:43</div>
+    <div class="footer">由 Claude 自动生成 · 2026-04-17 21:55:15</div>
   </div>
 
   <script>
@@ -1306,6 +1354,7 @@
     });
 
     sourceBtns.forEach(btn => {
+      if (btn.classList.contains('inactive')) return;
       btn.addEventListener('click', () => {
         const name = btn.dataset.source;
         activeSource = (activeSource === name) ? null : name;
