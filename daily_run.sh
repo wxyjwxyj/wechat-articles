@@ -116,12 +116,14 @@ if [ $WX_EXIT -ne 0 ]; then
 fi
 
 # 5.5-5.8 并行采集（HN / ArXiv / GitHub / RSS 互相独立）
+# HN / ArXiv / GitHub 是境外公开 API，直连比走代理更稳定
+DIRECT="env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY"
 log "并行采集 HN / ArXiv / GitHub Trending / RSS..."
-python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
+$DIRECT python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
 PID_HN=$!
-python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
+$DIRECT python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
 PID_ARXIV=$!
-python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
+$DIRECT python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
 PID_GH=$!
 python fetch_rss_today.py >> "$LOG_FILE" 2>&1 &
 PID_RSS=$!
