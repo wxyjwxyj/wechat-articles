@@ -105,7 +105,7 @@ class HackerNewsCollector:
 
         # 并发获取所有 story 详情
         ai_stories = []
-        with ThreadPoolExecutor(max_workers=min(len(story_ids), 20)) as executor:
+        with ThreadPoolExecutor(max_workers=min(len(story_ids), 10)) as executor:
             futures = {executor.submit(_fetch_story, sid, self._session, self.timeout): sid for sid in story_ids}
             for future in as_completed(futures):
                 story = future.result()
