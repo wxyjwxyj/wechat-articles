@@ -116,14 +116,14 @@ if [ $WX_EXIT -ne 0 ]; then
 fi
 
 # 5.5-5.8 并行采集（HN / ArXiv / GitHub / RSS 互相独立）
-# HN / ArXiv / GitHub 是境外公开 API，直连比走代理更稳定
+# HN / ArXiv 直连更稳定；GitHub / RSS 需要走代理
 DIRECT="env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY"
 log "并行采集 HN / ArXiv / GitHub Trending / RSS..."
 $DIRECT python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
 PID_HN=$!
 $DIRECT python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
 PID_ARXIV=$!
-$DIRECT python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
+python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
 PID_GH=$!
 python fetch_rss_today.py >> "$LOG_FILE" 2>&1 &
 PID_RSS=$!
@@ -198,6 +198,8 @@ python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
 
 fi  # SKIP_GENERATE
 
+if [ -z "$SKIP_GENERATE" ]; then
+
 # 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"
@@ -209,7 +211,10 @@ python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 git add today.html mp_article_preview.html archive/ >> "$LOG_FILE" 2>&1
 git commit -m "content: ${TODAY_DATE} HTML" >> "$LOG_FILE" 2>&1
 
+fi  # SKIP_GENERATE (archive + commit)
+
 # 13. stash 保护 → 切 main → 推送
+if [ -z "$SKIP_GENERATE" ]; then
 log "推送到 GitHub..."
 git stash --include-untracked >> "$LOG_FILE" 2>&1
 STASHED=$?
@@ -224,6 +229,7 @@ git push origin main >> "$LOG_FILE" 2>&1 || ERRORS="${ERRORS}GitHub推送失败 
 # 14. 切回 dev + 恢复 stash
 git checkout dev >> "$LOG_FILE" 2>&1
 [ $STASHED -eq 0 ] && git stash pop >> "$LOG_FILE" 2>&1
+fi  # SKIP_GENERATE (push)
 
 # 15. 统计结果并通知
 ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "?")
