@@ -4,7 +4,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 
-def retry_session(retries: int = 3, backoff: float = 1.0) -> requests.Session:
+def retry_session(retries: int = 3, backoff: float = 1.0, pool_maxsize: int = 20) -> requests.Session:
     """返回一个带指数退避重试的 requests Session。"""
     s = requests.Session()
     retry = Retry(
@@ -13,6 +13,7 @@ def retry_session(retries: int = 3, backoff: float = 1.0) -> requests.Session:
         status_forcelist=[429, 500, 502, 503, 504],
         allowed_methods=["GET", "POST"],
     )
-    s.mount("http://", HTTPAdapter(max_retries=retry))
-    s.mount("https://", HTTPAdapter(max_retries=retry))
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=pool_maxsize, pool_maxsize=pool_maxsize)
+    s.mount("http://", adapter)
+    s.mount("https://", adapter)
     return s
