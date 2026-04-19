@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## 2026-04-19
+
+- refactor: 清理 3 个文件残留的 `import anthropic`（build_bundle/claude_scorer/topic_searcher）
+- refactor: research/ 模块（hn_search/web_search/github_search）裸调 requests 改为 retry_session
+- fix: 移除 claude_scorer.py 中已失效的 `except anthropic.APIError` 分支
+- docs: design.md 补充 5 条未记录的设计决策（翻译持久化、并行采集策略、日志系统、429 重试、并发翻译）
+
+## 2026-04-18
+
+- fix: HN/ArXiv 采集绕过本地代理直连，避免代理超时
+- fix: HN collector 线程池从 20 降到 10，HTTP 连接池增大，消除 pool-full 警告
+- fix: daily_run.sh 的 archive/push 步骤受 SKIP_GENERATE 控制
+
+## 2026-04-17
+
+- refactor: 所有 Claude API 调用统一通过 utils/claude.py（haiku→sonnet→opus fallback）
+
+## 2026-04-16
+
+- fix: _tag_items 缩进修复
+
 ## 2026-04-15
 
 - fix: notify() 改用 terminal-notifier，修复 launchd 环境下通知失效
