@@ -101,9 +101,9 @@ def _tag_items(items: list[dict]) -> None:
     if claude_results:
         for item, result in zip(items, claude_results):
             item["tags"] = result["tags"] or extract_tags(item)  # Claude 返回空则兜底
-                item["score"] = result["score"]
-            logger.info("Claude 打标签完成")
-            return
+            item["score"] = result["score"]
+        logger.info("Claude 打标签完成")
+        return
     # 降级：关键词匹配
     logger.info("Claude 打标签失败，使用关键词匹配")
     for item in items:
