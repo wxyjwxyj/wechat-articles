@@ -1,6 +1,6 @@
 """Hacker News Algolia Search API 封装。"""
-import requests
 from utils.errors import CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -17,6 +17,7 @@ class HNSearcher:
             timeout: HTTP 请求超时秒数
         """
         self.timeout = timeout
+        self._session = retry_session()
 
     def search_stories(
         self,
@@ -45,7 +46,7 @@ class HNSearcher:
         logger.info("HN 搜索: %s (max_results=%d)", query, max_results)
 
         try:
-            resp = requests.get(
+            resp = self._session.get(
                 HN_SEARCH_API,
                 params=params,
                 timeout=self.timeout,

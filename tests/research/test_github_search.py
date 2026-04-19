@@ -7,19 +7,19 @@ def test_search_repositories_builds_correct_url():
     """应构建正确的 GitHub Search API URL"""
     searcher = GitHubSearcher()
 
-    with patch('research.github_search.requests.get') as mock_get:
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {"items": []}
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"items": []}
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-        searcher.search_repositories("reinforcement learning", max_results=5)
+    searcher.search_repositories("reinforcement learning", max_results=5)
 
-        call_args = mock_get.call_args
-        assert "api.github.com/search/repositories" in call_args[0][0]
-        params = call_args[1]['params']
-        assert "reinforcement learning" in params['q']
-        assert params['sort'] == 'stars'
+    call_args = searcher._session.get.call_args
+    assert "api.github.com/search/repositories" in call_args[0][0]
+    params = call_args[1]['params']
+    assert "reinforcement learning" in params['q']
+    assert params['sort'] == 'stars'
 
 
 def test_search_repositories_returns_repos():
@@ -40,17 +40,17 @@ def test_search_repositories_returns_repos():
         ]
     }
 
-    with patch('research.github_search.requests.get') as mock_get:
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = mock_json
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_json
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-        results = searcher.search_repositories("reinforcement learning")
+    results = searcher.search_repositories("reinforcement learning")
 
-        assert len(results) == 1
-        assert results[0]["name"] == "stable-baselines3"
-        assert results[0]["stars"] == 5000
+    assert len(results) == 1
+    assert results[0]["name"] == "stable-baselines3"
+    assert results[0]["stars"] == 5000
 
 
 def test_search_repositories_handles_api_error():
@@ -58,12 +58,11 @@ def test_search_repositories_handles_api_error():
     from utils.errors import CollectorError
 
     searcher = GitHubSearcher()
+    searcher._session = MagicMock()
+    searcher._session.get.side_effect = Exception("API rate limit")
 
-    with patch('research.github_search.requests.get') as mock_get:
-        mock_get.side_effect = Exception("API rate limit")
-
-        try:
-            searcher.search_repositories("test")
-            assert False, "应该抛出异常"
-        except CollectorError:
-            pass
+    try:
+        searcher.search_repositories("test")
+        assert False, "应该抛出异常"
+    except CollectorError:
+        pass

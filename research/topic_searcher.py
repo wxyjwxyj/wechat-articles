@@ -1,7 +1,6 @@
 """主题搜索聚合器，并行调用多个数据源。"""
 import json
 import re
-import anthropic
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collectors.arxiv import ArxivCollector
 from research.github_search import GitHubSearcher

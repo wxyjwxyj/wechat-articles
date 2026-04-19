@@ -1,3 +1,4 @@
+# tests/research/test_hn_search.py
 from unittest.mock import patch, MagicMock
 from research.hn_search import HNSearcher
 
@@ -6,19 +7,19 @@ def test_search_stories_builds_correct_url():
     """应构建正确的 HN Algolia API URL"""
     searcher = HNSearcher()
 
-    with patch('research.hn_search.requests.get') as mock_get:
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = {"hits": []}
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"hits": []}
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-        searcher.search_stories("reinforcement learning", max_results=5)
+    searcher.search_stories("reinforcement learning", max_results=5)
 
-        call_args = mock_get.call_args
-        assert "hn.algolia.com/api/v1/search" in call_args[0][0]
-        params = call_args[1]['params']
-        assert params['query'] == "reinforcement learning"
-        assert params['tags'] == "story"
+    call_args = searcher._session.get.call_args
+    assert "hn.algolia.com/api/v1/search" in call_args[0][0]
+    params = call_args[1]['params']
+    assert params['query'] == "reinforcement learning"
+    assert params['tags'] == "story"
 
 
 def test_search_stories_returns_results():
@@ -39,17 +40,17 @@ def test_search_stories_returns_results():
         ]
     }
 
-    with patch('research.hn_search.requests.get') as mock_get:
-        mock_resp = MagicMock()
-        mock_resp.json.return_value = mock_json
-        mock_resp.raise_for_status = MagicMock()
-        mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_json
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-        results = searcher.search_stories("reinforcement learning")
+    results = searcher.search_stories("reinforcement learning")
 
-        assert len(results) == 1
-        assert results[0]["title"] == "Deep RL breakthrough"
-        assert results[0]["score"] == 350
+    assert len(results) == 1
+    assert results[0]["title"] == "Deep RL breakthrough"
+    assert results[0]["score"] == 350
 
 
 def test_search_stories_handles_api_error():
@@ -57,12 +58,11 @@ def test_search_stories_handles_api_error():
     from utils.errors import CollectorError
 
     searcher = HNSearcher()
+    searcher._session = MagicMock()
+    searcher._session.get.side_effect = Exception("Network error")
 
-    with patch('research.hn_search.requests.get') as mock_get:
-        mock_get.side_effect = Exception("Network error")
-
-        try:
-            searcher.search_stories("test")
-            assert False, "应该抛出异常"
-        except CollectorError:
-            pass
+    try:
+        searcher.search_stories("test")
+        assert False, "应该抛出异常"
+    except CollectorError:
+        pass

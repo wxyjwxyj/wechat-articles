@@ -4,8 +4,8 @@ import os
 import re
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import requests
 from utils.errors import CollectorError
+from utils.http import retry_session
 from utils.log import get_logger
 
 logger = get_logger(__name__)
@@ -28,6 +28,7 @@ class WebSearcher:
         self.google_cx = google_cx or os.getenv("GOOGLE_SEARCH_CX", "")
         self.bing_api_key = bing_api_key or os.getenv("BING_SEARCH_API_KEY", "")
         self.timeout = timeout
+        self._session = retry_session()
 
     def search_articles(self, topic: str, max_results: int = 10, extra_queries: list[str] | None = None) -> list[dict]:
         """搜索技术文章。优先级：Exa → Google → Bing → DuckDuckGo。
@@ -149,7 +150,7 @@ class WebSearcher:
             "lr": "lang_zh-CN",
         }
         logger.info("Google 搜索: %s", query)
-        resp = requests.get(GOOGLE_SEARCH_API, params=params, timeout=self.timeout)
+        resp = self._session.get(GOOGLE_SEARCH_API, params=params, timeout=self.timeout)
         resp.raise_for_status()
         items = resp.json().get("items", [])
         results = []
@@ -176,7 +177,7 @@ class WebSearcher:
         params = {"q": query, "count": min(10, max_results), "mkt": "zh-CN", "responseFilter": "Webpages"}
         headers = {"Ocp-Apim-Subscription-Key": self.bing_api_key}
         logger.info("Bing 搜索: %s", query)
-        resp = requests.get(BING_SEARCH_API, params=params, headers=headers, timeout=self.timeout)
+        resp = self._session.get(BING_SEARCH_API, params=params, headers=headers, timeout=self.timeout)
         resp.raise_for_status()
         web_pages = resp.json().get("webPages", {}).get("value", [])
         results = []

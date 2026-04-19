@@ -105,3 +105,53 @@ set -a && source .env && set +a && python scripts/xxx.py
 ```
 
 **不要：** 直接 `python scripts/xxx.py`，环境变量没注入。
+
+---
+
+## 翻译结果持久化到 DB（2026-04-19）
+
+**背景：** 海外条目（HN/ArXiv/GitHub/RSS）每次 build_bundle 都要调 Claude 翻译 title/summary，重复跑浪费 API 额度且慢。
+
+**决策：** 翻译结果写入 items 表的 `title_zh` / `summary_zh` 字段，下次 `build_bundle.py` 检测到已有翻译（`item.get("title_zh")`）直接跳过。重跑 bundle 秒级完成。
+
+**不要：** 每次都重新翻译，也不要把翻译结果只存在 bundle JSON 里（重跑就丢了）。
+
+---
+
+## 并行采集：HN/ArXiv 直连，GitHub/RSS 走代理（2026-04-19）
+
+**背景：** 4 个非微信数据源互相独立，串行太慢。但 HN/ArXiv 直连更稳定，走代理反而可能超时。
+
+**决策：** `daily_run.sh` 用 `&` 并行启动 4 个采集进程，`wait` 收集 exit code。HN/ArXiv 用 `env -u http_proxy` 去掉代理直连，GitHub/RSS 保留代理。
+
+**不要：** 给 HN/ArXiv 加代理（直连更快更稳），也不要串行跑采集（浪费时间）。
+
+---
+
+## 日志系统：stderr + 按天文件（2026-04-19）
+
+**背景：** 需要实时看输出（stderr），也需要事后排查（文件）。
+
+**决策：** `utils/log.py` 的 `get_logger()` 统一配置 root logger，同时输出到 stderr 和 `.claude/logs/YYYY-MM-DD.log`。格式 `[时间] 级别 模块名 - 消息`。`daily_run.sh` 自动清理 30 天前的日志。
+
+**不要：** 在各模块里自己配 logging，统一用 `get_logger(__name__)`。
+
+---
+
+## claude_call 内置 429 限流重试（2026-04-19）
+
+**背景：** Claude API 高频调用（批量打标签、翻译）容易触发 429 限流，单次失败就中断整个流水线。
+
+**决策：** `utils/claude.py` 的 `claude_call()` 对 `RateLimitError` 单独做 3 次指数退避重试（2s/4s/8s），3 次都限流才 fallback 到下一个模型。这是 API 层重试，跟 `retry_session` 的 HTTP 层重试是两层独立机制。
+
+**不要：** 在调用方自己写 429 重试逻辑，`claude_call` 已经内置了。
+
+---
+
+## build_bundle 并发翻译（2026-04-19）
+
+**背景：** 海外条目翻译是 IO 密集型（等 Claude API 响应），串行翻译 20 条要 1-2 分钟。
+
+**决策：** `build_bundle.py` 用 `ThreadPoolExecutor(max_workers=5)` 并发翻译，5 条同时发请求。这是进程内的线程级并发，跟 `daily_run.sh` 的进程级并行是两个层面。
+
+**不要：** 串行翻译（太慢），也不要开太多 worker（容易触发 429）。

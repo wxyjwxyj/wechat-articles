@@ -42,16 +42,16 @@ def test_search_articles_fallback_to_google_when_exa_fails():
     """Exa 失败时应降级到 Google"""
     searcher = WebSearcher(google_api_key="test-google", google_cx="test-cx")
 
-    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
-        with patch('research.web_search.requests.get') as mock_get:
-            mock_resp = MagicMock()
-            mock_resp.json.return_value = {"items": []}
-            mock_resp.raise_for_status = MagicMock()
-            mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = {"items": []}
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-            searcher.search_articles("强化学习")
-            call_args = mock_get.call_args
-            assert "googleapis.com" in call_args[0][0]
+    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
+        searcher.search_articles("强化学习")
+        call_args = searcher._session.get.call_args
+        assert "googleapis.com" in call_args[0][0]
 
 
 def test_search_articles_returns_exa_results():
@@ -81,14 +81,14 @@ def test_search_articles_returns_google_results():
         ]
     }
 
-    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
-        with patch('research.web_search.requests.get') as mock_get:
-            mock_resp = MagicMock()
-            mock_resp.json.return_value = mock_json
-            mock_resp.raise_for_status = MagicMock()
-            mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_json
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-            results = searcher.search_articles("强化学习")
+    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
+        results = searcher.search_articles("强化学习")
 
     assert len(results) == 1
     assert results[0]["title"] == "强化学习入门教程"
@@ -110,14 +110,14 @@ def test_search_articles_returns_bing_results():
         }
     }
 
-    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
-        with patch('research.web_search.requests.get') as mock_get:
-            mock_resp = MagicMock()
-            mock_resp.json.return_value = mock_json
-            mock_resp.raise_for_status = MagicMock()
-            mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_json
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-            results = searcher.search_articles("强化学习")
+    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
+        results = searcher.search_articles("强化学习")
 
     assert len(results) == 1
     assert results[0]["title"] == "强化学习入门教程"
@@ -142,14 +142,14 @@ def test_search_articles_prefers_chinese_content_in_google_fallback():
         ]
     }
 
-    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
-        with patch('research.web_search.requests.get') as mock_get:
-            mock_resp = MagicMock()
-            mock_resp.json.return_value = mock_json
-            mock_resp.raise_for_status = MagicMock()
-            mock_get.return_value = mock_resp
+    mock_resp = MagicMock()
+    mock_resp.json.return_value = mock_json
+    mock_resp.raise_for_status = MagicMock()
+    searcher._session = MagicMock()
+    searcher._session.get.return_value = mock_resp
 
-            results = searcher.search_articles("强化学习")
+    with patch('research.web_search.subprocess.run', return_value=_mock_exa_run(returncode=1, stdout="")):
+        results = searcher.search_articles("强化学习")
 
     assert "中文" in results[0]["snippet"]
 

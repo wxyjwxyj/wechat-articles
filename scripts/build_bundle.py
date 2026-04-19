@@ -6,8 +6,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
 
-import anthropic
-
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from storage.db import init_db

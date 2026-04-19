@@ -2,7 +2,6 @@
 import json
 from contextlib import closing
 from pathlib import Path
-import anthropic
 from utils.errors import AIApiError
 from utils.log import get_logger
 
@@ -167,8 +166,6 @@ Format:
 
             logger.info("Claude 评分完成：%d 个资源", len(results))
 
-        except anthropic.APIError as e:
-            raise AIApiError(f"Claude API 调用失败: {e}") from e
         except (json.JSONDecodeError, KeyError) as e:
             logger.warning("评分解析失败，原始响应: %s", raw[:300])
             raise AIApiError(f"Claude 返回解析失败: {e}") from e
