@@ -8,7 +8,6 @@
 # 分类用于 topics 排序：同分类内按文章数降序，分类间按固定顺序
 #
 import json
-import time
 
 from utils.log import get_logger
 
@@ -108,11 +107,9 @@ BATCH_SIZE = 15  # 每批最多处理条数，避免 JSON 过长解析失败
 def _call_claude_batch(
     items: list[dict],
     id_offset: int,
-    api_key: str,
-    base_url: str,
 ) -> list[dict]:
     """调用 Claude 为一批文章打标签+评分，返回与 items 等长的结果列表。"""
-    import anthropic
+    from utils.claude import claude_call
 
     articles_text = "\n".join(
         f"{id_offset + i + 1}. 标题：{item.get('title', '')}  摘要：{item.get('summary', '')[:80]}"
@@ -141,21 +138,7 @@ Requirements:
 Format:
 {{"results": [{{"id": {id_offset + 1}, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
 
-    client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-    for attempt in range(3):
-        try:
-            message = client.messages.create(
-                model="claude-opus-4-6",
-                max_tokens=1024,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            break
-        except anthropic.RateLimitError:
-            if attempt < 2:
-                time.sleep(2 ** (attempt + 1))
-                continue
-            raise
-    raw = message.content[0].text.strip()
+    raw = claude_call(prompt, max_tokens=1024)
 
     start = raw.find("{")
     end = raw.rfind("}") + 1
@@ -177,29 +160,25 @@ Format:
 
 def extract_tags_batch_with_claude(
     items: list[dict],
-    api_key: str,
-    base_url: str = "https://api.anthropic.com",
+    api_key: str = "",
+    base_url: str = "",
 ) -> list[dict]:
     """
     用 Claude API 批量为文章打标签，同时打重要性分数（0-10）。
     自动分批（每批 BATCH_SIZE 条），避免 JSON 过长解析失败。
     返回与 items 等长的列表，每项为 {"tags": [...], "score": int}。
     失败时返回空列表，由调用方降级到关键词匹配。
-    """
-    try:
-        import anthropic  # noqa: F401
-    except ImportError:
-        logger.warning("未安装 anthropic 库（pip install anthropic），降级到关键词匹配")
-        return []
 
+    注意：api_key/base_url 参数已废弃，配置统一由 utils.claude 管理。
+    """
     output: list[dict] = []
     for batch_start in range(0, len(items), BATCH_SIZE):
         batch = items[batch_start: batch_start + BATCH_SIZE]
         try:
-            batch_result = _call_claude_batch(batch, batch_start, api_key, base_url)
+            batch_result = _call_claude_batch(batch, batch_start)
             output.extend(batch_result)
             logger.debug("批次 %d-%d 打标签完成", batch_start + 1, batch_start + len(batch))
-        except (anthropic.APIError, json.JSONDecodeError, KeyError, IndexError) as e:
+        except (json.JSONDecodeError, KeyError, IndexError, Exception) as e:
             logger.warning("批次 %d-%d 打标签失败（%s），该批降级到关键词匹配",
                            batch_start + 1, batch_start + len(batch), e)
             output.extend([{"tags": [], "score": 5} for _ in batch])

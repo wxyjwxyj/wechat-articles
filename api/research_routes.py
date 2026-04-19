@@ -3,7 +3,6 @@ import html as _html
 import json
 import os
 import time
-import anthropic
 from flask import request, jsonify, Response, stream_with_context
 from research.topic_searcher import TopicSearcher
 from research.result_renderer import render_results_html
@@ -351,15 +350,11 @@ def register_research_routes(app):
 
         def generate():
             try:
-                client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+                from utils.claude import claude_stream
                 first_chunk = True
                 t_start = time.time()
                 char_count = 0
-                with client.messages.stream(
-                    model="claude-opus-4-6",
-                    max_tokens=8192,
-                    messages=[{"role": "user", "content": prompt}],
-                ) as stream:
+                with claude_stream(prompt, max_tokens=8192, model="claude-opus-4-6") as stream:
                     for text in stream.text_stream:
                         if first_chunk:
                             logger.info("深度研究首个 chunk（%.1fs）: %s", time.time() - t_start, repr(text[:100]))

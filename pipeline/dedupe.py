@@ -1,6 +1,5 @@
 import json
 import re
-import time
 
 from utils.log import get_logger
 
@@ -146,8 +145,6 @@ def _keyword_dedupe(items: list[dict], sim_threshold: float = 0.55) -> list[dict
 
 def _claude_dedupe(
     items: list[dict],
-    api_key: str,
-    base_url: str = "https://api.anthropic.com",
 ) -> list[list[int]] | None:
     """
     用 Claude 判断哪些文章报道同一事件，返回分组（下标列表的列表）。
@@ -176,34 +173,18 @@ def _claude_dedupe(
     )
 
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-        for attempt in range(3):
-            try:
-                message = client.messages.create(
-                    model="claude-opus-4-6",
-                    max_tokens=512,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                break
-            except anthropic.RateLimitError:
-                if attempt < 2:
-                    time.sleep(2 ** (attempt + 1))
-                    continue
-                raise
-        if not message.content:
+        from utils.claude import claude_call
+        raw = claude_call(prompt, max_tokens=512)
+        if not raw:
             logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
-        raw = message.content[0].text.strip()
+        raw = raw.strip()
         logger.info("Claude 去重原始响应: %s", raw[:500])
     except ImportError:
         logger.warning("未安装 anthropic 库，降级到关键词方案")
         return None
-    except anthropic.APIError as e:
+    except Exception as e:
         logger.warning("Claude 去重 API 错误（%s），降级到关键词方案", e)
-        return None
-    except (json.JSONDecodeError, KeyError, IndexError) as e:
-        logger.warning("Claude 去重响应解析失败（%s），降级到关键词方案", e)
         return None
 
     try:
@@ -274,7 +255,7 @@ def dedupe_items(
 
     if api_key:
         logger.info("使用 Claude 去重（共 %d 篇）...", len(exact_deduped))
-        groups = _claude_dedupe(exact_deduped, api_key, base_url)
+        groups = _claude_dedupe(exact_deduped)
         if groups is not None:
             logger.info("Claude 去重完成，聚合为 %d 条", len(groups))
 

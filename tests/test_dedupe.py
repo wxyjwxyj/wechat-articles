@@ -118,17 +118,15 @@ def test_claude_dedupe_uses_last_json_when_model_self_corrects():
     from pipeline.dedupe import _claude_dedupe
 
     # 模拟 Claude 先输出合并分组，再自我纠正为分开
-    mock_response = MagicMock()
-    mock_response.content = [MagicMock(text='''```json\n{"groups": [[1, 2]]}\n```\n\nLet me correct that:\n\n```json\n{"groups": [[1], [2]]}\n```''')]
+    mock_text = '''```json\n{"groups": [[1, 2]]}\n```\n\nLet me correct that:\n\n```json\n{"groups": [[1], [2]]}\n```'''
 
     items = [
         {"url": "https://a", "title": "Mythos technical details", "source_name": "A"},
         {"url": "https://b", "title": "Trump officials test Mythos", "source_name": "B"},
     ]
 
-    with patch("anthropic.Anthropic") as mock_anthropic:
-        mock_anthropic.return_value.messages.create.return_value = mock_response
-        result = _claude_dedupe(items, api_key="fake-key")
+    with patch("utils.claude.claude_call", return_value=mock_text):
+        result = _claude_dedupe(items)
 
     assert result is not None
     assert len(result) == 2, "应取最后一个 JSON（分开），而不是第一个（合并）"

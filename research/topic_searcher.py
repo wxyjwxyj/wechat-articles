@@ -261,8 +261,6 @@ class TopicSearcher:
 
     def _expand_queries(self, topic: str) -> list[str]:
         """用 Claude 将 topic 扩展为中英双语子查询，提升搜索召回率。"""
-        if not self.api_key:
-            return []
         prompt = (
             f'I want to search for learning resources about "{topic}". '
             f'Please suggest 4 search phrases: 2 in English and 2 in Chinese, each 3-6 words. '
@@ -270,12 +268,8 @@ class TopicSearcher:
         )
         raw = ""
         try:
-            client = anthropic.Anthropic(api_key=self.api_key, base_url=self.base_url)
-            resp = client.messages.create(
-                model="claude-haiku-4-5-20251001", max_tokens=256,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = resp.content[0].text.strip()
+            from utils.claude import claude_call
+            raw = claude_call(prompt, max_tokens=256)
             logger.info("Query 扩展原始响应: %s", raw[:200])
             start, end = raw.find("["), raw.rfind("]") + 1
             if start == -1:

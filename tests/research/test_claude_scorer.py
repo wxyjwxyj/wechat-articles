@@ -11,20 +11,14 @@ def test_score_resources_calls_claude_api():
         {"title": "PyTorch Tutorial", "summary": "Getting started with PyTorch"},
     ]
 
-    mock_message = MagicMock()
-    mock_message.content = [MagicMock(text='{"results": [{"id": 1, "score": 8, "comment": "很好的综述"}, {"id": 2, "score": 7, "comment": "实用教程"}]}')]
+    mock_text = '{"results": [{"id": 1, "score": 8, "comment": "很好的综述"}, {"id": 2, "score": 7, "comment": "实用教程"}]}'
 
-    with patch('research.claude_scorer.anthropic.Anthropic') as mock_anthropic:
-        mock_client = MagicMock()
-        mock_client.messages.create.return_value = mock_message
-        mock_anthropic.return_value = mock_client
-
+    with patch('utils.claude.claude_call', return_value=mock_text):
         results = scorer.score_resources(resources)
 
         assert len(results) == 2
         assert results[0]["score"] == 8
         assert results[0]["comment"] == "很好的综述"
-        assert mock_client.messages.create.called
 
 
 def test_score_resources_filters_low_scores():
@@ -36,14 +30,9 @@ def test_score_resources_filters_low_scores():
         {"title": "Bad paper", "summary": "Low quality"},
     ]
 
-    mock_message = MagicMock()
-    mock_message.content = [MagicMock(text='{"results": [{"id": 1, "score": 8, "comment": "优秀"}, {"id": 2, "score": 3, "comment": "质量差"}]}')]
+    mock_text = '{"results": [{"id": 1, "score": 8, "comment": "优秀"}, {"id": 2, "score": 3, "comment": "质量差"}]}'
 
-    with patch('research.claude_scorer.anthropic.Anthropic') as mock_anthropic:
-        mock_client = MagicMock()
-        mock_client.messages.create.return_value = mock_message
-        mock_anthropic.return_value = mock_client
-
+    with patch('utils.claude.claude_call', return_value=mock_text):
         results = scorer.score_resources(resources)
 
         # 只返回 score >= 6 的
@@ -57,11 +46,7 @@ def test_score_resources_handles_api_error():
 
     scorer = ClaudeScorer(api_key="test-key")
 
-    with patch('research.claude_scorer.anthropic.Anthropic') as mock_anthropic:
-        mock_client = MagicMock()
-        mock_client.messages.create.side_effect = Exception("API error")
-        mock_anthropic.return_value = mock_client
-
+    with patch('utils.claude.claude_call', side_effect=Exception("API error")):
         try:
             scorer.score_resources([{"title": "test", "summary": "test"}])
             assert False, "应该抛出异常"

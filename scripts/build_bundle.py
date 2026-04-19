@@ -15,7 +15,6 @@ from storage.repository import SourceRepository, ItemRepository, BundleRepositor
 from pipeline.dedupe import dedupe_items
 from pipeline.tagging import extract_tags, extract_tags_batch_with_claude
 from pipeline.bundles import build_daily_bundle
-from utils.config import get_claude_config
 from utils.errors import News1Error, PipelineError
 from utils.log import get_logger
 
@@ -25,16 +24,17 @@ DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
 
 
-def _translate_overseas_items(items: list[dict], api_key: str, base_url: str, item_repo) -> None:
+def _translate_overseas_items(items: list[dict], item_repo) -> None:
     """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh 并回写 DB。"""
+    from utils.claude import get_client
     overseas = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
     targets = [i for i in overseas if not i.get("title_zh")]  # 已有翻译则跳过
     skipped = len(overseas) - len(targets)
-    if not targets or not api_key:
+    if not targets:
         if overseas:
             logger.info("翻译跳过（全部已缓存，共 %d 条）", len(overseas))
         return
-    client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
+    client = get_client()
 
     def _translate_one(item: dict) -> bool:
         prompt = (
@@ -94,20 +94,18 @@ def _is_wechat_source(s: dict) -> bool:
     return bool(cfg.get("is_wechat"))
 
 
-def _tag_items(items: list[dict], api_key: str, base_url: str) -> None:
-    """为 items 打标签，优先用 Claude，无 key 或失败时降级到关键词匹配。"""
-    if api_key:
-        logger.info("使用 Claude 打标签（共 %d 篇）...", len(items))
-        claude_results = extract_tags_batch_with_claude(items, api_key, base_url)
-        if claude_results:
-            for item, result in zip(items, claude_results):
-                item["tags"] = result["tags"] or extract_tags(item)  # Claude 返回空则兜底
+def _tag_items(items: list[dict]) -> None:
+    """为 items 打标签，优先用 Claude，失败时降级到关键词匹配。"""
+    logger.info("使用 Claude 打标签（共 %d 篇）...", len(items))
+    claude_results = extract_tags_batch_with_claude(items)
+    if claude_results:
+        for item, result in zip(items, claude_results):
+            item["tags"] = result["tags"] or extract_tags(item)  # Claude 返回空则兜底
                 item["score"] = result["score"]
             logger.info("Claude 打标签完成")
             return
     # 降级：关键词匹配
-    if not api_key:
-        logger.info("未配置 claude_api_key，使用关键词匹配打标签")
+    logger.info("Claude 打标签失败，使用关键词匹配")
     for item in items:
         if not item.get("tags"):
             item["tags"] = extract_tags(item)
@@ -152,12 +150,10 @@ def main() -> None:
     if filtered:
         logger.info("微信公众号日期过滤：移除 %d 条非采集日文章（采集日=%s）", filtered, today)
 
-    # 读取 Claude 配置（去重和打标签共用）
-    api_key, base_url = get_claude_config()
-    items = dedupe_items(raw_items, api_key=api_key, base_url=base_url)
+    items = dedupe_items(raw_items)
 
     # 打标签（Claude 优先，降级到关键词匹配）
-    _tag_items(items, api_key, base_url)
+    _tag_items(items)
 
     # 多来源加成：每多一家报道 +0.5，上限 10（无论打标签是否用 Claude）
     for item in items:
@@ -166,7 +162,7 @@ def main() -> None:
             item["score"] = min(10, item["score"] + (source_count - 1) * 0.5)
 
     # 翻译海外源标题/摘要（已有翻译的跳过，翻译结果回写 DB）
-    _translate_overseas_items(items, api_key, base_url, item_repo)
+    _translate_overseas_items(items, item_repo)
 
     # 生成 bundle
     bundle = build_daily_bundle(today, items)

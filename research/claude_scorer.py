@@ -152,13 +152,8 @@ Format:
 
         raw = ""
         try:
-            client = anthropic.Anthropic(api_key=self.api_key, base_url=self.base_url)
-            message = client.messages.create(
-                model=self.model,
-                max_tokens=2048,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            raw = message.content[0].text.strip()
+            from utils.claude import claude_call
+            raw = claude_call(prompt, max_tokens=2048, model=self.model)
 
             # 提取 JSON
             start = raw.find("{")

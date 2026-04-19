@@ -8,13 +8,13 @@ globs: "**/*.py,daily_run.sh"
 
 ---
 
-## 可用模型：只有 claude-opus-4-6（2026-04-11）
+## 可用模型与统一调用入口（2026-04-19）
 
-**背景：** 本机 API 环境（cckeys.top 代理）不支持 haiku 模型，`claude-haiku-4-5` 均返回 `INVALID_MODEL_ID`。
+**背景：** cckeys.top 代理支持三个模型：`claude-haiku-4-5-20251001`、`claude-sonnet-4-6`、`claude-opus-4-6`。
 
-**决策：** 所有 Claude API 调用统一用 `claude-opus-4-6`，不做 haiku fallback。
+**决策：** 所有 Claude API 调用统一通过 `utils/claude.py` 的 `claude_call()` / `claude_stream()` / `get_client()`，内置 haiku → sonnet → opus 三级 fallback。不要直接创建 `anthropic.Anthropic` client。
 
-**不要：** 在代码里加 haiku 作为首选或 fallback，会直接失败。
+**不要：** 在各模块里直接 `import anthropic` 创建 client，也不要硬编码模型名。
 
 ---
 

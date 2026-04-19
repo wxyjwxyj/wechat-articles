@@ -109,12 +109,12 @@ def build_mp_article_payload(
 
 def _generate_commentary(
     highlights: list[dict],
-    api_key: str,
-    base_url: str,
+    api_key: str = "",
+    base_url: str = "",
 ) -> list[str]:
     """
     调用 Claude 为每篇精选文章生成一句编辑点评。
-    优先用 Haiku（便宜快速），失败时降级到无点评模式。
+    配置统一由 utils.claude 管理，api_key/base_url 参数已废弃。
     """
     if not api_key:
         return []
@@ -145,32 +145,16 @@ Today's {len(highlights)} selected items:
 Return strictly in JSON format, no other text:
 {{"comments": ["第1条点评", "第2条点评", ...]}}"""
 
-    # 模型优先级：Haiku（快且便宜）→ Sonnet（兜底）
-    models = ["claude-haiku-4-5-20251001", "claude-opus-4-6"]
-
-    for model in models:
-        try:
-            import anthropic
-            client = anthropic.Anthropic(api_key=api_key, base_url=base_url)
-            message = client.messages.create(
-                model=model,
-                max_tokens=1024,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            if not message.content:
-                logger.warning("%s 返回空内容，尝试下一个模型", model)
-                continue
-            raw = message.content[0].text.strip()
-            logger.info("使用 %s 生成点评，原始响应: %s", model, raw[:300])
-            break
-        except ImportError:
-            logger.warning("未安装 anthropic 库，跳过点评生成")
+    try:
+        from utils.claude import claude_call
+        raw = claude_call(prompt, max_tokens=1024)
+        if not raw:
+            logger.warning("Claude 返回空内容，跳过点评生成")
             return []
-        except Exception as e:
-            logger.warning("%s 调用失败（%s），尝试下一个模型", model, e)
-            continue
-    else:
-        logger.warning("所有模型均失败，跳过点评生成")
+        raw = raw.strip()
+        logger.info("生成点评，原始响应: %s", raw[:300])
+    except Exception as e:
+        logger.warning("点评生成失败（%s），跳过", e)
         return []
 
     try:
