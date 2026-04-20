@@ -1,7 +1,6 @@
 """执行"标准化 → 去重 → 标签 → bundle"流水线，并将结果写入数据库与 bundle_today.json。"""
 import json
 import sys
-import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import date
 from pathlib import Path
@@ -24,7 +23,7 @@ OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
 
 def _translate_overseas_items(items: list[dict], item_repo) -> None:
     """为非 wechat 条目并发翻译 title/summary，写入 title_zh/summary_zh 并回写 DB。"""
-    from utils.claude import get_client
+    from utils.claude import claude_call
     overseas = [i for i in items if i.get("source_type") != "wechat" and i.get("language", "en") != "zh"]
     targets = [i for i in overseas if not i.get("title_zh")]  # 已有翻译则跳过
     skipped = len(overseas) - len(targets)
@@ -32,7 +31,6 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
         if overseas:
             logger.info("翻译跳过（全部已缓存，共 %d 条）", len(overseas))
         return
-    client = get_client()
 
     def _translate_one(item: dict) -> bool:
         prompt = (
@@ -41,34 +39,22 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
             f'Use 「」instead of double quotes within translated text. Do not use " in the output.\n'
             f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
         )
-        for attempt in range(3):
-            try:
-                resp = client.messages.create(
-                    model="claude-opus-4-6", max_tokens=512,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                raw = resp.content[0].text.strip()
-                start, end = raw.find("{"), raw.rfind("}") + 1
-                if start == -1:
-                    raise ValueError("无 JSON 对象")
-                r = json.loads(raw[start:end])
-                item["title_zh"] = r.get("title_zh", "") or item["title"]  # 空时兜底原标题，防止重复翻译
-                item["summary_zh"] = r.get("summary_zh", "")
-                # 回写 DB（有 id 的条目才能回写）
-                if item.get("id"):
-                    item_repo.update_item_translations(item["id"], item["title_zh"], item["summary_zh"])
-                else:
-                    logger.warning("item 缺少 id，跳过回写: %s", item["title"][:30])
-                return True
-            except anthropic.RateLimitError:
-                if attempt < 2:
-                    time.sleep(2 ** (attempt + 1))
-                else:
-                    logger.warning("翻译 429 重试耗尽（%s）", item["title"][:30])
-            except Exception as e:
-                logger.warning("翻译失败（%s）: %s", item["title"][:30], e)
-                break
-        return False
+        try:
+            raw = claude_call(prompt, max_tokens=512, model="claude-opus-4-6")
+            start, end = raw.find("{"), raw.rfind("}") + 1
+            if start == -1:
+                raise ValueError("无 JSON 对象")
+            r = json.loads(raw[start:end])
+            item["title_zh"] = r.get("title_zh", "") or item["title"]
+            item["summary_zh"] = r.get("summary_zh", "")
+            if item.get("id"):
+                item_repo.update_item_translations(item["id"], item["title_zh"], item["summary_zh"])
+            else:
+                logger.warning("item 缺少 id，跳过回写: %s", item["title"][:30])
+            return True
+        except Exception as e:
+            logger.warning("翻译失败（%s）: %s", item["title"][:30], e)
+            return False
 
     success = 0
     with ThreadPoolExecutor(max_workers=5) as executor:
