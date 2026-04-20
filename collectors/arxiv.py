@@ -42,6 +42,7 @@ HIGH_VALUE_KEYWORDS = [
     "diffusion", "multimodal", "vision-language",
     "benchmark", "scaling", "emergent",
     "deepseek", "llama", "mistral", "qwen",
+    "world model",
 ]
 
 

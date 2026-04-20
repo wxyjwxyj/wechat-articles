@@ -26,6 +26,8 @@ AI_KEYWORDS = [
     "langchain", "rag", "agent", "multimodal",
     "stable diffusion", "midjourney", "sora",
     "nvidia", "cuda", "gpu", "tpu",
+    "embodied ai",
+    "world model",
 ]
 
 # 排除的关键词（减少误匹配）

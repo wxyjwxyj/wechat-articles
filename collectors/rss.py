@@ -12,21 +12,35 @@ from utils.log import get_logger
 
 logger = get_logger(__name__)
 
-# AI 相关关键词（标题或摘要匹配任意一个即通过）
-AI_KEYWORDS = [
-    "ai", "artificial intelligence", "machine learning", "deep learning",
-    "llm", "large language model", "gpt", "claude", "gemini", "llama",
+# AI 相关关键词
+# _EXACT: 短词，需要词边界匹配（避免 "said"/"again" 误命中）
+# _SUBSTRING: 长词，直接子串匹配即可
+_EXACT_KEYWORDS = ["ai", "nlp", "rag", "llm", "gpt"]
+_SUBSTRING_KEYWORDS = [
+    "artificial intelligence", "machine learning", "deep learning",
+    "large language model", "claude", "gemini", "llama",
     "openai", "anthropic", "google deepmind", "mistral", "deepseek",
     "chatbot", "neural network", "transformer", "diffusion model",
-    "agent", "rag", "fine-tun", "generative", "foundation model",
-    "robotics", "computer vision", "nlp", "natural language",
+    "agent", "fine-tun", "generative", "foundation model",
+    "robotics", "computer vision", "natural language",
+    "具身智能",
+    "世界模型",
 ]
+
+import re
+
+# 预编译短词的正则（词边界匹配）
+_EXACT_PATTERN = re.compile(
+    r"\b(?:" + "|".join(re.escape(kw) for kw in _EXACT_KEYWORDS) + r")\b"
+)
 
 
 def _is_ai_related(title: str, summary: str) -> bool:
-    """判断条目是否 AI 相关（标题或摘要包含关键词）。"""
+    """判断条目是否 AI 相关。短词用词边界匹配，长词用子串匹配。"""
     text = (title + " " + summary).lower()
-    return any(kw in text for kw in AI_KEYWORDS)
+    if _EXACT_PATTERN.search(text):
+        return True
+    return any(kw in text for kw in _SUBSTRING_KEYWORDS)
 
 
 def _parse_published(entry) -> datetime:
