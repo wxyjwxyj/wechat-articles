@@ -141,7 +141,7 @@ class ArxivCollector:
         max_results: int = 50,
         max_papers: int = 10,
         days_back: int = 2,
-        timeout: int = 30,
+        timeout: int = 60,
     ):
         """
         Args:
@@ -156,7 +156,8 @@ class ArxivCollector:
         self.max_papers = max_papers
         self.days_back = days_back
         self.timeout = timeout
-        self._session = retry_session()
+        # ArXiv 限流恢复慢，用更长退避（3s/6s/12s）
+        self._session = retry_session(backoff=3.0)
 
     def fetch_recent_papers(self) -> list[dict]:
         """采集最近的 AI 论文。
