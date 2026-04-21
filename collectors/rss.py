@@ -25,9 +25,8 @@ _SUBSTRING_KEYWORDS = [
     "robotics", "computer vision", "natural language",
     "具身智能",
     "世界模型",
+    "mythos",
 ]
-
-import re
 
 # 预编译短词的正则（词边界匹配）
 _EXACT_PATTERN = re.compile(
