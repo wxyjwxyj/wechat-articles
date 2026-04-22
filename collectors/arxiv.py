@@ -43,6 +43,7 @@ HIGH_VALUE_KEYWORDS = [
     "benchmark", "scaling", "emergent",
     "deepseek", "llama", "mistral", "qwen",
     "world model",
+    "mythos",
 ]
 
 
@@ -157,8 +158,8 @@ class ArxivCollector:
         self.max_papers = max_papers
         self.days_back = days_back
         self.timeout = timeout
-        # ArXiv 限流恢复慢，用更长退避（3s/6s/12s）
-        self._session = retry_session(backoff=3.0)
+        # ArXiv 限流恢复慢，用更长退避（10s/20s/40s，最多60s）
+        self._session = retry_session(retries=5, backoff=10.0, backoff_max=60.0)
 
     def fetch_recent_papers(self) -> list[dict]:
         """采集最近的 AI 论文。
@@ -185,6 +186,11 @@ class ArxivCollector:
             resp = self._session.get(ARXIV_API, params=params, timeout=self.timeout)
             resp.raise_for_status()
         except requests.RequestException as e:
+            err_str = str(e)
+            if "429" in err_str or "too many" in err_str.lower():
+                logger.warning("ArXiv 429 限流，重试已耗尽（backoff 最大 60s × 5次）: %s", err_str[:120])
+            else:
+                logger.warning("ArXiv 请求失败: %s", err_str[:120])
             raise CollectorError(f"ArXiv API 请求失败: {e}") from e
 
         # 解析 XML
