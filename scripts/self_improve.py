@@ -277,8 +277,16 @@ def _write_insights(today: str, auto_changes: list, suggestions: list, trend_not
     if trend_notes:
         lines.append(f"\n## 今日趋势\n\n{trend_notes}\n")
 
-    INSIGHTS_FILE.write_text("".join(lines))
+    content = "".join(lines)
+    INSIGHTS_FILE.write_text(content)
     logger.info("已写入 %s", INSIGHTS_FILE.name)
+
+    # 同时归档到 insights/YYYY-MM-DD.md
+    archive_dir = PROJECT_DIR / "insights"
+    archive_dir.mkdir(exist_ok=True)
+    archive_file = archive_dir / f"{today}.md"
+    archive_file.write_text(content)
+    logger.info("已归档 → insights/%s.md", today)
 
 
 def main():
