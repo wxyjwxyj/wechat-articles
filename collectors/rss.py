@@ -27,6 +27,10 @@ _SUBSTRING_KEYWORDS = [
     "世界模型",
     "mythos",
     "cursor",
+    "world model",
+    "embodied ai",
+    "Mythos",
+    "商汤",
 ]
 
 # 预编译短词的正则（词边界匹配）

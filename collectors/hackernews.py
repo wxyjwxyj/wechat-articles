@@ -30,6 +30,8 @@ AI_KEYWORDS = [
     "world model",
     "mythos",
     "cursor",
+    "image generation",
+    "商汤",
 ]
 
 # 排除的关键词（减少误匹配）
