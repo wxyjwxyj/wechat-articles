@@ -155,3 +155,13 @@ set -a && source .env && set +a && python scripts/xxx.py
 **决策：** `build_bundle.py` 用 `ThreadPoolExecutor(max_workers=5)` 并发翻译，5 条同时发请求。这是进程内的线程级并发，跟 `daily_run.sh` 的进程级并行是两个层面。
 
 **不要：** 串行翻译（太慢），也不要开太多 worker（容易触发 429）。
+
+---
+
+## 统一调度：schedule.yaml + scheduler.py（2026-04-22）
+
+**背景：** 调度时间分散在 com.news1.daily.plist 和 com.news1.publish.plist 两个文件，改时间要改多处。
+
+**决策：** `schedule.yaml` 是唯一的调度配置，`scripts/scheduler.py` 每5分钟被 launchd 触发，读 yaml 判断是否命中任务。`daily_run.sh` 支持 `--steps` 参数按需执行步骤子集。`.ran/` 目录存放"今天已跑"标记文件防止重复触发。
+
+**不要：** 在 plist 里硬编码任务时间，也不要直接改 daily_run.sh 的执行时间。调度时间只在 `schedule.yaml` 一处维护。
