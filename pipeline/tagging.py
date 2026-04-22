@@ -73,6 +73,10 @@ PATTERNS = [
     ("大模型", "宽泛", ["大模型", "LLM", "语言模型", "基础模型", "foundation model",
                         "token", "Token", "参数", "亿参"]),
     ("AI",     "宽泛", ["AI", "人工智能"]),
+
+    ("Mythos", "AI产品", ["Mythos"]),  # auto-added: Anthropic's Mythos appears in 2 articles as a dist
+
+    ("Cursor", "编程工具", ["Cursor"]),  # auto-added: appeared in 2 articles; emerging AI coding tool ga
 ]
 
 # 标签名 -> 分类，供 build_topics 排序

@@ -28,6 +28,8 @@ AI_KEYWORDS = [
     "nvidia", "cuda", "gpu", "tpu",
     "embodied ai",
     "world model",
+    "mythos",
+    "cursor",
 ]
 
 # 排除的关键词（减少误匹配）
