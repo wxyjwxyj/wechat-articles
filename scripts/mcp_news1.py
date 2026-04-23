@@ -20,6 +20,8 @@ mcp = FastMCP("news1")
 def _get_conn():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA busy_timeout=5000")
     return conn
 
 
@@ -49,6 +51,7 @@ def query_items_by_date(date: str = "") -> str:
 @mcp.tool()
 def query_recent_trend(days: int = 7) -> str:
     """查询最近 N 天（默认7天）各数据源每天的采集条数趋势。"""
+    days = int(days)
     with _get_conn() as conn:
         rows = conn.execute("""
             SELECT
@@ -92,6 +95,8 @@ def query_recent_trend(days: int = 7) -> str:
 @mcp.tool()
 def query_items(keyword: str, days: int = 3, limit: int = 10) -> str:
     """按关键词搜索最近 N 天的新闻条目（搜索标题和摘要）。"""
+    days = int(days)
+    limit = int(limit)
     with _get_conn() as conn:
         rows = conn.execute("""
             SELECT i.title, i.title_zh, i.url, s.name as source,

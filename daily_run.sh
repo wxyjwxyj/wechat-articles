@@ -196,7 +196,8 @@ fi
 
 # 条数异常检测：少于 20 条发出警告（正常应有 40-80 条）
 BUNDLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "0")
-if [ "$BUNDLE_COUNT" -lt 20 ] 2>/dev/null; then
+BUNDLE_COUNT=${BUNDLE_COUNT:-0}
+if [ "$BUNDLE_COUNT" -lt 20 ]; then
     log "⚠ 今日内容偏少：${BUNDLE_COUNT} 条（正常应有 40+ 条），请检查采集是否正常"
     notify "AI日报 ⚠️" "内容偏少：${BUNDLE_COUNT} 条，请检查采集"
     ERRORS="${ERRORS}内容偏少(${BUNDLE_COUNT}条) "
@@ -278,7 +279,7 @@ if should_run publish_mp; then
 fi
 
 # 15. 统计结果并通知
-ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "?")
+ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "0")
 if [ -z "$ERRORS" ]; then
     log "✅ 完成！共 ${ARTICLE_COUNT} 条"
     notify "AI日报 ✅" "采集完成：${ARTICLE_COUNT} 条，GitHub 已推送"
@@ -292,15 +293,22 @@ METRICS_FILE="$PROJECT_DIR/.claude/metrics.csv"
 if [ ! -f "$METRICS_FILE" ]; then
     echo "date,time,total,wechat,hackernews,arxiv,github,rss,errors,status" > "$METRICS_FILE"
 fi
+export METRICS_DATE="$(date +%Y-%m-%d)"
+export METRICS_TIME="$(date +%H:%M)"
+export METRICS_TOTAL="${ARTICLE_COUNT:-0}"
+export METRICS_ERRORS="${ERRORS:-}"
+export METRICS_FILE="$METRICS_FILE"
 python -c "
-import json, sqlite3, csv, os
-from datetime import datetime, timezone, timedelta
+import sqlite3, csv, os
+from datetime import timezone, timedelta
 
-today = '$(date +%Y-%m-%d)'
-now = '$(date +%H:%M)'
-CST = timezone(timedelta(hours=8))
+today = os.environ['METRICS_DATE']
+now = os.environ['METRICS_TIME']
+total = os.environ.get('METRICS_TOTAL', '0') or '0'
+errors = os.environ.get('METRICS_ERRORS', '').strip() or 'none'
+status = 'ok' if errors == 'none' else 'warn'
+metrics_file = os.environ['METRICS_FILE']
 
-# 各数据源条数
 conn = sqlite3.connect('content.db')
 rows = conn.execute('''
     SELECT s.type, COUNT(i.id)
@@ -311,11 +319,7 @@ rows = conn.execute('''
 conn.close()
 src = dict(rows)
 
-total = '${ARTICLE_COUNT}' if '${ARTICLE_COUNT}' != '?' else '0'
-errors = '${ERRORS}'.strip() or 'none'
-status = 'ok' if not '${ERRORS}'.strip() else 'warn'
-
-with open('$METRICS_FILE', 'a', newline='') as f:
+with open(metrics_file, 'a', newline='') as f:
     w = csv.writer(f)
     w.writerow([today, now, total,
         src.get('wechat',0), src.get('hackernews',0),
