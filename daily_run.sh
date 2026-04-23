@@ -32,6 +32,22 @@ describe_exit() {
     esac
 }
 
+# 解析 --steps 参数（逗号分隔，如 wechat,bundle,generate）
+# 不传则默认全量执行所有步骤
+STEPS_ARG=""
+ALL_STEPS="wechat parallel_collect bundle generate archive self_improve push_github publish_mp"
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --steps) STEPS_ARG="$2"; shift 2 ;;
+        *) shift ;;
+    esac
+done
+STEPS="${STEPS_ARG//,/ }"
+[ -z "$STEPS" ] && STEPS="$ALL_STEPS"
+
+# 判断某步骤是否应该执行
+should_run() { echo " $STEPS " | grep -q " $1 "; }
+
 cd "$PROJECT_DIR" || exit 1
 log "========== 开始每日采集 =========="
 
@@ -95,6 +111,7 @@ else
 fi
 
 # 5. 采集今日微信文章
+if should_run wechat; then
 log "采集今日微信文章..."
 python fetch_wechat_today.py >> "$LOG_FILE" 2>&1
 WX_EXIT=$?
@@ -114,9 +131,11 @@ if [ $WX_EXIT -ne 0 ]; then
     ERRORS="${ERRORS}微信:${WX_REASON} "
     # CDP/登录问题不影响 HN 采集，但需要记录
 fi
+fi  # wechat
 
 # 5.5-5.8 并行采集（HN / ArXiv / GitHub / RSS 互相独立）
 # HN / ArXiv 直连更稳定；GitHub / RSS 需要走代理
+if should_run parallel_collect; then
 DIRECT="env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY"
 log "并行采集 HN / ArXiv / GitHub Trending / RSS..."
 $DIRECT python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
@@ -150,8 +169,10 @@ if [ $RSS_EXIT -ne 0 ]; then
     log "⚠ RSS 采集失败: $(describe_exit $RSS_EXIT) (exit=$RSS_EXIT)"
     ERRORS="${ERRORS}RSS:$(describe_exit $RSS_EXIT) "
 fi
+fi  # parallel_collect
 
 # 6. 生成 bundle
+if should_run bundle; then
 log "生成 bundle..."
 python scripts/build_bundle.py >> "$LOG_FILE" 2>&1
 BUNDLE_EXIT=$?
@@ -164,12 +185,21 @@ if [ $BUNDLE_EXIT -ne 0 ]; then
     rm -f bundle_today.json
     SKIP_GENERATE=1
 fi
+fi  # bundle
 
-# 7. 检查是否有内容 + 日期校验
+# 7. 检查是否有内容 + 日期校验 + 条数异常检测
 if [ ! -f "bundle_today.json" ]; then
     log "⚠ 今日无内容，跳过 HTML 生成"
     notify "AI日报 ⚠" "今日无内容，跳过生成"
     exit 0
+fi
+
+# 条数异常检测：少于 20 条发出警告（正常应有 40-80 条）
+BUNDLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "0")
+if [ "$BUNDLE_COUNT" -lt 20 ] 2>/dev/null; then
+    log "⚠ 今日内容偏少：${BUNDLE_COUNT} 条（正常应有 40+ 条），请检查采集是否正常"
+    notify "AI日报 ⚠️" "内容偏少：${BUNDLE_COUNT} 条，请检查采集"
+    ERRORS="${ERRORS}内容偏少(${BUNDLE_COUNT}条) "
 fi
 if [ -z "$SKIP_GENERATE" ]; then
     BUNDLE_DATE=$(python -c "import json; print(json.load(open('bundle_today.json')).get('bundle_date',''))" 2>/dev/null)
@@ -183,6 +213,7 @@ fi
 
 if [ -z "$SKIP_GENERATE" ]; then
 
+if should_run generate; then
 # 8. 在 dev 分支生成 HTML
 log "生成 HTML..."
 python generate_html.py bundle_today.json >> "$LOG_FILE" 2>&1
@@ -194,12 +225,14 @@ python scripts/generate_mp_article.py bundle_today.json >> "$LOG_FILE" 2>&1
 # 10. 生成导读风 HTML（mp_article_preview.html + archive/digest_YYYY-MM-DD.html）
 log "生成导读风 HTML..."
 python scripts/generate_mp_html.py >> "$LOG_FILE" 2>&1
+fi  # generate
 
 
 fi  # SKIP_GENERATE
 
 if [ -z "$SKIP_GENERATE" ]; then
 
+if should_run archive; then
 # 12. 归档当日 HTML
 TODAY_DATE=$(date +%Y-%m-%d)
 log "归档当日 HTML → archive/${TODAY_DATE}.html"
@@ -208,17 +241,20 @@ cp today.html "archive/${TODAY_DATE}.html"
 python scripts/generate_archive_index.py >> "$LOG_FILE" 2>&1
 
 # 12.3 自学习：分析今日新闻，自动优化配置
+if should_run self_improve; then
 log "自学习分析..."
 python scripts/self_improve.py >> "$LOG_FILE" 2>&1 || log "⚠ 自学习失败（不影响主流程）"
+fi  # self_improve
 
 # 12.5 在 dev 提交今日 HTML（必须先提交，步骤13才能正确拉取）
 git add today.html mp_article_preview.html archive/ >> "$LOG_FILE" 2>&1
 git commit -m "content: ${TODAY_DATE} HTML" >> "$LOG_FILE" 2>&1
+fi  # archive
 
 fi  # SKIP_GENERATE (archive + commit)
 
 # 13. stash 保护 → 切 main → 推送
-if [ -z "$SKIP_GENERATE" ]; then
+if [ -z "$SKIP_GENERATE" ] && should_run push_github; then
 log "推送到 GitHub..."
 git stash --include-untracked >> "$LOG_FILE" 2>&1
 STASHED=$?
@@ -233,7 +269,13 @@ git push origin main >> "$LOG_FILE" 2>&1 || ERRORS="${ERRORS}GitHub推送失败 
 # 14. 切回 dev + 恢复 stash
 git checkout dev >> "$LOG_FILE" 2>&1
 [ $STASHED -eq 0 ] && git stash pop >> "$LOG_FILE" 2>&1
-fi  # SKIP_GENERATE (push)
+fi  # push_github
+
+# publish_mp：提交公众号草稿（原来由 publish.plist 单独触发）
+if should_run publish_mp; then
+    log "提交公众号草稿..."
+    python scripts/publish_to_mp.py >> "$LOG_FILE" 2>&1
+fi
 
 # 15. 统计结果并通知
 ARTICLE_COUNT=$(python -c "import json; d=json.load(open('bundle_today.json')); print(len(d.get('items_flat', d.get('items', []))))" 2>/dev/null || echo "?")
