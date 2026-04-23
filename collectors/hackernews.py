@@ -34,6 +34,7 @@ AI_KEYWORDS = [
     "商汤",
     "bytedance",
     "xiaomi",
+    "embodied world model",
 ]
 
 # 排除的关键词（减少误匹配）
