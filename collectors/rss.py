@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 # AI 相关关键词
 # _EXACT: 短词，需要词边界匹配（避免 "said"/"again" 误命中）
 # _SUBSTRING: 长词，直接子串匹配即可
-_EXACT_KEYWORDS = ["ai", "nlp", "rag", "llm", "gpt"]
+_EXACT_KEYWORDS = ["ai", "nlp", "rag", "llm", "gpt", "tpu"]
 _SUBSTRING_KEYWORDS = [
     "artificial intelligence", "machine learning", "deep learning",
     "large language model", "claude", "gemini", "llama",
@@ -29,7 +29,6 @@ _SUBSTRING_KEYWORDS = [
     "cursor",
     "world model",
     "embodied ai",
-    "Mythos",
     "商汤",
 ]
 

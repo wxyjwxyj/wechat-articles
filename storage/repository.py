@@ -145,13 +145,13 @@ class ItemRepository:
 
     def list_items_by_date(self, date_str: str) -> list[dict]:
         """返回指定日期采集或发布的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。
-        使用 date() 提取日期部分，兼容带时区后缀（+00:00）和不带时区的 ISO 格式。
+        published_at 按北京时间（UTC+8）换算日期，兼容带时区后缀（+00:00）和不带时区的 ISO 格式。
         """
         with closing(get_connection(self.db_path)) as conn:
             rows = [
                 dict(row)
                 for row in conn.execute(
-                    "select * from items where date(created_at) = ? or date(published_at) = ? order by published_at desc",
+                    "select * from items where date(created_at, '+8 hours') = ? or date(published_at, '+8 hours') = ? order by published_at desc",
                     (date_str, date_str),
                 ).fetchall()
             ]

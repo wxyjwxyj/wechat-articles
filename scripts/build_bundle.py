@@ -2,7 +2,7 @@
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from datetime import date
+from datetime import date, datetime, timezone, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -17,8 +17,24 @@ from utils.log import get_logger
 
 logger = get_logger(__name__)
 
+_CST = timezone(timedelta(hours=8))
+
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
+
+
+def _published_date_cst(item: dict) -> str:
+    """将 published_at 转换为北京时间日期字符串（YYYY-MM-DD）。假设 DB 中所有 published_at 均为 UTC。"""
+    raw = item.get("published_at", "")
+    if not raw:
+        return ""
+    try:
+        dt = datetime.fromisoformat(raw)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(_CST).date().isoformat()
+    except (ValueError, TypeError):
+        return raw[:10]
 
 
 def _translate_overseas_items(items: list[dict], item_repo) -> None:
@@ -128,7 +144,7 @@ def main() -> None:
     raw_items = [
         item for item in raw_items
         if item.get("source_id") not in wechat_source_ids
-        or item.get("published_at", "")[:10] == today
+        or _published_date_cst(item) == today
     ]
     filtered = before - len(raw_items)
     if filtered:

@@ -44,6 +44,7 @@ HIGH_VALUE_KEYWORDS = [
     "deepseek", "llama", "mistral", "qwen",
     "world model",
     "mythos",
+    "multimodal vision",
 ]
 
 

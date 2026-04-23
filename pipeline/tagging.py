@@ -34,18 +34,19 @@ PATTERNS = [
 
     # ── AI 产品 / 公司 ───────────────────────────────────────────
     ("OpenAI",   "AI公司", ["OpenAI", "ChatGPT", "GPT-4", "GPT-5", "Sora", "o3", "o4"]),
-    ("Anthropic","AI公司", ["Anthropic", "Claude"]),
+    ("Anthropic","AI公司", ["Anthropic", "Claude", "Mythos"]),
     ("Google",   "AI公司", ["Google", "Gemini", "Gemma", "DeepMind", "谷歌"]),
     ("Meta",     "AI公司", ["Meta", "Llama", "LLaMA"]),
     ("DeepSeek", "AI公司", ["DeepSeek", "深度求索"]),
     ("Kimi",     "AI公司", ["Kimi", "月之暗面"]),
     ("阿里",     "AI公司", ["阿里", "通义", "千问", "Qwen", "阿里云"]),
-    ("字节",     "AI公司", ["字节", "豆包", "抖音"]),
+    ("字节",     "AI公司", ["字节", "豆包", "抖音", "Bytedance", "ByteDance"]),
     ("腾讯",     "AI公司", ["腾讯", "混元", "微信", "WeChat"]),
     ("百度",     "AI公司", ["百度", "文心", "ERNIE"]),
     ("小米",     "AI公司", ["小米", "Xiaomi"]),
     ("苹果",     "AI公司", ["苹果", "Apple", "iPhone", "Siri", "iOS"]),
     ("英伟达",   "AI公司", ["英伟达", "NVIDIA", "CUDA", "GPU"]),
+    ("商汤",     "AI公司", ["商汤", "SenseTime"]),
 
     # ── AI 技术方向 ───────────────────────────────────────────────
     ("Agent",   "AI技术", ["Agent", "智能体", "多智能体", "AgentOS", "agentic"]),
@@ -59,7 +60,8 @@ PATTERNS = [
     ("AI安全",  "AI技术", ["AI安全", "对齐", "alignment", "越狱", "jailbreak", "勒索", "情绪"]),
 
     # ── 行业应用 ─────────────────────────────────────────────────
-    ("AI编程","行业应用", ["Copilot", "代码生成", "编程助手", "cursor", "coding"]),
+    ("AI编程","行业应用", ["Copilot", "代码生成", "编程助手", "coding"]),
+    ("Cursor","编程工具", ["Cursor"]),  # AI 编程 IDE
     ("AI搜索","行业应用", ["AI搜索", "搜索引擎", "Perplexity"]),
     ("AR/VR", "行业应用", ["AR", "VR", "XR", "眼镜", "XREAL", "空间计算"]),
     ("芯片",  "行业应用", ["芯片", "算力", "TPU", "NPU", "半导体", "内存"]),
@@ -73,10 +75,6 @@ PATTERNS = [
     ("大模型", "宽泛", ["大模型", "LLM", "语言模型", "基础模型", "foundation model",
                         "token", "Token", "参数", "亿参"]),
     ("AI",     "宽泛", ["AI", "人工智能"]),
-
-    ("Mythos", "AI产品", ["Mythos"]),  # auto-added: Anthropic's Mythos appears in 2 articles as a dist
-
-    ("Cursor", "编程工具", ["Cursor"]),  # auto-added: appeared in 2 articles; emerging AI coding tool ga
 ]
 
 # 标签名 -> 分类，供 build_topics 排序
