@@ -287,5 +287,42 @@ else
     notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条 | 问题：${ERRORS}"
 fi
 
-# 16. 清理 30 天前的旧日志
+# 16. 记录可观测性指标到 metrics.csv
+METRICS_FILE="$PROJECT_DIR/.claude/metrics.csv"
+if [ ! -f "$METRICS_FILE" ]; then
+    echo "date,time,total,wechat,hackernews,arxiv,github,rss,errors,status" > "$METRICS_FILE"
+fi
+python -c "
+import json, sqlite3, csv, os
+from datetime import datetime, timezone, timedelta
+
+today = '$(date +%Y-%m-%d)'
+now = '$(date +%H:%M)'
+CST = timezone(timedelta(hours=8))
+
+# 各数据源条数
+conn = sqlite3.connect('content.db')
+rows = conn.execute('''
+    SELECT s.type, COUNT(i.id)
+    FROM items i JOIN sources s ON i.source_id = s.id
+    WHERE date(i.published_at, \"+8 hours\") = ? OR date(i.created_at) = ?
+    GROUP BY s.type
+''', (today, today)).fetchall()
+conn.close()
+src = dict(rows)
+
+total = '${ARTICLE_COUNT}' if '${ARTICLE_COUNT}' != '?' else '0'
+errors = '${ERRORS}'.strip() or 'none'
+status = 'ok' if not '${ERRORS}'.strip() else 'warn'
+
+with open('$METRICS_FILE', 'a', newline='') as f:
+    w = csv.writer(f)
+    w.writerow([today, now, total,
+        src.get('wechat',0), src.get('hackernews',0),
+        src.get('arxiv',0), src.get('github_trending',0), src.get('rss',0),
+        errors, status])
+print('指标已记录')
+" >> "$LOG_FILE" 2>&1
+
+# 17. 清理 30 天前的旧日志
 find "$LOG_DIR" -name "*.log" -mtime +30 -delete 2>/dev/null
