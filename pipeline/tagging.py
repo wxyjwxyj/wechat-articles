@@ -75,6 +75,10 @@ PATTERNS = [
     ("大模型", "宽泛", ["大模型", "LLM", "语言模型", "基础模型", "foundation model",
                         "token", "Token", "参数", "亿参"]),
     ("AI",     "宽泛", ["AI", "人工智能"]),
+
+    ("Vercel", "AI公司", ["Vercel", "vercel-labs"]),  # auto-added: appeared in GitHub Trending with AI skills project
+
+    ("Tencent", "AI公司", ["腾讯", "Tencent", "混元"]),  # auto-added: appeared in 1 article but Tencent is major AI play
 ]
 
 # 标签名 -> 分类，供 build_topics 排序
