@@ -35,6 +35,9 @@ _SUBSTRING_KEYWORDS = [
     "GPT-5.5",
     "MoE",
     "华为芯片",
+    "DeepSeek V4",
+    "mixture of experts",
+    "huawei",
 ]
 
 # 预编译短词的正则（词边界匹配）

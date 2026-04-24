@@ -37,6 +37,7 @@ AI_KEYWORDS = [
     "embodied world model",
     "GPT-5.5",
     "MoE",
+    "huawei",
 ]
 
 # 排除的关键词（减少误匹配）
