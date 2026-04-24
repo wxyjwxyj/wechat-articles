@@ -4,6 +4,7 @@
 支持按分类筛选（cs.AI、cs.CL、cs.CV、cs.LG 等）。
 返回 Atom XML，用标准库 xml.etree 解析。
 """
+import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 
@@ -184,16 +185,26 @@ class ArxivCollector:
 
         logger.info("查询 ArXiv: %s (max_results=%d)", query[:60], self.max_results)
 
-        try:
-            resp = self._session.get(ARXIV_API, params=params, timeout=self.timeout)
-            resp.raise_for_status()
-        except requests.RequestException as e:
-            err_str = str(e)
-            if "429" in err_str or "too many" in err_str.lower():
-                logger.warning("ArXiv 429 限流，重试已耗尽（backoff 最大 60s × 5次）: %s", err_str[:120])
-            else:
-                logger.warning("ArXiv 请求失败: %s", err_str[:120])
-            raise CollectorError(f"ArXiv API 请求失败: {e}") from e
+        # 冷启动时 ArXiv 经常第一次超时，加应用层重试（最多 3 次，间隔 30s）
+        for attempt in range(3):
+            try:
+                resp = self._session.get(ARXIV_API, params=params, timeout=self.timeout)
+                resp.raise_for_status()
+                break
+            except requests.Timeout as e:
+                if attempt < 2:
+                    logger.warning("ArXiv 请求超时（第 %d 次），30s 后重试", attempt + 1)
+                    time.sleep(30)
+                else:
+                    logger.warning("ArXiv 超时重试耗尽: %s", str(e)[:120])
+                    raise CollectorError(f"ArXiv API 请求失败: {e}") from e
+            except requests.RequestException as e:
+                err_str = str(e)
+                if "429" in err_str or "too many" in err_str.lower():
+                    logger.warning("ArXiv 429 限流，重试已耗尽（backoff 最大 60s × 5次）: %s", err_str[:120])
+                else:
+                    logger.warning("ArXiv 请求失败: %s", err_str[:120])
+                raise CollectorError(f"ArXiv API 请求失败: {e}") from e
 
         # 解析 XML
         try:

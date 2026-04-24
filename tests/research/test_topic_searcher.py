@@ -11,6 +11,10 @@ def test_search_topic_calls_all_sources():
          patch('research.topic_searcher.GitHubSearcher') as mock_github, \
          patch('research.topic_searcher.HNSearcher') as mock_hn, \
          patch('research.topic_searcher.search_docs') as mock_docs, \
+         patch('research.topic_searcher.WebSearcher'), \
+         patch('research.topic_searcher.WechatSearcher'), \
+         patch('research.topic_searcher.XhsSearcher'), \
+         patch('utils.claude.claude_call', return_value='["test query"]'), \
          patch('research.topic_searcher.ClaudeScorer') as mock_scorer:
 
         mock_arxiv_inst = MagicMock()
@@ -48,6 +52,10 @@ def test_search_topic_returns_categorized_results():
          patch('research.topic_searcher.GitHubSearcher') as mock_github, \
          patch('research.topic_searcher.HNSearcher') as mock_hn, \
          patch('research.topic_searcher.search_docs') as mock_docs, \
+         patch('research.topic_searcher.WebSearcher'), \
+         patch('research.topic_searcher.WechatSearcher'), \
+         patch('research.topic_searcher.XhsSearcher'), \
+         patch('utils.claude.claude_call', return_value='["test query"]'), \
          patch('research.topic_searcher.ClaudeScorer') as mock_scorer:
 
         mock_arxiv_inst = MagicMock()
@@ -86,6 +94,10 @@ def test_search_topic_handles_partial_failure():
          patch('research.topic_searcher.GitHubSearcher') as mock_github, \
          patch('research.topic_searcher.HNSearcher') as mock_hn, \
          patch('research.topic_searcher.search_docs') as mock_docs, \
+         patch('research.topic_searcher.WebSearcher'), \
+         patch('research.topic_searcher.WechatSearcher'), \
+         patch('research.topic_searcher.XhsSearcher'), \
+         patch('utils.claude.claude_call', return_value='["test query"]'), \
          patch('research.topic_searcher.ClaudeScorer') as mock_scorer:
 
         # ArXiv 失败
