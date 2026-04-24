@@ -79,6 +79,10 @@ PATTERNS = [
     ("Vercel", "AI公司", ["Vercel", "vercel-labs"]),  # auto-added: appeared in GitHub Trending with AI skills project
 
     ("Tencent", "AI公司", ["腾讯", "Tencent", "混元"]),  # auto-added: appeared in 1 article but Tencent is major AI play
+
+    ("Huawei", "AI芯片", ["华为芯片", "Huawei chip", "Huawei"]),  # auto-added: emerging hardware partnership trend with DeepSeek
+
+    ("Tencent Hunyuan", "AI公司", ["腾讯 Hy3", "Hunyuan", "混元"]),  # auto-added: Tencent's competing model appearing in news cycle
 ]
 
 # 标签名 -> 分类，供 build_topics 排序

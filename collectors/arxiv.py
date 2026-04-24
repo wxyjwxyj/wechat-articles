@@ -47,6 +47,7 @@ HIGH_VALUE_KEYWORDS = [
     "mythos",
     "multimodal vision",
     "embodied world model",
+    "mixture of experts",
 ]
 
 

@@ -32,6 +32,9 @@ _SUBSTRING_KEYWORDS = [
     "商汤",
     "embodied world model",
     "reasoning",
+    "GPT-5.5",
+    "MoE",
+    "华为芯片",
 ]
 
 # 预编译短词的正则（词边界匹配）
