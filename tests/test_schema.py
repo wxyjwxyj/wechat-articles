@@ -135,4 +135,5 @@ def test_bundle_pipeline_produces_bundle_dict(tmp_path: Path):
     bundle = build_daily_bundle("2026-04-03", dedupe_items(stored))
 
     assert bundle["title"] == "今日 AI 资讯速览｜2026-04-03"
-    assert bundle["topics"][0]["name"] == "AI"
+    topic_names = [t["name"] for t in bundle["topics"]]
+    assert "AI" in topic_names

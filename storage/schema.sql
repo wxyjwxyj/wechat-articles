@@ -15,7 +15,7 @@ create table if not exists items (
   source_id integer not null,
   source_type text not null,
   title text not null,
-  url text not null unique,
+  url text not null,
   author text,
   published_at text not null,
   raw_content text not null,
@@ -23,8 +23,10 @@ create table if not exists items (
   cover text,
   tags text not null default '[]',
   language text not null default 'zh',
-  content_hash text not null,
+  content_hash text not null unique,
   status text not null default 'raw',
+  title_zh text not null default '',
+  summary_zh text not null default '',
   created_at text not null,
   updated_at text not null,
   foreign key(source_id) references sources(id)
@@ -81,4 +83,30 @@ create table if not exists publish_tasks (
   created_at text not null,
   updated_at text not null,
   foreign key(bundle_id) references bundles(id)
+);
+
+-- 索引：加速按日期查询和按来源筛选
+create index if not exists idx_items_published_at on items(published_at);
+create index if not exists idx_items_source_id on items(source_id);
+create index if not exists idx_items_created_at_date on items(date(created_at));
+create index if not exists idx_items_published_at_date on items(date(published_at));
+
+-- Research Hub 搜索历史
+create table if not exists research_sessions (
+  id integer primary key autoincrement,
+  topic text not null,
+  results_json text not null default '{}',
+  created_at text not null default (datetime('now'))
+);
+create index if not exists idx_research_sessions_created_at on research_sessions(created_at);
+
+-- Research Hub 评分缓存（url + topic 为 key，避免重复调用 Claude）
+create table if not exists research_score_cache (
+  id integer primary key autoincrement,
+  url text not null,
+  topic text not null,
+  score integer not null,
+  comment text not null default '',
+  created_at text not null default (datetime('now')),
+  unique(url, topic)
 );

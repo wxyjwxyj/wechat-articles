@@ -4,6 +4,7 @@ from datetime import date
 from flask import current_app, jsonify
 
 from storage.repository import BundleRepository, ItemRepository, SourceRepository
+from api.research_routes import register_research_routes
 
 
 def register_routes(app) -> None:
@@ -52,6 +53,9 @@ def register_routes(app) -> None:
             return jsonify([])
         # 话题从 bundle_topics 关联表获取（暂时返回空列表，待后续完善）
         return jsonify(bundle.get("topics", []))
+
+    # 注册研究功能路由
+    register_research_routes(app)
 
 
 def _get_bundle_by_date(bundle_date: str):

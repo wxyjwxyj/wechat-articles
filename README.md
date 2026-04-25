@@ -1,112 +1,125 @@
-# 微信内容中台 — 第一阶段
+# AI 日报自动化系统
 
-把微信公众号文章采集升级为"采集入库 → 内容处理 → API 输出 → 小程序可读 → 公众号发布稿生成"的闭环系统。
+多源 AI 资讯采集 → 去重打标签 → 生成公众号稿件 → 提交草稿箱 → 推送 GitHub Pages，全链路自动化。
 
 ## 快速开始
 
 ### 环境要求
 
 - Python 3.11+
-- Chrome 浏览器（需登录微信公众平台）
+- Chrome 浏览器（需登录微信公众平台，供 CDP 采集使用）
 - CDP Proxy（本地运行于 localhost:3456）
+- `.env` 文件（含 `ANTHROPIC_API_KEY`）
 
 ### 安装依赖
 
 ```bash
-pip install requests flask pytest
+pip install -r requirements.txt
 ```
 
 ### 配置
 
-复制 `config.example.json` 为 `config.json` 并填入：
-
-```json
-{
-  "cdp_proxy": "http://localhost:3456",
-  "token": "你的微信公众平台 token"
-}
+```bash
+cp config.example.json config.json   # 填入 cdp_proxy 地址
+cp .env.example .env                 # 填入 ANTHROPIC_API_KEY
+python scripts/seed_sources.py       # 初始化数据源（首次运行）
 ```
 
 ### 一键运行
 
 ```bash
-bash run.sh
+./daily_run.sh    # 全自动（launchd 每天 11:30 自动调用）
+./run.sh          # 交互式执行
 ```
 
 ### 单步运行
 
 ```bash
-# 初始化 sources（首次运行或新增公众号时）
-python scripts/seed_sources.py
+# 采集各数据源
+python fetch_wechat_today.py              # 微信公众号（CDP，4个）
+python fetch_rss_today.py                 # 微信公众号 RSS + 海外 RSS（11个）
+python fetch_hackernews_today.py          # Hacker News
+python fetch_arxiv_today.py               # ArXiv 论文
+python fetch_github_trending_today.py     # GitHub Trending
 
-# 抓取今日微信文章并入库
-python fetch_wechat_today.py
+# 处理与生成
+python scripts/build_bundle.py            # 去重 → 打标签 → bundle
+python generate_html.py bundle_today.json # 生成 HTML 预览页
+python scripts/generate_mp_article.py bundle_today.json  # 生成公众号稿件
+python scripts/publish_to_mp.py           # 提交草稿箱
 
-# 生成每日 bundle（标准化 → 去重 → 标签 → bundle）
-python scripts/build_bundle.py
-
-# 生成 HTML 预览页
-python generate_html.py bundle_today.json
-
-# 生成公众号发布稿
-python scripts/generate_mp_article.py bundle_today.json
-
-# 启动本地 API（供小程序或调试使用）
-python -m flask --app api.app run --debug
+# 工具
+python scripts/seed_sources.py            # 初始化/更新数据源
+pytest tests/ -v                          # 全量测试
 ```
 
-## 数据文件说明
+## 数据源
 
-| 文件 | 说明 |
-|------|------|
-| `config.json` | 微信配置（token 等），**不提交 git** |
-| `content.db` | SQLite 主数据库，所有内容的唯一数据源 |
-| `bundle_today.json` | 每日 bundle 快照，HTML 和公众号稿件的共同输入 |
-| `index.html` | 生成的 HTML 预览页 |
-| `mp_article_preview.json` | 公众号发布稿预览，人工确认后发布 |
+### 微信公众号（9个）
 
-## 本地 API
+| 采集方式 | 公众号 |
+|---------|--------|
+| CDP（需登录） | AI寒武纪、36氪、虎嗅APP、硅星人Pro |
+| Wechat2RSS 免费 RSS | 量子位、机器之心、新智元 |
+| wechatrss.waytomaster.com | APPSO、数字生命卡兹克 |
 
-启动：`python -m flask --app api.app run --debug`
+### 海外源（6个）
 
-| 路由 | 说明 |
-|------|------|
-| `GET /api/bundles/today` | 今日 bundle |
-| `GET /api/bundles/<date>` | 指定日期 bundle（格式：YYYY-MM-DD）|
-| `GET /api/sources` | 所有来源列表 |
-| `GET /api/sources/<name>/items` | 指定来源今日文章 |
+Hacker News、ArXiv、GitHub Trending、TechCrunch AI、MIT Technology Review、The Verge AI
+
+## 主链路
+
+```
+fetch_wechat_today.py（CDP 4个公众号）  ┐
+fetch_rss_today.py（RSS 5个公众号 + 3个海外）│
+fetch_hackernews_today.py               ├→ content.db
+fetch_arxiv_today.py                    │
+fetch_github_trending_today.py          ┘
+  → build_bundle.py（去重 → 打标签 → 翻译 → bundle）→ bundle_today.json
+  → generate_html.py（today.html）
+  → generate_mp_article.py（公众号稿件）
+  → publish_to_mp.py（封面图 + 草稿箱）
+  → daily_run.sh 步骤13（推 GitHub Pages）
+```
 
 ## 模块结构
 
 ```
-collectors/     # 内容采集器（微信公众号等）
-pipeline/       # 内容处理（标准化、去重、标签、bundle 生成）
-storage/        # SQLite 数据库访问层
-publishers/     # 内容输出（HTML 预览、公众号发布稿）
-api/            # Flask 只读 API
-scripts/        # 独立脚本（seed sources、build bundle、生成稿件）
+collectors/     # 采集器（wechat/rss/hackernews/arxiv/github_trending）
+pipeline/       # 内容处理（normalize/dedupe/tagging/bundles）
+storage/        # SQLite 数据访问层（db/repository）
+publishers/     # 输出（html_preview/mp_article）
+scripts/        # 独立脚本（seed/build/generate/publish）
+utils/          # 工具（config/log/http/errors）
 tests/          # 测试
 ```
 
-## 运行测试
+## 数据文件
 
-```bash
-pytest
-```
+| 文件 | 说明 |
+|------|------|
+| `content.db` | SQLite 主数据库（WAL 模式） |
+| `bundle_today.json` | 每日 bundle 快照 |
+| `today.html` | HTML 预览页 |
+| `.env` | 密钥（不进 Git） |
+| `config.json` | 本地配置（不进 Git） |
+
+## GitHub Pages
+
+归档页：https://wxyjwxyj.github.io/wechat-articles/
+
+每日 HTML 自动推送到 `main` 分支，`index.html` 是手写门户页，不能覆盖。
 
 ## 常见问题
 
-**Q: 为什么返回空数据？**
+**Q: CDP 采集返回空数据？**
 
-A: 检查以下几点：
-1. CDP Proxy 是否正常运行（`curl http://localhost:3456/health`）
-2. 浏览器是否已登录微信公众平台
-3. token 是否过期（从浏览器 URL 中重新获取）
+检查：CDP Proxy 是否运行（`curl http://localhost:3456/health`）、浏览器是否登录微信公众平台。
+
+**Q: 如何添加新公众号？**
+
+修改 `scripts/seed_sources.py` 后执行，RSS 源加 `is_wechat: True` 标记。
 
 **Q: 为什么不用 async/await？**
 
-A: CDP Proxy 的 `/eval` 端点对 Promise 返回值处理不完善，异步代码会返回空对象 `{}`。使用同步的 XMLHttpRequest 更可靠。
-
-**Q: 如何添加新的公众号？**
-
-A: 在 `content.db` 的 `sources` 表中新增记录，或修改 `scripts/seed_sources.py` 后重新执行。
+CDP Proxy 的 `/eval` 端点对 Promise 返回值处理不完善，同步 XMLHttpRequest 更可靠。

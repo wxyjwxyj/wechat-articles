@@ -37,3 +37,9 @@ wechat_api.py
 wechat_monitor.py
 monitor_wechat.py
 *.csv
+
+# 历史数据
+data/
+CLAUDE.local.md
+insights_today.md
+.ran/

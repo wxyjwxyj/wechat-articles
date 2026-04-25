@@ -30,6 +30,8 @@ class ItemPayload(TypedDict):
     language: str
     content_hash: str
     status: str
+    title_zh: Optional[str]
+    summary_zh: Optional[str]
 
 
 class SourceRepository:
@@ -85,7 +87,7 @@ class ItemRepository:
 
     def upsert_item(self, payload: ItemPayload) -> None:
         """
-        插入或更新条目。如果 url 已存在则更新所有字段。
+        插入或更新条目。如果 content_hash 已存在则更新可变字段（url 允许更新以修正采集错误）。
         """
         now = datetime.now(timezone.utc).isoformat(timespec='seconds')
         with closing(get_connection(self.db_path)) as conn:
@@ -99,8 +101,9 @@ class ItemRepository:
                         created_at, updated_at
                     )
                     values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    on conflict(url) do update set
+                    on conflict(content_hash) do update set
                       title=excluded.title,
+                      url=excluded.url,
                       author=excluded.author,
                       published_at=excluded.published_at,
                       raw_content=excluded.raw_content,
@@ -108,7 +111,6 @@ class ItemRepository:
                       cover=excluded.cover,
                       tags=excluded.tags,
                       language=excluded.language,
-                      content_hash=excluded.content_hash,
                       status=excluded.status,
                       updated_at=excluded.updated_at
                     """,
@@ -131,16 +133,26 @@ class ItemRepository:
                     ),
                 )
 
+    def update_item_translations(self, item_id: int, title_zh: str, summary_zh: str) -> None:
+        """回写翻译结果到数据库。"""
+        now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute(
+                    "update items set title_zh=?, summary_zh=?, updated_at=? where id=?",
+                    (title_zh, summary_zh, now, item_id),
+                )
+
     def list_items_by_date(self, date_str: str) -> list[dict]:
-        """返回指定日期的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。"""
-        start = f"{date_str}T00:00:00"
-        end = f"{date_str}T23:59:59"
+        """返回指定日期采集或发布的所有 item，按 published_at 降序排列。date_str 格式为 YYYY-MM-DD。
+        published_at 按北京时间（UTC+8）换算日期，兼容带时区后缀（+00:00）和不带时区的 ISO 格式。
+        """
         with closing(get_connection(self.db_path)) as conn:
             rows = [
                 dict(row)
                 for row in conn.execute(
-                    "select * from items where published_at between ? and ? order by published_at desc",
-                    (start, end),
+                    "select * from items where date(created_at, '+8 hours') = ? or date(published_at, '+8 hours') = ? order by published_at desc",
+                    (date_str, date_str),
                 ).fetchall()
             ]
         return rows
@@ -186,12 +198,15 @@ class BundleRepository:
 
     def replace_bundle_items(self, bundle_id: int, item_ids: list[int]) -> None:
         """替换 bundle 关联的 item 列表（先删后插）。"""
+        # 保序去重，防止重复 item_id 触发唯一约束
+        seen = set()
+        unique_ids = [x for x in item_ids if not (x in seen or seen.add(x))]
         with closing(get_connection(self.db_path)) as conn:
             with conn:
                 conn.execute("delete from bundle_items where bundle_id = ?", (bundle_id,))
                 conn.executemany(
                     "insert into bundle_items(bundle_id, item_id, sort_order) values (?, ?, ?)",
-                    [(bundle_id, item_id, i) for i, item_id in enumerate(item_ids)],
+                    [(bundle_id, item_id, i) for i, item_id in enumerate(unique_ids)],
                 )
 
     def replace_bundle_topics(self, bundle_id: int, topic_ids: list[int]) -> None:
