@@ -29,9 +29,10 @@ def load_project_config() -> dict:
     return cfg
 
 
-def get_claude_config() -> tuple[str, str]:
-    """返回 (api_key, base_url)，环境变量优先。"""
+def get_claude_config() -> tuple[str, str, str]:
+    """返回 (api_key, base_url, model)，环境变量优先。"""
     cfg = _load_config_file()
     api_key = os.getenv("ANTHROPIC_API_KEY") or cfg.get("claude_api_key", "")
     base_url = os.getenv("ANTHROPIC_BASE_URL") or cfg.get("claude_base_url", "https://api.anthropic.com")
-    return api_key, base_url
+    model = os.getenv("ANTHROPIC_MODEL") or cfg.get("claude_model", "claude-sonnet-4-6")
+    return api_key, base_url, model

@@ -15,7 +15,7 @@ class ClaudeScorer:
         self,
         api_key: str,
         base_url: str = "https://api.anthropic.com",
-        model: str = "claude-sonnet-4-6",
+        model: str | None = None,
         min_score: int = 6,
         db_path: Path | str | None = None,
     ):
@@ -23,7 +23,7 @@ class ClaudeScorer:
         Args:
             api_key: Anthropic API key
             base_url: API base URL
-            model: 使用的模型
+            model: 使用的模型，None 则从配置读取
             min_score: 最低分数阈值（低于此分数的资源会被过滤）
             db_path: SQLite 数据库路径，用于评分缓存；为 None 则不缓存
         """

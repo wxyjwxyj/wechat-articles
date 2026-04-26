@@ -56,7 +56,7 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
             f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
         )
         try:
-            raw = claude_call(prompt, max_tokens=512, model="claude-opus-4-6")
+            raw = claude_call(prompt, max_tokens=512)
             start, end = raw.find("{"), raw.rfind("}") + 1
             if start == -1:
                 raise ValueError("无 JSON 对象")

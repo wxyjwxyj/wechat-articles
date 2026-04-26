@@ -17,7 +17,7 @@ DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "content.db")
 
 def _make_searcher() -> TopicSearcher:
     """创建 TopicSearcher 实例（复用配置读取逻辑）。"""
-    api_key, base_url = get_claude_config()
+    api_key, base_url, _ = get_claude_config()
     return TopicSearcher(
         api_key=api_key,
         base_url=base_url,
@@ -202,7 +202,7 @@ def register_research_routes(app):
         if not topic:
             return '<h1>缺少 topic 参数</h1>', 400
 
-        api_key, _ = get_claude_config()
+        api_key, _, _ = get_claude_config()
         if not api_key:
             return '<h1>未配置 ANTHROPIC_API_KEY</h1>', 500
 
@@ -230,7 +230,7 @@ def register_research_routes(app):
 
         logger.info("收到搜索请求: %s", topic)
 
-        api_key, _ = get_claude_config()
+        api_key, _, _ = get_claude_config()
         if not api_key:
             return jsonify({"error": "未配置 ANTHROPIC_API_KEY 环境变量"}), 500
 
@@ -303,7 +303,7 @@ def register_research_routes(app):
         if not topic:
             return jsonify({"error": "缺少 topic 参数"}), 400
 
-        api_key, base_url = get_claude_config()
+        api_key, base_url, _ = get_claude_config()
         if not api_key:
             return jsonify({"error": "未配置 ANTHROPIC_API_KEY"}), 500
 

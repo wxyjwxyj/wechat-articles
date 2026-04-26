@@ -1,29 +1,29 @@
 """统一 Claude API 调用入口。
 
-fallback 链：haiku → sonnet → opus，日常任务用最便宜的，失败逐级升级。
+模型、API Key、Base URL 均从 .env / config.json 读取，换代理只改配置不改代码。
 所有模块通过 claude_call() / claude_stream() / get_client() 调用，
 不要直接创建 anthropic.Anthropic client。
 """
 import logging
 import time
 import anthropic
+from anthropic.types import TextBlock
 
 from utils.config import get_claude_config
 
 logger = logging.getLogger(__name__)
 
-# fallback 顺序：快→强
-MODELS = [
-    "claude-haiku-4-5-20251001",
-    "claude-sonnet-4-6",
-    "claude-opus-4-6",
-]
-
 
 def get_client() -> anthropic.Anthropic:
     """返回配置好的 Anthropic client，供需要复用 client 的场景使用。"""
-    api_key, base_url = get_claude_config()
+    api_key, base_url, _ = get_claude_config()
     return anthropic.Anthropic(api_key=api_key, base_url=base_url)
+
+
+def _get_model() -> str:
+    """返回当前配置的模型名。"""
+    _, _, model = get_claude_config()
+    return model
 
 
 def claude_call(
@@ -43,33 +43,35 @@ def claude_call(
         模型返回的文本，所有模型都失败时抛出最后一个异常
     """
     client = get_client()
-    models = [model] if model else MODELS
+    m = model or _get_model()
 
     last_err = None
-    for m in models:
-        for attempt in range(3):
-            try:
-                msg = client.messages.create(
-                    model=m,
-                    max_tokens=max_tokens,
-                    messages=[{"role": "user", "content": prompt}],
-                )
-                if m != models[0]:
-                    logger.info("claude_call: fallback 到 %s 成功", m)
-                return msg.content[0].text
-            except anthropic.RateLimitError:
-                if attempt < 2:
-                    wait = 2 ** (attempt + 1)
-                    logger.warning("claude_call: %s 限流，%ds 后重试", m, wait)
-                    time.sleep(wait)
-                    continue
-                logger.warning("claude_call: %s 限流 3 次，尝试下一个模型", m)
-                last_err = anthropic.RateLimitError("rate limit exceeded")
-                break
-            except Exception as e:
-                logger.warning("claude_call: %s 失败（%s），尝试下一个模型", m, e)
-                last_err = e
-                break
+    for attempt in range(3):
+        try:
+            msg = client.messages.create(
+                model=m,
+                max_tokens=max_tokens,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            # 跳过 ThinkingBlock，取第一个 TextBlock
+            for block in msg.content:
+                if isinstance(block, TextBlock):
+                    return block.text
+            # 兜底：直接拼所有块的文本
+            return "".join(getattr(b, "text", "") for b in msg.content)
+        except anthropic.RateLimitError as e:
+            if attempt < 2:
+                wait = 2 ** (attempt + 1)
+                logger.warning("claude_call: %s 限流，%ds 后重试", m, wait)
+                time.sleep(wait)
+                continue
+            logger.warning("claude_call: %s 限流 3 次，放弃", m)
+            last_err = e
+            break
+        except Exception as e:
+            logger.warning("claude_call: %s 失败（%s）", m, e)
+            last_err = e
+            break
 
     raise last_err
 
@@ -78,7 +80,7 @@ def claude_stream(
     prompt: str,
     *,
     max_tokens: int = 8192,
-    model: str = "claude-opus-4-6",
+    model: str | None = None,
 ):
     """流式输出，返回 context manager，用法：
 
@@ -88,7 +90,7 @@ def claude_stream(
     """
     client = get_client()
     return client.messages.stream(
-        model=model,
+        model=model or _get_model(),
         max_tokens=max_tokens,
         messages=[{"role": "user", "content": prompt}],
     )

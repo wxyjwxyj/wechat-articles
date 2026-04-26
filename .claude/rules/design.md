@@ -8,11 +8,11 @@ globs: "**/*.py,daily_run.sh"
 
 ---
 
-## 可用模型与统一调用入口（2026-04-19）
+## 可用模型与统一调用入口（2026-04-26 更新）
 
-**背景：** cckeys.top 代理支持三个模型：`claude-haiku-4-5-20251001`、`claude-sonnet-4-6`、`claude-opus-4-6`。
+**背景：** 模型、API Key、Base URL 均从 `.env` 环境变量读取（`ANTHROPIC_API_KEY` / `ANTHROPIC_BASE_URL` / `ANTHROPIC_MODEL`），config.json 降级兜底。
 
-**决策：** 所有 Claude API 调用统一通过 `utils/claude.py` 的 `claude_call()` / `claude_stream()` / `get_client()`，内置 haiku → sonnet → opus 三级 fallback。不要直接创建 `anthropic.Anthropic` client。
+**决策：** 所有 Claude API 调用统一通过 `utils/claude.py` 的 `claude_call()` / `claude_stream()` / `get_client()`。模型名从配置读取，换代理只改 `.env`，代码不用动。不要直接创建 `anthropic.Anthropic` client。
 
 **不要：** 在各模块里直接 `import anthropic` 创建 client，也不要硬编码模型名。
 
@@ -142,7 +142,7 @@ set -a && source .env && set +a && python scripts/xxx.py
 
 **背景：** Claude API 高频调用（批量打标签、翻译）容易触发 429 限流，单次失败就中断整个流水线。
 
-**决策：** `utils/claude.py` 的 `claude_call()` 对 `RateLimitError` 单独做 3 次指数退避重试（2s/4s/8s），3 次都限流才 fallback 到下一个模型。这是 API 层重试，跟 `retry_session` 的 HTTP 层重试是两层独立机制。
+**决策：** `utils/claude.py` 的 `claude_call()` 对 `RateLimitError` 单独做 3 次指数退避重试（2s/4s/8s），3 次都限流则抛出异常。这是 API 层重试，跟 `retry_session` 的 HTTP 层重试是两层独立机制。
 
 **不要：** 在调用方自己写 429 重试逻辑，`claude_call` 已经内置了。
 

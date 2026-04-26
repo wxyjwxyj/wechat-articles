@@ -29,7 +29,7 @@ def main() -> None:
     with open(bundle_path, "r", encoding="utf-8") as f:
         bundle = json.load(f)
 
-    api_key, base_url = get_claude_config()
+    api_key, base_url, _ = get_claude_config()
     if api_key:
         logger.info("使用 Claude 生成编辑点评...")
     else:
