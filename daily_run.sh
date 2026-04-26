@@ -91,7 +91,7 @@ try:
     import anthropic
 except ImportError:
     print('no_sdk'); sys.exit()
-key, base_url = get_claude_config()
+key, base_url, _ = get_claude_config()
 if not key:
     print('no_key'); sys.exit()
 try:
