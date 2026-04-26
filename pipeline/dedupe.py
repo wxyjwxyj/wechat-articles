@@ -174,7 +174,7 @@ def _claude_dedupe(
 
     try:
         from utils.claude import claude_call
-        raw = claude_call(prompt, max_tokens=512)
+        raw = claude_call(prompt, max_tokens=4096)
         if not raw:
             logger.warning("Claude 去重返回空内容，降级到关键词方案")
             return None
@@ -188,13 +188,8 @@ def _claude_dedupe(
         return None
 
     try:
-        # 取最后一个完整 JSON 对象（Claude 有时会先输出错误答案再自我纠正）
-        end = raw.rfind("}") + 1
-        start = raw.rfind("{", 0, end)
-        if start == -1 or end == 0:
-            logger.warning("Claude 去重响应不含 JSON 对象，降级到关键词方案")
-            return None
-        data = json.loads(raw[start:end])
+        from utils.claude import extract_json
+        data = extract_json(raw)
         groups = data.get("groups", [])
         # 验证格式：每组是下标列表，下标在合法范围内
         n = len(items)

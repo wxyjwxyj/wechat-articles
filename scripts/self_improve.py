@@ -312,13 +312,9 @@ def main():
 
     # 3. 解析响应
     try:
-        # 处理可能的 markdown 代码块包裹
-        text = response.strip()
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1]
-            text = text.rsplit("```", 1)[0]
-        result = json.loads(text)
-    except (json.JSONDecodeError, IndexError) as e:
+        from utils.claude import extract_json
+        result = extract_json(response)
+    except (json.JSONDecodeError, ValueError) as e:
         logger.error("JSON 解析失败: %s\n响应: %s", e, response[:500])
         _write_insights(today, [], [], f"解析失败，原始响应已记录到日志")
         return

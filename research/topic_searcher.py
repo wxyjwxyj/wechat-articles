@@ -268,13 +268,10 @@ class TopicSearcher:
         raw = ""
         try:
             from utils.claude import claude_call
-            raw = claude_call(prompt, max_tokens=256)
+            raw = claude_call(prompt, max_tokens=1024)
             logger.info("Query 扩展原始响应: %s", raw[:200])
-            start, end = raw.find("["), raw.rfind("]") + 1
-            if start == -1:
-                logger.warning("Query 扩展：响应中未找到 JSON 数组，原始内容: %s", raw[:200])
-                return []
-            queries = json.loads(raw[start:end])
+            from utils.claude import extract_json_array
+            queries = extract_json_array(raw)
             logger.info("Query 扩展：%s → %s", topic, queries)
             return [q for q in queries if isinstance(q, str) and q.strip()]
         except json.JSONDecodeError as e:

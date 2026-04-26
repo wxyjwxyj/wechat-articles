@@ -16,25 +16,66 @@ from utils.config import get_claude_config
 logger = logging.getLogger(__name__)
 
 
-def extract_json(raw: str) -> dict:
-    """从 Claude 响应中提取 JSON，处理 markdown 代码块包裹。
+def _strip_markdown_code_block(raw: str) -> str:
+    """去除 markdown 代码块包裹（支持多个代码块，逐行过滤）。"""
+    lines = raw.strip().splitlines()
+    cleaned = [
+        line for line in lines
+        if not re.match(r'^\s*```(?:json)?\s*$', line)
+    ]
+    return "\n".join(cleaned)
 
-    Args:
-        raw: Claude 返回的原始文本
 
-    Returns:
-        解析后的 dict
+def _find_last_json_object(text: str) -> tuple[int, int]:
+    """在文本中找到最后一个完整的 JSON 对象的 (start, end) 位置。
 
-    Raises:
-        ValueError: 找不到有效 JSON
+    从后往前扫描，用括号深度匹配找到正确的 {…} 对。
     """
-    # 去除 ```json ... ``` 包裹
-    cleaned = re.sub(r'^```(?:json)?\s*', '', raw.strip())
-    cleaned = re.sub(r'\s*```$', '', cleaned.strip())
-    start = cleaned.find("{")
-    end = cleaned.rfind("}") + 1
+    end = text.rfind("}")
+    if end == -1:
+        return -1, -1
+    depth = 0
+    for i in range(end, -1, -1):
+        if text[i] == "}":
+            depth += 1
+        elif text[i] == "{":
+            depth -= 1
+            if depth == 0:
+                return i, end + 1
+    return -1, -1
+
+
+def extract_json(raw: str) -> dict:
+    """从 Claude 响应中提取最后一个 JSON 对象，处理 markdown 代码块包裹。"""
+    cleaned = _strip_markdown_code_block(raw)
+    start, end = _find_last_json_object(cleaned)
     if start == -1:
         raise ValueError(f"无 JSON 对象: {raw[:100]}")
+    return json.loads(cleaned[start:end])
+
+
+def _find_last_json_array(text: str) -> tuple[int, int]:
+    """在文本中找到最后一个完整的 JSON 数组的 (start, end) 位置。"""
+    end = text.rfind("]")
+    if end == -1:
+        return -1, -1
+    depth = 0
+    for i in range(end, -1, -1):
+        if text[i] == "]":
+            depth += 1
+        elif text[i] == "[":
+            depth -= 1
+            if depth == 0:
+                return i, end + 1
+    return -1, -1
+
+
+def extract_json_array(raw: str) -> list:
+    """从 Claude 响应中提取最后一个 JSON 数组，处理 markdown 代码块包裹。"""
+    cleaned = _strip_markdown_code_block(raw)
+    start, end = _find_last_json_array(cleaned)
+    if start == -1:
+        raise ValueError(f"无 JSON 数组: {raw[:100]}")
     return json.loads(cleaned[start:end])
 
 

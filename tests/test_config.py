@@ -47,4 +47,4 @@ def test_get_claude_config_missing_file_returns_empty(tmp_path, monkeypatch):
 
     assert api_key == ""
     assert base_url == "https://api.anthropic.com"
-    assert model == "claude-sonnet-4-6"
+    assert model == "mimo-v2.5-pro"

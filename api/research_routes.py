@@ -354,7 +354,7 @@ def register_research_routes(app):
                 first_chunk = True
                 t_start = time.time()
                 char_count = 0
-                with claude_stream(prompt, max_tokens=8192, model="claude-opus-4-6") as stream:
+                with claude_stream(prompt, max_tokens=8192) as stream:
                     for text in stream.text_stream:
                         if first_chunk:
                             logger.info("深度研究首个 chunk（%.1fs）: %s", time.time() - t_start, repr(text[:100]))

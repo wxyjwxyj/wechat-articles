@@ -57,7 +57,7 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
         )
         try:
             from utils.claude import extract_json
-            raw = claude_call(prompt, max_tokens=512)
+            raw = claude_call(prompt, max_tokens=2048)
             r = extract_json(raw)
             item["title_zh"] = r.get("title_zh", "") or item["title"]
             item["summary_zh"] = r.get("summary_zh", "")
