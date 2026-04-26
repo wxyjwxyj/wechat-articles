@@ -86,8 +86,10 @@ def get_client() -> anthropic.Anthropic:
 
 
 def _get_model() -> str:
-    """返回当前配置的模型名。"""
+    """返回当前配置的模型名，未配置则报错。"""
     _, _, model = get_claude_config()
+    if not model:
+        raise RuntimeError("未配置 ANTHROPIC_MODEL，请在 .env 中设置")
     return model
 
 
