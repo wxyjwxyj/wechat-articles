@@ -23,7 +23,11 @@ def _load_config_file() -> dict:
 
 
 def _load_cc_switch_config() -> dict:
-    """从 cc-switch 数据库读取当前激活的 provider 配置。"""
+    """从 cc-switch 数据库读取当前激活的 provider 配置。
+
+    cc-switch 会把 Claude 模型名翻译成 provider 实际模型（如 mimo-v2.5-pro），
+    所以 ANTHROPIC_MODEL 未设置时，用 sonnet 映射作为默认模型。
+    """
     if not CC_SWITCH_DB.exists():
         return {}
     try:
@@ -37,10 +41,14 @@ def _load_cc_switch_config() -> dict:
             return {}
         cfg = json.loads(row["settings_config"])
         env = cfg.get("env", {})
+        model = (
+            env.get("ANTHROPIC_MODEL")
+            or env.get("ANTHROPIC_DEFAULT_SONNET_MODEL", "")
+        )
         return {
             "api_key": env.get("ANTHROPIC_AUTH_TOKEN", ""),
             "base_url": env.get("ANTHROPIC_BASE_URL", ""),
-            "model": env.get("ANTHROPIC_MODEL", ""),
+            "model": model,
         }
     except Exception as e:
         logger.debug("读取 cc-switch 配置失败: %s", e)
