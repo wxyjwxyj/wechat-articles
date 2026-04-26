@@ -9,7 +9,7 @@ import logging
 import re
 import time
 import anthropic
-from anthropic.types import TextBlock
+from anthropic.types import TextBlock, ThinkingBlock
 
 from utils.config import get_claude_config
 
@@ -77,12 +77,16 @@ def claude_call(
                 max_tokens=max_tokens,
                 messages=[{"role": "user", "content": prompt}],
             )
-            # 跳过 ThinkingBlock，取第一个 TextBlock
+            # 取第一个 TextBlock
             for block in msg.content:
                 if isinstance(block, TextBlock):
                     return block.text
-            # 兜底：直接拼所有块的文本
-            return "".join(getattr(b, "text", "") for b in msg.content)
+            # 兜底：无 TextBlock 时尝试从 ThinkingBlock 提取
+            for block in msg.content:
+                if isinstance(block, ThinkingBlock) and block.thinking:
+                    logger.debug("claude_call: 无 TextBlock，从 ThinkingBlock 提取")
+                    return block.thinking
+            return ""
         except anthropic.RateLimitError as e:
             if attempt < 2:
                 wait = 2 ** (attempt + 1)

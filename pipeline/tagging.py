@@ -148,7 +148,7 @@ Requirements:
 Format:
 {{"results": [{{"id": {id_offset + 1}, "tags": ["标签A", "标签B"], "score": 8}}, ...]}}"""
 
-    raw = claude_call(prompt, max_tokens=1024)
+    raw = claude_call(prompt, max_tokens=4096)
 
     from utils.claude import extract_json
     data = extract_json(raw)
