@@ -1,10 +1,12 @@
-"""统一配置读取：敏感字段优先从环境变量获取，降级读 config.json。"""
+"""统一配置读取：环境变量 → cc-switch → config.json。"""
 import json
 import os
 import logging
+import sqlite3
 from pathlib import Path
 
 CONFIG_PATH = Path(__file__).parent.parent / "config.json"
+CC_SWITCH_DB = Path.home() / ".cc-switch" / "cc-switch.db"
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +22,31 @@ def _load_config_file() -> dict:
         return {}
 
 
+def _load_cc_switch_config() -> dict:
+    """从 cc-switch 数据库读取当前激活的 provider 配置。"""
+    if not CC_SWITCH_DB.exists():
+        return {}
+    try:
+        conn = sqlite3.connect(f"file:{CC_SWITCH_DB}?mode=ro", uri=True)
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT settings_config FROM providers WHERE app_type='claude' AND is_current=1"
+        ).fetchone()
+        conn.close()
+        if not row:
+            return {}
+        cfg = json.loads(row["settings_config"])
+        env = cfg.get("env", {})
+        return {
+            "api_key": env.get("ANTHROPIC_AUTH_TOKEN", ""),
+            "base_url": env.get("ANTHROPIC_BASE_URL", ""),
+            "model": env.get("ANTHROPIC_MODEL", ""),
+        }
+    except Exception as e:
+        logger.debug("读取 cc-switch 配置失败: %s", e)
+        return {}
+
+
 def load_project_config() -> dict:
     """加载并校验项目配置，缺少必要字段时记录警告。"""
     cfg = _load_config_file()
@@ -30,9 +57,26 @@ def load_project_config() -> dict:
 
 
 def get_claude_config() -> tuple[str, str, str]:
-    """返回 (api_key, base_url, model)，环境变量优先。"""
+    """返回 (api_key, base_url, model)。
+
+    优先级：环境变量 → cc-switch → config.json → 空字符串
+    """
+    cc = _load_cc_switch_config()
     cfg = _load_config_file()
-    api_key = os.getenv("ANTHROPIC_API_KEY") or cfg.get("claude_api_key", "")
-    base_url = os.getenv("ANTHROPIC_BASE_URL") or cfg.get("claude_base_url", "https://api.anthropic.com")
-    model = os.getenv("ANTHROPIC_MODEL") or cfg.get("claude_model", "mimo-v2.5-pro")
+
+    api_key = (
+        os.getenv("ANTHROPIC_API_KEY")
+        or cc.get("api_key")
+        or cfg.get("claude_api_key", "")
+    )
+    base_url = (
+        os.getenv("ANTHROPIC_BASE_URL")
+        or cc.get("base_url")
+        or cfg.get("claude_base_url", "")
+    )
+    model = (
+        os.getenv("ANTHROPIC_MODEL")
+        or cc.get("model")
+        or cfg.get("claude_model", "")
+    )
     return api_key, base_url, model
