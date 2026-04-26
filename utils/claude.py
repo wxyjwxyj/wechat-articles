@@ -4,7 +4,9 @@
 所有模块通过 claude_call() / claude_stream() / get_client() 调用，
 不要直接创建 anthropic.Anthropic client。
 """
+import json
 import logging
+import re
 import time
 import anthropic
 from anthropic.types import TextBlock
@@ -12,6 +14,28 @@ from anthropic.types import TextBlock
 from utils.config import get_claude_config
 
 logger = logging.getLogger(__name__)
+
+
+def extract_json(raw: str) -> dict:
+    """从 Claude 响应中提取 JSON，处理 markdown 代码块包裹。
+
+    Args:
+        raw: Claude 返回的原始文本
+
+    Returns:
+        解析后的 dict
+
+    Raises:
+        ValueError: 找不到有效 JSON
+    """
+    # 去除 ```json ... ``` 包裹
+    cleaned = re.sub(r'^```(?:json)?\s*', '', raw.strip())
+    cleaned = re.sub(r'\s*```$', '', cleaned.strip())
+    start = cleaned.find("{")
+    end = cleaned.rfind("}") + 1
+    if start == -1:
+        raise ValueError(f"无 JSON 对象: {raw[:100]}")
+    return json.loads(cleaned[start:end])
 
 
 def get_client() -> anthropic.Anthropic:

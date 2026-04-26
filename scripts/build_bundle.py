@@ -56,11 +56,9 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
             f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
         )
         try:
+            from utils.claude import extract_json
             raw = claude_call(prompt, max_tokens=512)
-            start, end = raw.find("{"), raw.rfind("}") + 1
-            if start == -1:
-                raise ValueError("无 JSON 对象")
-            r = json.loads(raw[start:end])
+            r = extract_json(raw)
             item["title_zh"] = r.get("title_zh", "") or item["title"]
             item["summary_zh"] = r.get("summary_zh", "")
             if item.get("id"):
@@ -70,6 +68,7 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
             return True
         except Exception as e:
             logger.warning("翻译失败（%s）: %s", item["title"][:30], e)
+            item.setdefault("title_zh", item["title"])
             return False
 
     success = 0

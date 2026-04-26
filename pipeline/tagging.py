@@ -150,9 +150,8 @@ Format:
 
     raw = claude_call(prompt, max_tokens=1024)
 
-    start = raw.find("{")
-    end = raw.rfind("}") + 1
-    data = json.loads(raw[start:end])
+    from utils.claude import extract_json
+    data = extract_json(raw)
     results = data.get("results", [])
 
     tag_set = set(ALL_TAGS)

@@ -155,13 +155,8 @@ Format:
             raw = claude_call(prompt, max_tokens=2048, model=self.model)
 
             # 提取 JSON
-            start = raw.find("{")
-            end = raw.rfind("}") + 1
-            if start == -1 or end == 0:
-                logger.warning("评分原始响应（未找到JSON）: %s", raw[:300])
-                raise AIApiError("Claude 返回格式错误：未找到 JSON")
-
-            data = json.loads(raw[start:end])
+            from utils.claude import extract_json
+            data = extract_json(raw)
             results = data.get("results", [])
 
             logger.info("Claude 评分完成：%d 个资源", len(results))
