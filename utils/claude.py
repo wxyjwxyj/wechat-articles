@@ -120,6 +120,8 @@ def claude_call(
                 max_tokens=max_tokens,
                 messages=[{"role": "user", "content": prompt}],
             )
+            u = msg.usage
+            logger.info("claude_call: %s %d in / %d out", m, u.input_tokens, u.output_tokens)
             # 取第一个 TextBlock
             for block in msg.content:
                 if isinstance(block, TextBlock):
