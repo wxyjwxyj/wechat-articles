@@ -122,7 +122,7 @@ def _call_claude_batch(
     from utils.claude import claude_call
 
     articles_text = "\n".join(
-        f"{id_offset + i + 1}. 标题：{item.get('title', '')}  摘要：{item.get('summary', '')[:80]}"
+        f"{id_offset + i + 1}. 标题：{item.get('title', '')}  来源：{item.get('source_name', '')}  摘要：{item.get('summary', '')[:80]}"
         for i, item in enumerate(items)
     )
     tags_list = "、".join(ALL_TAGS)
@@ -135,6 +135,11 @@ def _call_claude_batch(
    - 5-6: General news, feature updates, industry data
    - 3-4: Advertorials, job postings, event notices, loosely AI-related
    - 0-2: Irrelevant content, ads
+
+Scoring guardrails:
+- Titles with clickbait patterns (杀疯了/炸裂/震惊/重磅/王炸/颠覆/颠覆性/etc.) are likely advertorials — cap at 4 unless the summary provides concrete technical details
+- Articles with empty or missing summary should be treated with extra skepticism — cap at 5
+- A real product release has version numbers, benchmarks, or API details; hype alone does not qualify as 9-10
 
 Tag library: {tags_list}
 
