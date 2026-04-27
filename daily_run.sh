@@ -83,21 +83,13 @@ fi
 log "初始化 sources..."
 python scripts/seed_sources.py >> "$LOG_FILE" 2>&1
 
-# 4.5 检查 Claude API 可用性（不可用时提前通知，build_bundle 会降级为关键词方案）
+# 4.5 检查 Claude API 可用性（走 claude_call 同一路径，不可用时提前通知）
 CLAUDE_OK=$(python -c "
-from utils.config import get_claude_config
+from utils.claude import claude_call
 import sys
 try:
-    import anthropic
-except ImportError:
-    print('no_sdk'); sys.exit()
-key, base_url, _ = get_claude_config()
-if not key:
-    print('no_key'); sys.exit()
-try:
-    client = anthropic.Anthropic(api_key=key, base_url=base_url)
-    # models.list 不计费，仅验证认证是否有效
-    client.models.list()
+    # 跟实际流水线走同一条代码路径，max_tokens=1 最小消耗
+    claude_call('hi', max_tokens=1)
     print('ok')
 except Exception as e:
     print(f'fail:{str(e)[:80]}')
@@ -134,13 +126,13 @@ fi
 fi  # wechat
 
 # 5.5-5.8 并行采集（HN / ArXiv / GitHub / RSS 互相独立）
-# HN / ArXiv 直连更稳定；GitHub / RSS 需要走代理
+# HN 直连更稳定；ArXiv / GitHub / RSS 需要走代理（系统 DNS 依赖代理）
 if should_run parallel_collect; then
 DIRECT="env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY"
 log "并行采集 HN / ArXiv / GitHub Trending / RSS..."
 $DIRECT python fetch_hackernews_today.py >> "$LOG_FILE" 2>&1 &
 PID_HN=$!
-$DIRECT python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
+python fetch_arxiv_today.py >> "$LOG_FILE" 2>&1 &
 PID_ARXIV=$!
 python fetch_github_trending_today.py >> "$LOG_FILE" 2>&1 &
 PID_GH=$!
