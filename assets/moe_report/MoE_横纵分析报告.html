@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>MoE（混合专家模型）横纵分析报告</title>
+<title>MoE 横纵分析报告</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -208,7 +208,7 @@ td:last-child { text-align: center; }
 <h3>阅读指南</h3>
 <p><strong>如果你只有 5 分钟</strong>：读<a href="#一一句话定义">一句话定义</a> + <a href="#五横纵交汇洞察">横纵交汇洞察</a>的最后的话。</p>
 <p><strong>如果你想理解 MoE 但不碰技术细节</strong>：读<a href="#二技术背景">技术背景</a> + <a href="#311-纵向演进的核心脉络">纵向分析·阶段划分</a> + <a href="#41-竞争格局概况">竞争格局概况</a>。</p>
-<p><strong>如果你想读懂整份报告的所有技术概念</strong>：建议先花 15 分钟读 <a href="../MoE前置知识.md">MoE 前置知识</a>（23 个概念，零基础友好），再回来看完整报告。</p>
+<p><strong>如果你想读懂整份报告的所有技术概念</strong>：建议先花 15 分钟读 <a href="../MoE前置知识.md">MoE 前置知识</a>（22 个概念，零基础友好），再回来看完整报告。</p>
 <p><strong>如果你是研究者/工程师</strong>：直接跳<a href="#42-核心模型架构对比">架构对比表</a>和<a href="#44-性能对比">性能对比</a>，纵向分析的 3.5（DeepSeek）和 3.8（中国 MoE 军团）是重点。</p>
 <hr>
 <h2>目录</h2>
@@ -327,11 +327,12 @@ td:last-child { text-align: center; }
 <p>前面提到，MoE 训练需要 auxiliary loss 来强制专家负载均衡。但 auxiliary loss 有一个根本问题：它和主任务的目标（降低 language modeling loss）是冲突的。你在强迫模型同时优化两个相互拉锯的目标。</p>
 <p>DeepSeek 的方案很优雅：不用 auxiliary loss，而是在每个 expert 的 Router 分数上加一个动态 bias。如果某个 expert 最近太忙，bias 就减一点，让 token 不太愿意选它；如果太闲，bias 就加一点。这个 bias 不在梯度路径上——只影响前向选择，不参与反向传播。所以它不影响模型的优化目标，纯做负载均衡。</p>
 <p>这三个创新组合在一起，DeepSeek-V2 做到了：236B 总参数，21B 激活参数，在大部分基准上超越了 Mixtral 8x22B（141B 总参数），而且训练成本不到同类模型的 1/3。</p>
+<p>除了 MoE 架构层面的创新，V2 还引入了一项对推理成本影响深远的注意力机制创新——<strong>MLA（Multi-Head Latent Attention，多头潜注意力）</strong>。MLA 将 K/V 向量压缩到一个极小的"潜空间"，只存压缩后的潜向量，推理时再解压恢复。效果：每个 token 的 KV Cache 从标准 MHA 的 ~1.2MB 压缩到 ~70KB（仅为原来的约 6%，对比主流 GQA 也降到了约 1/3~1/7，等效 GQA-2.25 组），推理吞吐提升 5.76 倍。MoE 让 FFN 参数膨胀，MLA 让 Attention 显存收缩——这套"MoE + MLA"的组合拳，是 DeepSeek 能以 GPT-4 约 1% 价格提供 API 服务的关键工程基础。</p>
 <h4>DeepSeek-V2.5（2024.9）和 V3（2024.12）</h4>
 <p>V2.5 是一次迭代升级，加入了 DeepSeek-Coder 和 DeepSeek-Math 的能力融合，优化了数学和代码性能。</p>
 <p>V3 才是真正的重磅升级。2024 年 12 月，DeepSeek 发布了 DeepSeek-V3，671B 总参数，37B 激活参数，256 个专家。</p>
 <p>更让人震惊的是训练成本公开：V3 的训练仅花费约 557.6 万美元（2,788,000 H800 GPU 小时）。作为对比，同级别的 GPT-4 训练成本据估算超过了 1 亿美元。这不是因为 DeepSeek 穷，而是他们做了一系列极致的工程优化。</p>
-<p><strong>mHC（multi-head Composition）</strong> 是 V3 架构上最大的创新。在 DeepSeekMoE 的细粒度切分中，每个 token 需要路由到多个 mini-expert。但普通的拼接方式（把 K 个 expert 的输出 concat 起来）会丢失不同 expert 之间的交互信息。mHC 通过多个 attention head 来组合 expert 输出，每个 head 关注不同的 expert 组合模式，让模型能学到更复杂的专家协作关系。</p>
+<p>V3 在 V2 的三大创新基础上做了全面升级。MoE 架构上，路由专家从 160 个增加到 256 个，共享专家从 2 个精简为 1 个，门控函数从 Softmax 换成了 Sigmoid——每个专家的路由分数独立计算，不再互相挤压。工程层面的创新同样关键：<strong>Multi-Token Prediction（MTP）</strong> 让模型同时预测多个未来 token，训练信号更密集，推理时通过投机解码实现 1.8x 加速；<strong>FP8 混合精度训练</strong> 首次在大规模模型上验证可行，显存和计算量减半；自研的 <strong>DualPipe 流水线并行</strong> 算法实现了计算与通信的近乎完全重叠。</p>
 <h4>DeepSeek R1（2025.1）：推理能力的范式突破</h4>
 <p>2025 年 1 月，DeepSeek 发布了 R1，一个基于 V3-Base 的推理模型。这篇论文后来登上了 <strong>Nature 封面</strong>（2025 年 9 月），是全球首个经过同行评审的主流 LLM 研究成果。</p>
 <p>R1 的核心创新是 <strong>GRPO（群体相对策略优化）算法</strong>。传统的 RLHF 用 PPO 训练，需要同时维护一个和策略模型同等规模的 Critic 模型，训练复杂度和显存开销都巨大。GRPO 去掉了 Critic 模型：对同一个问题生成一组候选答案，以组内平均得分为基线计算相对优势值。省了一个大模型的开销。</p>
@@ -510,7 +511,7 @@ td:last-child { text-align: center; }
 <tr><td>Mixtral 8x7B</td><td>2023.12</td><td>47B</td><td>13B</td><td>8</td><td>2</td><td>首个开源高性能 MoE</td><td>✅</td></tr>
 <tr><td>Mixtral 8x22B</td><td>2024.04</td><td>141B</td><td>39B</td><td>8</td><td>2</td><td>expert 容量放大</td><td>✅</td></tr>
 <tr><td>DeepSeek-V2</td><td>2024.05</td><td>236B</td><td>21B</td><td>160+2</td><td>6+2</td><td>细粒度切分+共享专家+无aux loss</td><td>✅</td></tr>
-<tr><td>DeepSeek-V3</td><td>2024.12</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>mHC、极致训练优化、$5.6M</td><td>✅</td></tr>
+<tr><td>DeepSeek-V3</td><td>2024.12</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>Sigmoid门控、MTP、FP8训练、$5.6M</td><td>✅</td></tr>
 <tr><td>DeepSeek R1</td><td>2025.01</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>GRPO纯RL推理、Nature封面</td><td>✅</td></tr>
 <tr><td>DeepSeek V3.2</td><td>2025.12</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>DSA稀疏注意力、RL>10% FLOPs</td><td>✅</td></tr>
 <tr><td><strong>DeepSeek V4-Pro</strong></td><td><strong>2026.04</strong></td><td><strong>1.6T</strong></td><td><strong>49B</strong></td><td>未公开</td><td>未公开</td><td><strong>Hybrid Attention CSA+HCA、1M ctx</strong></td><td>✅</td></tr>

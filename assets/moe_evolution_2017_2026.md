@@ -374,7 +374,7 @@ Mistral 的 MoE 路线走了"往返"：MoE -> Dense -> 更先进的 Granular MoE
 | 上下文 | 128K |
 | 核心创新 | **MLA (Multi-Head Latent Attention)** |
 
-**MLA（多头潜注意力）**：将 KV cache 压缩为低秩 latent vector，KV cache 减少 93.3%，推理吞吐提升 5.76x
+**MLA（多头潜注意力）**：将 KV cache 压缩为低秩 latent vector，对比标准 MHA 减少 93.3%（等效 GQA-2.25 组，约为 GQA 的 1/3~1/7），推理吞吐提升 5.76x
 
 **成本优势**：API 定价仅为 GPT-4 的约 1%（$0.14/$0.28 每百万 token）
 
