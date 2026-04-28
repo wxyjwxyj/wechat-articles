@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>MoE（混合专家模型）横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>MoE（混合专家模型）横纵分析报告</h1>
+<blockquote>从 1991 年的"分而治之"到 2026 年的 685B 参数开源巨兽，MoE 如何从一个边缘想法变成大模型时代的核心架构选择。</blockquote>
+<p><strong>研究对象</strong>：Mixture of Experts（混合专家模型），AI 模型架构</p>
+<p><strong>类型</strong>：技术/算法</p>
+<p><strong>研究时间</strong>：2026 年 4 月</p>
+<p><strong>方法论</strong>：横纵分析法 — 纵向沿时间轴追溯技术演进，横向对比当下主流 MoE 模型的架构选择</p>
+<hr>
+<h2>目录</h2>
+<ol>
+<li><a href="#一一句话定义">一句话定义</a></li>
+<li><a href="#二技术背景">技术背景：读懂 MoE 需要知道的事</a></li>
+<li><a href="#三纵向分析">纵向分析：MoE 三十年演进史</a></li>
+<li><a href="#四横向分析">横向分析：2026 年 MoE 竞争图谱</a></li>
+<li><a href="#五横纵交汇洞察">横纵交汇洞察</a></li>
+<li><a href="#六信息来源">信息来源</a></li>
+</ol>
+<hr>
+<h2>一、一句话定义</h2>
+<p><strong>MoE（Mixture of Experts）是一种稀疏模型架构：把一个大模型拆成 N 个"专家"小模型，每个输入 token 只激活其中 K 个（K << N），用"分而治之"换取更高效的模型容量利用。</strong></p>
+<p>它不是某种特定的模型，而是 Transformer 架构中 FFN（前馈网络）层的一种替代方案。MoE 替换了传统 Transformer 中"所有 token 走同一个 FFN"的做法，改为"Router 先看 token 是什么，再决定发给哪几个专家 FFN 处理"。</p>
+<hr>
+<h2>二、技术背景</h2>
+<blockquote>这一章的目标是让没有机器学习背景的读者也能理解 MoE 的核心逻辑。如果你已经熟悉 Transformer 和 FFN，可以跳到第三节。</blockquote>
+<h3>2.1 MoE 改了什么</h3>
+<p>任何大语言模型（GPT、Claude、DeepSeek）都基于 Transformer 架构。一个 Transformer 层由两步交替组成：</p>
+<pre><code>Token → Attention 层（理解上下文关系）→ FFN 层（存储知识、做变换）→ 下一层</code></pre>
+<p>Attention 负责"看上下文"——让模型理解"苹果"在"她吃了苹果"和"她买了苹果手机"里分别指什么。FFN 负责"存知识"——研究发现，模型学到的绝大多数事实性知识都存储在 FFN 的权重里。</p>
+<p><strong>MoE 只替换 FFN 层，Attention 保持不变：</strong></p>
+<pre><code>原始 Transformer:    Attention → FFN（一个）<br>MoE Transformer:     Attention → Router → [FFN₁, FFN₂, ..., FFN_N]（N 个专家）<br>                                              ↓<br>                                    Router 选 K 个来干活</code></pre>
+<h3>2.2 为什么要这么做</h3>
+<p>直觉很简单：没有人是什么都懂的。你去医院看病，不会一个人看完所有科室，而是挂号台（Router）根据你的症状（token 内容），帮你分配给内科或骨科（Expert）。</p>
+<p>如果用传统的稠密（Dense）模型，每个 token 都要激活模型里的全部参数。一个 7B 的模型，处理任何一个词时，70 亿个参数全部参与计算。这很浪费——处理"微积分"这个词时，模型里存"莎士比亚"知识的那些权重也在跑。</p>
+<p>MoE 的思路是：让模型容量大幅膨胀（可以有几百个专家），但每次只叫最相关的那几个出来干活。一个 685B 总参数的 MoE 模型，处理一个 token 时可能只激活 37B 参数。</p>
+<h3>2.3 代价</h3>
+<p>天下没有免费的午餐。MoE 的代价也很直接：</p>
+<ul>
+<li><strong>显存爆炸</strong>：虽然推理时只算 K 个专家，但所有 N 个专家都必须加载在 GPU 显存里，因为你不知道下一个 token 会落到哪个专家。Mixtral 8x7B 总参数 47B，推理需要 ~94GB 显存，而同等推理速度的 13B 稠密模型只需要 ~26GB。</li>
+</ul>
+<ul>
+<li><strong>训练不稳定</strong>：Router 和专家一起训练，容易出现"赢家通吃"——少数几个专家变得很忙，其他专家闲置。需要额外的负载均衡机制来防止。</li>
+</ul>
+<ul>
+<li><strong>通信开销</strong>：在分布式训练中，不同专家分布在不同 GPU 上，token 的路由分发和结果收集会带来额外的通信代价。</li>
+</ul>
+<ul>
+<li><strong>微调困难</strong>：稀疏模型 fine-tune 时更容易过拟合，量化也更复杂。</li>
+</ul>
+<p><strong>一句话：MoE = 用显存放能力，用稀疏换速度。</strong> 后续三十年的演进，本质就是不断探索如何放大"能力"那一端，同时压制"代价"那一端。</p>
+<hr>
+<h2>三、纵向分析</h2>
+<h3>3.1 史前时代（1991-2016）：一个超前于时代的想法</h3>
+<p>MoE 的概念比深度学习本身的爆发早了二十多年。而且，它几乎拥有你能想到的最豪华的作者阵容。</p>
+<h4>1991：MoE 的诞生</h4>
+<p>《Adaptive Mixtures of Local Experts》，作者是 Robert Jacobs、Michael Jordan（对，就是篮球界那个 Michael Jordan 的同名人，伯克利的机器学习大佬）、Steven Nowlan、以及 <strong>Geoffrey Hinton</strong>。</p>
+<p>四位作者在论文里提出：不要训练一个大而全的神经网络，而是训练多个小"专家"网络，每个专家专注数据的不同子区域，再用一个可训练的"门控网络"（Gating Network）根据输入决定每个专家的权重。训练方法用的是 EM 算法（Expectation-Maximization）。</p>
+<p>他们在日语元音识别上做了实验。结果很直白：MoE 模型达到目标准确率所需的训练轮次，大约是单一大型网络的一半。</p>
+<p>这个想法在 1991 年是惊人的——"分而治之"比"一个大模型通吃"更快。但当时没人会用上千个 GPU 训练大模型，所以这个惊人的想法很快被遗忘在了论文堆里。</p>
+<h4>1992-1995：理论框架的建立</h4>
+<p>1992 年，Hampshire 和 Waibel 发表了 Meta-Pi 网络，一个独立于 Jacobs 路线的并行多网络方案，用于语音识别。这说明"分而治之"的想法在 90 年代初不是孤立的一篇论文，而是一个方向。</p>
+<p>真正的理论里程碑在 1994 年。Jordan 和 Jacobs 发表了《Hierarchical Mixtures of Experts and the EM Algorithm》，把 MoE 扩展成<strong>树形层次结构</strong>——专家不只有一层，而是多层嵌套。这篇论文从概率模型的框架重新解释了 MoE，并证明 EM 算法训练的收敛速度比梯度下降快约 10 倍。</p>
+<p>1995 年，Jordan 和 Xu 给出了 MoE 训练的收敛性理论证明。到 90 年代中期，MoE 的理论基础已经相当完整——有架构、有训练算法、有收敛保证。但硬件跟不上理论。</p>
+<h4>2001-2013：漫长的沉寂与偶然的尝试</h4>
+<p>在 90 年代后期到 2000 年代，MoE 基本处于休眠状态。2001 年 Collobert 和 Bengio 把 MoE 的门控思想扩展到了 SVM，证明这个框架不限于神经网络。但在那个 SVM 和随机森林统治机器学习的年代，MoE 依然是个飞地。</p>
+<p><strong>2013 年是一个被低估的节点。</strong> David Eigen、Marc'Aurelio Ranzato、Ilya Sutskever（后来 OpenAI 的联合创始人）发表了《Learning Factored Representations in a Deep Mixture of Experts》。这篇论文第一次尝试把 MoE 的门控机制嵌入到深度神经网络的每一层——本质上就是今天 Transformer MoE 的雏形。</p>
+<p>但它失败了。核心问题出在"稀疏"上：当时的门控机制无法可靠地产生稀疏激活。Softmax 输出永远是"每个专家都有一点点贡献"，计算量和稠密模型没区别，MoE 的优势荡然无存。</p>
+<p>与此同时，Yoshua Bengio 团队在 2013-2015 年间发表了一系列关于"条件计算"（Conditional Computation）的论文，核心思想是：网络的不同部分应该在需要时才激活。这和 MoE 的精神一脉相承，但 Bengio 的方案也没有实现真正的稀疏性。</p>
+<p>这些失败有一个共同的技术原因：2013 年的优化器、GPU 显存、分布式训练框架，都不支持稀疏梯度的高效计算。想法对了，工具没跟上。</p>
+<h4>Shazeer 的铺垫（2016）</h4>
+<p>在 Google Brain，Noam Shazeer 并没有直接参与 2013 年的 MoE 尝试。他当时的主线工作是<strong>大规模语言模型</strong>。</p>
+<p>2016 年，Shazeer 和 Jozefowicz 等人发表了《Exploring the Limits of Language Modeling》，把基于 LSTM 的稠密语言模型推到了当时的算力极限。这篇论文让他深刻体会到了稠密模型的扩展瓶颈：<strong>参数每大一点，计算量就线性增长。想做个千亿参数的语言模型？先准备好电费账单。</strong></p>
+<p>同一年，Shazeer 还做了"Sparse Non-negative Matrix Language Modeling"（2015）和"Swivel"词嵌入（2016）。这些工作虽然不直接涉及 MoE，但都围绕一个主题：<strong>稀疏性</strong>。他显然在找"怎么让模型只用一部分参数处理一个输入"的解法。</p>
+<p>而解法已经在文献里沉睡了 25 年。</p>
+<h3>3.2 关键转折：Sparsely-Gated MoE（2017.01）</h3>
+<p>Shazeer 把 1991 年 Jacobs 等人的"用门控网络选专家"的思想、2013 年 Eigen 等人的"深度 MoE 层"的架构直觉、以及自己 2016 年从稠密语言模型 scaling 中得到的切肤之痛，融合成了一个新的方案。</p>
+<p>2017 年 1 月，Shazeer 和 Azalia Mirhoseini、Quoc Le、Geoffrey Hinton、Jeff Dean 等 Google Brain 全明星阵容发表了《Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer》。这是 MoE 在大模型时代的开山之作，也是所有现代 MoE 模型（Mixtral、DeepSeek-V3、Qwen-MoE）的模板。</p>
+<p>这篇论文提出了几个至今仍在使用的核心设计：</p>
+<p><strong>稀疏门控（Sparsely-Gated）Router</strong>：不只是一个简单的分类器，而是一个可学习的门控网络。对每个 token，Router 计算一个 softmax 分布，然后只选 top-K 个得分最高的专家。为了让不同 token 选不同的专家（而不是所有 token 都选同一个"最优"专家），引入了额外的噪声项。</p>
+<p><strong>负载均衡</strong>：作者意识到如果放任 Router 自己选，会出现可怕的"赢家通吃"——少数专家收到大部分 token，其余专家形同虚设。他们的解决方案是引入 auxiliary loss（辅助损失），在训练时惩罚"专家使用分布不均匀"的情况。</p>
+<p><strong>层次化路由（Hierarchical Routing）</strong>：当专家数量很大时（论文里有上千个专家），计算所有专家的 Router 分数本身就很贵。Shazeer 的方案是建一棵"专家树"，每层用一个小 Router 做粗选，走到叶子节点才是真正的专家。</p>
+<p>实验结果令人震撼：用 Sparsely-Gated MoE 做语言模型，可以达到比同等计算量的 LSTM 模型好几个数量级的 perplexity 改善。但当时的主流程架还不是 Transformer，这篇论文也不是发表在 Transformer 的语境下。</p>
+<p>然后，2017 年 6 月，Google 的另一组人（Vaswani et al.）发表了《Attention Is All You Need》，Transformer 诞生了。</p>
+<h3>3.3 Google 的 MoE 帝国时代（2018-2022）</h3>
+<p>从 2018 到 2022 年，Google 几乎是 MoE 领域唯一的玩家。他们内部显然认定了 MoE 是通向大模型的正确路线，投入了大量资源。</p>
+<h4>GShard（2020）：把 MoE 放进 Transformer</h4>
+<p>GShard 是第一个真正把 MoE 和 Transformer 结合起来训练的大规模系统。Lepikhin 等人用 MoE 替代了 Transformer 中每隔一层的 FFN，在机器翻译任务上训练了 600B 参数的模型。</p>
+<p>GShard 的核心贡献不是算法创新，而是系统工程：它提出了一套把不同 expert 的权重分布到不同 TPU 设备上的策略（GShard = Giant Sharding），让训练巨大 MoE 模型成为工程上可行的目标。论文还引入了 expert capacity（专家容量）的概念——如果某个 expert 收到的 token 超过了容量上限，多余的 token 直接丢弃。这很粗暴，但在工程上有效。</p>
+<h4>Switch Transformer（2021）：更简单的 Router 反而更好</h4>
+<p>2021 年 1 月，Google 的 William Fedus 等人发表了 Switch Transformer。这篇论文做了一个现在看来有点反直觉的简化：把 Router 的 top-K 从常见的 K=2 改成 K=1。</p>
+<p>他们的论证是：top-1 路由大幅简化了路由和合并的计算，减少了通信开销。模型为了补偿"只选一个专家"的信息损失，会学到更好的专家分工。引入的 capacity factor（容量因子）概念让负载均衡变得更可控——当 capacity factor = 1.0 时，一个 expert 最多处理 tokens / N 个 token（即刚好均分）；设为 1.5 则允许 50% 的溢出缓冲。</p>
+<p>Switch Transformer 在 C4 数据集上预训练了从 8B 到 1.6T 参数的各种规模，展示了 MoE 的可扩展性。关键结论是：<strong>MoE 的扩展效率优于稠密模型</strong>——同样的计算量下，加更多专家 > 加更多层。</p>
+<p>但 top-1 也有代价：每个 token 只走一个专家，失去了"不同专家从不同角度贡献"的机会。这也是为什么后来 DeepSeek 等模型又把 K 调回了更大的值。</p>
+<h4>GLaM（2021）：GPT-3 的 MoE 对标</h4>
+<p>2021 年底，Google 发布了 GLaM（Generalist Language Model），1.2T 总参数，激活 97B（64 个专家，top-2）。Google 声称在 29 个 NLP 基准上，GLaM 用 GPT-3 训练量 1/3 的能耗，达到了 GPT-3 的性能水平，部分任务上甚至显著超越。</p>
+<p>但 GLaM 始终没有开源，也没有公开 API。它更像是一次内部技术验证和对外的 PR 宣示——"我们 Google 有比 GPT-3 更高效的架构"——但这没能阻止 OpenAI 在主流认知中领先。</p>
+<h4>ST-MoE（2022）：解决训练稳定性</h4>
+<p>2022 年 2 月，Google 的 Zoph 等人发表了 ST-MoE（Stable and Transferable MoE）。这篇论文直面 MoE 的两大痛点：</p>
+<p><strong>训练不稳定</strong>：提出了 Z-loss —— 在 Router 输出的 logit 上额外加一个正则化项，惩罚绝对值过大的 logit 值。这有效防止了 router 输出极端分布（所有 token 走同一个 expert）。</p>
+<p><strong>专家丢弃问题</strong>：当 expert capacity 不够时，token 被丢弃会浪费计算和训练数据。ST-MoE 提出用 random routing（随机路由）作为兜底——当优先 expert 满了，随机发到一个不那么忙的 expert，虽不最优但至少不浪费。</p>
+<p>ST-MoE 还在实验中系统比较了 scaling MoE 的不同方式，发现增加 expert 数量 > 增加 expert 大小。这一结论直接影响了后来的 Mixtral 和 DeepSeek 的架构选择。</p>
+<p>到 2022 年底，Google 的内部 MoE 技术栈已经相当成熟。但讽刺的是，这些技术几乎都停留在论文和内部系统里，真正把 MoE 带到开源社区和大众视野的，是一家法国小公司。</p>
+<h3>3.4 开源时代的开端：Mixtral 8x7B（2023.12）</h3>
+<p>2023 年 12 月，巴黎创业公司 Mistral AI 发布了 Mixtral 8x7B。</p>
+<p>这不是第一个 MoE 模型，但它是第一个<strong>真正好用的开源 MoE 模型</strong>。8 个 expert，每个 7B 参数，top-2 路由，总参数 47B，每次激活 13B。它的推理速度和 13B 稠密模型相当，但性能接近 GPT-3.5。</p>
+<p>更关键的是，Mistral 只发了一条推文附带 torrent 链接（甚至没写博客），扔出模型权重就走了。这个"不够正式"的发布方式反而引爆了社区——48 小时内，开发者们自己测、自己写 benchmark、自己在 Reddit 和 HuggingFace 上分享结果。开源社区第一次感受到：MoE 不是一个 Google 内部的实验室玩具，是我能在自己 GPU 上跑的东西。</p>
+<p>2024 年 4 月，Mistral 又发布了 Mixtral 8x22B，把每个 expert 放大到 22B，总参数 141B，对标 GPT-4 的性能区间。</p>
+<p>Mixtral 的路由策略有两个值得说的设计：</p>
+<p><strong>Router bias toward high-norm</strong>：Mistral 发现，训练过程中会出现某些 expert 输出向量的 norm 系统性地高于其他 expert。Router 倾向于选 norm 高的 expert（因为它们"声音更大"），但这其实是参数初始化带来的偏差，不是真正的专长分工。Mistral 的解法是在 router 里对输出 norm 做补偿。</p>
+<p><strong>Token-choice routing</strong>：每个 token 选专家。这是标准的 token-choice 路由方式，但跟后来一些研究讨论的 expert-choice（让专家选 token）形成对比。</p>
+<h3>3.5 DeepSeek 的架构革命（2024-2025）</h3>
+<p>如果说 Mixtral 是把 MoE 做成一个"大家都能用的产品"，那 DeepSeek 就是在这个基础上做了架构层面的重大创新。</p>
+<h4>DeepSeek-V2（2024.5）：三个关键创新</h4>
+<p>2024 年 5 月，DeepSeek 发布了 DeepSeek-V2，一个 236B 总参数（激活 21B）的 MoE 模型。这个模型对 MoE 架构做了三件事，每一件都影响深远：</p>
+<p><strong>创新一：Fine-grained Expert Segmentation（细粒度专家切分）</strong></p>
+<p>传统 MoE 的每个 expert 就是一个完整的标准 FFN。DeepSeek 的洞见是：打破 expert = 一个完整 FFN 的等式，把 1 个标准 FFN 切分成 m 个更小的"mini-expert"。比如原来 1 个 7B 的 expert，切成 4 个 ~1.75B 的 mini-expert。</p>
+<p>为什么要这么做？更灵活的组合。标准 expert 太大，选 2 个就可能激活了太多参数。mini-expert 让 Router 可以更精细地激活——选更多 mini-expert，但每个更小，总和可控。DeepSeek-V2 用了 m=4 的切分。</p>
+<p><strong>创新二：Shared Experts（共享专家）</strong></p>
+<p>传统的 MoE 里，通用知识（语法、基本常识）需要在每个 expert 里冗余存储——因为每个 token 都要用到这些知识，但每次只走 2 个 expert，所以每个 expert 都得备一份。</p>
+<p>DeepSeek 的方案：分出一小部分参数作为"共享专家"，所有 token 都必须经过它们。然后加上一些"路由专家"，按 token 内容选择性激活。DeepSeek-V2 的 236B 参数中，有 2 个共享专家（它们的输出在合并时权重固定），160 个路由专家（分为 4 组，每 token 激活 6 个）。</p>
+<p>这个设计避免了知识的冗余存储。共享专家存"人人都需要的"（语法、常识），路由专家存"某一类问题需要的"（代码、数学、特定语言）。</p>
+<p><strong>创新三：Auxiliary-Loss-Free Load Balancing（无辅助损失的负载均衡）</strong></p>
+<p>前面提到，MoE 训练需要 auxiliary loss 来强制专家负载均衡。但 auxiliary loss 有一个根本问题：它和主任务的目标（降低 language modeling loss）是冲突的。你在强迫模型同时优化两个相互拉锯的目标。</p>
+<p>DeepSeek 的方案很优雅：不用 auxiliary loss，而是在每个 expert 的 Router 分数上加一个动态 bias。如果某个 expert 最近太忙，bias 就减一点，让 token 不太愿意选它；如果太闲，bias 就加一点。这个 bias 不在梯度路径上——只影响前向选择，不参与反向传播。所以它不影响模型的优化目标，纯做负载均衡。</p>
+<p>这三个创新组合在一起，DeepSeek-V2 做到了：236B 总参数，21B 激活参数，在大部分基准上超越了 Mixtral 8x22B（141B 总参数），而且训练成本不到同类模型的 1/3。</p>
+<h4>DeepSeek-V2.5（2024.9）和 V3（2024.12）</h4>
+<p>V2.5 是一次迭代升级，加入了 DeepSeek-Coder 和 DeepSeek-Math 的能力融合，优化了数学和代码性能。</p>
+<p>V3 才是真正的重磅升级。2024 年 12 月，DeepSeek 发布了 DeepSeek-V3，671B 总参数，37B 激活参数，256 个专家。</p>
+<p>更让人震惊的是训练成本公开：V3 的训练仅花费约 557.6 万美元（2,788,000 H800 GPU 小时）。作为对比，同级别的 GPT-4 训练成本据估算超过了 1 亿美元。这不是因为 DeepSeek 穷，而是他们做了一系列极致的工程优化。</p>
+<p><strong>mHC（multi-head Composition）</strong> 是 V3 架构上最大的创新。在 DeepSeekMoE 的细粒度切分中，每个 token 需要路由到多个 mini-expert。但普通的拼接方式（把 K 个 expert 的输出 concat 起来）会丢失不同 expert 之间的交互信息。mHC 通过多个 attention head 来组合 expert 输出，每个 head 关注不同的 expert 组合模式，让模型能学到更复杂的专家协作关系。</p>
+<h4>DeepSeek R1（2025.1）：推理能力的范式突破</h4>
+<p>2025 年 1 月，DeepSeek 发布了 R1，一个基于 V3-Base 的推理模型。这篇论文后来登上了 <strong>Nature 封面</strong>（2025 年 9 月），是全球首个经过同行评审的主流 LLM 研究成果。</p>
+<p>R1 的核心创新是 <strong>GRPO（群体相对策略优化）算法</strong>。传统的 RLHF 用 PPO 训练，需要同时维护一个和策略模型同等规模的 Critic 模型，训练复杂度和显存开销都巨大。GRPO 去掉了 Critic 模型：对同一个问题生成一组候选答案，以组内平均得分为基线计算相对优势值。省了一个大模型的开销。</p>
+<p>更惊人的是 <strong>R1-Zero</strong>：完全不用任何 SFT 数据，直接对 V3-Base 做纯强化学习训练，模型自己涌现出了"思考"行为——</p>
+<ul>
+<li>自我反思："Wait, wait. That's an aha moment..."</li>
+<li>自我验证：双重检查，交叉验证</li>
+<li>自适应思考时间：简单题一笔带过，难题分多步推理</li>
+</ul>
+<p>AIME 2024 得分 79.8%，MATH-500 达到 97.3%，Codeforces Elo 2029（超过 96.3% 人类选手）。而且推理成本仅为 OpenAI o1 的 3-4%。</p>
+<p>R1 的影响超出了 benchmark：它证明了"推理能力可以通过纯 RL 从 Base 模型中涌现"，这个范式影响了后续几乎所有推理模型的训练方式。</p>
+<h4>DeepSeek V3.1（2025.8）：混合推理架构</h4>
+<p>2025 年 8 月，DeepSeek 发布了 V3.1。这次更新的核心是把 V3（非推理）和 R1（推理）合并成一个统一模型——通过"深度思考"按钮一键切换推理/非推理模式，不需要部署两套权重。</p>
+<p>V3.1 的 Agent 能力大幅提升：SWE-bench Verified 从 V3 的 45.4 跃升到 66.0（+45%），Terminal-Bench 提升 5 倍以上。后续 V3.1-Terminus（2025.9）进一步将 SWE-bench 推到 68.4。</p>
+<p>但 V3.1 也闹出了著名的"极"字 bug——模型会随机在输出中插入"极"字，甚至出现在 JSON 和代码里。社区分析怀疑是 tokenizer 中"极"（token ID 2577）和省略号"……"（token ID 2576）相邻，数据清洗时产生了 off-by-one 错误。这个 bug 在 V3.2 中被修复。</p>
+<h4>DeepSeek V3.2（2026.3）</h4>
+<p>V3.2 修复了"极"字 bug，进一步优化推理能力，支持 1M 上下文，并在训练稳定性上做了改进。DeepSeek V4 也已在 Preview 阶段。</p>
+<p>DeepSeek 的 MoE 模型开源策略，深刻改变了 AI 生态。V2 和 V3 都在 HuggingFace 上公开了完整权重，开源社区基于它们做了大量 fine-tune 和部署尝试。vLLM 和 SGLang 两个主流推理框架都对 DeepSeek MoE 做了专门优化。</p>
+<h3>3.6 阿里 Qwen 的 MoE 路线（2024-2026）</h3>
+<p>阿里通义团队是另一个在 MoE 上投入巨大的玩家。他们的路线和 DeepSeek 不同，更注重生态完整性。</p>
+<h4>Qwen2.5-MoE（2025）</h4>
+<p>阿里的首次 MoE 公开亮相。14.3B 总参数，激活 2.7B——把 MoE 的"轻量部署"做到了极致。这个模型的定位是端侧和移动端部署，让 MoE 不再只是"大模型的玩物"。</p>
+<h4>Qwen3-MoE（2025-2026）</h4>
+<p>Qwen3-MoE 沿用了 DeepSeekMoE 的 fine-grained expert + shared expert 方案，但做了自己的路由策略优化。有多个规模版本，从端侧到云端覆盖。</p>
+<h4>Qwen3-Next（2026）</h4>
+<p>这是阿里 MoE 路线中最激进的设计。Qwen3-Next 不再是一个纯 Transformer 模型，而是把 GatedDeltaNet（一种新型线性注意力机制）和 MoE 结合在一起。512 个专家，用了一种新的路由器设计来管理超大规模专家池。</p>
+<p>这个混合架构的动机是：传统的 Softmax Attention 在处理超长序列时计算量按序列长度的平方增长。用 GatedDeltaNet 替代部分层的 Attention，既能减少计算量，又能让 MoE 的专家专注于更重要的信息处理。</p>
+<p>这个方向是否真能 work，还有待更广泛的验证。但 Qwen3-Next 代表了一个趋势：<strong>MoE 不只是 Transformer 内的局部替换，而是可以和其他架构创新（新 Attention 变体、新层类型）组合使用的灵活工具。</strong></p>
+<h4>Qwen3.5（2026.4）</h4>
+<p>阿里最新发布的是 Qwen3.5，一个 397B 参数的旗舰模型（约 397B 总参数，100B+ 激活）。从公开评测看，在部分任务上已经与 GPT-5 对标。</p>
+<h3>3.7 美国玩家的 MoE 态度（2024-2026）</h3>
+<h4>OpenAI：GPT-4 真的是 MoE 吗</h4>
+<p>关于 GPT-4 是否是 MoE 架构，AI 圈的传闻从未断过。</p>
+<p>2023 年 6 月，George Hotz（geohot）在播客中透露，他听到的说法是 GPT-4 用了 8 个 expert，每个 220B 参数。如果属实，GPT-4 就是一个 8x220B 的 MoE 模型，总参数约 1.8T（后来 OpenAI 否定了 1.8T 这个数字，但没有否认 MoE 架构）。</p>
+<p>2024 年，一些间接证据指向 GPT-4 使用了某种形式的 MoE：API 定价中不同模型的推理速度差异、某些社区测试中发现的"有时慢有时快"的行为模式（符合不同 token 走不同专家的特征）。</p>
+<p>但 OpenAI 官方从未正面确认或否认。直到 2025 年，奥特曼在一次访谈中被直接问到 MoE，他的回答是"不想公开架构细节"。这个模糊是有价值的——它暗示 MoE 至少是内部认真考虑过甚至已经使用的东西，否则大可以直接否认。</p>
+<h4>Google Gemini</h4>
+<p>Google 在 Gemini 上延续了 MoE 路线，但同样没有公开架构细节。从 DeepMind 团队的零星表态可以判断，Gemini 使用了某种形式的 MoE。给定的 Google 过去在 MoE 上的积累，这是最自然的路径。</p>
+<p>不过值得玩味的是，Google 在 MoE 论文上领先了那么多年，但在真正让 MoE 产生商业影响力的比赛中，却输给了 Mistral 和 DeepSeek。"原创"和"落地"之间的差距，在 MoE 的故事里被放大了。</p>
+<h4>Anthropic：坚持 Dense 的少数派</h4>
+<p>在所有主流 AI 玩家中，Anthropic 是唯一一个旗帜鲜明地选择了稠密（Dense）架构的公司。Claude 3/4 系列全部是 Dense Transformer。</p>
+<p>Anthropic 的推理很务实。他们认为：</p>
+<ol>
+<li><strong>训练稳定性</strong>：Dense 模型的训练远比 MoE 稳定，不需要 auxiliary loss、bias 调整、expert dropout 等额外机制。Anthropic 的 Scaling Monosemanticity（单义性研究）系列工作，对训练过程中的可解释性有极高要求，MoE 的路由行为会显著增加解释的难度。</li>
+</ol>
+<ol>
+<li><strong>推理部署简单</strong>：Dense 模型可以直接在标准 GPU 上推理，不需要处理 expert 分布、EP（Expert Parallelism）、KV Cache 跨设备通信等复杂问题。这对 API 的延迟稳定性很重要。</li>
+</ol>
+<ol>
+<li><strong>Fine-tune 友好</strong>：企业客户通常需要 fine-tune 模型。MoE 的稀疏激活在 fine-tune 时容易过拟合，而 Dense 模型的 fine-tune 经验成熟、效果可预期。</li>
+</ol>
+<ol>
+<li><strong>安全对齐更容易</strong>：Anthropic 把安全放在首位。MoE 的路由机制引入了新的攻击面——恶意输入可以操纵 Router 走向特定专家，产生不可预期的输出。Dense 模型没有这个攻击面。</li>
+</ol>
+<p>Anthropic 的选择有代价：他们的模型单位参数效率可能不如 MoE。但他们的判断似乎是，对于他们真正在乎的维度（安全、可控、稳定），Dense 是更合理的选择。到目前为止，Claude 3.5/4 的性能在同等规模下不输给 MoE 模型，说明他们的折中至少目前是成立的。</p>
+<h4>xAI Grok</h4>
+<p>Elon Musk 的 xAI，Grok-1 是一个 314B 参数的 MoE 模型，8 个 expert top-2。Grok 的路线更"传统"——基本上沿用了 Mixtral 的设计，没有做 DeepSeek 那样的架构创新。</p>
+<p>Grok-2 和 Grok-3 在性能上有提升，但架构细节公开不多。xAI 在 MoE 上最大的贡献可能是他们在 Twitter/X 数据中心大规模部署 MoE 模型的经验——如何让 MoE 推理在高并发的社交媒体场景下保持低延迟。</p>
+<h3>3.8 MoE 推理生态的演进（2023-2026）</h3>
+<p>MoE 模型能不能实际使用，很大程度上取决于推理框架的支持。这部分演进时间线值得单列。</p>
+<p><strong>2023</strong>：MoE 模型还是少数派的玩具。大部分推理框架（包括初版 vLLM）对 MoE 支持很差。Mixtral 发布时，开发者用的是 transformers 库原生推理，用 HuggingFace 的 <code>device_map="auto"</code> 把不同 expert 分布到不同 GPU，效率极低。</p>
+<p><strong>2024 上半年</strong>：vLLM 0.4.x 加入了初步的 MoE 支持，主要是 Expert Parallelism（把不同 expert 分布到不同 GPU 上处理）。但 EP 的实现还很粗糙，通信开销大。</p>
+<p><strong>2024 下半年</strong>：SGLang 异军突起，对 MoE 的优化比 vLLM 更激进。DeepSeek-V3 发布后，SGLang 成了社区的默认推理选型——它在 MoE 上的吞吐量比 vLLM 高 30-50%。</p>
+<p><strong>2025</strong>：两个框架对 MoE 争夺进入白热化。vLLM 重新设计了 MoE 的 fused kernels，SGLang 引入了 RadixAttention + MoE 的联合优化。TensorRT-LLM 也加入了 MoE 的 Expert Parallelism 支持，在企业级部署上更有优势（更低的 P99 延迟）。</p>
+<p><strong>2026</strong>：MoE 推理已经成为每个框架的标配功能。社区总结出了几条公认的 MoE 推理优化法则：</p>
+<ul>
+<li>小批量推理：Pre-fill（首次推理）受计算限制，EP 的通信开销不明显</li>
+<li>大批量推理：Decode 阶段受 KV Cache 显存限制，EP 反而增加开销</li>
+<li>Expert 多卡分布时，all-to-all 通信是最大瓶颈</li>
+</ul>
+<h3>3.9 2025-2026：MoE 成为行业标配</h3>
+<h4>Mistral 的"回归"：从 Dense 退回到 MoE（2025.12）</h4>
+<p>Mistral 在 2024 年 7 月发布了 Mistral Large 2（123B Dense），当时看来是对 MoE 的一次理性回归——这家以 Mixtral 成名的公司选择了更稳定的 Dense 架构来做旗舰模型。</p>
+<p>但 2025 年 12 月，Mistral 发布了 Mistral 3 系列，又重新回到了 MoE 路线。Mistral Large 3 是一个 675B 参数的 Granular MoE 模型，128 个专家，激活约 41B（仅占总参数的 6%）。从 2024 年 Large 2 的 123B Dense 到 2025 年 Large 3 的 675B MoE，激活参数反而从 123B 降到了 41B。</p>
+<p>这个"离开又回来"的轨迹说明了 MoE 的引力：当你想把模型做大，MoE 几乎是唯一可行的路线。Mistral Large 2 的 123B Dense 在性能上触到了天花板，而要突破这个天花板、同时保持推理经济性，MoE 是不可避免的选择。</p>
+<p>到 2026 年 3 月，Mistral 又发布了 Small 4（119B 总参、仅 6.5B 激活、128 专家），把细粒度 MoE 推到了极致——激活比不到 5.5%。</p>
+<h4>Meta 入局：Llama 4 首款 MoE（2025）</h4>
+<p>Meta 在 Llama 系列上一直坚持 Dense 路线（Llama 3.1 405B 是纯 Dense）。但 2025 年发布的 Llama 4 转向了 MoE：</p>
+<ul>
+<li><strong>Llama 4 Scout</strong>：109B 总参数，17B 激活，16 个专家。10M 上下文窗口是最大卖点。</li>
+<li><strong>Llama 4 Maverick</strong>：400B 总参数，17B 激活，128 个专家。1M 上下文。</li>
+</ul>
+<p>Meta 的 MoE 设计偏保守——Scout 只用了 16 个专家（远少于 DeepSeek 的 256），激活比也较高（15.6% vs DeepSeek V3 的 5.5%）。这说明 Meta 在 MoE 上的首要考量是训练稳定性和可预测性，而非极致效率。</p>
+<h4>Kimi K2：首个开源 1T MoE（2025-2026）</h4>
+<p>月之暗面（Moonshot AI）的 Kimi K2 是第一个开源了 1 万亿参数的 MoE 模型。384 个路由专家 + 1 个共享专家，总参数 1T，激活 32B。K2 还引入了一个新的优化器 MuonClip，声称训练比 AdamW 更稳定。</p>
+<h4>xAI Grok 的 Scaling 激进路线</h4>
+<p>Grok-1（2024.03）是一个 314B 的 MoE 模型（8 专家，top-2），基本沿用了 Mixtral 的设计范式。但 Grok-4 Heavy（2025-2026）大幅跃进：多 Agent 辩论推理，AIME 2025 达到满分，HLE（Humanity's Last Exam）50.7% 成为业界首个破 50% 的模型。Grok-5 预计 2026 年底达到 6-7T 参数，是 Scaling Law 最激进的践行者。</p>
+<h3>3.10 纵向演进的核心脉络</h3>
+<p>回头看 30 年的 MoE 演进史，有一条清晰的主线：</p>
+<p><strong>第一阶段（1991-2016）</strong>：想法超前于工程条件，MoE 存在于论文里但不具备实用条件。</p>
+<p><strong>第二阶段（2017-2022）</strong>：Google 建立了 MoE 的技术基础。稀疏路由、负载均衡、大规模训练、训练稳定化的核心技术都在这一时期被提出。但 Google 的 MoE 技术始终没有走出内部系统。</p>
+<p><strong>第三阶段（2023-2024）</strong>：开源改变了 MoE 的走向。Mistral 证明了"开源 MoE 好用"，DeepSeek 证明了"开源 MoE 可以比闭源更好"。MoE 从一个 Google 内部的技术栈变成了社区可参与、可改进的开放生态。</p>
+<p><strong>第四阶段（2025-2026）</strong>：MoE 进入"标配化"阶段。几乎所有主流模型都在用（或至少考虑用），Anthropic 的 Dense 选择反而成了特立独行。MoE 推理生态成熟，从少数派技术变成了基础设施。</p>
+<p>驱动这条演进主线的最核心矛盾始终是：<strong>如何在给定的计算预算下，最大化模型能力？</strong> MoE 的核心 trade-off（用显存放能力，用稀疏换速度）三十年不变，变得只是工程化程度和生态成熟度。</p>
+<hr>
+<h2>四、横向分析</h2>
+<p>对 2026 年 4 月当前时间点的 MoE 竞争格局进行全面横向对比。</p>
+<h3>4.1 竞争格局概况</h3>
+<p>当前的 MoE 世界可以分为四个阵营：</p>
+<table>
+<tr><th>阵营</th><th>代表模型</th><th>策略</th></tr>
+<tr><td><strong>开源标杆</strong></td><td>DeepSeek-V3.2</td><td>架构创新 + 极致性价比 + 社区生态</td></tr>
+<tr><td><strong>全面生态</strong></td><td>Qwen3-MoE 系列</td><td>全尺寸覆盖（手机到云端）+ 混合架构试水</td></tr>
+<tr><td><strong>欧洲挑战者</strong></td><td>Mixtral 8x22B / 后续</td><td>小而美，高性价比</td></tr>
+<tr><td><strong>闭源不透露</strong></td><td>GPT-4/Gemini 系列</td><td>用了但不说的"黑箱 MoE"</td></tr>
+<tr><td><strong>Dense 少数派</strong></td><td>Anthropic Claude 4</td><td>明确不做 MoE，走可解释性+安全路线</td></tr>
+</table>
+<h3>4.2 核心模型架构对比</h3>
+<table>
+<tr><th>模型</th><th>发布时间</th><th>总参数</th><th>激活参数</th><th>Expert 数</th><th>Top-K</th><th>关键创新</th><th>开源</th></tr>
+<tr><td>Mixtral 8x7B</td><td>2023.12</td><td>47B</td><td>13B</td><td>8</td><td>2</td><td>首个开源高性能 MoE</td><td>✅</td></tr>
+<tr><td>Mixtral 8x22B</td><td>2024.04</td><td>141B</td><td>39B</td><td>8</td><td>2</td><td>expert 容量放大</td><td>✅</td></tr>
+<tr><td>DeepSeek-V2</td><td>2024.05</td><td>236B</td><td>21B</td><td>160+2</td><td>6+2</td><td>细粒度切分+共享专家+无aux loss</td><td>✅</td></tr>
+<tr><td>DeepSeek-V3</td><td>2024.12</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>mHC、极致训练优化</td><td>✅</td></tr>
+<tr><td>DeepSeek R1</td><td>2025.01</td><td>671B</td><td>37B</td><td>256+1</td><td>8+1</td><td>GRPO纯RL推理、Nature封面</td><td>✅</td></tr>
+<tr><td>DeepSeek V3.2</td><td>2026.03</td><td>685B</td><td>~37B</td><td>256+1</td><td>8+1</td><td>修复"极"bug、1M上下文</td><td>✅</td></tr>
+<tr><td>Qwen3-235B</td><td>2025</td><td>235B</td><td>22B</td><td>128</td><td>8</td><td>17/23项超越 R1</td><td>✅</td></tr>
+<tr><td>Qwen3-Next</td><td>2026</td><td>~80B</td><td>3B</td><td>512+1</td><td>未公开</td><td>GatedDeltaNet + MoE 混合</td><td>✅</td></tr>
+<tr><td>Mistral Large 3</td><td>2025.12</td><td>675B</td><td>~41B</td><td>128</td><td>未公开</td><td>Granular MoE、Dense→MoE回归</td><td>✅</td></tr>
+<tr><td>Mistral Small 4</td><td>2026.03</td><td>119B</td><td>6.5B</td><td>128</td><td>4</td><td>激活比5.5%、四合一</td><td>✅</td></tr>
+<tr><td>Llama 4 Scout</td><td>2025</td><td>109B</td><td>17B</td><td>16</td><td>未公开</td><td>Meta首个MoE、10M上下文</td><td>✅</td></tr>
+<tr><td>Llama 4 Maverick</td><td>2025</td><td>400B</td><td>17B</td><td>128</td><td>未公开</td><td>1M上下文</td><td>✅</td></tr>
+<tr><td>Kimi K2</td><td>2025-2026</td><td>1T</td><td>32B</td><td>384+1</td><td>未公开</td><td>首个开源1T MoE、MuonClip</td><td>✅</td></tr>
+<tr><td>GPT-4 (传闻)</td><td>2023.03</td><td>~1.8T(传闻)</td><td>~280B(传闻)</td><td>16(传闻)</td><td>2(传闻)</td><td>—</td><td>❌</td></tr>
+<tr><td>Grok-1</td><td>2024.03</td><td>314B</td><td>~86B</td><td>8</td><td>2</td><td>大规模开源</td><td>✅</td></tr>
+<tr><td>Grok-4 Heavy</td><td>2026</td><td>未公开</td><td>未公开</td><td>未公开</td><td>未公开</td><td>多Agent辩论、HLE 50.7%</td><td>❌</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>2026.02</td><td>~万亿(传闻)</td><td>~10%</td><td>未公开</td><td>未公开</td><td>TPU全自研、ARC-AGI-2 77.1%</td><td>❌</td></tr>
+<tr><td>Claude 4</td><td>2025-2026</td><td>未公开</td><td>—</td><td>—</td><td>—</td><td>Dense，非 MoE</td><td>❌</td></tr>
+</table>
+<h3>4.3 关键技术路线分化</h3>
+<p>当前 MoE 模型在三个关键设计维度上出现了明显的路线分化：</p>
+<h4>路由方式</h4>
+<ul>
+<li><strong>Token-choice（token 选专家）</strong>：主流方案。每个 token 经过 Router 后，选 top-K 个得分最高的专家。Mixtral、DeepSeek、Qwen 都用这个方式。</li>
+<li><strong>Expert-choice（专家选 token）</strong>：研究阶段的方案。让专家根据自身能力"挑选"擅长的 token。理论上可以实现更自然的专业化分工，但工程上复杂，目前没有主流模型采用。</li>
+<li><strong>Hash Routing</strong>：用 hash 函数决定 token 去向。最极端的简化，不需要训练 Router。但完全无法实现语义相关的专家分工，目前只在小规模实验中出现。</li>
+</ul>
+<h4>负载均衡</h4>
+<ul>
+<li><strong>Auxiliary Loss（辅助损失）</strong>：Mixtral 和大多数早期模型的选择。简单有效，但有损主任务优化。</li>
+<li><strong>Dynamic Bias（动态偏置）</strong>：DeepSeek 的方案。不影响梯度，理论上更优。但增加了训练过程中的超参数（bias 调整的步长/频率）。</li>
+<li><strong>Expert Capacity + Drop</strong>：GShard/Switch Transformer 的方案。工程上粗暴有效，但会丢弃 token 浪费训练数据。</li>
+</ul>
+<h4>Expert 组织结构</h4>
+<ul>
+<li><strong>Flat（扁平）</strong>：N 个平等专家，Router 直接选。Mixtral 的方式，简单但限制了专家数量的扩展。</li>
+<li><strong>Hierarchical（层次化）</strong>：专家分多层树形结构，逐级路由。Sparsely-Gated MoE 的方案，降低大 N 时的路由计算复杂度。</li>
+<li><strong>Fine-grained + Shared</strong>：DeepSeek 的方案。细粒度 mini-expert 增加组合灵活性，共享专家避免通用知识冗余。</li>
+</ul>
+<h3>4.4 性能对比</h3>
+<p>以下数据来自各模型的技术报告和社区评测，测试时间标注在括号内。不同评测设置下的分数不完全可比，仅作参照：</p>
+<table>
+<tr><th>模型</th><th>MMLU</th><th>HumanEval</th><th>AIME 2024</th><th>SWE-bench</th><th>测试时间</th></tr>
+<tr><td>Mixtral 8x7B</td><td>70.6%</td><td>40.2%</td><td>—</td><td>—</td><td>2023.12</td></tr>
+<tr><td>Mixtral 8x22B</td><td>77.7%</td><td>45.1%</td><td>—</td><td>—</td><td>2024.04</td></tr>
+<tr><td>DeepSeek-V2</td><td>~78%</td><td>~76%</td><td>—</td><td>—</td><td>2024.05</td></tr>
+<tr><td>DeepSeek-V3</td><td>88.5%</td><td>89.1%</td><td>—</td><td>45.4</td><td>2024.12</td></tr>
+<tr><td>DeepSeek R1</td><td>90.8%</td><td>—</td><td>79.8%</td><td>—</td><td>2025.01</td></tr>
+<tr><td>DeepSeek V3.1</td><td>88.5%</td><td>—</td><td>—</td><td>66.0</td><td>2025.08</td></tr>
+<tr><td>Qwen3-235B</td><td>~89%</td><td>—</td><td>85.7%</td><td>—</td><td>2025</td></tr>
+<tr><td>Mistral Large 3</td><td>85.5%</td><td>92.0%</td><td>73.6</td><td>—</td><td>2025.12</td></tr>
+<tr><td>GPT-4</td><td>86.4%</td><td>88.4%</td><td>—</td><td>—</td><td>2023.03</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>92.6%</td><td>—</td><td>—</td><td>80.6</td><td>2026.02</td></tr>
+<tr><td>Grok-4 Heavy</td><td>—</td><td>—</td><td>~100%</td><td>—</td><td>2026</td></tr>
+<tr><td>Claude 3.5 Sonnet</td><td>~88%</td><td>~91%</td><td>—</td><td>—</td><td>2024.06</td></tr>
+</table>
+<p><strong>注</strong>：不同模型的评测设置和时间不同，分数不完全可比。HumanEval 正在被社区弃用（饱和度过高），新模型倾向报告 LiveCodeBench / SWE-bench。AIME 2024 是数学推理的硬指标。"—"表示该模型未公开对应数据。</p>
+<h3>4.5 开源生态和社区采用</h3>
+<p><strong>HuggingFace 下载量与社区活跃度（截至 2026 年 4 月）</strong>：</p>
+<p>DeepSeek-V3 是最受欢迎的 MoE 模型，其 Fine-grained + Shared Expert 架构方案已成为新模型的事实标准。Mistral Large 3 和 Kimi K2 也从 DeepSeekMoE 中汲取了灵感。</p>
+<p>Qwen3-MoE 在中文社区影响力巨大，从端侧（30B-A3B）到云端（235B-A22B）全覆盖。最新 Qwen3.5 SWE-bench 达 76.4% 接近闭源水平。</p>
+<p>Mistral Small 4（119B/6.5B 激活）把细粒度 MoE 推到了极致，但社区反馈显存翻倍（从 Small 3.1 到 3.2）是个槽点。</p>
+<p>Meta Llama 4 Scout 的 10M 上下文窗口是差异化卖点，但 MoE 设计偏保守（仅 16 专家）。</p>
+<p>Kimi K2 是唯一开源 1T 参数的 MoE 模型，但社区采用仍在初期。</p>
+<h3>4.6 MoE 的五个未解决问题</h3>
+<p>尽管 MoE 在 2024-2026 年取得了巨大成功，但几个根本性问题还没有被完全解决：</p>
+<p><strong>1. 推理显存</strong>：所有 expert 必须常驻显存。一个 671B 的 MoE 模型推理需要至少 400GB+ 显存（FP8），而同等激活参数量的 Dense 模型只需要 ~80GB。EP（Expert Parallelism）缓解了这个问题，但增加了通信延迟。CPU offloading（把不常用的 expert 放 CPU 内存，用时加载）在 2025 年有一些进展，但离"好用"还有距离。</p>
+<p><strong>2. 微调和量化</strong>：MoE 模型的微调（尤其是 QLoRA）比 Dense 模型更容易过拟合。量化的难度也很大——每个 expert 的激活分布可能不同，做统一量化会损失精度，做逐个 expert 量化又太复杂。2025 年下半年有一些针对 MoE 的量化方案（如 SmoothQuant-MoE），但还不够成熟。</p>
+<p><strong>3. 专家专业化的本质</strong>：Router 到底学到了什么样的专家分工？理论上是"不同专家擅长不同领域"，但实际分析发现，专家的专业化并没有那么清晰——更像是"不同专家对不同 token 的响应模式不同"，而不是"专家 #3 擅长数学、专家 #7 擅长代码"这样语义可解释的分工。这也意味着我们还没有完全理解 MoE 内部到底在发生什么。</p>
+<p><strong>4. 最优专家数量和 Top-K</strong>：N 应该设多少？K 应该设多少？目前没有理论指导，只有实验经验。而且最优值似乎随模型规模和训练数据规模变化，没有稳定的规律。</p>
+<p><strong>5. 安全对齐</strong>：MoE 的路由机制引入了新的攻击面。研究发现，可以设计 adversarial input 来操纵 Router 走向特定专家，产生有害输出。目前没有专门针对 MoE 路由的安全对齐方案。</p>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 历史如何塑造了今天的竞争位置</h3>
+<p>把纵向演进和横向对比放在一起看，最反直觉的一点是：<strong>Google 在 MoE 技术上领先了 7 年，但今天 MoE 的标杆是 DeepSeek，不是 Google。</strong></p>
+<p>这是怎么发生的？</p>
+<p>回头看 Google 的 MoE 论文系列（2017-2022），技术质量极高。Sparsely-Gated MoE 定义了路由框架，GShard 解决了大规模训练的工程问题，Switch Transformer 证明了简化 router 的可行性，ST-MoE 解决了训练稳定性。单论论文贡献，Google 是 MoE 无可争议的开创者。</p>
+<p>但 Google 做了三件事，让这些技术积累没能转化为竞争优势：</p>
+<p><strong>第一，所有技术都停留在内部系统。</strong> 2022 年之前的 Google MoE 工作，没有任何一个公开了可用的模型权重或 API。研究者可以在论文里读到 Switch Transformer 的设计，但没有一个"开箱即用"的 Switch Transformer 让他们体验。</p>
+<p><strong>第二，搜索业务主导的组织结构。</strong> Google Brain 和 DeepMind 的 MoE 研究，首要目标是改善 Google 自己的搜索、翻译、广告等产品。公开论文和 API 是副产品，不是核心目标。这和 OpenAI 的"把 AGI 带到全世界"形成鲜明对比。</p>
+<p><strong>第三，对开源的路径依赖式低估。</strong> Google 习惯了用论文建立学术影响力，但 2023 年以后，AI 领域的游戏规则变了——开源模型比论文影响力更大。Mistral 用一条推文 + torrent 链接就在社区建立起了影响力，这是 Google 没有准备好的新战场。</p>
+<p>DeepSeek 的崛起，恰恰是在 Google 的三个弱点上做了正确的事：全部开源（权重、技术报告、部分训练细节），组织目标是做出"世界上性价比最高的 AI 模型"而不是服务某个内部业务线，以及深度拥抱开源社区的传播方式。</p>
+<h3>5.2 Anthropic 的 Dense 坚持会是对的吗</h3>
+<p>横向看 MoE 阵营，几乎所有主要玩家都在用或考虑用 MoE。Anthropic 用 Dense 的选择显得格格不入。</p>
+<p>但纵向看，Anthropic 的坚持有充分的历史理由：</p>
+<p>2022 年，Anthropic 的人从 OpenAI 离开创立这家公司时，原动力之一就是安全。他们亲历了 GPT-3 训练中的不可控因素，也看到了 MoE 路由引入的新复杂度。在一个你已经无法完全理解内部机制的系统中再引入一个自动路由层，等于增加了一层不可预测性。</p>
+<p>Anthropic 的"密集+安全"路线在 2025-2026 年得到了验证：Claude 3.5/4 在大部分 benchmarks 上不输给 MoE 模型，而且在安全对齐方面表现出了更一致的稳定性。</p>
+<p>我的判断是：Anthropic 的 Dense 坚持在短期内（1-2 年）不会成为劣势。但随着 MoE 推理生态的进一步发展（EP、offloading、量化），MoE 的训练效率优势可能会越来越难被忽视。长期看（3-5 年），Anthropic 可能需要在某个节点做出选择——是否转向某种"受控的 MoE"（比如更少专家、更强的路由解释性、专门的安全对齐方案）。</p>
+<h3>5.3 DeepSeek 护城河的脆弱性</h3>
+<p>DeepSeek-V3 在 2024 年底获得的关注度接近于一个小型"DeepSeek 时刻"。但横向看竞争格局，DeepSeek 的优势并不稳固：</p>
+<p><strong>架构创新已经被模仿</strong>：Fine-grained expert + Shared expert + 无 auxiliary loss 的组合，已经被 Qwen 系列复制。当所有人都用同样的架构方案时，架构就不再是护城河，工程执行力和数据质量才是。</p>
+<p><strong>训练成本优势的暂时性</strong>：V3 的 557 万美元训练成本确实惊艳，但这个成本的一部分来自 H800 GPU 的内部定价（DeepSeek 有自建集群）。其他玩家如果用云服务 GPU 训练同样的模型，成本会高不少。但关键是，随着硬件迭代和训练优化技术的普及，"低成本的巨大模型"会越来越多。DeepSeek 在性价比上的暂时领先不会持续太久。</p>
+<p><strong>开源的双刃剑</strong>：开源让 DeepSeek 获得了巨大的社区影响力，但也意味着任何人都能基于他们的模型做改进。这是"开源护城河"的悖论：影响力 ≠ 收入，社区 ≠ 商业壁垒。</p>
+<h3>5.4 未来推演：三个剧本</h3>
+<p><strong>剧本 A：最可能（MoE 标配化）——概率 60%</strong></p>
+<p>MoE 成为所有大模型的默认选择（就像 Transformer 在 2020 年取代 LSTM 一样）。Dense 模型退居中小规模（<30B 激活参数）和特殊场景（安全敏感、超低延迟）。MoE 推理生态完全成熟，开发者不再需要关心模型是不是 MoE——框架自动处理好一切。</p>
+<p>DeepSeek 维持开源生态的领先地位，但 Google 凭借 Gemini + TPU 硬件优势追赶。Anthropic 在某个节点低调转向某种"受控 MoE"。OpenAI 的 MoE 策略继续模糊但实际使用。</p>
+<p><strong>剧本 B：最危险（MoE 的安全隐患爆发，监管介入）——概率 20%</strong></p>
+<p>2026-2027 年，随着 MoE 模型从实验室走到数十亿用户手中的产品中，MoE 路由层的不可控性逐渐暴露：</p>
+<p>某个广泛使用的 MoE 模型被发现，通过精心设计的 prompt（不一定是恶意 prompt，甚至可能是一段 lyrics 或一段代码注释），可以系统性地让 Router 走向特定的专家组合，让模型产生违背 Safety 对齐的输出。这种"路由攻击"的特点是不需要 jailbreak 整个模型，只需要 jailbreak 路由器——攻击面更小，成功率更高。</p>
+<p>这会让安全社区和监管机构聚焦到 MoE 架构可解释性上，推动 Dense 模型在受监管场景下的反扑。</p>
+<p><strong>剧本 C：最乐观（MoE 成为"模型民主化"的基石）——概率 20%</strong></p>
+<p>MoE 的训练效率优势随着推理生态的成熟而完全释放。到 2027 年，训练一个 GPT-4 级别的 MoE 模型的成本降到 100 万美元以下。全球涌现出几十个高质量的开源 MoE 模型，各有专长（代码、医疗、法律、教育），AI 的能力不再是少数公司的垄断。</p>
+<p>在这个剧本里，MoE 的稀疏性不只是一种架构优化——它改变了"谁能做 AI"的经济模型。小公司甚至个人团队可以训练"专业领域的 OpenAI"，因为他们只需要训练 expert 的某个子集，而不是整个巨大的Dense模型。</p>
+<h3>5.5 最后的话</h3>
+<p>MoE 的故事有一个迷人的内核：一个 1991 年提出的古老想法，经过 30 年的兜兜转转，在 2023-2025 年突然成为 AI 架构的核心选择。它的复兴不是因为理论上的新突破，而是因为工程条件终于成熟了——更大的 GPU 显存、更快的网络通信、更成熟的分布式训练框架。</p>
+<p>这让我们想起另一个花了 30 年才爆发的技术：神经网络本身。1986 年反向传播算法被提出，但直到 2012 年 AlexNet 才证明了它的价值。之间差的不是算法，是算力和数据。</p>
+<p>MoE 的 30 年故事告诉我们：<strong>有好的想法只是第一步，等到条件成熟的那一天，才是最难的部分。</strong></p>
+<hr>
+<h2>六、信息来源</h2>
+<table>
+<tr><th>来源</th><th>类型</th><th>URL / 出处</th></tr>
+<tr><td>Adaptive Mixtures of Local Experts (1991)</td><td>论文</td><td>Jacobs, Jordan, Nowlan, Hinton — Neural Computation 3(1)</td></tr>
+<tr><td>Hierarchical Mixtures of Experts (1994)</td><td>论文</td><td>Jordan & Jacobs — Neural Computation 6(2)</td></tr>
+<tr><td>Deep Mixture of Experts (2013)</td><td>论文</td><td>Eigen, Ranzato, Sutskever — arXiv:1312.4314</td></tr>
+<tr><td>Exploring the Limits of Language Modeling (2016)</td><td>论文</td><td>Jozefowicz, Shazeer et al. — arXiv:1602.02410</td></tr>
+<tr><td>Sparsely-Gated MoE (2017)</td><td>论文</td><td>https://arxiv.org/abs/1701.06538</td></tr>
+<tr><td>GShard (2020)</td><td>论文</td><td>https://arxiv.org/abs/2006.16668</td></tr>
+<tr><td>Switch Transformer (2021)</td><td>论文</td><td>https://arxiv.org/abs/2101.03961</td></tr>
+<tr><td>GLaM (2021)</td><td>论文</td><td>https://arxiv.org/abs/2112.06905</td></tr>
+<tr><td>ST-MoE (2022)</td><td>论文</td><td>https://arxiv.org/abs/2202.08906</td></tr>
+<tr><td>Mixtral 8x7B (2023)</td><td>官方博客</td><td>https://mistral.ai/news/mixtral-of-experts/</td></tr>
+<tr><td>Grok-1 (2024)</td><td>官方博客</td><td>https://x.ai/blog/grok-os</td></tr>
+<tr><td>DeepSeek-V2 (2024)</td><td>技术报告</td><td>https://arxiv.org/abs/2405.04434</td></tr>
+<tr><td>DeepSeek-V3 (2024)</td><td>技术报告</td><td>https://arxiv.org/abs/2412.19437</td></tr>
+<tr><td>DeepSeek R1 (2025)</td><td>论文</td><td>Nature 封面 (2025.9) / arXiv</td></tr>
+<tr><td>DeepSeek V3.1 (2025)</td><td>官方公告</td><td>DeepSeek API Docs / 社区报道</td></tr>
+<tr><td>DeepSeek mHC</td><td>论文</td><td>arXiv:2512.24880</td></tr>
+<tr><td>Qwen3-MoE / Qwen3.5</td><td>官方博客</td><td>https://qwenlm.github.io/blog/</td></tr>
+<tr><td>Qwen3-Next</td><td>NVIDIA 博客</td><td>https://developer.nvidia.com/blog/new-open-source-qwen3-next-models/</td></tr>
+<tr><td>Mistral Large 3 / Small 4</td><td>官方博客</td><td>https://mistral.ai/</td></tr>
+<tr><td>Kimi K2</td><td>GitHub</td><td>https://github.com/moonshotai/Kimi-K2</td></tr>
+<tr><td>Llama 4 Scout/Maverick</td><td>Meta 官方</td><td>Meta AI 博客</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>ZDNET 等</td><td>https://www.zdnet.com/article/google-gemini-3-1-pro-release-ai-model/</td></tr>
+<tr><td>Grok-4 Heavy</td><td>Scientific American</td><td>https://www.scientificamerican.com/</td></tr>
+<tr><td>Anthropic Dense 选择</td><td>官方博客/访谈</td><td>Anthropic 技术博客、Dario Amodei 公开访谈</td></tr>
+<tr><td>GPT-4 MoE 传闻</td><td>社区分析</td><td>George Hotz 播客、SemiAnalysis</td></tr>
+<tr><td>vLLM MoE 支持</td><td>项目文档</td><td>https://docs.vllm.ai/</td></tr>
+<tr><td>SGLang MoE 优化</td><td>项目文档</td><td>https://sglang.readthedocs.io/</td></tr>
+<tr><td>Prem AI 2026 LLM 指南</td><td>评测</td><td>https://blog.premai.io/12-best-open-source-llms-for-production-in-2026/</td></tr>
+</table>
+<hr>
+<blockquote>本报告采用<strong>横纵分析法</strong>（Horizontal-Vertical Analysis）撰写，融合语言学中的历时-共时分析、社会科学中的纵向-横截面研究设计、以及竞争战略分析的核心思想，由数字生命卡兹克（Khazix）提出。</blockquote>
+</div>
+</body>
+</html>
