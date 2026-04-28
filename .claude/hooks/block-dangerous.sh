@@ -32,6 +32,7 @@ SUBSTRING_PATTERNS=(
   "git clean -fd"
   "DROP DATABASE"
   "DROP TABLE"
+  "git merge dev"
 )
 
 # 正则匹配模式（精确语义，避免误判正常路径）
