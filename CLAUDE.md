@@ -18,6 +18,25 @@ fetch_rss_today.py（TechCrunch/MIT/The Verge） ┘
   → daily_run.sh 步骤13（推 GitHub Pages）
 ```
 
+## 目录约定
+
+| 目录 | 用途 | 入 Git？ |
+|------|------|---------|
+| `collectors/` | 数据采集脚本 | 是 |
+| `utils/` | 工具库（DB、HTTP、Claude API） | 是 |
+| `pipeline/` | 数据处理流水线 | 是 |
+| `storage/` | 数据库操作层 | 是 |
+| `scripts/` | 独立工具脚本 | 是 |
+| `api/` | Flask API 路由 | 是 |
+| `research/` | Research Hub 功能模块 | 是 |
+| `tests/` | 测试代码 | 是 |
+| `.claude/` | Claude Code 配置（rules/skills/agents） | 部分 |
+| `archive/` | 历史日报 HTML | 是 |
+| `assets/` | **调研文档、配图、设计稿** | **是（创建后立即 commit）** |
+| `insights/` | 自学习洞察输出 | 是 |
+
+**⚠️ `assets/` 和调研文件必须入库。每次创建/修改调研文档后立即 `git add + commit`，禁止长期保持 untracked 状态。**
+
 ## 开发规范
 
 ### 本文件维护原则
