@@ -4,7 +4,3 @@
 
 👉 [查看今日日报](https://wxyjwxyj.github.io/wechat-articles/)
 
-- [今日日报](./today.html)
-- [公众号导读](./mp_article_preview.html)
-- [历史归档](./archive/)
-
