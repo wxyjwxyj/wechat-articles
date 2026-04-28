@@ -51,7 +51,7 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
     def _translate_one(item: dict) -> bool:
         prompt = (
             f'Translate the following title and summary into Chinese. '
-            f'Return JSON only, format: {{"title_zh": "...", "summary_zh": "..."}}. '
+            f'Return JSON only, format: {{"title_zh": "<translated_title>", "summary_zh": "<translated_summary>"}}. '
             f'Use 「」instead of double quotes within translated text. Do not use " in the output.\n'
             f'title: {item["title"]}\nsummary: {item.get("summary", "")}'
         )
@@ -59,7 +59,8 @@ def _translate_overseas_items(items: list[dict], item_repo) -> None:
             from utils.claude import extract_json
             raw = claude_call(prompt, max_tokens=2048)
             r = extract_json(raw)
-            item["title_zh"] = r.get("title_zh", "") or item["title"]
+            _tz = r.get("title_zh", "").strip()
+            item["title_zh"] = _tz if (_tz and _tz != "...") else item["title"]
             item["summary_zh"] = r.get("summary_zh", "")
             if item.get("id"):
                 item_repo.update_item_translations(item["id"], item["title_zh"], item["summary_zh"])

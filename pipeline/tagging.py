@@ -185,17 +185,30 @@ def extract_tags_batch_with_claude(
 
     注意：api_key/base_url 参数已废弃，配置统一由 utils.claude 管理。
     """
-    output: list[dict] = []
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    batches: list[tuple[int, list[dict]]] = []
     for batch_start in range(0, len(items), BATCH_SIZE):
-        batch = items[batch_start: batch_start + BATCH_SIZE]
-        try:
-            batch_result = _call_claude_batch(batch, batch_start)
-            output.extend(batch_result)
-            logger.debug("批次 %d-%d 打标签完成", batch_start + 1, batch_start + len(batch))
-        except (json.JSONDecodeError, KeyError, IndexError, Exception) as e:
-            logger.warning("批次 %d-%d 打标签失败（%s），该批降级到关键词匹配",
-                           batch_start + 1, batch_start + len(batch), e)
-            output.extend([{"tags": [], "score": 5} for _ in batch])
+        batches.append((batch_start, items[batch_start: batch_start + BATCH_SIZE]))
+
+    output: list[dict] = [{"tags": [], "score": 5}] * len(items)
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        fut_to_start = {
+            executor.submit(_call_claude_batch, batch, start): start
+            for start, batch in batches
+        }
+        for future in as_completed(fut_to_start):
+            start = fut_to_start[future]
+            batch_size = len(next(b for s, b in batches if s == start))
+            try:
+                batch_result = future.result()
+                for i, r in enumerate(batch_result):
+                    output[start + i] = r
+                logger.debug("批次 %d-%d 打标签完成", start + 1, start + batch_size)
+            except (json.JSONDecodeError, KeyError, IndexError, Exception) as e:
+                logger.warning("批次 %d-%d 打标签失败（%s），该批降级到关键词匹配",
+                               start + 1, start + batch_size, e)
+                # output already has default [{"tags":[],"score":5}]
 
     return output
 

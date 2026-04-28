@@ -4,6 +4,7 @@
 支持按分类筛选（cs.AI、cs.CL、cs.CV、cs.LG 等）。
 返回 Atom XML，用标准库 xml.etree 解析。
 """
+import random
 import time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
@@ -144,7 +145,7 @@ class ArxivCollector:
     def __init__(
         self,
         categories: list[str] | None = None,
-        max_results: int = 50,
+        max_results: int = 30,
         max_papers: int = 10,
         days_back: int = 2,
         timeout: int = 60,
@@ -185,6 +186,11 @@ class ArxivCollector:
         }
 
         logger.info("查询 ArXiv: %s (max_results=%d)", query[:60], self.max_results)
+
+        # 随机 jitter 避免与其他采集线程同时请求被限流
+        jitter = random.uniform(2, 8)
+        logger.debug("ArXiv jitter: %.1fs", jitter)
+        time.sleep(jitter)
 
         # 冷启动时 ArXiv 经常第一次超时，加应用层重试（最多 3 次，间隔 30s）
         for attempt in range(3):

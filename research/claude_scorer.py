@@ -161,12 +161,19 @@ Format:
 
             logger.info("Claude 评分完成：%d 个资源", len(results))
 
-        except (json.JSONDecodeError, KeyError) as e:
-            logger.warning("评分解析失败，原始响应: %s", raw[:300])
-            raise AIApiError(f"Claude 返回解析失败: {e}") from e
-        except Exception as e:
-            logger.warning("评分异常，原始响应: %s", raw[:300])
-            raise AIApiError(f"评分过程出错: {e}") from e
+        except Exception:
+            # JSON 提取失败时，重试一次更严格的 prompt
+            try:
+                logger.warning("评分 JSON 解析失败，重试中...")
+                retry_prompt = prompt + "\n\nCRITICAL: Output ONLY the JSON object. No explanation, no preamble."
+                raw = claude_call(retry_prompt, max_tokens=2048, model=self.model)
+                from utils.claude import extract_json
+                data = extract_json(raw)
+                results = data.get("results", [])
+                logger.info("重试成功：%d 个资源", len(results))
+            except Exception as e2:
+                logger.warning("评分重试也失败，原始响应: %s", raw[:300])
+                raise AIApiError(f"评分过程出错: {e2}") from e2
 
         # 合并评分结果到原资源，先收集全部（含低分），再过滤
         all_scored = []

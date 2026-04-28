@@ -280,6 +280,20 @@ else
     notify "AI日报 ⚠" "采集 ${ARTICLE_COUNT} 条 | 问题：${ERRORS}"
 fi
 
+# 15.5 统计今日 Claude API token 消耗
+python -c "
+import re
+total_in, total_out = 0, 0
+with open('$LOG_FILE', encoding='utf-8', errors='replace') as f:
+    for line in f:
+        m = re.search(r'claude_call: .+? (\d+) in / (\d+) out', line)
+        if m:
+            total_in += int(m.group(1))
+            total_out += int(m.group(2))
+total = total_in + total_out
+print(f'今日 token 消耗: {total_in:,} in + {total_out:,} out = {total:,} total')
+" | tee -a "$LOG_FILE"
+
 # 16. 记录可观测性指标到 metrics.csv
 METRICS_FILE="$PROJECT_DIR/.claude/metrics.csv"
 if [ ! -f "$METRICS_FILE" ]; then

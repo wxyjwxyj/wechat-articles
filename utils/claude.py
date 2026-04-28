@@ -6,6 +6,7 @@
 """
 import json
 import logging
+import os
 import re
 import time
 import anthropic
@@ -82,6 +83,12 @@ def extract_json_array(raw: str) -> list:
 def get_client() -> anthropic.Anthropic:
     """返回配置好的 Anthropic client，供需要复用 client 的场景使用。"""
     api_key, base_url, _ = get_claude_config()
+
+    # anthropic SDK 0.71+ 新增了 auth_token 参数，会读取 ANTHROPIC_AUTH_TOKEN 环境变量
+    # 如果该变量存在，SDK 会同时发送 X-Api-Key 和 Authorization: Bearer 两个头，
+    # 导致代理（如 MiMo）的 API key 认证被 Bearer token 干扰 → 401
+    os.environ.pop("ANTHROPIC_AUTH_TOKEN", None)
+
     return anthropic.Anthropic(api_key=api_key, base_url=base_url)
 
 

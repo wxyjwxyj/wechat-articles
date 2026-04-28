@@ -21,6 +21,10 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "slow: 需要真实 API 调用的集成测试，默认跳过",
+]
+addopts = ["-m", "not slow"]
 
 [tool.mypy]
 python_version = "3.11"
