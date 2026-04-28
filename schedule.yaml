@@ -1,0 +1,36 @@
+# 调度配置 — 修改此文件即可调整采集时间和步骤，无需改 plist
+# steps 可选值：wechat, parallel_collect, bundle, generate, archive, self_improve, push_github, publish_mp
+runs:
+  - time: "09:30"
+    steps:
+      - wechat
+      - parallel_collect
+      - bundle
+      - generate
+      - archive
+      - self_improve
+      - push_github
+
+  - time: "17:30"
+    steps:
+      - wechat
+      - parallel_collect
+      - bundle
+      - generate
+      - archive
+      - self_improve
+      - push_github
+
+  - time: "22:00"
+    steps:
+      - wechat
+      - parallel_collect
+      - bundle
+      - generate
+      - archive
+      - self_improve
+      - push_github
+
+  - time: "22:30"
+    steps:
+      - publish_mp
