@@ -73,6 +73,22 @@
 | **前向 / 前向传播** | 输入数据经过模型层层计算、输出结果的过程。不调参数，只是"算一遍"。跟"反向传播"对应 |
 | **Epoch** | 把整个训练数据集完整过一遍。15T tokens ÷ 8B 参数 ≈ 每 epoch ~1.6T tokens，LLaMA 3 8B 训了约 9 个 epoch |
 | **序列建模** | 处理有顺序的数据（文本、语音、DNA）的任务。输入有前后关系，不能打乱。前 Transformer 时代的核心问题 |
+| **Zero-shot / Few-shot** | Zero-shot=不给示例直接做任务。Few-shot=给几个示例再做。GPT-3 发现的 in-context learning 能力，彻底改变了 LLM 的使用方式 |
+| **In-context Learning** | 不需要 fine-tune，把任务说明和几个例子直接写在 prompt 里，模型就能照做。GPT-3 时代最重要的发现之一 |
+| **Chain-of-Thought（CoT）** | 让模型在给出答案前先"一步步思考"，推理准确率大幅提升。2025 年后成为推理时计算 scaling 的核心手段 |
+| **RLHF / DPO** | 训练完成后对齐模型行为的技术。RLHF=用人类反馈训练奖励模型+强化学习。DPO=直接从偏好数据优化，更简单 |
+| **SSM（State Space Model）** | 替代 Attention 的一种方案。O(n) 复杂度，Mamba 是代表。2025 年后成为混合架构的主流组件 |
+| **蒸馏（Distillation）** | 用大模型教小模型。大模型生成"标准答案"，小模型模仿学习。Phi-3 和 Gemma 2 的核心技术 |
+| **TTFT（首 Token 延迟）** | Time To First Token。从发送请求到收到第一个输出 token 的时间。在线服务最核心的延迟指标 |
+| **GRPO** | DeepSeek-R1 用的强化学习算法。不需要外部奖励模型，用同一批问题的多个回答互相对比来训练推理能力 |
+| **合成数据** | 用 AI 生成的训练数据。高质量真实数据耗尽后，合成数据成为继续 scaling 的关键替代方案 |
+| **Adam / AdamW** | 最主流的优化器（训练时调参数的算法）。β1=0.9、β2=0.95-0.999。AdamW = Adam + 权重衰减，几乎所有 LLM 都在用 |
+| **Warmup（学习率预热）** | 训练开始时先把学习率从小逐渐升到目标值。避免初期训练不稳定导致崩溃 |
+| **NSP（Next Sentence Prediction）** | BERT 的辅助训练任务：判断两句话是否前后相连。RoBERTa 证明这个任务贡献很小，后来的模型都不用了 |
+| **DualPipe** | DeepSeek V3 的并行算法。让前向/反向计算与 MoE 跨节点通信完全重叠，MFU 因此达到 ~70% |
+| **填充中间（FIM）** | Fill-in-the-Middle。代码模型的特殊训练格式：`<PRE>前缀 <SUF>后缀 <MID>补全`。StarCoder/CodeLlama 都在用 |
+| **ViT（Vision Transformer）** | Transformer 的图像版本。把图片切成 16×16 的小块（patch），每个 patch 当成一个 token 处理 |
+| **CNN（卷积神经网络）** | 前 Transformer 时代的图像处理主流架构，用滑动窗口局部处理。ViT 的全局视野更完整 |
 | **显存（VRAM）** | GPU 上专门的高速内存。存模型参数 + 中间结果。H100 一张 80GB——一个 LLaMA 70B 就要 140GB |
 | **泛化** | 在训练数据上学到通用规律，遇到从没见过的数据也能正确处理。大 batch 可能降低泛化 |
 | **浮点数** | 带小数点的数字（如 3.14=FP32）。FP32=32位、FP16=16位、FP8=8位。位数越少越省空间和算力 |
