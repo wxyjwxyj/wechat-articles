@@ -94,6 +94,10 @@
 | **NSP（Next Sentence Prediction）** | BERT 的辅助训练任务：判断两句话是否前后相连。RoBERTa 证明这个任务贡献很小，后来的模型都不用了 |
 | **DualPipe** | DeepSeek V3 的并行算法。让前向/反向计算与 MoE 跨节点通信完全重叠，MFU 因此达到 ~70% |
 | **填充中间（FIM）** | Fill-in-the-Middle。代码模型的特殊训练格式：`<PRE>前缀 <SUF>后缀 <MID>补全`。StarCoder/CodeLlama 都在用 |
+| **BLEU** | 机器翻译的质量评分，0-100 分。越接近人工翻译的分数越高。Transformer 原始论文达到 28.4 分（当时最高） |
+| **Label Smoothing** | 训练技巧：不要求模型 100% 确定选某个词，留一点"不确定性"。值 0.1 表示正确答案概率=0.9，其余均分。防过拟合 |
+| **vLLM** | 最流行的 LLM 推理部署框架。核心创新 PagedAttention（把 KV cache 当虚拟内存分页管理）。吞吐量比普通推理高 2-4 倍 |
+| **对比学习** | 训练方法：让匹配的样本（图文对）向量尽可能接近，不匹配的尽可能远离。CLIP 和检索系统的基础 |
 | **ViT（Vision Transformer）** | Transformer 的图像版本。把图片切成 16×16 的小块（patch），每个 patch 当成一个 token 处理 |
 | **CNN（卷积神经网络）** | 前 Transformer 时代的图像处理主流架构，用滑动窗口局部处理。ViT 的全局视野更完整 |
 | **显存（VRAM）** | GPU 上专门的高速内存。存模型参数 + 中间结果。H100 一张 80GB——一个 LLaMA 70B 就要 140GB |
