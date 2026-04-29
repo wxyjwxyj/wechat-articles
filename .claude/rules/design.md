@@ -118,13 +118,30 @@ set -a && source .env && set +a && python scripts/xxx.py
 
 ---
 
-## 并行采集：HN/ArXiv 直连，GitHub/RSS 走代理（2026-04-19）
+## 并行采集：HN 直连，ArXiv/GitHub/RSS 走代理（2026-04-29 更新）
 
-**背景：** 4 个非微信数据源互相独立，串行太慢。但 HN/ArXiv 直连更稳定，走代理反而可能超时。
+**背景：** 4 个非微信数据源互相独立，串行太慢。早期认为 ArXiv 直连更稳定，实测走代理反而更快（0.9s vs 11.2s），ArXiv API（export.arxiv.org）对代理 IP 未见额外限流。
 
-**决策：** `daily_run.sh` 用 `&` 并行启动 4 个采集进程，`wait` 收集 exit code。HN/ArXiv 用 `env -u http_proxy` 去掉代理直连，GitHub/RSS 保留代理。
+**决策：** `daily_run.sh` 用 `&` 并行启动 4 个采集进程，`wait` 收集 exit code。HN 用 `env -u http_proxy` 去掉代理直连，ArXiv/GitHub/RSS 保留代理。
 
-**不要：** 给 HN/ArXiv 加代理（直连更快更稳），也不要串行跑采集（浪费时间）。
+**不要：** 给 ArXiv 去掉代理（直连更慢），也不要串行跑采集（浪费时间）。
+
+---
+
+## ArXiv 候选池：max_results=100 保证筛选质量（2026-04-29）
+
+**背景：** ArXiv 用 7 个分类（cs.AI/CL/CV/LG/MA/RO/stat.ML）做 3 天窗口筛选，候选池大小直接影响最终 top-10 质量。
+
+**实验对比：**
+| max_results | top-10 分数分布 | 最高分 |
+|:---:|:---|:---:|
+| 30 | 7,5,5,5,5,5,4,4,4,3 | 7分 |
+| 50 | 7,7,6,6,5,5,5,5,5,5 | 7分 |
+| 100 | 8,7,7,6,6,6,6,5,5,5 | 8分 |
+
+**决策：** `fetch_arxiv_today.py` 传 `max_results=100`，ArxivCollector 默认值保持 30（仅供 research 模块搜索使用）。API 返回 200-250KB，网络开销跟 50 条几乎无差别（同一次 HTTP 往返）。同时 ArXiv 采集加 20-40s 随机 jitter，错开与其他并行采集的请求时间窗口，降低 429 概率。
+
+**不要：** 为了省带宽降低 max_results（省了几 KB 但丢掉高质量论文）。
 
 ---
 

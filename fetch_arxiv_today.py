@@ -31,7 +31,7 @@ def main() -> None:
 
     logger.info("采集 ArXiv AI 论文...")
     collector = ArxivCollector(
-        max_results=50,
+        max_results=100,
         max_papers=10,
         days_back=3,
     )

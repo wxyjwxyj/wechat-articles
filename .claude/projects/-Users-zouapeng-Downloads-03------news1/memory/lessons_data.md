@@ -196,7 +196,15 @@ GET https://mp.weixin.qq.com/cgi-bin/searchbiz?query=xxx&token=xxx
 
 ### ArXiv
 - commit: `cb37a64`，days_back=3（周末也能抓到周五论文）
-- max_results=50 作为候选池，按关键词相关度打分取前10
+- max_results=100 作为候选池，按关键词相关度打分取前10（30条候选池会漏高分论文）
+
+#### ⚠️ ArXiv 429 限流问题（2026-04-29 修复）
+- **现象**：早上 9:30 采集窗口频繁 429，下午/晚上窗口很少出问题
+- **根因**：4 个采集进程并行启动，HN/ArXiv/GitHub/RSS 几乎同时请求，jitter=2-8s 不够错开
+- **排查过程**：测了代理直连(11.2s) vs 走代理(0.9s)，代理反而更快；max_results 30/50/100 对响应时间无影响。**问题不在代理也不在 payload 大小，在于并行突发请求**
+- **修复**：jitter 2-8s → 20-40s，让 ArXiv 请求自然错开到其他采集完成之后（实测 ArXiv 实际请求时 HN/GitHub/RSS 均已结束）
+- **日志改进**：429 失败时记录 proxy 状态和总耗时，方便下次排查
+- **教训**：并行采集的 jitter 要大于最长的快速采集（RSS ~2s），否则所有请求仍会重叠
 
 ### GitHub Trending
 - commit: `9b204c6`，用标准库 HTMLParser 解析，无需 BeautifulSoup

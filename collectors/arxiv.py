@@ -4,6 +4,7 @@
 支持按分类筛选（cs.AI、cs.CL、cs.CV、cs.LG 等）。
 返回 Atom XML，用标准库 xml.etree 解析。
 """
+import os
 import random
 import time
 import xml.etree.ElementTree as ET
@@ -185,12 +186,16 @@ class ArxivCollector:
             "sortOrder": "descending",
         }
 
-        logger.info("查询 ArXiv: %s (max_results=%d)", query[:60], self.max_results)
+        # 记录代理状态用于排查 429
+        proxy_info = 'yes' if os.environ.get('http_proxy') or os.environ.get('https_proxy') else 'no'
+        logger.info("查询 ArXiv: %s (max_results=%d, proxy=%s)", query[:60], self.max_results, proxy_info)
 
-        # 随机 jitter 避免与其他采集线程同时请求被限流
-        jitter = random.uniform(2, 8)
-        logger.debug("ArXiv jitter: %.1fs", jitter)
+        # 随机 jitter 避免与其他并行采集同时请求被限流
+        jitter = random.uniform(20, 40)
+        logger.info("等待 %.0fs jitter 错开并行采集高峰...", jitter)
         time.sleep(jitter)
+
+        _t0 = time.time()
 
         # 冷启动时 ArXiv 经常第一次超时，加应用层重试（最多 3 次，间隔 30s）
         for attempt in range(3):
@@ -208,7 +213,8 @@ class ArxivCollector:
             except requests.RequestException as e:
                 err_str = str(e)
                 if "429" in err_str or "too many" in err_str.lower():
-                    logger.warning("ArXiv 429 限流，重试已耗尽（backoff 最大 60s × 5次）: %s", err_str[:120])
+                    elapsed = time.time() - _t0
+                    logger.warning("ArXiv 429 限流（proxy=%s, 耗时=%.0fs, backoff 最大 60s × 5次）: %s", proxy_info, elapsed, err_str[:100])
                 else:
                     logger.warning("ArXiv 请求失败: %s", err_str[:120])
                 raise CollectorError(f"ArXiv API 请求失败: {e}") from e
