@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-04-29
+
+- refactor: finish skill v2→v3，步骤 4 "更新记忆" 重写为 "知识同步" 四步法（Inventory→Impact Matrix→Apply→Self-check）
+- docs: finish skill 新增 references/sync-matrix.md（变更影响矩阵）
+- docs: lessons_data.md 新增 MiMo TTS 调用记录，修复子节结构断裂
+- feat: scripts/check_mimo_balance.sh（MiMo 余额查询工具）
+
 ## 2026-04-19
 
 - refactor: 清理 3 个文件残留的 `import anthropic`（build_bundle/claude_scorer/topic_searcher）

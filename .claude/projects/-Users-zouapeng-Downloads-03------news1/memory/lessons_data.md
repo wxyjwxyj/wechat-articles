@@ -225,3 +225,42 @@ GET https://mp.weixin.qq.com/cgi-bin/searchbiz?query=xxx&token=xxx
 - 精选 **6 条**（8→6，降低读者负担）
 - 保底：HN + GitHub Trending 各1条（ArXiv 靠分数自然竞争）
 - 所有候选统一按 score 降序，保底不强制排前面
+
+---
+
+## 七、MiMo TTS 调用记录（2026-04-29 探索，未集成）
+
+### 调用方式（OpenAI 兼容格式）
+MiMo TTS 使用 OpenAI SDK 格式，不是 Anthropic 格式。用同一组 API Key + proxy endpoint 即可。
+
+```python
+from openai import OpenAI
+import base64
+
+client = OpenAI(
+    api_key="<你的API Key>",
+    base_url="https://token-plan-cn.xiaomimimo.com/v1"
+)
+
+completion = client.chat.completions.create(
+    model="mimo-v2.5-tts",
+    messages=[
+        {"role": "user", "content": "风格控制指令（可选）"},
+        {"role": "assistant", "content": "要合成的文本"}
+    ],
+    audio={"format": "wav", "voice": "冰糖"}
+)
+
+audio_bytes = base64.b64decode(completion.choices[0].message.audio.data)
+```
+
+### 关键参数
+- **模型**：`mimo-v2.5-tts`（预置音色）/ `mimo-v2.5-tts-voicedesign`（文本设计音色）/ `mimo-v2.5-tts-voiceclone`（音色复刻）
+- **音色**：`冰糖`（中文女声）/ `茉莉` / `苏打` / `白桦`（中文男声）/ `Mia` / `Chloe` / `Milo` / `Dean`（英文）
+- **文本必须放在 `assistant` role**，风格指令放在 `user` role
+- **返回值**：`choices[0].message.audio.data` 是 base64 编码的 WAV 音频
+
+### 注意
+- 需要 `pip install openai`（项目已装）
+- 现有 `ANTHROPIC_API_KEY` 和 `https://token-plan-cn.xiaomimimo.com` endpoint 可直接复用
+- 无需额外指定 header，OpenAI SDK 默认的 `Authorization: Bearer` 认证即可

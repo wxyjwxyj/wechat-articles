@@ -141,7 +141,7 @@ set -a && source .env && set +a && python scripts/xxx.py
 | 文件 | 内容 |
 |------|------|
 | `lessons_engineering.md` | 工程化配置、hooks、代码质量、密钥管理、SQLite 并发、网络重试 |
-| `lessons_data.md` | 数据采集、管道、公众号发布经验 |
+| `lessons_data.md` | 数据采集、管道、公众号发布、MiMo TTS 经验 |
 | `lessons_frontend.md` | 前端、分支、GitHub Pages 经验 |
 | `lessons_research_hub.md` | Research Hub 经验 |
 | `project_wechat_lessons.md` | 早期项目历史 |
@@ -164,7 +164,7 @@ set -a && source .env && set +a && python scripts/xxx.py
 | 2026-04-12 | v27 | 测试覆盖提升（+10 tests）、list_items_by_date 时区 bug 修复、翻译日志改进 |
 | 2026-04-12 | v28 | 微信公众号采集 CDP→RSS 迁移；is_wechat 标记 + 严格日期过滤；Research Hub Exa + Claude query 扩展 |
 | 2026-04-13 | v29 | cckeys.top 代理拦截全面修复（所有 prompt 改英文，去掉 You are 句式）；去重取最后 JSON + 正反示例；评分缓存；采集端初筛；量子位/机器之心/新智元 改回 CDP；publish_to_mp 新增 --force 参数 |
-| 2026-04-29 | v30+ | ArXiv 429 修复（jitter 2-8s→20-40s）+ max_results=100 + 设计文档同步更新 |
+| 2026-04-29 | v30+ | ArXiv 429 修复（jitter 2-8s→20-40s）+ max_results=100；finish skill v2→v3（知识同步四步法）；MiMo TTS 调用记录 |
 
 ---
 

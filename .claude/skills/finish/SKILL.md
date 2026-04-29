@@ -1,10 +1,10 @@
 ---
 name: finish
 description: >
-  Run post-development pipeline: tests, code review, change summary, memory update, and commit.
+  Run post-development pipeline: tests, code review, change summary, knowledge sync, and commit.
   Use when changes are complete and ready to finalize, or when the user says
   "收尾", "提交", "finish", or after completing a development task.
-version: 2.0.0
+version: 3.0.0
 argument-hint: "[optional description]"
 ---
 
@@ -45,12 +45,48 @@ argument-hint: "[optional description]"
 
 用户确认后继续。改动说明之后的步骤全部自动执行，**不要反问"需不需要更新 XX"**。
 
-## 4. 更新记忆
+## 4. 知识同步（Knowledge Sync）
 
-检查是否需要更新 memory 文件（`.claude/projects/.../memory/`）：
-- 有新的踩坑经验 → 更新对应主题文件
-- 项目状态变化 → 更新 MEMORY.md
-- 没有新经验 → 跳过，不要强行更新
+将代码改动同步到文档体系。分四步执行，参照 `references/sync-matrix.md`：
+
+### 4a. Inventory — 盘文档
+列出项目所有 `.md` 文件：
+- `CLAUDE.md`
+- `.claude/rules/*.md`
+- `.claude/projects/*/memory/*.md`（记忆文件）
+- `.claude/research/*.md`（研究文档）
+
+逐个读取，输出当前文件清单。目的是发现所有可能受影响的文档，不遗漏。
+
+### 4b. Change Impact Matrix — 判影响
+根据 `git diff --name-only` 判断变更类型，对照 `references/sync-matrix.md` 确定需要更新的文档列表。
+
+**如果矩阵未覆盖本次变更类型**，按常识推断波及范围：改了哪个模块→该模块的文档在哪里→这些文档是否需要更新。
+
+### 4c. Apply — 执行同步
+按顺序修改：
+
+1. **项目级文档**：`CLAUDE.md`、`.claude/rules/*.md`
+2. **记忆文件**：`.claude/projects/*/memory/*.md`
+3. **研究文档**：`.claude/research/*.md`（如有）
+
+编辑原则：
+- **合并优于追加**：同类信息合并到一处，不分散到多个文件
+- **删除优于保留**：过期信息、已完成的 todo、推翻的决策 → 删，不留
+- **相对时间**（"今天"、"最近"）→ 转为绝对日期
+- **先读再改**：改任何文件前先完整读一遍，确认当前状态
+
+### 4d. Self-check — 自查清单
+改完后逐项确认：
+
+- [ ] 所有被波及的文档都更新了？
+- [ ] 没有相对时间遗留（"今天"、"最近"、"前几天"）？
+- [ ] 没有矛盾的内容（新旧决策同时存在）？
+- [ ] 已完成的待办已删除？
+- [ ] 重复内容已合并？
+- [ ] 记忆文件索引（MEMORY.md）的 description 是否与内容一致？
+
+全部通过才继续。不通过 → 回到 4c 修复。
 
 ## 5. 提交
 
@@ -77,4 +113,4 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
 ## 注意事项
 
-遇到问题参考 `gotchas.md`。
+遇到问题参考 `gotchas.md`，变更矩阵参考 `references/sync-matrix.md`。
