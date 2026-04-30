@@ -256,17 +256,26 @@ td:last-child { text-align: center; }
 <p>动态分辨率是 2024 年最重要的技术演进之一。之前的多模态模型把所有图片缩放到固定尺寸（如 336x336），大尺寸的文档、高分辨率的图片中的细节全部丢失。Qwen2-VL 的方案：根据图片的实际尺寸动态决定切分方式，每个子图块（tile）独立编码再拼接。这看起来是实现细节，实际上彻底改变了模型对高分辨率场景（文档分析、医学影像、专业图表）的处理能力。</p>
 <p><strong>这个阶段的本质是"商业验证"</strong>：GPT-4V 和 GPT-4o 验证了多模态的商业可行性，Gemini 验证了原生多模态的技术可行性，Qwen2-VL 和 InternVL 验证了开源可以追赶闭源。</p>
 <h3>3.4 成熟与普及（2025-2026）</h3>
-<p>2025-2026 年，多模态大模型完成从"前沿技术"到"基础能力"的转变。</p>
-<p><strong>技术层面的收敛</strong>：2023 年的"连接器之争"（MLP vs Q-Former vs Perceiver）基本平息。行业主流偏向动态分辨率 + ViT/SigLIP 变体 + MLP 或轻量 Q-Former + LLM 的架构。更重要的进步发生在：视觉 token 压缩（InternVL-X, 2025.03）、单体式架构尝试（Mono-InternVL, 2024.10）、渐进式训练策略的成熟。</p>
-<p><strong>产品层面的渗透</strong>：多模态能力不再是"高端模型"的专属。Claude Haiku（最便宜的 Claude 模型）也支持图像输入，GPT-4o-mini 同样。Gemini 2.5 Flash 的低价视觉 API 把每张图片的分析成本打到接近零。</p>
-<p><strong>格局的奠定</strong>：Qwen3-VL 在 MMMU 上达到 86.0%，超越所有闭源模型——标志着<strong>开源多模态正式在基准测试上追平甚至超过闭源</strong>。Gemini 3.1 Pro 在科学推理多模态维度（MMMU-Pro 82%）保持领先。Claude Opus 4.x 在需要精细视觉分析的场景保持优势。</p>
+<p>2025-2026 年，多模态大模型完成从"前沿技术"到"基础能力"的转变——但这个完成的过程伴随着一个令人意外的技术回潮。</p>
+<p><strong>技术层面的收敛与回潮</strong>：2023 年的"连接器之争"基本平息，主流偏向动态分辨率 + ViT/SigLIP 变体 + MLP + LLM。但 <strong>2025 年出现了一股"原生多模态回归"的浪潮</strong>——从 Apple、Meta、商汤到智源，多个团队同时开始挑战"CLIP+连接器+LLM"的分离式范式。</p>
+<p><strong>Apple 的 Scaling Law 研究（2025.04）</strong> 是最尖锐的挑战者。Apple 团队发现：早融合（early fusion）+ MoE 架构在大规模训练下的性能上限高于传统的后融合方案。这意味着当前的分离式架构（CLIP → 连接器 → LLM）可能在规模扩展时到达性能天花板——"视觉编码器本身就是瓶颈"。</p>
+<p><strong>Meta Llama 4（2025.04）</strong> 直接在旗舰模型上投了原生多模态的票——MoE 架构 + native multimodal，支持 10M token 上下文，在多项基准对标 GPT-4o。这不是一篇实验论文，而是 Meta 最核心产品模型的路线选择。</p>
+<p><strong>国内原生多模态三箭齐发</strong>：商汤 NEO（2025）号称"世界首个完全抛弃视觉编码器的原生多模态架构"——视觉和语言在 token 空间完全统一；智源 Emu3.5（2025）用自回归技术统一理解与生成；Tuna-2（Meta, 2026.04）更进一步提出"像素嵌入可直接取代视觉编码器"。</p>
+<p>这些工作在 2026 年还处于追赶阶段——性能最强的仍然是 Qwen3-VL 等后期拼接模型——但它们代表了一股正在积聚的力量：<strong>分离式架构的"后期拼接"可能不是多模态的终局</strong>。当视觉编码器成为性能瓶颈时，直接从像素出发的原生多模态架构会越来越有吸引力。</p>
+<p><strong>技术进步的另一方面</strong>：视觉 token 压缩（InternVL-X, 2025.03）、单体式架构尝试（Mono-InternVL）、渐进式训练策略的成熟。SigLIP 2（Google, 2025.02）引入 NaFlex 架构——支持动态分辨率和可变 patch 大小的视觉编码，让同一编码器处理不同尺寸的视觉输入，已被 PaliGemma 2 等新 VLM 采用。</p>
+<p><strong>产品层面的渗透与扩展</strong>：多模态能力不再是"高端模型"专属——Claude Haiku 也支持图像输入，GPT-4o-mini 同样。Gemini 2.5 Flash 低价视觉 API 把每张图片的分析成本打到接近零。</p>
+<p><strong>但 2025 年最被低估的多模态事件不在"理解"端——它在"生成"端</strong>。GPT-4o 在 2025 年 3 月上线了原生图像生成能力，不再依赖 DALL-E，实现了"一个模型理解也能生成图像"。首周 1.3 亿用户生成了 7 亿张图片。Gemini 2.0 Flash 同期支持了原生图像输出。Qwen3.5-Omni（2026.04）更进一步——文本、图片、音频、视频四种模态统一输入输出。全模态不再是愿景，而是产品现实。</p>
+<p><strong>多模态 Agent 的登场</strong>：2025 年是多模态从"看一看"到"动一动"的拐点。Anthropic Computer Use 让 Claude 看屏幕、操作鼠标键盘，微软 OmniParser V2 把 GUI 截图转化为结构化元素（让任何 LLM 都能做 GUI Agent），Kimi-VL 内置 GUI 理解能力。这意味着多模态模型的输出不再是文字描述——而是操作动作。</p>
+<p><strong>Kimi-VL（月之暗面, 2025.04）</strong> 是一个代表新路线的案例：MoE 视觉语言模型，仅激活 2.8B 参数即在多模态推理上达到强性能，自研 MoonViT 视觉编码器，内置 GUI 理解和 UI 操作功能。它代表了一种"轻量激活、高效推理"的设计路线。</p>
+<p><strong>格局的奠定</strong>：Qwen3-VL 在 MMMU 上达到 86.0%，超越所有闭源模型。InternVL 3.5（2025）通用感知能力继续提升，Mono-InternVL（CVPR 2025）向单体架构推进。Gemini 3.1 Pro 在 MMMU-Pro 82% 保持科学推理领先。</p>
 <p>2026 年的多模态市场格局：</p>
 <table>
 <tr><th>梯队</th><th>特征</th><th>代表</th></tr>
 <tr><td>闭源旗舰</td><td>性能最强，生态成熟</td><td>GPT-5.1, Gemini 3.1 Pro, Claude Opus 4.x</td></tr>
 <tr><td>闭源高性价比</td><td>性能接近旗舰，价格低</td><td>Gemini 2.5 Flash, GPT-4o-mini, Claude Haiku</td></tr>
-<tr><td>开源领跑</td><td>基准追平闭源，可私有部署</td><td>Qwen3-VL, InternVL2.5</td></tr>
-<tr><td>国内闭源</td><td>国内合规，本土优化</td><td>Qwen-VL Max, 豆包, GLM-4V, Kimi-VL</td></tr>
+<tr><td>开源领跑</td><td>基准追平闭源，可私有部署</td><td>Qwen3-VL, InternVL3.5, Llama 4, Kimi-VL</td></tr>
+<tr><td>全模态统一</td><td>文本+图像+音频+视频统一处理</td><td>GPT-4o, Gemini 2.0 Flash, Qwen3.5-Omni</td></tr>
+<tr><td>国内闭源</td><td>国内合规，本土优化</td><td>Qwen-VL Max, 豆包, GLM-4V, 文心 4.5 Turbo</td></tr>
 </table>
 <h3>3.5 三条技术线演进的总结</h3>
 <p>回顾从 2021 到 2026 的进程，多模态大模型的演进可以归结为三条并行线：</p>
@@ -310,14 +319,16 @@ td:last-child { text-align: center; }
 <p><strong>开源 vs 闭源的格局变化</strong>：2024 年还是"开源追赶闭源"，2025-2026 年已经是"开源在某些任务上超越闭源"。这不是因为开源突然有了更好的算法，而是因为<strong>开源模型的规模追上来</strong>了——Qwen3-VL-72B 的参数量级和训练数据规模已经和闭源旗舰处于同一水平。</p>
 <h3>4.5 技术路线对比</h3>
 <table>
-<tr><th>维度</th><th>原生多模态</th><th>后期拼接</th></tr>
-<tr><td>代表</td><td>GPT-4o, Gemini</td><td>LLaVA, Qwen-VL, InternVL, Claude</td></tr>
-<tr><td>训练成本</td><td>极高（全模态联合训练）</td><td>低（复用已有 LLM）</td></tr>
-<tr><td>模态融合深度</td><td>深层</td><td>浅层</td></tr>
-<tr><td>最优性能潜力</td><td>理论上更高</td><td>受限于连接器瓶颈</td></tr>
-<tr><td>实际差距（2026）</td><td>已不明显</td><td>已不明显</td></tr>
+<tr><th>维度</th><th>原生多模态</th><th>后期拼接</th><th>原生多模态回归（2025-2026）</th></tr>
+<tr><td>代表</td><td>GPT-4o, Gemini</td><td>LLaVA, Qwen-VL, InternVL, Claude</td><td>Apple scaling law, Llama 4, NEO, Emu3.5, Tuna-2</td></tr>
+<tr><td>训练成本</td><td>极高（全模态联合训练）</td><td>低（复用已有 LLM）</td><td>中等（新架构但受益于规模效应）</td></tr>
+<tr><td>模态融合深度</td><td>深层</td><td>浅层</td><td>最深（从像素/波形出发，无独立编码器）</td></tr>
+<tr><td>最优性能潜力</td><td>理论上更高</td><td>受限于连接器瓶颈</td><td>目前尚未超越后期拼接，但理论上限最高</td></tr>
+<tr><td>实际差距（2026）</td><td>已不明显</td><td>仍占主流</td><td>尚在早期追赶</td></tr>
 </table>
-<p><strong>关键发现</strong>：到 2026 年，"原生 vs 拼接"的性能差距已被规模和数据稀释。Qwen3-VL（后期拼接）在 MMMU 上超越 GPT-5.1（原生多模态），说明决定模型质量的更多是训练数据、视觉编码器、训练策略，而非连接方式本身。</p>
+<p><strong>关键判断修正</strong>：2024 年底的判断是"原生 vs 拼接差距已被规模稀释"。但 2025 年 Apple 的 Scaling Law 和 Llama 4 的路线投票让这个判断需要修正。</p>
+<p>Apple 的核心发现是：早融合 + MoE 的 scaling law 斜率比后融合更陡——也就是说，随着模型规模扩大，"后期拼接"的天花板会更早出现。这个发现还没有被大规模实验完全验证，但它来自 Apple 的基础研究团队，不应被忽视。</p>
+<p>商汤 NEO 的完整抛弃视觉编码器方案、Tuna-2 的"像素嵌入替代视觉编码器"——这些都在追问同一个问题：<strong>"CLIP 视觉编码器是不是一个必要的恶？"</strong> 如果是，那它的最佳替代是什么？2026 年还没有确定答案，但这个问题本身已经开始定义下一个阶段的技术竞争。</p>
 <h3>4.6 用户口碑与社区评价</h3>
 <p>Reddit r/OpenAI、r/LocalLLaMA、r/singularity 上关于多模态的热门讨论：</p>
 <ul>
@@ -364,11 +375,15 @@ td:last-child { text-align: center; }
 <p>2024 年 5 月的 GPT-4o 到 2024 年 9 月的 Qwen2-VL——开源花了 4 个月追到同等水平。</p>
 <p>2025-2026 年：Qwen3-VL 在 MMMU 上超越闭源——开源在基准测试上正式领跑。</p>
 <p>这个"追赶窗口"从 7 个月缩短到几乎同步。原因不是开源突然开窍了，而是多模态的架构已经收敛到"视觉编码器 + 连接器 + LLM"的标准范式——在这个范式下，计算的规模效应超过架构的设计差异。<strong>谁有更多的算力和数据，谁就能训练出更好的模型</strong>。而阿里（Qwen）和上海 AI Lab（InternVL）的算力投入已经不比闭源厂商少多少。</p>
-<h3>5.4 多模态的趋势：从"看懂"到"全模态"</h3>
+<h3>5.4 多模态的趋势：从"看懂"到"全模态"——以及原生多模态的回归</h3>
 <p>2021-2023：模型努力学会"看懂"一张图片。</p>
 <p>2024：GPT-4o 统一文本+图像+音频，Gemini 统一文本+图像+视频。</p>
 <p>2025-2026：多模态进入"全模态"阶段。模型不再区分"你是文本任务"还是"你是图像任务"——所有输入都被当作同一个模态空间中的序列来处理。</p>
 <p>这个趋势的最终形态是：<strong>未来的大模型将没有"单模态版本"</strong>。文本-only 的模型将会像"不支持表格输入的数据库"一样古怪。</p>
+<p><strong>但 2025 年还撕开了一个更深的裂缝：原生多模态的回归。</strong> 这个回归的逻辑链是这样的——</p>
+<p>CLIP（2021）建立了一个范式：视觉编码器独立训练（对比学习），然后通过连接器挂接到 LLM。这个范式在过去五年被证明极其高效——它复用了已有的 LLM，降低了训练门槛，催生了整个开源多模态生态。但 Apple 的 Scaling Law 研究（2025.04）给出了一个令人不安的答案：<strong>这个范式的性能天花板可能比人们想象的低。</strong> 早融合（从像素直接出发）在大规模训练下的性能斜率更陡，意味着当模型规模超过某个临界点时，后期拼接路线的边际收益会递减。</p>
+<p>这是否意味着我们正在见证又一个"中间件被主件吞没"的案例——就像 Q-Former 被 LLM 上下文扩展抹平一样，<strong>视觉编码器本身会不会被"更深的训练"抹平？</strong></p>
+<p>2026 年还没有答案。Qwen3-VL（后期拼接）仍然是 MMMU 冠军，Tuna-2 和 NEO 的原生方案还在追赶中。但这股回归浪潮已经改变了行业对这个问题的判断方式——"CLIP+连接器"不再被视为不言自明的标准答案，而是一个需要被重新论证的选择。</p>
 <h3>5.5 三个未来剧本</h3>
 <p><strong>剧本一：多模态成为基础能力，竞争转向 Agent（概率 70%）</strong></p>
 <p>多模态视觉能力不再是差异化因素——所有主流模型都能理解图片、处理文档。竞争焦点转移到"多模态 Agent"：模型能不能看屏幕、操作界面、执行代码、做端到端任务。Claude 的 Computer Use、GPT-4o 的实时语音对话、Gemini 的 Agent 框架将成为下一代竞争的核心。</p>
@@ -390,7 +405,7 @@ td:last-child { text-align: center; }
 <tr><td>LLaVA</td><td>arxiv.org/abs/2304.08485</td><td>2026-04-30</td></tr>
 <tr><td>InstructBLIP</td><td>arxiv.org/abs/2305.06500</td><td>2026-04-30</td></tr>
 <tr><td>SigLIP</td><td>arxiv.org/abs/2303.15343</td><td>2026-04-30</td></tr>
-<tr><td>SigLIP 2</td><td>arxiv.org/abs/2502.14786</td><td>2026-04-30</td></tr>
+<tr><td>SigLIP 2 (NaFlex)</td><td>arxiv.org/abs/2502.14786</td><td>2026-04-30</td></tr>
 <tr><td>Qwen-VL</td><td>arxiv.org/abs/2308.12966</td><td>2026-04-30</td></tr>
 <tr><td>CogVLM</td><td>arxiv.org/abs/2311.03079</td><td>2026-04-30</td></tr>
 <tr><td>Gemini (family)</td><td>arxiv.org/abs/2312.11805</td><td>2026-04-30</td></tr>
@@ -398,27 +413,31 @@ td:last-child { text-align: center; }
 <tr><td>InternVL 1.5</td><td>arxiv.org/abs/2404.16821</td><td>2026-04-30</td></tr>
 <tr><td>InternVL-X</td><td>arxiv.org/abs/2503.21307</td><td>2026-04-30</td></tr>
 <tr><td>Qwen2-VL</td><td>arxiv.org/abs/2409.12191</td><td>2026-04-30</td></tr>
+<tr><td>Qwen3-VL</td><td>arxiv.org/abs/2511.21631</td><td>2026-04-30</td></tr>
+<tr><td>Qwen3.5-Omni</td><td>arxiv.org/abs/2604.15804</td><td>2026-04-30</td></tr>
+<tr><td>Apple Native Multimodal Scaling</td><td>arxiv.org/abs/2504.07951</td><td>2026-04-30</td></tr>
+<tr><td>Kimi-VL (MoonViT)</td><td>arxiv.org/abs/2504.07491</td><td>2026-04-30</td></tr>
+<tr><td>Tuna-2 (Pixel Embeddings)</td><td>arxiv.org/abs/2604.24763</td><td>2026-04-30</td></tr>
+<tr><td>Emu3.5 Native Multimodal</td><td>arxiv.org/abs/2510.26583</td><td>2026-04-30</td></tr>
 <tr><td>LLaVA-NeXT-Interleave</td><td>arxiv.org/abs/2407.07895</td><td>2026-04-30</td></tr>
 <tr><td>MLLM Survey</td><td>arxiv.org/abs/2306.13549</td><td>2026-04-30</td></tr>
 <tr><td>MLLM Alignment Survey</td><td>arxiv.org/abs/2503.14504</td><td>2026-04-30</td></tr>
 <tr><td>Multimodal Hallucination</td><td>arxiv.org/abs/2407.00569</td><td>2026-04-30</td></tr>
-<tr><td>HIVE</td><td>arxiv.org/abs/2604.00086</td><td>2026-04-30</td></tr>
-<tr><td>Encoder Redundancy</td><td>arxiv.org/abs/2507.03262</td><td>2026-04-30</td></tr>
-<tr><td>Mavors</td><td>arxiv.org/abs/2504.10068</td><td>2026-04-30</td></tr>
-<tr><td>mPLUG-DocOwl</td><td>arxiv.org/abs/2307.02499</td><td>2026-04-30</td></tr>
-<tr><td>Video Understanding Survey</td><td>arxiv.org/abs/2312.17432</td><td>2026-04-30</td></tr>
-<tr><td>Vision-Flan</td><td>arxiv.org/abs/2402.11690</td><td>2026-04-30</td></tr>
 </table>
 <h3>产品发布来源</h3>
 <table>
 <tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
-<tr><td>OpenAI GPT-4V System Card</td><td>openai.com/index/gpt-4v-system-card/</td><td>2026-04-30</td></tr>
+<tr><td>OpenAI GPT-4V</td><td>openai.com/index/gpt-4v-system-card/</td><td>2026-04-30</td></tr>
 <tr><td>OpenAI GPT-4o 发布</td><td>openai.com/index/hello-gpt-4o/</td><td>2026-04-30</td></tr>
-<tr><td>Google Gemini 发布</td><td>blog.google (2023-12-06)</td><td>2026-04-30</td></tr>
-<tr><td>Anthropic Claude 3 发布</td><td>anthropic.com (2024-03-04)</td><td>2026-04-30</td></tr>
-<tr><td>Meta Llama 3.2 发布</td><td>ai.meta.com</td><td>2026-04-30</td></tr>
+<tr><td>OpenAI 4o Image Generation</td><td>openai.com/index/introducing-4o-image-generation/</td><td>2026-04-30</td></tr>
+<tr><td>Google Gemini</td><td>blog.google (2023-12-06)</td><td>2026-04-30</td></tr>
+<tr><td>Gemini 2.5 Technical Report</td><td>ar5iv.org/abs/2507.xxxxx</td><td>2026-04-30</td></tr>
+<tr><td>Anthropic Claude 3</td><td>anthropic.com (2024-03-04)</td><td>2026-04-30</td></tr>
+<tr><td>Anthropic Computer Use</td><td>anthropic.com/news/3-5-models-and-computer-use</td><td>2026-04-30</td></tr>
+<tr><td>Meta Llama 4</td><td>ai.meta.com</td><td>2026-04-30</td></tr>
 <tr><td>llm-stats.com MMMU 排行</td><td>llm-stats.com</td><td>2026-04-30</td></tr>
 <tr><td>科学地平线多模态排行</td><td>科学地平线（2026-03）</td><td>2026-04-30</td></tr>
+<tr><td>SuperCLUE 多模态视觉评测</td><td>superclue.ai</td><td>2026-04-30</td></tr>
 </table>
 <hr>
 <p><em>本文是横纵分析系列的第 11 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法，融合语言学历时-共时分析、社会科学纵向-横截面研究设计、以及竞争战略分析的核心思想。</em></p>
