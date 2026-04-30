@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>长上下文技术 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>长上下文技术 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉 Transformer 和注意力机制的基本概念，可以直接翻阅主报告。</blockquote>
+<hr>
+<h2>一、什么是"上下文长度"？</h2>
+<p>上下文长度（Context Length）指的是大模型<strong>一次能"看到"多少文本</strong>。</p>
+<p>直观理解：你给 ChatGPT 粘贴了一篇 5 万字的论文，问它"论文第三章的结论是什么"。模型能不能回答，取决于它的上下文长度是否 ≥ 5 万字。如果模型只支持 4 万字，它根本"看不到"第三章的内容。</p>
+<h3>为什么上下文长度很重要？</h3>
+<ul>
+<li><strong>读长文档</strong>：分析合同、论文、代码库</li>
+<li><strong>多轮对话</strong>：Agent 跟用户聊了 50 轮，要记住前面说了什么</li>
+<li><strong>跨文件推理</strong>：看了一个项目的所有代码文件再回答问题</li>
+</ul>
+<h3>上下文长度的"水分"</h3>
+<p>一个残酷的事实：<strong>模型宣称的上下文长度 ≠ 它能有效使用的上下文长度。</strong></p>
+<p>就像你说"我能背 1000 页书"，但距离你 200 页位置那句话你只能记得 3 成。模型也一样——OpenAI 的 GPT-4o 宣称 128K 上下文，但在长距离检索测试中，中间位置的内容准确率会大幅下降。</p>
+<p>这就是著名的 <strong>Lost in the Middle（迷失在中间）</strong> 现象。</p>
+<hr>
+<h2>二、位置编码——模型怎么知道词语的顺序？</h2>
+<p>"我打你"和"你打我"词语一样，意思完全相反。模型必须知道词语的顺序。</p>
+<h3>最初的方案：绝对位置编码</h3>
+<p>2017 年 Transformer 诞生时，给每个位置分配一个"座位号"：第 1 个词加编码 1，第 2 个词加编码 2……</p>
+<p><strong>痛点</strong>：模型训练时只见过 1-1024 号的座位。你让它处理 2000 个词，第 1500 号座位的编码它从没见过，表现自然一塌糊涂。</p>
+<h3>RoPE：旋转位置编码（2021）</h3>
+<p>现在最主流的位置编码方案（被 Llama、Mistral、Qwen、GPT-4o、Claude 等几乎所有主流模型采用）。</p>
+<p><strong>直觉</strong>：想象你在一个旋转餐厅里——你坐的位置（语义信息）不变，但餐桌在转（位置信息用旋转角度表示）。你跟你旁边的人说话（短距离），跟 50 米外的人喊话（长距离），难度自然不同。</p>
+<p>RoPE 把 query 和 key 向量做"旋转"，旋转量取决于它们的位置。<strong>两个词越近，它们的旋转量之差越小</strong>，注意力分数越高。这个设计天然支持相对位置感知。</p>
+<p>比喻不完美但有用：<strong>RoPE 像给每个词发了一把刻度尺，尺子上标着"离我有多远"</strong>。</p>
+<h3>ALiBi：给远距离词"扣分"（2021）</h3>
+<p>比 RoPE 更简单粗暴：不给位置编码，直接在注意力分数上按距离扣分——距离越远扣分越多。</p>
+<p>思路像<strong>一个不耐烦的读者，越往后看越没耐心</strong>。好处是天然支持超长文本（因为不依赖训练时的位置），但远距离信息捕捉能力不如 RoPE。</p>
+<hr>
+<h2>三、为什么长文本这么耗显存？</h2>
+<p>训练大模型时，显存被三样东西占着：模型参数、优化器状态、<strong>中间激活值</strong>（每层的输出）。</p>
+<p>对于长文本，中间激活值是显存黑洞。因为注意力计算的核心操作：</p>
+<blockquote>每个词要看所有词 → 产生一个 N×N 的注意力矩阵（N 是文本长度）</blockquote>
+<p>序列长度翻倍，注意力矩阵的大小翻 <strong>4 倍</strong>（N²）。处理 128K 文本的注意力矩阵是 4K 文本的 <strong>1024 倍</strong>。</p>
+<p><strong>这就是长上下文技术要解决的核心矛盾：文本越长，计算量和显存需求爆炸式增长。</strong></p>
+<hr>
+<h2>四、FlashAttention——让长文本变得可行</h2>
+<h3>问题出在哪？</h3>
+<p>GPU 有高速缓存（SRAM，又快又小）和显存（HBM，慢且大）。标准 attention 需要反复读写显存——就像<strong>频繁从冰箱取菜而不是用手边的备菜台</strong>。</p>
+<h3>FlashAttention 的洞察</h3>
+<p>把注意力计算切成小块，在高速缓存里一块一块算完，最后拼起来。<strong>显存读写次数从 O(N²) 降到 O(N)</strong>。</p>
+<p>打个比方：你不再需要把所有人的聊天记录全部写在黑板上再分析，而是分组聊天，每组聊完把结论记下来。</p>
+<p><strong>FlashAttention 是所有长上下文技术的基础设施</strong>——没有它，128K+ 的上下文在工程上根本不可行。</p>
+<hr>
+<h2>五、KV Cache——推理时的显存瓶颈</h2>
+<h3>推理时发生了什么？</h3>
+<p>模型生成文本是一个词一个词蹦的。生成第 100 个词时，前 99 个词的 Key 和 Value 向量已经算过了——但如果不缓存，每次都要从头重算。</p>
+<p><strong>KV Cache</strong> 就是把前面所有词的 K/V 向量存下来，避免重复计算。</p>
+<h3>问题</h3>
+<p>上下文长度每翻一倍，KV Cache 也翻一倍。128K 上下文的 KV Cache 占用可达数 GB。</p>
+<p>打个比方：<strong>你在写一本 100 页的书，写完第 50 页后，前面 50 页的"摘要"占了半个书架。写到第 100 页时，书架满了。</strong></p>
+<h3>解决方案</h3>
+<table>
+<tr><th>方案</th><th>思路</th><th>类比</th></tr>
+<tr><td>MQA</td><td>所有注意力头共享同一组 K/V</td><td>多个厨师共用一个备菜台</td></tr>
+<tr><td>GQA</td><td>分组共享 K/V</td><td>每 4 个厨师共用一个备菜台</td></tr>
+<tr><td>MLA</td><td>把 K/V 压缩成"浓缩液"，用时再还原</td><td>把蔬菜打成浓缩汁，做菜时再还原</td></tr>
+</table>
+<p>MLA（DeepSeek 的核心创新）是目前最强的方案——把 KV Cache 压缩了 93%-98%。</p>
+<hr>
+<h2>六、上下文扩展——让模型支持更长的文本</h2>
+<p>模型训练时只用 4K 长度的文本，怎么能让它处理 128K？</p>
+<h3>线性插值（PI）</h3>
+<p>把 128K 个位置"压缩"映射到模型熟悉的 4K 个位置上。类似<strong>把一张大照片缩小到相框里</strong>——信息都在，但分辨率降低了。</p>
+<h3>YaRN</h3>
+<p>更聪明的方法：不简单压缩，而是调整 RoPE 的旋转频率。<strong>高频部分（细粒度位置）少缩放，低频部分（粗略位置）多缩放</strong>。</p>
+<p>就像调收音机——高频台（精确定位）微调即可，低频台（大致方向）大调。</p>
+<h3>NTK-aware scaling</h3>
+<p>跟 YaRN 类似，基于神经正切核理论，也是"不同频率不同缩放"。被社区广泛采用。</p>
+<hr>
+<h2>七、StreamingLLM——处理无限长文本</h2>
+<p>如果文本无限长（比如直播字幕），怎么办？</p>
+<p>研究者发现了一个神奇现象：<strong>Attention Sink（注意力沉没）</strong>。</p>
+<p>模型对第一个 token（不论内容是什么）会分配异常高的注意力分数。原因是 softmax 要求所有注意力之和为 1，模型把"多余的注意力"倾倒给了第一个 token。</p>
+<p><strong>解决方案</strong>：只保留开头几个 token（作为注意力"垃圾桶"）+ 最近的若干 token。中间的统统丢掉。</p>
+<p>代价：<strong>它只能"看到"最近的文本</strong>，中间内容完全丢失。适合实时字幕等场景，不适合需要精确回忆全文的任务。</p>
+<hr>
+<h2>八、位置编码的"外推"——为什么模型能处理没见过的长度</h2>
+<p>外推 = Extension = 模型训练时最长只见过 4K 文本，但推理时能处理 128K"推"得更远。</p>
+<h3>三条路线</h3>
+<ol>
+<li><strong>位置编码天生好</strong>：ALiBi 天然支持外推</li>
+<li><strong>扩展方法（PI/YaRN/NTK）</strong>：通过缩放/旋转调整适配新长度</li>
+<li><strong>训练时渐进</strong>：先在短文本上预训练，再在长文本上继续训练</li>
+</ol>
+<p>大多数模型走的是 <strong>2+3 组合</strong>路线。</p>
+<hr>
+<h2>九、评估——怎么知道模型真的"看懂了"长文本？</h2>
+<h3>Needle in a Haystack（大海捞针）</h3>
+<p>在超长文本（干草堆）里藏一句"验证码是 8472"，问模型"验证码是多少"。这是最流行的长上下文评测方法。</p>
+<p><strong>局限</strong>：模型只要找到字面匹配就能答对，不需要真正理解。</p>
+<h3>NoLiMa（更高难度的评测）</h3>
+<p>不藏简单密码，而是藏<strong>语义信息</strong>，模型必须真正理解才能答对。结果：</p>
+<table>
+<tr><th>模型</th><th>宣称</th><th>有效（NoLiMa）</th></tr>
+<tr><td>Llama 4 Scout</td><td>10M</td><td>~1K</td></tr>
+<tr><td>GPT-4.1</td><td>1M</td><td>~16K</td></tr>
+<tr><td>Claude 3.5 Sonnet</td><td>200K</td><td>~4K</td></tr>
+</table>
+<p><strong>宣称和有效差距巨大</strong>——这是当前长上下文领域最重要的认知。</p>
+<hr>
+<h2>十、长上下文 vs RAG——不是二选一</h2>
+<p>RAG（检索增强生成）是把外部文档切碎、索引、只搜相关片段给模型看。</p>
+<table>
+<tr><th>方案</th><th>优势</th><th>劣势</th></tr>
+<tr><td>长上下文</td><td>一次给模型看全文 → 全局理解更好</td><td>贵、慢、有效利用率低</td></tr>
+<tr><td>RAG</td><td>便宜、快、可扩展</td><td>可能遗漏信息、碎片化</td></tr>
+</table>
+<p>2026 年的共识：<strong>不用二选一，而是混合架构</strong>——用 RAG 召回相关段落，用长上下文做综合分析。</p>
+<hr>
+<h2>十一、一张图总结</h2>
+<pre><code>问题：文本变长 → 注意力计算 O(N²) → 显存爆炸<br>          ↓<br>怎么解决？<br>          ↓<br>┌─────────────────────────────────────────────────────────────┐<br>│  并行技术路线                                    │<br>│                                                             │<br>│  位置编码 ← RoPE/YaRN/ALiBi ← 决定模型能"推"到多长          │<br>│  计算优化 ← FlashAttention ← 让长文本训练在工程上可行         │<br>│  显存压缩 ← MQA/GQA/MLA ← 减少 KV Cache 占用的 90%+         │<br>│  分布式   ← Ring Attention ← 多卡分摊长序列计算              │<br>│  推理优化 ← StreamingLLM/H2O ← 动态丢弃不重要的缓存          │<br>│  评测     ← NIAH → RULER → NoLiMa ← 识别"虚假上下文"         │<br>└─────────────────────────────────────────────────────────────┘<br>          ↓<br>结果：2017 年 512 tokens → 2026 年 1M+ tokens<br>      但"宣称"和"有效"之间的鸿沟仍是核心挑战</code></pre>
+</div>
+</body>
+</html>
