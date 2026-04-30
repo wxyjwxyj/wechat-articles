@@ -32,10 +32,11 @@ fetch_rss_today.py（TechCrunch/MIT/The Verge） ┘
 | `tests/` | 测试代码 | 是 |
 | `.claude/` | Claude Code 配置（rules/skills/agents） | 部分 |
 | `archive/` | 历史日报 HTML | 是 |
-| `assets/` | **调研文档、配图、设计稿** | **是（创建后立即 commit）** |
+| `assets/research/` | **横纵分析报告成品（主报告 + 前置知识）** | **是（创建后立即 commit）** |
+| `assets/` (其他) | 配图、设计稿等素材 | 是 |
 | `insights/` | 自学习洞察输出 | 是 |
 
-**⚠️ `assets/` 和调研文件必须入库。每次创建/修改调研文档后立即 `git add + commit`，禁止长期保持 untracked 状态。**
+**⚠️ `assets/research/` 和调研文件必须入库。每次创建/修改调研文档后立即 `git add + commit`，禁止长期保持 untracked 状态。**
 
 ## 开发规范
 
