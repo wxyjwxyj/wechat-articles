@@ -276,6 +276,9 @@ td:last-child { text-align: center; }
 <p>MCP 与 A2A 的分工很有意思：<strong>Anthropic 做"纵向"（Agent 连工具），Google 做"横向"（Agent 连 Agent）。</strong> 两者不是竞争关系，而是互补的两层标准。</p>
 <p><strong>2025 年 12 月，MCP 的行业地位发生质变——Anthropic 将其捐赠给新成立的 Agentic AI Foundation（Linux 基金会），OpenAI、Google、Microsoft 等巨头全部加入。</strong> MCP 从"Anthropic 提出的一个协议"变成了"行业共同维护的标准"。同一时期，A2A 已有 150+ 家企业接入。双协议格局正式确立：MCP 解决"Agent 怎么用工具"，A2A 解决"Agent 怎么找伙伴"。</p>
 <p><strong>几乎同时，一个名为 OpenClaw 的开源项目在 GitHub 上悄然崛起。</strong> 2025 年 11 月以 Clawdbot 为前身诞生，2026 年初更名为 OpenClaw，定位为"个人 AI Agent 操作系统"。到 2026 年 4 月，它的 GitHub Star 数突破 30 万，超越 Linux 和 React，成为 GitHub 软件类星标历史第一。这定义了一个新品类——用户在自己的设备上运行一个 Agent 系统，让它自主管理文件、浏览网页、操作应用。中国甚至出现了"人人养龙虾"的社交媒体现象，赛迪智库专门发布了研究报告。OpenClaw 的成功说明了一个重要趋势：<strong>用户不想用更多 App，他们想要一个能替自己操作所有 App 的 Agent。</strong></p>
+<p><strong>OpenClaw 带起来的浪潮还没退，第二个现象级项目 Hermes Agent 杀了进来。</strong> 2026 年 3 月，Nous Research 发布了 Hermes Agent——同样定位为开源个人 Agent 平台，但核心卖点完全不同：<strong>持久记忆和自我进化。</strong> OpenClaw 每次重启会丢失上下文，Hermes Agent 用 FTS5 记忆系统把"每次对话的历史"持久化存储，Agent 越用越了解你的习惯和偏好。它的自我进化机制——Agent 能反思自己的过往行为并调整策略——是 OpenClaw 没有的功能。</p>
+<p>到 2026 年 4 月，Hermes Agent 在不到两个月内冲到 10 万 Stars，成为 OpenClaw 之后增长最快的 AI Agent 开源项目。中国社交网络出现"养龙虾不如养马"的讨论。但对标 OpenClaw 的快速膨胀也带来了同样的烦恼——功能迭代太快、稳定性不足、以及社区关于"代码抄袭"的争议（2026 年 4 月被指控抄袭中国团队的架构设计）。</p>
+<p>Hermes Agent 和 OpenClaw 的竞争定义了 2026 年 Agent 品类的核心分化：<strong>OpenClaw 追求"广度"（什么都能操作），Hermes Agent 追求"深度"（越用越懂你）。</strong> 两个项目的 Star 数加起来超过 40 万，说明用户对"个人 AI Agent"的需求不是一时热度——它是真实存在的。</p>
 <p><strong>2025 年下半年，Agent 进入企业级部署阶段。</strong> Google 推出 Gemini Agent（原生 Agent 能力），Microsoft 推出 Copilot Agents，Amazon Bedrock Agents 上线。各大云厂商都在做同一件事：让 Agent 成为云平台的原生服务。这背后的逻辑很清楚——Agent 消耗的 token 是普通聊天的几十倍，对云厂商来说是巨大的算力消费增量。</p>
 <p><strong>7 月，OpenAI 发布 ChatGPT Agent</strong>——ChatGPT 用户可直接让 Agent 自主完成复杂任务。同月，Meta 以超过 20 亿美元收购了爆红一时的中国 Agent 产品 Manus（后被中国监管否决），这被视为 Meta 全面押注 AI Agent 的标志。9 月，Anthropic 发布 Claude Agent SDK（开源），随后在 10 月推出 Opus 4.5——首个具备"自我改进 Agent"能力的模型。</p>
 <p><strong>12 月，Microsoft Ignite 将 2026 年定为"Year of the Agent"</strong>，推出 Agent 365 全面嵌入 Office 套件。Salesforce 在 Dreamforce 2025 上发布 Agentforce 360，定义了"Agentic Enterprise"概念。这一年，Agent 从创业公司的独角戏变成了巨头的必争之地。收购案密集发生：Anthropic 收购 Vercept（增强 Computer Use），Salesforce 收购 Doti、Convergence、Clockwise 等多起，NICE 以 $955M 收购 Agentic AI 公司。但也出现了第一批倒下的——a16z 支持的 Yupp.ai 融资 $33M 后 22 个月倒闭，Robin AI 等也相继关门。</p>
@@ -306,6 +309,7 @@ td:last-child { text-align: center; }
 <table>
 <tr><th>框架</th><th>开发者</th><th>发布时间</th><th>GitHub Stars</th><th>开源</th><th>核心定位</th></tr>
 <tr><td><strong>OpenClaw</strong></td><td>社区</td><td>2025-11</td><td>300,000+</td><td>✅</td><td>个人 Agent 操作系统</td></tr>
+<tr><td><strong>Hermes Agent</strong></td><td>Nous Research</td><td>2026-03</td><td>100,000+</td><td>✅</td><td>自我进化+持久记忆 Agent</td></tr>
 <tr><td><strong>AutoGPT</strong></td><td>Significant Gravitas</td><td>2023-03</td><td>183,890</td><td>✅</td><td>自主 Agent，任务分解</td></tr>
 <tr><td><strong>Dify</strong></td><td>LangGenius</td><td>2023-05</td><td>140,000+</td><td>✅</td><td>可视化 Agent 搭建平台</td></tr>
 <tr><td><strong>LangChain</strong></td><td>LangChain Inc</td><td>2022-12</td><td>103,000+</td><td>✅</td><td>通用 LLM 应用框架</td></tr>
@@ -334,6 +338,7 @@ td:last-child { text-align: center; }
 <table>
 <tr><th>产品</th><th>公司</th><th>发布时间</th><th>类型</th><th>定价</th></tr>
 <tr><td><strong>OpenClaw</strong></td><td>社区</td><td>2025-11</td><td>个人 Agent 操作系统</td><td>免费开源</td></tr>
+<tr><td><strong>Hermes Agent</strong></td><td>Nous Research</td><td>2026-03</td><td>自我进化+持久记忆 Agent</td><td>免费开源</td></tr>
 <tr><td><strong>Claude Cowork</strong></td><td>Anthropic</td><td>2026-03</td><td>桌面协作 Agent</td><td>API 按量计费</td></tr>
 <tr><td><strong>Claude Dispatch</strong></td><td>Anthropic</td><td>2026-03</td><td>远程操控 Agent</td><td>API 按量计费</td></tr>
 <tr><td><strong>OpenAI Workspace Agents</strong></td><td>OpenAI</td><td>2026-04</td><td>企业长周期 Agent</td><td>ChatGPT Business/Enterprise</td></tr>
@@ -409,6 +414,7 @@ td:last-child { text-align: center; }
 <p>2026 年 4 月的删库事故把 Agent 安全问题推到了聚光灯下。用户的反应很有意思——多数人不是怪 Agent 本身，而是怪<strong>把 Agent 直接暴露在生产环境中的决策</strong>。这从侧面说明：行业对 Agent 的认知已经从"新奇事物"变成了"需要认真对待的生产工具"。大家都认同 Agent 有价值，但怎么安全地用 Agent，还没有共识。</p>
 <p><strong>OpenClaw：现象级的爱恨交织。</strong></p>
 <p>OpenClaw 的 30 万+ Stars 不是浪得虚名——它的价值观（开源、本地运行、用户控制）精准命中了技术社区的诉求。但快速膨胀也带来了质量争议：功能迭代太快导致稳定性不足，安全审计跟不上增长。中国政府对 OpenClaw 发布了安全风险提示，限制国企和政府机关使用。Red Hat 推出了 NemoClaw（企业安全分支）。一句话用户评价："OpenClaw 让我看到了 Agent 的未来，但这个未来还很粗糙。"</p>
+<p><strong>Hermes Agent vs OpenClaw：2026 年最激烈的 Agent 之争。</strong> Hermes Agent 的支持者最常提的三个词——"记忆"、"进化"、"懂我"。用户切换的理由很直接："OpenClaw 每次都像第一次见你，Hermes Agent 记得你上个月说过的话。"吐槽集中在：自我进化偶尔会产生"学习错误"——Agent 从一次失败的交互中学会了不该学的行为模式。架构抄袭争议（被指控抄袭中国团队 EvoMap）也让部分技术社区对 Nous Research 的信任打了折扣。用户评价："Hermes Agent 是理想主义的产品——但它现在还只是个原型。"</p>
 <hr>
 <h2>五、横纵交汇洞察</h2>
 <h3>5.1 历史如何塑造了今天的竞争格局</h3>
@@ -425,6 +431,7 @@ td:last-child { text-align: center; }
 <li><strong>Dify（2023-05）</strong> 在时间线上没有先发优势，但胜在定位清晰——不做框架做平台。Dify 的增长曲线是 2025-2026 年最陡的，说明当框架战争进入白热化时，通过"降维"（从代码到可视化）来竞争是有效的。</li>
 <li><strong>OpenAI Agents SDK（2025-03）</strong> 是时间线上最新的框架。它的出现说明 OpenAI 认识到：光有模型和 API 不够，需要工具生态。但入场太晚，已经没法撼动 LangChain 和 Dify 的位置了。</li>
 <li><strong>OpenClaw（2025-11）</strong> 是所有项目中"出道即巅峰"的典型——半年内从零到 GitHub 历史第一。它与其他框架的核心区别在于定位：不是"帮开发者写 Agent"的工具，而是"给最终用户用 Agent"的操作系统。OpenClaw 的爆发标志着 Agent 从"开发者工具"进入"消费者产品"阶段，这也是为什么它的 Star 数远超所有框架——它面向的不是开发者圈子，而是所有对 AI 感兴趣的人。</li>
+<li><strong>Hermes Agent（2026-03）</strong> 是 OpenClaw 之后增长最快的 Agent 项目——两个月内 10 万 Stars。它的差异化打得很准：OpenClaw 没做好的"记忆"和"自我进化"是 Hermes Agent 的核心卖点。但它和 OpenClaw 走了同一条路——个人 Agent 操作系统——意味着它直接和 OpenClaw 抢用户，而不是创造新品类。这种"正面刚"的竞争策略短期内能借 OpenClaw 的知名度获益，但长期要看它能不能在"记忆"这个单一差异化上建立足够宽的护城河。</li>
 </ul>
 <h3>5.3 优势与劣势的历史根源</h3>
 <p><strong>Agent 的核心优势——"自主性"——可以追溯到 ReAct 论文（2022）。</strong> ReAct 的"推理+行动"循环是所有现代 Agent 的底层设计模式。所有的 Agent 框架、产品、基准测试，本质上都是在优化这个循环的某个环节。</p>
