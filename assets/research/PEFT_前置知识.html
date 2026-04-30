@@ -210,7 +210,7 @@ td:last-child { text-align: center; }
 <tr><td>训练的参数</td><td>100%（175B）</td><td>0.1%-1%（≈100MB）</td></tr>
 <tr><td>每任务存储</td><td>整个模型（350GB）</td><td>一个补丁文件（10MB）</td></tr>
 <tr><td>推理延迟</td><td>不变</td><td>LoRA 变体：不变（可合并到原模型）</td></tr>
-<tr><td>灾难性遗忘</td><td>有风险</td><td>低（原始模型冻结）</td></tr>
+<tr><td><strong>灾难性遗忘</strong>（学新任务忘旧任务）</td><td>有风险</td><td><strong>低</strong>（原始模型冻结）</td></tr>
 </table>
 <hr>
 <h2>二、PEFT 三大路线</h2>
@@ -219,12 +219,14 @@ td:last-child { text-align: center; }
 <pre><code>Transformer 层<br>  ├── [Self-Attention]<br>  ├── [Adapter] ← 插入的小模块<br>  ├── [FFN]<br>  └── [Adapter] ← 插入的小模块</code></pre>
 <p>优点：可以在不同任务间切换（换 adapter 文件就行）。</p>
 <p>缺点：推理时有额外计算（因为要串行通过 adapter）。</p>
-<h3>路线二：Prefix / Prompt（前缀/提示）</h3>
-<p>在模型输入或 hidden state 前面加一些"可学习的虚拟 token"。</p>
+<h3>路线二：Prefix / Prompt Tuning（前缀/提示微调）</h3>
+<p>在模型输入或 hidden state 前面加一些"可学习的虚拟 token"——称为 <strong>Soft Prompt（软提示）</strong>。</p>
 <pre><code>输入：[prefix_1, prefix_2, ..., prefix_k, "翻译成英文：今天天气真好"]<br>                   ↑<br>              可学习的虚拟 token</code></pre>
 <p>这些虚拟 token 在训练时被优化，让模型学会"看到这个前缀就要做翻译"。</p>
 <p>优点：极其轻量（0.01% 参数）。</p>
 <p>缺点：在某些任务上效果不如 LoRA。</p>
+<h3>P-Tuning v2</h3>
+<p>Prompt Tuning 的一个改进版本（清华团队，2021.10）。核心改进：不只在输入层加 Soft Prompt，而是在每一层都加入可学习的 prompt token。这让 Prompt Tuning 在小模型和序列标注任务上也有效果。也是 HuggingFace 内置支持的方案。</p>
 <h3>路线三：LoRA（低秩适配）—— 事实标准</h3>
 <p>LoRA 的核心假设非常巧妙：<strong>模型微调时权重的变化量（ΔW）是低秩的</strong>。</p>
 <p>什么意思？一个权重矩阵可能是 4096×4096 的，但每次微调产生的变化量可能只需要两个小矩阵就能表示——比如 4096×16 和 16×4096。</p>
@@ -237,12 +239,21 @@ td:last-child { text-align: center; }
 <li>训练参数减少 10,000 倍</li>
 </ol>
 <hr>
-<h2>三、QLoRA：让普通电脑也能微调大模型</h2>
-<p>QLoRA 是 LoRA 的升级版，把三个技术组合在一起：</p>
+<h2>三、量化（Quantization）—— 给模型"减肥"</h2>
+<p>量化是把模型的权重从高精度（16-bit）压缩到低精度（4-bit 或 8-bit）的技术。就像是把高清照片压缩成 JPEG——清晰度略有下降，但文件体积大幅缩小。</p>
+<table>
+<tr><th>精度</th><th>每个权重占</th><th>70B 模型占用显存</th></tr>
+<tr><td>FP16（标准）</td><td>2 字节</td><td>~140 GB</td></tr>
+<tr><td>INT8（8-bit）</td><td>1 字节</td><td>~70 GB</td></tr>
+<tr><td><strong>NF4</strong>（4-bit）</td><td><strong>0.5 字节</strong></td><td><strong>~35 GB</strong></td></tr>
+</table>
+<p>NF4 是 4-bit 量化的一种特殊格式（NormalFloat），专门为正态分布的权重设计，精度损失最小。量化之后的模型<strong>存得更小、跑得更快</strong>，但质量几乎不降。</p>
+<h2>四、QLoRA：让普通电脑也能微调大模型</h2>
+<p>QLoRA 是 LoRA 的升级版（Tim Dettmers, 2023），把三个技术组合在一起：</p>
 <ol>
-<li><strong>4-bit 量化</strong>：模型本身用 4-bit 存储（NF4 格式），显存大幅降低</li>
-<li><strong>LoRA</strong>：训练时只更新低秩矩阵</li>
-<li><strong>分页优化器</strong>：显存不够时自动用到 CPU 内存</li>
+<li><strong>NF4 4-bit 量化</strong>：模型权重用 4-bit 存储，显存降到原来的 1/4</li>
+<li><strong>双重量化（Double Quantization）</strong>：连"量化的参数"本身也做一次量化，再省一点显存</li>
+<li><strong>分页优化器（Paged Optimizers）</strong>：显存溢出时自动把优化器状态暂存到 CPU 内存（类似电脑的虚拟内存）</li>
 </ol>
 <p>结果：65B 模型用单块 48GB GPU（一块 A100）就能微调——这在 QLoRA 之前需要 8 块 GPU。</p>
 <table>
@@ -253,7 +264,12 @@ td:last-child { text-align: center; }
 <tr><td>48 GB</td><td><strong>65B</strong>（A100）</td></tr>
 </table>
 <hr>
-<h2>四、LoRA 的超参数</h2>
+<h2>四、DoRA（权重分解低秩适配）—— LoRA 的升级版</h2>
+<p>DoRA（Weight-Decomposed Low-Rank Adaptation，NVIDIA, 2024）是 LoRA 目前最强的变体。它的洞察是：<strong>权重的作用可以分解为"大小"和"方向"两部分。</strong></p>
+<pre><code>LoRA 同时改变方向和大小 → 粗放<br>DoRA：先把权重拆成"大小"和"方向"<br>      → 大小用可学习向量调<br>      → 方向用 LoRA 调<br>      → 更精细</code></pre>
+<p>效果持续优于 LoRA，在某些任务上接近全量微调。缺点是多了一个超参数（需要决定在哪几层做分解），使用比 LoRA 略复杂。HuggingFace PEFT 库已原生支持。</p>
+<hr>
+<h2>五、LoRA 的超参数</h2>
 <table>
 <tr><th>参数</th><th>推荐值</th><th>说明</th></tr>
 <tr><td>r（秩）</td><td>8-64</td><td>越大效果越接近全量微调，但显存和参数也增加</td></tr>
@@ -262,11 +278,11 @@ td:last-child { text-align: center; }
 </table>
 <p>经验：r=16 是起点，大部分场景够用。需要更接近全量微调时用 r=64。</p>
 <hr>
-<h2>五、微调 vs RAG——什么时候怎么做</h2>
+<h2>六、微调 vs RAG——什么时候怎么做</h2>
 <pre><code>需要模型完成特定任务？<br>├─ 需要最新/外部知识 → RAG<br>├─ 需要格式/风格/行为改变 → 微调（LoRA/QLoRA）<br>├─ 需要提高领域准确度<br>│  ├─ 知识在文档中 → RAG<br>│  └─ 知识需内化（如医学诊断） → 微调<br>└─ 两者都需要 → 微调 + RAG（最常见最佳实践）</code></pre>
 <p>微调改变模型的"行为模式"和"知识内化"。RAG 提供"外部知识"。两者不是替代关系，是互补关系。</p>
 <hr>
-<h2>六、一张图总结</h2>
+<h2>七、一张图总结</h2>
 <pre><code>            PEFT 全景<br>                │<br>    ┌───────────┼───────────┐<br>    │           │           │<br>  Adapter    Prefix/Prompt   LoRA（标准）<br>    │           │           │<br>  插层小模块   虚拟token  低秩分解<br>    │           │           │<br>  有额外延迟   极其轻量   零推理延迟<br>    │           │           │<br>    └───────────┼───────────┘<br>                │<br>            QLoRA (LoRA + 量化)<br>                │<br>      单卡微调 65B 模型<br><br>   2026年推荐路线：<br>   单卡内存够 → LoRA (r=16)<br>   单卡内存紧 → QLoRA (NF4 + LoRA)<br>   需要极致质量 → DoRA 或更高秩 LoRA</code></pre>
 </div>
 </body>
