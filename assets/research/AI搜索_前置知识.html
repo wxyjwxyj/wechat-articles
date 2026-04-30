@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI 搜索前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>AI 搜索 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉 AI 搜索的基本概念，可以直接翻阅主报告。</blockquote>
+<hr>
+<h2>一、AI 搜索是做什么的？</h2>
+<p>AI 搜索就是把大语言模型（LLM）和搜索引擎结合起来，让搜索结果从"一堆蓝色链接"变成"一个直接答案"。</p>
+<p>传统搜索引擎的工作方式：</p>
+<pre><code>你搜"2024年中国GDP是多少"<br>  → Google/百度返回一堆链接<br>  → 你一个个点开看，自己找答案<br>  → 可能要点 3-5 个网页才能拼出答案</code></pre>
+<p>AI 搜索的工作方式：</p>
+<pre><code>你搜"2024年中国GDP是多少"<br>  → AI 搜索：搜索网络 → 阅读多个网页 → 综合 → 直接告诉你答案<br>  → "2024年中国GDP为134.9万亿元，同比增长5.0%。来源：国家统计局"</code></pre>
+<p>省去了"打开链接→找答案→确认"的步骤。这就是 AI 搜索的核心价值：<strong>从"给链接"到"给答案"</strong>。</p>
+<hr>
+<h2>二、关键概念</h2>
+<h3>检索增强生成（RAG）</h3>
+<p>AI 搜索的技术基础。AI 模型不靠自己的知识回答——它先搜索网络，把搜到的内容作为"参考资料"，再基于这些资料生成答案。</p>
+<p>这跟 ChatGPT 纯靠模型参数回答问题不一样。纯靠模型（比如让 GPT 直接回答"2024年GDP"）可能遇到知识截止日期或幻觉。RAG 模式先搜了最新数据再回答，准确性和时效性都更好。</p>
+<p><strong>RAG 的核心流程</strong>：</p>
+<pre><code>用户提问 → 搜索引擎检索相关页面 → 提取页面内容<br>  → 把内容+问题一起发给 LLM → LLM 基于搜到的内容生成答案</code></pre>
+<h3>幻觉（Hallucination）</h3>
+<p>AI 模型会"编造"看起来合理但其实不对的内容。在 AI 搜索中，幻觉尤其危险——用户相信搜索结果应该是"真实"的。</p>
+<p>2024 年 Google AI Overviews 翻车事件就是典型：AI 建议用户在披萨上加胶水防止奶酪滑落（曲解了一个 Reddit 玩笑帖）。这暴露了 AI 搜索的核心风险——90% 的正确率意味着每 10 次回答就有 1 次可能出错。</p>
+<h3>引用来源（Citation）</h3>
+<p>AI 搜索区别于 ChatGPT 纯生成的关键设计：每个答案后面标注了信息来源。Perplexity 定义了"对话式+引用来源"的范式——先给答案，再告诉用户答案来自哪里。用户自己可以点进去验证。</p>
+<h3>深度搜索（Deep Research）</h3>
+<p>2025-2026 年的新能力——AI 不只是回答一个问题，而是针对复杂问题做"多步研究"：</p>
+<p>例子：搜"2026年最适合做 AI 创业的城市"</p>
+<p>→ AI 先搜全球 AI 创业城市排名</p>
+<p>→ 发现需要知道政策支持、人才密度、融资活跃度</p>
+<p>→ 分别搜这三个方面</p>
+<p>→ 综合形成分析报告</p>
+<p>Perplexity 的 Pro Search、You.com 的 ARI、Genspark 的 Agent 工作台都在做这个。</p>
+<hr>
+<h2>三、AI 搜索的产品形态</h2>
+<table>
+<tr><th>形态</th><th>代表</th><th>特点</th></tr>
+<tr><td><strong>对话式搜索</strong></td><td>Perplexity、秘塔</td><td>像聊天一样搜索，每个答案带引用</td></tr>
+<tr><td><strong>传统搜索 + AI 摘要</strong></td><td>Google AI Overviews、百度</td><td>在原有搜索结果上加 AI 摘要框</td></tr>
+<tr><td><strong>深度研究引擎</strong></td><td>Kimi、Genspark</td><td>处理长上下文，做多步调研写报告</td></tr>
+<tr><td><strong>AI Agent 工作台</strong></td><td>Genspark (后期)、Comet</td><td>不只是搜索，还能帮你执行任务（订票、填表）</td></tr>
+</table>
+<hr>
+<h2>四、商业模式为何难以解决？</h2>
+<p>Google 靠搜索广告年收入 2000 亿美元。AI 搜索面临一个结构性问题：</p>
+<p><strong>传统搜索 → 用户点广告 → Google 赚钱</strong></p>
+<p><strong>AI 搜索 → AI 直接告诉用户答案 → 用户不点广告了 → 钱从哪来？</strong></p>
+<p>Perplexity 试过广告模式，但 2026 年放弃了——原因是"答案引擎"的页面空间有限，放广告会破坏体验。现在转向订阅 + 企业 API。</p>
+<p>另一个问题是 <strong>算力成本</strong>：传统搜索一次请求的成本约 $0.0002，AI 搜索一次请求的成本可能 $0.01-0.05（调用 LLM 的费用）。成本差了 50-250 倍。</p>
+<hr>
+<h2>五、主流产品速览</h2>
+<table>
+<tr><th>产品</th><th>一句话</th></tr>
+<tr><td><strong>Perplexity</strong></td><td>AI 搜索的品类定义者，2026 年估值 $210 亿</td></tr>
+<tr><td><strong>Google AI Overviews</strong></td><td>传统搜索巨头被迫 AI 化，至今准确率争议未消</td></tr>
+<tr><td><strong>Kimi</strong></td><td>月之暗面，200 万字上下文，适合深度研究</td></tr>
+<tr><td><strong>秘塔 AI 搜索</strong></td><td>"中国版 Perplexity"，中文搜索体验好</td></tr>
+<tr><td><strong>天工 AI 搜索</strong></td><td>国内第一款 AI 搜索（2023.08），昆仑万维</td></tr>
+<tr><td><strong>豆包</strong></td><td>字节跳动，App 端使用量最大的国产 AI 搜索</td></tr>
+<tr><td><strong>Genspark</strong></td><td>前百度 VP 创立，45 天冲到 $3600 万 ARR</td></tr>
+<tr><td><strong>You.com</strong></td><td>最早做 AI 搜索（2021），后来转向企业端</td></tr>
+</table>
+<hr>
+<h2>六、一个简单的直觉</h2>
+<pre><code>传统搜索 = 图书馆 + 管理员指路<br>（给你说"在第三排第二列"，你自己去找）<br><br>AI 搜索 = 图书馆 + 管理员帮你把书读完了告诉你答案<br>（直接说"答案是这个，在第 37 页和第 42 页都提到了"）</code></pre>
+<p>AI 搜索的效率更高，但风险也更大——图书管理员可能读错了、可能曲解了原文。而且图书馆的收入模式（靠指路收广告费）被颠覆了。这就是 AI 搜索在 2026 年的真实状态：<strong>技术上更先进，商业模式上还在探索中。</strong></p>
+</div>
+</body>
+</html>
