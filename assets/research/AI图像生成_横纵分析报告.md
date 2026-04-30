@@ -77,7 +77,7 @@ DALL-E 2 只能在 OpenAI 的服务器上用，Midjourney 只能在他们的 Dis
 
 **DALL-E 3（2023 年 10 月）** 走了另一条路线——跟 ChatGPT 深度集成。你可以在 ChatGPT 里直接描述需求，ChatGPT 帮你优化提示词，然后 DALL-E 3 生成。这解决了一个重要问题：很多用户不知道怎么写好的提示词。DALL-E 3 的文字理解力是所有模型中最强的，但生成风格偏"二次元"或"插画感"，不如 Midjourney 写实。
 
-**2024 年 8 月，Flux 发布**——Black Forest Labs，由原 Stability AI 核心团队成员创办。Flux 用 DiT 架构（扩散 Transformer），在 120 亿参数规模上训练。Flux 的写实度直接对标 Midjourney——这是第一个在质量上与 Midjourney 正面竞争的开源/半开源模型。Flux.2（2025 年 11 月）进一步缩小了差距。
+**2024 年 8 月，Flux 发布**——Black Forest Labs，由原 Stability AI 核心团队成员创办（Robin Rombach、Andreas Blattmann、Patrick Esser 等 Stable Diffusion 原作者）。Flux 用 DiT 架构（扩散 Transformer），在 120 亿参数规模上训练。Flux 的写实度直接对标 Midjourney——这是第一个在质量上与 Midjourney 正面竞争的开源/半开源模型。2025 年 5 月的 Flux.1 Kontext 加入上下文图像编辑能力，2025 年 11 月的 Flux.2 系列推出 Pro/Flex/Dev/Klein 四种变体（Klein 以 Apache 2.0 完全开源），进一步缩小了与 Midjourney 的差距。
 
 **Adobe Firefly（2023 年 3 月）** 走"商用安全"路线——所有训练数据都有合法授权，生成的图片可用于商业用途（不涉及版权风险）。这让它在企业市场有独特优势，但生成质量在 2024 年被 Midjourney V6 和 Flux 拉开了差距。
 
@@ -87,7 +87,7 @@ DALL-E 2 只能在 OpenAI 的服务器上用，Midjourney 只能在他们的 Dis
 
 **Midjourney** 已成为一个稳定盈利的公司。未公开估值但据估计已 $10B+，年收入约 $2 亿（主要来自 $10-60/月的订阅）。团队规模极小（约 50 人），利润率极高。Midjourney 始终不做公开 API——它的所有用户必须通过 Discord 或 Web App 使用，这保持了极低的获客成本和极高的用户粘性。
 
-**GPT Image（2025 年 3 月）取代了 DALL-E**——OpenAI 把图像生成能力直接内嵌到了 GPT 模型中，不再是独立的 DALL-E 服务。这对用户是更好的体验（在 ChatGPT 一句话就能生成图片），但对独立的图像生成产品是巨大的冲击——ChatGPT 的 4 亿用户现在都能直接生成图片了。
+**GPT Image（2025 年 3 月）取代了 DALL-E**——OpenAI 把图像生成能力直接内嵌到了 GPT 模型中，不再是独立的 DALL-E 服务。GPT Image 基于 GPT-4o，采用自回归架构而非扩散模型，发布首周就有 1.3 亿用户生成了 7 亿张图片，"吉卜力风格"头像席卷社交网络。2025 年 12 月的 GPT Image 1.5 提升了编辑精度和 4 倍生成速度；2026 年 4 月的 GPT Image 2 更进一步引入推理模型辅助图像生成。
 
 **Stability AI** 经历了艰难的财务困境。2023-2024 年，Stability AI 烧光了投资者的耐心，CEO 多次更换。尽管 SD 3.5 在技术上依然优秀，但公司能否持续运营是悬在开源生态头上的一个问号。SD 的开源生态（ComfyUI、LoRA、ControlNet）反而健康得惊人——但这不是 Stability AI 的功劳，而是社区的力量。
 
@@ -107,11 +107,11 @@ DALL-E 2 只能在 OpenAI 的服务器上用，Midjourney 只能在他们的 Dis
 
 | 产品 | 开发商 | 首次发布 | 最新版本 | 核心技术 | 产品形态 | 定价 | 开源 |
 |------|--------|---------|---------|---------|---------|------|:----:|
-| **Midjourney** | 独立 | 2022-03 | V7/V8 | 自研扩散 | Discord/Web | $10-60/月 | ❌ |
-| **GPT Image** | OpenAI | 2025-03 | GPT-4o | 多模态 LLM | ChatGPT 内建 | ChatGPT Plus $20/月 | ❌ |
+| **Midjourney** | 独立 | 2022-03 | V8.1 | 自研扩散 | Discord/Web | $10-60/月 | ❌ |
+| **GPT Image** | OpenAI | 2025-03 | GPT Image 2 | 自回归 LLM | ChatGPT 内建 | ChatGPT Plus $20/月 | ❌ |
 | **Flux** | Black Forest Labs | 2024-08 | Flux.2 | DiT (12B) | API/开源 | API 定价+开源 | ✅(部分) |
 | **Stable Diffusion 3.5** | Stability AI | 2023 | SD 3.5 | MMDiT | 开源 | 免费 | ✅ |
-| **Adobe Firefly** | Adobe | 2023-03 | Firefly 3 | 扩散 | Photoshop 内建 | Creative Cloud $55/月 | ❌ |
+| **Adobe Firefly** | Adobe | 2023-03 | Firefly 5 | 扩散 | Photoshop 内建 | Creative Cloud $55/月 | ❌ |
 | **Imagen 4** | Google | 2025-05 | Imagen 4 | 扩散 | Gemini/ImageFX | Gemini 免费+付费 | ❌ |
 | **Ideogram** | Ideogram | 2023 | 3.0 | 扩散 | Web | 免费+付费 | ❌ |
 | **Recraft** | Recraft | 2023 | V4 | 扩散 | Web | 免费+付费 $10-48/月 | ❌ |
@@ -122,13 +122,13 @@ DALL-E 2 只能在 OpenAI 的服务器上用，Midjourney 只能在他们的 Dis
 
 Midjourney 是所有 AI 图像产品中最独特的：它在 Discord 里运作，不做公开 API，不跟任何平台集成。这个策略的优点是极低的获客成本（Discord 的社交裂变）、极高的用户粘性（社区氛围）。缺点是用户群被限制在"愿意用 Discord 的人"——企业用户、合规团队、大规模 API 调用者都不是 Midjourney 的目标用户。
 
-到 2026 年，Midjourney 在"设计圈"的地位仍然无可撼动——"Midjourney 一下"已经成了动词。但它的增长瓶颈也很明显：不上 API、不集成到 Photoshop、不跟任何企业工具合作——$2 亿的年收可能是这个模式的天花板。
+到 2026 年，Midjourney 在"设计圈"的地位仍然无可撼动——"Midjourney 一下"已经成了动词。2025 年 4 月的 V7 alpha 和 2026 年 3 月的 V8 alpha 持续巩固了质量领先地位，但它的增长瓶颈也很明显：不上 API、不集成到 Photoshop、不跟任何企业工具合作——$2 亿的年收可能是这个模式的天花板。
 
 **GPT Image——AI 图像变成 AI 聊天的附加功能**
 
 GPT Image 取代 DALL-E 后，OpenAI 的图像生成战略变成了"把图像生成当作 ChatGPT 的一个功能"——不是独立的图片生成工具，而是"你在 ChatGPT 里聊着聊着顺便生成张图"。
 
-这个策略的杀伤力极大：ChatGPT 的 4 亿用户都能通过对话直接生成图片，不需要学习任何新的 UI、不需要切换到独立的 App。问题是 GPT Image 的生成质量仍然不如 Midjourney——尤其在写实度和审美上。
+这个策略的杀伤力极大：ChatGPT 的 4 亿用户都能通过对话直接生成图片，不需要学习任何新的 UI、不需要切换到独立的 App。GPT Image 1 和 1.5 的生成质量在写实度上不如 Midjourney，但 2026 年 4 月的 GPT Image 2 首次在图像生成中引入推理模型——生成过程中"思考"构图和细节，效果有明显提升。不过训练数据的版权争议也随之而来：GPT Image 2 的训练数据是否包含受版权保护的作品，是 2026 年尚未落地的法律风险。
 
 **Flux + SD——开源生态的力量**
 
@@ -140,7 +140,7 @@ Flux 和 SD 3.5 代表了两种开源策略：Flux 是"开源模型赚钱"（开
 
 Firefly 的核心卖点不是技术领先——而是"合规"。所有训练数据来自 Adobe Stock 等已授权来源，生成的图片没有版权风险。对大型企业来说，这比"画质好一点"重要得多。
 
-但 Firefly 的生成质量在 2026 年已经被 Midjourney 和 Flux 甩开。Adobe 的策略似乎不是"做最好的图像生成"——而是"做最安全的图像生成"。这个策略在企业市场是有效的，但在消费者市场没有竞争力。
+Firefly Image 4（2025 年 4 月）和 Image 5（2025 年 10 月）在持续迭代，也集成了 Google Gemini/Veo/Imagen 和 OpenAI 模型，但生成质量仍然被 Midjourney 和 Flux 甩开。Adobe 的策略似乎不是"做最好的图像生成"——而是"做最安全的图像生成"。这个策略在企业市场是有效的，但在消费者市场没有竞争力。
 
 ### 4.3 定价对比：一个已经竞争充分的赛道
 
