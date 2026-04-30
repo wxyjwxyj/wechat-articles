@@ -68,7 +68,7 @@ ASR 市场更成熟（准确率已经超过人类水平），TTS 市场差异化
 - **最自然的语音**：用大模型（如 GPT-4o）做端到端生成，但需要 300-1000ms 的延迟
 - **最快的语音**：用轻量模型（如 CosyVoice 的 bi-streaming），延迟能做到 150ms，但自然度不如大模型
 
-在实时对话场景中，延迟超过 500ms 用户就会觉得"不自然"。所以行业在拼命压延迟——同时保持自然度。GPT-4o voice 做到了 ~320ms，CosyVoice 3 bi-streaming 做到了 ~150ms，这两个是目前行业标杆。
+**TTFB（Time To First Byte，首包时间）** 是衡量语音延迟的核心指标——从用户说完话到 AI 开始回话的第一个音频字节传回来的时间。延迟超过 500ms 用户就会觉得"不自然"。2026 年的延迟竞赛数据：ElevenLabs Flash 75ms TTFB（目前最快），Deepgram Aura-2 90ms，CosyVoice 3 bi-streaming ~150ms，GPT-4o voice ~320ms。行业正在全面压向 100ms 以下。
 
 ---
 
