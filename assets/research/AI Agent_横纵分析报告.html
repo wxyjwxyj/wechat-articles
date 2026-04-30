@@ -218,7 +218,7 @@ td:last-child { text-align: center; }
 <p><strong>Tool Calling / Function Calling</strong>：2023 年 6 月 OpenAI 引入，让 LLM 能输出结构化 API 调用请求。这是 Agent 从"会说话的脑子"变成"有手有脚的助手"的关键一步。不同模型的实现有差异：OpenAI 支持并行调用，Claude 更强调安全性（不确定时倾向不调用），Gemini 深度集成 Google 生态。</p>
 <p><strong>ReAct（Reasoning + Acting）</strong>：2022 年由 Yao et al. 提出的推理-行动交替循环。Agent 每次推理一小步，查一下外部信息，再推理下一步。这种方法有效解决了 LLM 的"闭门造车"问题——在没有外部信息验证时，LLM 很容易编造错误答案。</p>
 <p><strong>Planning（规划）</strong>：从 CoT（思维链，2022）到 ToT（思维树，2023）到 GoT（思维图，2024），Agent 的规划能力经历了从"一条直线"到"一棵树"再到"一张网"的演进。最新的方向是递归推理（Recursive Multi-Agent Systems, 2026），把递归作为新的 scaling 维度。</p>
-<p><strong>MCP（Model Context Protocol）</strong>：Anthropic 2024 年底推出的开放协议，标准化 Agent 与外部工具的连接方式，被称为"AI 的 USB-C"。配套的 A2A（Agent-to-Agent Protocol，Google 2025）解决的是 Agent 间的通信问题。</p>
+<p><strong>MCP（Model Context Protocol）</strong>：Anthropic 2024 年底推出的开放协议，标准化 Agent 与外部工具的连接方式，被称为"AI 的 USB-C"。2025 年 12 月 Anthropic 将其捐赠给 Linux 基金会下属的 Agentic AI Foundation，OpenAI、Google、Microsoft 全部加入，MCP 从"Anthropic 的协议"升级为"行业标准"。配套的 A2A（Agent-to-Agent Protocol，Google 2025）解决的是 Agent 间的通信问题。</p>
 <h3>2.3 为什么 Agent 现在才火？</h3>
 <p>一个 40 年前就有的概念（SOAR, 1983），为什么 2023 年突然爆发？答案很简单：<strong>Agent 需要一个足够聪明的"大脑"</strong>。Symbolic AI 时代的 Agent 受限于规则系统的表达能力——你能手动编写的规则永远无法覆盖真实世界的复杂性。LLM 的出现让 Agent 第一次拥有了"理解复杂指令、做出合理判断"的能力，剩下的工具调用和记忆系统只是锦上添花的技术工程。</p>
 <p>前置知识（包括 Tool Calling、ReAct、Memory、MCP、A2A、Prompt Injection、Agent 基准测试等的详细讲解，配比喻和例子）请参考 <code>AI Agent_前置知识.md</code>。</p>
@@ -274,7 +274,17 @@ td:last-child { text-align: center; }
 <p><strong>3 月，OpenAI 发布 Agents SDK。</strong> OpenAI 终于推出了自己的 Agent 开发框架——轻量级、支持多 Agent 编排、核心机制是 Handoff（Agent 之间移交控制权）。这表明 OpenAI 认识到 Agent 不是一个产品功能，而是一个开发范式，需要工具生态来支撑。</p>
 <p><strong>同样在 3 月，Google 发布 A2A（Agent-to-Agent）协议。</strong> 如果说 MCP 解决的是"Agent 怎么用工具"，A2A 解决的是"Agent 之间怎么聊天"。场景很清晰：一家旅行 Agent 需要和酒店 Agent、航班 Agent、租车 Agent 沟通。A2A 在协议层面规范了 Agent 间的任务协商、能力发现、安全认证。</p>
 <p>MCP 与 A2A 的分工很有意思：<strong>Anthropic 做"纵向"（Agent 连工具），Google 做"横向"（Agent 连 Agent）。</strong> 两者不是竞争关系，而是互补的两层标准。</p>
+<p><strong>2025 年 12 月，MCP 的行业地位发生质变——Anthropic 将其捐赠给新成立的 Agentic AI Foundation（Linux 基金会），OpenAI、Google、Microsoft 等巨头全部加入。</strong> MCP 从"Anthropic 提出的一个协议"变成了"行业共同维护的标准"。同一时期，A2A 已有 150+ 家企业接入。双协议格局正式确立：MCP 解决"Agent 怎么用工具"，A2A 解决"Agent 怎么找伙伴"。</p>
+<p><strong>几乎同时，一个名为 OpenClaw 的开源项目在 GitHub 上悄然崛起。</strong> 2025 年 11 月以 Clawdbot 为前身诞生，2026 年初更名为 OpenClaw，定位为"个人 AI Agent 操作系统"。到 2026 年 4 月，它的 GitHub Star 数突破 30 万，超越 Linux 和 React，成为 GitHub 软件类星标历史第一。这定义了一个新品类——用户在自己的设备上运行一个 Agent 系统，让它自主管理文件、浏览网页、操作应用。中国甚至出现了"人人养龙虾"的社交媒体现象，赛迪智库专门发布了研究报告。OpenClaw 的成功说明了一个重要趋势：<strong>用户不想用更多 App，他们想要一个能替自己操作所有 App 的 Agent。</strong></p>
 <p><strong>2025 年下半年，Agent 进入企业级部署阶段。</strong> Google 推出 Gemini Agent（原生 Agent 能力），Microsoft 推出 Copilot Agents，Amazon Bedrock Agents 上线。各大云厂商都在做同一件事：让 Agent 成为云平台的原生服务。这背后的逻辑很清楚——Agent 消耗的 token 是普通聊天的几十倍，对云厂商来说是巨大的算力消费增量。</p>
+<p><strong>7 月，OpenAI 发布 ChatGPT Agent</strong>——ChatGPT 用户可直接让 Agent 自主完成复杂任务。同月，Meta 以超过 20 亿美元收购了爆红一时的中国 Agent 产品 Manus（后被中国监管否决），这被视为 Meta 全面押注 AI Agent 的标志。9 月，Anthropic 发布 Claude Agent SDK（开源），随后在 10 月推出 Opus 4.5——首个具备"自我改进 Agent"能力的模型。</p>
+<p><strong>12 月，Microsoft Ignite 将 2026 年定为"Year of the Agent"</strong>，推出 Agent 365 全面嵌入 Office 套件。Salesforce 在 Dreamforce 2025 上发布 Agentforce 360，定义了"Agentic Enterprise"概念。这一年，Agent 从创业公司的独角戏变成了巨头的必争之地。收购案密集发生：Anthropic 收购 Vercept（增强 Computer Use），Salesforce 收购 Doti、Convergence、Clockwise 等多起，NICE 以 $955M 收购 Agentic AI 公司。但也出现了第一批倒下的——a16z 支持的 Yupp.ai 融资 $33M 后 22 个月倒闭，Robin AI 等也相继关门。</p>
+<p><strong>2026 年 3 月至 4 月，Agent 行业进入最密集的产品发布期：</strong></p>
+<p><strong>3 月 24 日，Anthropic 发布 Claude Cowork 和 Claude Dispatch。</strong> Cowork 定位为"AI 数字同事"，与用户在同一台电脑上协作；Dispatch 支持手机远程操控电脑执行任务。同一天，Claude 获得直接操控 Mac 电脑的能力。Cowork 的发布引发了关于<strong>"SaaSpocalypse"</strong>的大讨论——如果 Agent 能直接操作软件，传统 SaaS 的 UI 还有什么意义？</p>
+<p><strong>4 月，OpenAI 发布 Workspace Agents</strong>——ChatGPT Business/Enterprise 版的 7×24 在线 Agent，正式宣布 Custom GPTs 逐步弃用。同时大幅升级 Agents SDK（v0.14.0），新增 Sandbox 沙箱环境和 Harness 架构——从"能用"走向"安全用"。</p>
+<p><strong>4 月，Google Cloud Next '26 发布 Enterprise Agent Platform</strong>，整合 Vertex AI 为全栈 Agent 平台，推出 AI Ultra 订阅（$250/月）。Microsoft Agent Framework 1.0 正式发布，原生支持 MCP 和 A2A，一行代码切换 6 个模型厂商。</p>
+<p><strong>同样在 4 月，Anthropic 发布 Claude Managed Agents（托管智能体服务）</strong>——开发周期从数月缩短到数天。这意味着 Anthropic 从"提供模型"直接进入了"提供 Agent 服务"的领域。行业反应激烈：<strong>"Anthropic 亲自下场，又一批 Agent 创业公司死掉了。"</strong> 同月，Anthropic 还发布 Agent Skills 开放标准，并宣布 Enterprise 从 per-seat 转向按用量计费——重度用户成本可能翻倍，被视为"AI 免费时代结束"的又一标志。</p>
+<p><strong>4 月 22 日，Salesforce TDX 2026 发布 Headless 360</strong>——向 AI Agent 开放全部平台能力，采用 per-conversation 定价（$2/对话）。GitHub Copilot 也从固定订阅转向按用量计费。整个行业的定价模式正在从"卖座位"转向"卖 Agent 工作量"。</p>
 <p><strong>进入 2026 年，Agent 安全事件开始从概念讨论变为真实事故。</strong></p>
 <p><strong>4 月 28 日，Hacker News 上出现了一篇引发行业震动的帖子："我们的 AI Agent 删除了生产数据库。"</strong> 500 多分、1002 条评论。Agent 被 prompt injection 攻击后执行了 DROP TABLE 操作。这不是第一次 Agent 事故，但绝对是影响最大的一次。它让整个行业意识到：Agent 的权限控制不是锦上添花，而是生死攸关。</p>
 <p>同一周，多项 Agent 安全相关的技术进展值得关注：</p>
@@ -295,16 +305,19 @@ td:last-child { text-align: center; }
 <h3>4.2 Agent 开发框架：百家争鸣</h3>
 <table>
 <tr><th>框架</th><th>开发者</th><th>发布时间</th><th>GitHub Stars</th><th>开源</th><th>核心定位</th></tr>
+<tr><td><strong>OpenClaw</strong></td><td>社区</td><td>2025-11</td><td>300,000+</td><td>✅</td><td>个人 Agent 操作系统</td></tr>
 <tr><td><strong>AutoGPT</strong></td><td>Significant Gravitas</td><td>2023-03</td><td>183,890</td><td>✅</td><td>自主 Agent，任务分解</td></tr>
-<tr><td><strong>Dify</strong></td><td>LangGenius</td><td>2023-05</td><td>139,689</td><td>✅</td><td>可视化 Agent 搭建平台</td></tr>
-<tr><td><strong>LangChain</strong></td><td>LangChain Inc</td><td>2022-12</td><td>135,430</td><td>✅</td><td>通用 LLM 应用框架</td></tr>
+<tr><td><strong>Dify</strong></td><td>LangGenius</td><td>2023-05</td><td>140,000+</td><td>✅</td><td>可视化 Agent 搭建平台</td></tr>
+<tr><td><strong>LangChain</strong></td><td>LangChain Inc</td><td>2022-12</td><td>103,000+</td><td>✅</td><td>通用 LLM 应用框架</td></tr>
 <tr><td><strong>MetaGPT</strong></td><td>FoundationAgents</td><td>2023-06</td><td>67,564</td><td>✅</td><td>多 Agent 角色扮演</td></tr>
 <tr><td><strong>AutoGen</strong></td><td>Microsoft</td><td>2023-10</td><td>57,586</td><td>✅</td><td>多 Agent 对话框架</td></tr>
 <tr><td><strong>CrewAI</strong></td><td>CrewAI Inc</td><td>2024-01</td><td>50,315</td><td>✅</td><td>多 Agent 角色协作</td></tr>
-<tr><td><strong>LlamaIndex</strong></td><td>RunLLama</td><td>2022-11</td><td>49,048</td><td>✅</td><td>数据/RAG 框架</td></tr>
+<tr><td><strong>LlamaIndex</strong></td><td>RunLLama</td><td>2022-11</td><td>40,000+</td><td>✅</td><td>数据/RAG 框架</td></tr>
 <tr><td><strong>Agno</strong></td><td>Agno Inc</td><td>2022-05</td><td>39,803</td><td>✅</td><td>Agent 构建工具</td></tr>
 <tr><td><strong>LangGraph</strong></td><td>LangChain Inc</td><td>2023-08</td><td>30,850</td><td>✅</td><td>状态图 Agent</td></tr>
 <tr><td><strong>OpenAI Agents SDK</strong></td><td>OpenAI</td><td>2025-03</td><td>25,576</td><td>✅</td><td>官方多 Agent 编排</td></tr>
+<tr><td><strong>Microsoft Agent Framework</strong></td><td>Microsoft</td><td>2025</td><td>30,000+</td><td>✅</td><td>企业 Agent 开发框架</td></tr>
+<tr><td><strong>Google ADK</strong></td><td>Google</td><td>2025</td><td>20,000+</td><td>✅</td><td>Agent 开发工具集</td></tr>
 </table>
 <p><strong>数据说明</strong>：GitHub Stars 截至 2026-04-30，数据来自 GitHub API。这些数字只反映社区热度，不直接等价于工程成熟度或商业化程度。</p>
 <h4>框架竞争的核心矛盾</h4>
@@ -316,17 +329,19 @@ td:last-child { text-align: center; }
 <li><strong>CrewAI</strong> 的核心是"角色"——定义 Agent 的角色、任务、流程，像管一个项目团队</li>
 <li><strong>MetaGPT</strong> 的核心是"SOP"——模拟软件公司从 PM 到测试的完整角色链</li>
 </ul>
-<p><strong>OpenAI Agents SDK 的存在本身就是个声明。</strong> 2025 年 3 月 OpenAI 推出自己的 Agent 框架时，LangChain 的股票（未上市）可能跌了一截。但经过一年多的发展，结果远没有到"颠覆"的程度——Agents SDK 定位为轻量级工具（25k stars），和 LangChain 的重框架走的是不同路线。OpenAI 的 Handoff 机制（Agent 间移交控制权）倒是设计上的亮点，被其他框架借鉴。</p>
+<p><strong>OpenAI Agents SDK 的存在本身就是个声明。</strong> 2025 年 3 月 OpenAI 推出自己的 Agent 框架时，LangChain 的股票（未上市）可能跌了一截。但经过一年多的发展，结果远没有到"颠覆"的程度——Agents SDK 定位为轻量级工具（25k stars），和 LangChain 的重框架走的是不同路线。OpenAI 的 Handoff 机制（Agent 间移交控制权）是设计上的亮点，被其他框架借鉴。2026 年 4 月的 v0.14.0 升级增加了 Sandbox 沙箱环境和 Harness 架构（来自 Codex 的生产级运行框架），标志着 OpenAI 正式从"功能优先"转向"安全优先"。</p>
 <h3>4.3 Agent 产品：谁在真正创造价值？</h3>
 <table>
 <tr><th>产品</th><th>公司</th><th>发布时间</th><th>类型</th><th>定价</th></tr>
-<tr><td><strong>Manus</strong></td><td>Monica</td><td>2025-03</td><td>通用自主 Agent</td><td>免费 + Pro $39/月</td></tr>
+<tr><td><strong>OpenClaw</strong></td><td>社区</td><td>2025-11</td><td>个人 Agent 操作系统</td><td>免费开源</td></tr>
+<tr><td><strong>Claude Cowork</strong></td><td>Anthropic</td><td>2026-03</td><td>桌面协作 Agent</td><td>API 按量计费</td></tr>
+<tr><td><strong>Claude Dispatch</strong></td><td>Anthropic</td><td>2026-03</td><td>远程操控 Agent</td><td>API 按量计费</td></tr>
+<tr><td><strong>OpenAI Workspace Agents</strong></td><td>OpenAI</td><td>2026-04</td><td>企业长周期 Agent</td><td>ChatGPT Business/Enterprise</td></tr>
+<tr><td><strong>ChatGPT Agent</strong></td><td>OpenAI</td><td>2025-07</td><td>通用自主 Agent</td><td>ChatGPT Plus $20/月</td></tr>
 <tr><td><strong>OpenAI Operator</strong></td><td>OpenAI</td><td>2025-01</td><td>浏览器 Agent</td><td>ChatGPT Pro $200/月</td></tr>
+<tr><td><strong>Manus</strong></td><td>Monica / Meta</td><td>2025-03</td><td>通用自主 Agent</td><td>免费 + Pro $39/月</td></tr>
 <tr><td><strong>Claude Computer Use</strong></td><td>Anthropic</td><td>2024-10</td><td>桌面操控 Agent</td><td>API 按量计费</td></tr>
 <tr><td><strong>Devin</strong></td><td>Cognition AI</td><td>2024-03</td><td>AI 软件工程师</td><td>$500/月起</td></tr>
-<tr><td><strong>Cursor</strong></td><td>Anysphere</td><td>2024-05</td><td>AI 编程 IDE</td><td>$20/月</td></tr>
-<tr><td><strong>Windsurf</strong></td><td>Codeium</td><td>2024-08</td><td>AI 编程 IDE</td><td>$15/月</td></tr>
-<tr><td><strong>GitHub Copilot Agent</strong></td><td>Microsoft</td><td>2025-01</td><td>AI 编程助手</td><td>$10-39/月</td></tr>
 </table>
 <p><strong>AI 编程 Agent 是当前最成熟、变现最清晰的产品方向。</strong> Cursor 是公认的用户体验标杆，其 <code>@</code> 引用上下文的设计被广泛模仿。GitHub Copilot 在 2026 年从固定订阅转向用量计费，是行业的重要风向标——说明 Agent 的工作量不是均匀的（每个月少的时候只有几十次调用，多的时候几千次），固定订阅制下厂商利润空间有限。</p>
 <p><strong>通用自主 Agent（Manus / Operator）面临"Demo 级 vs 生产级"的信任鸿沟。</strong> Manus 在爆红后热度明显回落，不是因为技术不行，而是因为用户期望被 Demo 拉得太高。一个 Agent 如果在 9 个任务里完成 8 个，第 9 个搞砸了，用户的记忆点不是那 8 个成功的，而是那个搞砸的。这是 Agent 产品的"容错困境"——用户对人类的容错率远高于对 Agent 的。</p>
@@ -334,10 +349,10 @@ td:last-child { text-align: center; }
 <h3>4.4 大厂平台战略：云厂商的 Agent 牌局</h3>
 <table>
 <tr><th>厂商</th><th>Agent 平台/产品</th><th>核心策略</th></tr>
-<tr><td><strong>OpenAI</strong></td><td>Operator + Tasks + Agents SDK</td><td>三线作战：产品（Operator）、服务（Tasks）、开发者生态（SDK）</td></tr>
-<tr><td><strong>Anthropic</strong></td><td>Computer Use + MCP</td><td>技术领先但产品少，走"开放标准"路线</td></tr>
-<tr><td><strong>Google</strong></td><td>Gemini Agent + Vertex AI + A2A</td><td>云厂商绑定 + 协议标准（A2A）</td></tr>
-<tr><td><strong>Microsoft</strong></td><td>Copilot Agents + AutoGen</td><td>企业 Copilot 生态 + 开源社区（AutoGen）</td></tr>
+<tr><td><strong>OpenAI</strong></td><td>Operator + ChatGPT Agent + Workspace Agents + Agents SDK</td><td>四层覆盖：产品（Operator/ChatGPT Agent）、企业（Workspace Agents）、开发者（SDK）</td></tr>
+<tr><td><strong>Anthropic</strong></td><td>Cowork + Dispatch + Computer Use + Claude Agent SDK + Managed Agents + MCP</td><td>从模型公司全面转型 Agent 平台公司，亲自下场做 Agent 产品</td></tr>
+<tr><td><strong>Google</strong></td><td>Enterprise Agent Platform + Vertex AI + A2A + ADK</td><td>云厂商全栈绑定 + 协议标准（A2A）+ 开发生态（ADK）</td></tr>
+<tr><td><strong>Microsoft</strong></td><td>Agent 365 + Copilot Agents + Agent Framework 1.0</td><td>企业 Copilot 生态 + 开源 Agent 框架</td></tr>
 <tr><td><strong>字节跳动</strong></td><td>Coze / 扣子</td><td>国内最成功的 Agent 平台，月活领先</td></tr>
 <tr><td><strong>百度</strong></td><td>AppBuilder</td><td>云厂商策略，绑定文心大模型</td></tr>
 <tr><td><strong>阿里</strong></td><td>百炼平台</td><td>云厂商策略，绑定通义千问</td></tr>
@@ -392,6 +407,8 @@ td:last-child { text-align: center; }
 <p>Manus 在 2025 年 3 月的爆红是 Agent 行业的一个缩影：演示视频里的 Manus 看起来无所不能，实际用起来发现"还行但没那么神"。用户反映最集中的问题是"场景覆盖率不足"——Manus 在它训练过的场景里表现惊艳，遇到新场景就力不从心。这其实是所有"通用 Agent"的共同困境：<strong>通用性和可靠性之间存在本质矛盾。</strong></p>
 <p><strong>AI Agent 删库事件：信任危机。</strong></p>
 <p>2026 年 4 月的删库事故把 Agent 安全问题推到了聚光灯下。用户的反应很有意思——多数人不是怪 Agent 本身，而是怪<strong>把 Agent 直接暴露在生产环境中的决策</strong>。这从侧面说明：行业对 Agent 的认知已经从"新奇事物"变成了"需要认真对待的生产工具"。大家都认同 Agent 有价值，但怎么安全地用 Agent，还没有共识。</p>
+<p><strong>OpenClaw：现象级的爱恨交织。</strong></p>
+<p>OpenClaw 的 30 万+ Stars 不是浪得虚名——它的价值观（开源、本地运行、用户控制）精准命中了技术社区的诉求。但快速膨胀也带来了质量争议：功能迭代太快导致稳定性不足，安全审计跟不上增长。中国政府对 OpenClaw 发布了安全风险提示，限制国企和政府机关使用。Red Hat 推出了 NemoClaw（企业安全分支）。一句话用户评价："OpenClaw 让我看到了 Agent 的未来，但这个未来还很粗糙。"</p>
 <hr>
 <h2>五、横纵交汇洞察</h2>
 <h3>5.1 历史如何塑造了今天的竞争格局</h3>
@@ -407,45 +424,49 @@ td:last-child { text-align: center; }
 <li><strong>AutoGPT（2023-03）</strong> 是最早引爆 Agent 概念的项目，但后续发展乏力。作为个人项目（Significant Gravitas 一个人），它没能建立起可持续的开发团队和商业模式。AutoGPT 的星数（183k）和实际影响力之间的差距是所有 Agent 项目里最大的。</li>
 <li><strong>Dify（2023-05）</strong> 在时间线上没有先发优势，但胜在定位清晰——不做框架做平台。Dify 的增长曲线是 2025-2026 年最陡的，说明当框架战争进入白热化时，通过"降维"（从代码到可视化）来竞争是有效的。</li>
 <li><strong>OpenAI Agents SDK（2025-03）</strong> 是时间线上最新的框架。它的出现说明 OpenAI 认识到：光有模型和 API 不够，需要工具生态。但入场太晚，已经没法撼动 LangChain 和 Dify 的位置了。</li>
+<li><strong>OpenClaw（2025-11）</strong> 是所有项目中"出道即巅峰"的典型——半年内从零到 GitHub 历史第一。它与其他框架的核心区别在于定位：不是"帮开发者写 Agent"的工具，而是"给最终用户用 Agent"的操作系统。OpenClaw 的爆发标志着 Agent 从"开发者工具"进入"消费者产品"阶段，这也是为什么它的 Star 数远超所有框架——它面向的不是开发者圈子，而是所有对 AI 感兴趣的人。</li>
 </ul>
 <h3>5.3 优势与劣势的历史根源</h3>
 <p><strong>Agent 的核心优势——"自主性"——可以追溯到 ReAct 论文（2022）。</strong> ReAct 的"推理+行动"循环是所有现代 Agent 的底层设计模式。所有的 Agent 框架、产品、基准测试，本质上都是在优化这个循环的某个环节。</p>
 <p><strong>Agent 的核心劣势——"不可靠性"——则根植于 LLM 本身的随机性。</strong> LLM 不是确定性系统，同样的输入在不同时间可能输出不同的结果。这对聊天场景没问题（甚至被看作"创造力"），但对 Agent 场景是致命的——一个需要精确执行的自动化系统，如果核心推理引擎是不确定的，可靠性天花板就是低的。这个问题不是工程优化能完全解决的，它可能需要回到模型层面（推理链路的可验证性、确定性的工具调用分支）。</p>
 <p><strong>"Demo 级 vs 生产级"的鸿沟，历史根源在 2023 年的 Agent 元年的成功标准。</strong> 2023 年的 Agent 项目比拼的是"能做什么"，而不是"做得多可靠"。AutoGPT 的 Demo 展示了一个自主运行的 Agent，但没有人去验证它在 100 次运行中的成功率。这种"功能优先于可靠性"的惯性一直延续到 2025 年的 Manus。直到 2026 年的删库事件，行业才开始真正重视 Agent 的安全性和可靠性。</p>
+<p><strong>2026 年最深刻的商业模式变化：从"卖座位"到"卖工作量"。</strong> Anthropic Enterprise 转向按用量计费、GitHub Copilot 转向 consumption pricing、Salesforce Agentforce 按对话收费——所有巨头都在同一时间抛弃了 SaaS 经典的 per-seat 订阅制。原因很直接：Agent 的工作量分布极度不均匀（一个月可能只用几次，也可能跑几千次），固定订阅下要么用户觉得亏要么厂商亏。按用量计费对双方都更公平，但也意味着 <strong>Agent 的使用成本是透明且可量化的</strong>——这对企业决策是好事，但对 Agent 厂商意味着"你的价值必须对得起每一次调用的价格"。</p>
+<p><strong>2026 年最大的格局变化：Anthropic 从模型公司变成了 Agent 平台公司。</strong> 从 Claude Agent SDK（2025.09）到 Cowork/Dispatch（2026.03）再到 Managed Agents（2026.04），Anthropic 在半年内完成了从"卖模型"到"卖 Agent 服务"的转型。这个决策的逻辑很清楚：Agent 消耗的 token 是普通聊天的 10-50 倍，做 Agent 产品比单纯卖 API 能 capture 更多价值。但对 Agent 创业公司来说，这意味着最大的模型供应商之一变成了直接的竞争对手。行业把这称为 <strong>"平台挤压"</strong>——当模型厂商自己做 Agent 时，依赖该模型的 Agent 创业公司的生存空间急剧缩小。</p>
 <p><strong>Anthropic 的安全路线选择可以追溯到 2023 年。</strong> 当 OpenAI 在 2023 年 6 月推出 Function Calling 时，Anthropic 的 Claude 对 Tool Use 采取了更保守的策略——模型在不确定时倾向不调用工具。2024 年的 Computer Use 也是先强调安全再展示能力。这种"安全优先"的路线让 Anthropic 在 Agent 的"快速迭代"阶段稍显落后，但在 2026 年安全事件频发后，变成了差异化优势。</p>
 <h3>5.4 未来推演：三个剧本</h3>
-<h4>剧本一：最可能的剧本——Agent 成为"新型应用层"（概率 60%）</h4>
+<h4>剧本一：最可能的剧本——Agent 成为"新型应用层"（概率 55%）</h4>
 <p>Agent 不会取代 App，也不会取代 OS，而是在现有基础设施上新增一层"智能中间层"。就像移动互联网没有取代 PC 互联网，而是创造了新的场景。Agent 的核心价值在于<strong>连接</strong>——连接不同的 SaaS 工具、连接线上和线下、连接数据和决策。</p>
 <p>在这个剧本里：</p>
 <ul>
-<li>框架格局稳定：LangChain 和 Dify 分庭抗礼，前者服务专业开发者，后者服务非技术用户</li>
-<li>编程 Agent 全面落地：Cursor 等成为开发标配，类似当年的 IDE</li>
-<li>通用 Agent（Manus、Operator）在特定垂直场景（客服、运营、数据分析）站稳脚跟，但不会"无所不能"</li>
+<li>框架格局两极化：OpenClaw 做消费者端个人 Agent，LangChain/Dify 做企业端 Agent 开发</li>
+<li>编程 Agent 全面落地：Cursor 等成为开发标配</li>
+<li>定价全面转向按用量计费，Agent 的使用成本透明化</li>
 <li>Agent 安全和治理成为成熟的企业级市场</li>
+<li>Anthropic 和 OpenAI 的 Agent 产品与第三方创业公司形成竞争</li>
 </ul>
-<h4>剧本二：最危险的剧本——Agent "承诺膨胀"（概率 25%）</h4>
-<p>Agent 的安全事故持续发酵，行业信心受挫。一个严重事故（比如 Agent 自动执行的金融交易导致亿元级损失）触发监管，Agent 的应用受到严格限制。"Agent 冬天"真的到来。</p>
+<h4>剧本二：最危险的剧本——"平台挤压 + 安全事故"双重打击（概率 25%）</h4>
+<p>两个风险叠加：Anthropic/OpenAI 亲自下场做 Agent 产品挤压了创业生态，导致创新活力下降；同时安全事故持续发酵，行业信心受挫。一个严重事故（比如 Agent 自动执行的金融交易导致亿元级损失）触发监管，Agent 应用受到严格限制。"Agent 冬天"真的到来。</p>
 <p>在这个剧本里：</p>
 <ul>
+<li>Agent 创业公司大量倒闭（已出现苗头：Yupp.ai 倒闭、Robin AI 破产）</li>
 <li>企业 Agent 部署大幅放缓</li>
-<li>投资转向 Agent 安全领域</li>
-<li>MCP 和 A2A 协议发展受阻（监管不确定性）</li>
+<li>监管收紧，Agent 的自主权被严格限制</li>
 <li>编程 Agent 受影响最小（代码领域风险可控）</li>
 </ul>
-<p>这个剧本不是危言耸听——2026 年 4 月的删库事件如果发生在金融或医疗领域，后果要严重得多。行业在 Agent 安全上的投入还远远不够。</p>
-<h4>剧本三：最乐观的剧本——Agent 成为下一代 OS 界面（概率 15%）</h4>
-<p>OpenAI 的 Agent 手机真的做出来了，Agent 代替 App 作为用户与数字世界的交互入口。人们不再下载 App，而是告诉 Agent 要做什么。MCP 成为无处不在的基础设施，类似 HTTP 之于互联网。</p>
+<p>这个剧本不是危言耸听——2026 年 4 月的删库事件如果发生在金融或医疗领域，后果要严重得多。行业在 Agent 安全上的投入还远远不够。"SaaSpocalypse"的讨论也在加剧传统软件厂商对 Agent 的警惕。</p>
+<h4>剧本三：最乐观的剧本——Agent 成为个人数字助理（概率 20%）</h4>
+<p>OpenClaw 的成功证明了"个人 Agent OS"的市场需求真实存在。Agent 不是取代 OS，而是成为运行在 OS 之上的"个人数字助理层"——用户通过 Agent 管理文件、操作应用、处理信息。MCP 成为无处不在的基础设施，类似 USB 之于外设。</p>
 <p>在这个剧本里：</p>
 <ul>
-<li>Agent 平台的竞争进入白热化，类似 2010 年的移动 OS 战争</li>
-<li>传统 App 生态萎缩，SaaS 公司的核心产品从 App 变成 Agent API</li>
-<li>Agent 编程成为主流开发范式，全栈工程师转型 AI Agent 工程师</li>
-<li>LangChain 和 Dify 的可能被收购（类似 Sun 收购 MySQL）</li>
+<li>Agent 平台的竞争进入白热化，OpenClaw 开源 vs 厂商闭源</li>
+<li>SaaS 公司从卖 App 变成卖 Agent API，UI 不再是核心产品</li>
+<li>"Agent-as-a-Service"的按用量定价成为标配</li>
+<li>模型厂商同时做 Agent 产品成为常态，"平台挤压"加速行业洗牌</li>
 </ul>
-<p>这个剧本很诱人，但需要跨越三个巨大的障碍：</p>
+<p>这个剧本比一年前更可信了——OpenClaw 的 30 万 Stars 和 Cowork/Dispatch 的发布都说明用户对"个人 Agent"的需求真实存在。但仍需跨越三个巨大障碍：</p>
 <ol>
 <li><strong>可靠性</strong>：Agent 需要达到 99.9%+ 的任务成功率，现在可能只有 80-90%</li>
-<li><strong>成本</strong>：Agent 的 token 消耗量是 chat 的数十倍，商业化模型还没跑通</li>
+<li><strong>成本</strong>：Agent 的 token 消耗量是 chat 的数十倍，按用量计费下用户愿不愿意买单还是未知数</li>
 <li><strong>安全</strong>：Agent 权限控制、数据隐私、审计溯源都需要根本性的解决方案</li>
 </ol>
 <p>如果把视角拉远，Agent 的发展实际上揭示了一个更大的趋势：<strong>AI 的"行动化"</strong>。从 2017 年 Transformer 让 AI "能理解"，到 2022 年 ChatGPT "能对话"，再到 2023 年 Agent "能行动"，AI 的能力边界在持续外扩。每一次外扩都伴随着控制权的重新分配——从"人类操作 AI"到"AI 自主行动"再到"人类监督 AI"。</p>
@@ -479,9 +500,17 @@ td:last-child { text-align: center; }
 <li>OpenAI Function Calling 发布 — https://openai.com/blog/function-calling-and-other-api-updates (2023-06-13)</li>
 <li>Anthropic Computer Use 发布 — https://www.anthropic.com/news/3-5-models-and-computer-use (2024-10)</li>
 <li>MCP (Model Context Protocol) 发布 — https://www.anthropic.com/news/model-context-protocol (2024-11-25)</li>
+<li>MCP 捐赠给 Linux 基金会 — https://www.anthropic.com/news/donating-the-model-context-protocol (2025-12)</li>
 <li>A2A (Agent-to-Agent Protocol) — https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ (2025-04)</li>
 <li>Devin 发布 — https://www.cognition.ai/blog/introducing-devin (2024-03)</li>
 <li>OpenAI Operator / Agents SDK (2025-01 / 2025-03)</li>
+<li>OpenAI Agents SDK v0.14.0 升级（Sandbox + Harness）— https://openai.com/sl-SI/index/the-next-evolution-of-the-agents-sdk/ (2026-04)</li>
+<li>OpenAI Workspace Agents (2026-04)</li>
+<li>Anthropic Claude Cowork + Dispatch (2026-03)</li>
+<li>Anthropic Claude Managed Agents + Agent Skills (2026-04)</li>
+<li>Google Cloud Next '26 Enterprise Agent Platform (2026-04)</li>
+<li>Microsoft Agent Framework 1.0 (2026-04)</li>
+<li>OpenClaw GitHub (300k+ Stars) — https://github.com/openclaw/openclaw (2025-11)</li>
 </ol>
 <h3>行业新闻（2026 年 4 月）</h3>
 <ol>
