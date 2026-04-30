@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>LLM 应用框架前置知识</title>
+<title>LLM应用框架 前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -217,10 +217,16 @@ td:last-child { text-align: center; }
 <p>最基本的概念——把多个步骤串起来。比如：</p>
 <pre><code>用户提问 → 检索相关文档 → 把问题和文档一起发给 LLM → 输出回答</code></pre>
 <p>框架让你用声明式的方式定义这个流程，不需要手写每一步的代码。</p>
+<h3>DAG（有向无环图）</h3>
+<p>当流程不是简单的一条线，而是有分支、有并行的复杂结构时，就用到 DAG。比如一个知识库机器人可以"同时搜索文档库和数据库 → 把两个结果合并 → 发给 LLM"，这就是一个 DAG。现代 LLM 框架的内部编排引擎大多基于 DAG 设计。</p>
 <h3>Agent（智能体）</h3>
 <p>一个"会自己决定做什么"的 LLM 程序。Agent 不只是执行固定流程，而是在循环中：</p>
 <pre><code>接收任务 → 推理（该做什么）→ 执行（调用工具）→ 观察结果 → 再推理 → ...</code></pre>
 <p>Agent 框架处理这个循环的编排逻辑（状态管理、容错、决策机制）。</p>
+<h3>ReAct（推理+行动）</h3>
+<p>Agent 最核心的工作模式。由 2022 年 Yao et al. 提出，核心思想是"边思考边行动"：</p>
+<pre><code>思考"我需要查什么" → 调用搜索工具 → 看到结果 → 思考下一步 → 调用另一个工具 → ...</code></pre>
+<p>ReAct 锁定了几乎所有现代 Agent 框架（LangChain、AutoGen、CrewAI）的设计方向。一句话说清楚：<strong>没有 ReAct，Agent 只会闭门造车；有了 ReAct，Agent 能一边推理一边验证。</strong></p>
 <h3>Tool / Plugin（工具）</h3>
 <p>LLM 需要调用外部能力——搜索引擎、数据库、计算器、API。框架提供统一的方式来定义和调用这些工具。</p>
 <h3>Memory（记忆）</h3>
@@ -231,17 +237,26 @@ td:last-child { text-align: center; }
 </ul>
 <h3>RAG Pipeline（检索增强生成）</h3>
 <p>从文档中检索相关内容并注入 prompt。框架处理：文档解析 → 分块 → 向量化 → 检索 → 重排序 → 生成的完整链路。</p>
+<h3>Token（词元）</h3>
+<p>Token 是大模型处理文本的最小单位。简单理解——模型不读"字"，读"词元"。"你好世界"=4个 token。API 按 token 计费，框架的优化目标很多就是"用更少的 token 完成任务"。</p>
+<h3>MCP（Model Context Protocol）</h3>
+<p>Anthropic 在 2024 年底推出的开放协议，统一 Agent 与外部工具的连接方式，被称为"AI 的 USB-C"。主流框架（LangChain、Dify）都已原生支持 MCP，使其成为 Agent-工具连接的标准化接口。</p>
+<h3>LangGraph（状态图框架）</h3>
+<p>LangChain 的 Agent 编排引擎，采用<strong>有向图状态机</strong>架构取代了早期的 Chain 模型。Agent 的每一步都是图上的一个节点，节点之间有状态传递。LangGraph 是 2024-2026 年 Agent 编排领域的事实标准，能处理复杂的循环、分支和条件跳转。</p>
 <hr>
 <h2>三、主流框架一句话定位</h2>
 <table>
 <tr><th>框架</th><th>一句话定位</th><th>谁在用</th></tr>
 <tr><td><strong>LangChain</strong></td><td>通用编排框架，700+ 集成，生态最大</td><td>AI 工程师、Agent 开发者</td></tr>
+<tr><td><strong>LangGraph</strong></td><td>Agent 状态图引擎，LangChain 的 Agent 核心</td><td>需要复杂 Agent 的团队</td></tr>
 <tr><td><strong>LlamaIndex</strong></td><td>检索和数据索引最强，适合企业知识库</td><td>知识库、文档处理团队</td></tr>
 <tr><td><strong>Dify</strong></td><td>可视化拖拽平台，非技术人员也能用</td><td>产品经理、业务团队、GCC</td></tr>
 <tr><td><strong>Haystack</strong></td><td>模块化、可审计，适合受监管行业</td><td>金融、医疗、政府</td></tr>
-<tr><td><strong>Semantic Kernel</strong></td><td>.NET 生态，企业合规级</td><td>.NET / Azure 用户</td></tr>
-<tr><td><strong>DSPy</strong></td><td>自动优化 prompt，编译器式框架</td><td>追求极致 prompt 质量的团队</td></tr>
-<tr><td><strong>CrewAI</strong></td><td>多 Agent 协作，简单易用</td><td>Agent 原型的快速验证</td></tr>
+<tr><td><strong>MAF (原 Semantic Kernel)</strong></td><td>.NET 生态，企业合规级，M365 深度集成</td><td>.NET / Azure 用户</td></tr>
+<tr><td><strong>DSPy</strong></td><td>自动优化 prompt 和 few-shot，编译器式框架</td><td>追求极致 prompt 质量的团队</td></tr>
+<tr><td><strong>CrewAI</strong></td><td>多 Agent 角色扮演，简单协作</td><td>Agent 原型的快速验证</td></tr>
+<tr><td><strong>AutoGen</strong></td><td>微软多 Agent 对话框架</td><td>多 Agent 研究和原型</td></tr>
+<tr><td><strong>Coze / 扣子</strong></td><td>字节跳动低代码 Agent 平台</td><td>国内非技术用户</td></tr>
 </table>
 <hr>
 <h2>四、LangChain vs LlamaIndex——最关键的区别</h2>
