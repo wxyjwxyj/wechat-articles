@@ -219,6 +219,17 @@ td:last-child { text-align: center; }
 <li>检索到的资料约束了模型的回答范围，大幅降低幻觉</li>
 </ul>
 <p>RAG 的流行不是因为技术多炫酷，而是因为它<strong>让大模型在真实生产环境中变得可用</strong>。</p>
+<h3>前置概念：预训练（Pre-training）与微调（Fine-tuning）</h3>
+<p>RAG 属于"不碰模型"的技术路线。要理解这点，需要先知道大模型的训练分成两个阶段：</p>
+<ul>
+<li><strong>预训练（Pre-training）</strong>：让模型在大规模通用数据（整个互联网的文本）上从头学习语言的基本规律。耗时几个月，花费数千万美元。</li>
+<li><strong>微调（Fine-tuning）</strong>：在预训练好的模型基础上，用特定任务的数据做针对性训练。成本低得多，只需少量数据和 GPU 时间。</li>
+</ul>
+<p>大多数日常使用的大模型（ChatGPT、Claude）都是经过预训练后再微调的。预训练决定了模型的"知识底子"，微调调整它的"行为方式"。RAG 走的是另一条路——不修改模型本身，而是<strong>在模型回答前给它"递小抄"</strong>。</p>
+<h3>困惑度（Perplexity）</h3>
+<p>困惑度是衡量大模型"有多确定"的指标。数值越低，模型对预测越自信，质量越高。</p>
+<p>一个直观理解：如果模型看到"今天天气真____"时，完全确定下一个词是"好"，困惑度就很低；如果在"好"、"棒"、"热"之间犹豫不决，困惑度就高。</p>
+<p>在主报告中，RETRO（7.5B 参数）在困惑度上匹配 GPT-3（175B 参数）——意思是 7.5B 的小模型通过检索外部知识，达到了 175B 大模型的预测质量。</p>
 <hr>
 <h2>三、RAG 的核心流程：索引 → 检索 → 生成</h2>
 <h3>第一步：索引（Indexing）——把知识存起来</h3>
@@ -243,16 +254,21 @@ td:last-child { text-align: center; }
 <hr>
 <h2>五、一个完整的 RAG 调用长什么样</h2>
 <pre><code>用户问："公司2024年Q3的营收是多少？"<br><br>1. 检索前处理<br>   → 查询重写："2024年第三季度营收数据"（LLM 把口语化的提问改写成适合检索的格式）<br><br>2. 混合检索<br>   → 向量搜索 + BM25 关键词搜索<br>   → 各取 top 50，用 RRF 算法合并排序<br>   → 取 top 10 候选<br><br>3. 重排序<br>   → Cross-encoder 对 top 10 精确打分<br>   → 取 top 3-5<br><br>4. 用检索结果 + 问题生成回答<br>   → 把 top 3 片段 + 用户问题一起发给 LLM<br>   → LLM 基于资料回答："2024年Q3营收为12.5亿元..."<br><br>5.（可选）溯源<br>   → 标注每条信息的来源："财务报告第3页第2段"</code></pre>
+<p>重排序需要用到的两个概念：</p>
+<p><strong>Cross-encoder（交叉编码器）</strong>：一种成对打分模型——同时看查询和候选文档，直接判断它们的匹配程度。比向量搜索更精确，但速度慢（要逐对计算），所以只用在前者筛选出的 top 候选上。</p>
+<p><strong>RRF（Reciprocal Rank Fusion，倒数排名融合）</strong>：一种简单有效的排序融合算法。假设向量搜索排第 3 的文档和 BM25 排第 8 的是同一篇，RRF 把两个排名加权合并，让"在两个列表里都排名靠前"的文档胜出。</p>
 <hr>
 <h2>六、Naive RAG → Advanced RAG → Agentic RAG</h2>
-<p>RAG 经历了三个阶段的演进：</p>
+<p>RAG 经历了四个阶段的演进：</p>
 <table>
 <tr><th>阶段</th><th>思路</th><th>比喻</th></tr>
 <tr><td><strong>Naive RAG</strong></td><td>索引→搜→答，一条直线</td><td>去图书馆找一本书，翻到相关页，照着读</td></tr>
 <tr><td><strong>Advanced RAG</strong></td><td>加优化步骤（查询重写、重排序、混合搜索）</td><td>去图书馆前先查目录、找到后让专家确认相关性</td></tr>
+<tr><td><strong>Modular RAG</strong></td><td>拆成可插拔模块，不同场景组合不同模块</td><td>不是只有一个固定设计，而是 LEGO 积木——搭什么造型取决于要建什么</td></tr>
 <tr><td><strong>Agentic RAG</strong></td><td>模型自主决定搜什么、搜几次、要不要搜</td><td>不是只跑一趟图书馆，而是边读边想，发现不够再回去查</td></tr>
 </table>
-<p>Self-RAG 和 CRAG（Corrective RAG）是 Agentic RAG 的代表——模型会自我反思："我刚搜到的资料够用吗？答案有依据吗？不够的话我再搜一轮。"</p>
+<p><strong>Modular RAG</strong> 是 Naive → Advanced 之后的自然延伸——不再满足于固定的线性管线，而是把 RAG 拆成可自由组合的模块：线性（Linear）、条件分支（Conditional）、并行（Branching）、循环（Looping）。不同任务场景套用不同流程。</p>
+<p><strong>Agentic RAG</strong> 是目前最前沿的阶段。Self-RAG 和 CRAG（Corrective RAG）是其代表——模型会自我反思："我刚搜到的资料够用吗？答案有依据吗？不够的话我再搜一轮。"</p>
 <hr>
 <h2>七、GraphRAG——当 RAG 遇到知识图谱</h2>
 <p>传统 RAG 适合回答"某份文档里有什么"的问题。但如果问题是"这 1000 份文档综合起来，最核心的主题是什么？"，传统 RAG 就无能为力了——因为它只搜片段，看不到全局。</p>
