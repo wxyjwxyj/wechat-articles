@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Context Engineering 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Context Engineering 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉 System Prompt、Prompt Caching、上下文窗口、KV Cache 等概念，可以直接翻阅主报告。</blockquote>
+<hr>
+<h2>一、Context Engineering 到底是什么？</h2>
+<p><strong>Context Engineering = 设计模型"能看到什么"的系统工程。</strong></p>
+<p>你看过一个让 AI 写代码的场景吗？用户告诉模型"帮我重构这个函数"，模型不仅看到这句话，还看到了整个代码库的上下文——当前文件、相关接口、历史修改记录。</p>
+<p>这背后就是 Context Engineering 在做的事：<strong>决定什么信息放进模型的上下文窗口、以什么格式、放多少、什么时候更新。</strong></p>
+<p>核心矛盾：模型的上下文窗口是有限的（虽然已经从 4K 长到 200K-1M），但一次 AI 调用可能需要的信息量远超这个限制。Context Engineering 就是解决这个"塞不下的问题"。</p>
+<hr>
+<h2>二、核心概念</h2>
+<h3>上下文窗口（Context Window）</h3>
+<p>模型一次能"看到"的最大 token 数。类比工作记忆：</p>
+<table>
+<tr><th>年份</th><th>典型大小</th><th>类比</th></tr>
+<tr><td>2022</td><td>4K tokens</td><td>一页 A4 纸</td></tr>
+<tr><td>2023</td><td>32K-100K</td><td>一本短篇小说</td></tr>
+<tr><td>2024</td><td>128K-200K</td><td>一本长篇小说</td></tr>
+<tr><td>2025-2026</td><td>200K-2M</td><td>三本《三体》的厚度</td></tr>
+</table>
+<p>但长 ≠ 好。"Lost in the Middle" 现象：信息放在 prompt 的开头或结尾时模型能准确提取，放中间就很容易被忽略。所以<strong>怎么放跟放了多少同样重要</strong>。</p>
+<h3>System Prompt（系统提示）</h3>
+<p>模型的"岗位说明书"——告诉模型它是什么角色、有什么工具、怎么回答问题。2023 年只要 "You are a helpful assistant"（几十个 token），2026 年的 Agent system prompt 经常长达数千甚至数万 token，包含：</p>
+<ul>
+<li>角色定义</li>
+<li>行为规则和边界</li>
+<li>所有工具的描述和参数 schema</li>
+<li>输出格式要求</li>
+</ul>
+<h3>Prompt Caching（提示缓存）</h3>
+<p><strong>如果每次请求都有大量相同的"静态内容"（如 system prompt、工具定义），模型不得不重新处理这些相同的 token——浪费算力和时间。</strong></p>
+<p>Prompt Caching 的解决方案：把计算过的 prompt 状态缓存起来。下次请求的前缀跟缓存内容匹配时，直接复用计算结果。</p>
+<p>效果：延迟降低 80%+，输入 token 成本降低 90%。核心是个"trade-off"：缓存写入贵 25% 但读取便宜 90%——适合"写一次、读很多次"的场景。</p>
+<table>
+<tr><th>场景</th><th>是否适合 Caching</th></tr>
+<tr><td>每次相同的 system prompt</td><td>✅ 极适合</td></tr>
+<tr><td>每次相同的一组工具定义</td><td>✅ 极适合</td></tr>
+<tr><td>每次不同的用户问题</td><td>❌ 不适合</td></tr>
+<tr><td>每次不同的 RAG 结果</td><td>❌ 不适合</td></tr>
+</table>
+<h3>KV Cache（键值缓存）</h3>
+<p>Transformer 模型在生成每个 token 时，需要重新计算之前所有 token 的注意力。KV Cache 把之前计算好的结果存下来，避免重复计算。</p>
+<p>这是推理加速的核心技术。Context Engineering 中的压缩技术很多都在 KV Cache 层面做文章——不是压缩"输入文本"，而是压缩"模型内部的中间计算结果"。</p>
+<h3>Memory（记忆）</h3>
+<p>多轮对话中，模型需要记住之前聊过什么。Context Engineering 中的"记忆"不是一个东西，而是一套策略：</p>
+<table>
+<tr><th>策略</th><th>做法</th><th>适用</th></tr>
+<tr><td>滑动窗口</td><td>只保留最近几轮对话</td><td>简单闲聊</td></tr>
+<tr><td>摘要压缩</td><td>把旧对话总结成几句话</td><td>长对话</td></tr>
+<tr><td>向量检索</td><td>把历史存入向量库，按需检索</td><td>超长历史</td></tr>
+</table>
+<hr>
+<h2>三、为什么 2025 年突然火了？</h2>
+<p>三个趋势在 2025 年撞在一起：</p>
+<ol>
+<li><strong>Agent 系统爆发</strong>：AI 不再只是"问一句答一句"，而是自主调用工具、多步推理。一次 Agent 调用的上下文包含 system prompt + 工具定义 + 历史对话 + RAG 结果 + 当前问题——怎么编排这些信息成了一个系统工程问题。</li>
+</ol>
+<ol>
+<li><strong>模型上下文窗口变大</strong>：2024-2025 年，Gemini 1.5 率先达到 1M token，其他模型跟进。但社区发现：塞满窗口并不会让模型表现更好——<strong>关键不是能放多少，而是怎么放</strong>。</li>
+</ol>
+<ol>
+<li><strong>成本经济变化</strong>：Prompt Caching 的出现彻底改变了"prompt 多长算贵"——静态内容可以缓存，边际成本趋近于零。</li>
+</ol>
+<p>2025 年 6 月，Shopify CEO Tobi Lutke 在 X 上发了条推文正式命名了这个领域。Andrej Karpathy 用一个比喻让它迅速传播：</p>
+<blockquote>LLM = CPU（处理器）</blockquote>
+<blockquote>Context Window = RAM（工作内存）</blockquote>
+<blockquote>Context Engineering = 操作系统（决定什么数据加载到内存）</blockquote>
+<hr>
+<h2>四、Context Engineering vs Prompt Engineering</h2>
+<table>
+<tr><th></th><th>Prompt Engineering</th><th>Context Engineering</th></tr>
+<tr><td>核心问题</td><td>"怎么写指令"</td><td>"给模型看什么"</td></tr>
+<tr><td>范围</td><td>prompt 文本</td><td>全部上下文（system + tools + history + RAG）</td></tr>
+<tr><td>关注点</td><td>措辞、格式、推理策略</td><td>信息架构、token 预算、缓存、压缩</td></tr>
+<tr><td>静态 vs 动态</td><td>相对静态</td><td>每次推理动态组装</td></tr>
+<tr><td>可以类比</td><td>写一份好文档</td><td>设计一个信息管理系统</td></tr>
+</table>
+<p>关系：Prompt Engineering 是 Context Engineering 的子集。你还在写 prompt，但现在的"prompt"是一个包含大量动态组件的复杂系统。</p>
+<hr>
+<h2>五、一张图总结</h2>
+<pre><code>                    Context Engineering<br>                           │<br>        ┌──────────────────┼──────────────────┐<br>        │                  │                  │<br>   工程层面            工具层面           策略层面<br>        │                  │                  │<br>    ┌───┴───┐        ┌───┴───┐        ┌───┴───┐<br>    │       │        │       │        │       │<br>  System   Token   Prompt  Memory   RAG    Context<br>  Prompt   预算   Caching 管理    检索    压缩<br>    │       │        │       │        │       │<br>   角色    放多少   省成本  记住历史  找外部  挤空间<br>   定义    才够？</code></pre>
+</div>
+</body>
+</html>
