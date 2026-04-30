@@ -38,7 +38,7 @@
 
 ## 一、为什么要懂 Transformer？
 
-2026 年，你用的每一个 AI 产品背后几乎都站着 Transformer——GPT-4、Claude、Gemini、DeepSeek、文心一言、通义千问。它不只是大语言模型的基础，还是视觉（ViT）、语音（Whisper）、蛋白质折叠（AlphaFold）等 AI 前沿的通用架构。
+2026 年，你用的每一个 AI 产品背后几乎都站着 Transformer——GPT-5.5、Claude Opus 4、Gemini 3.1 Pro、DeepSeek V4、文心一言、通义千问。它不只是大语言模型的基础，还是视觉（ViT）、语音（Whisper）、蛋白质折叠（AlphaFold）等 AI 前沿的通用架构。
 
 这篇文章的目标读者是**没有深度学习背景的人**。全部用大白话讲，不讲数学推导，只说直觉和关键概念。
 

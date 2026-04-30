@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Transformer横纵分析报告</title>
+<title>Transformer 横纵分析报告</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -242,7 +242,7 @@ td:last-child { text-align: center; }
 </ol>
 <hr>
 <h2>一、一句话定义</h2>
-<p>Transformer 是一种完全基于注意力机制、彻底抛弃了循环神经网络的序列建模架构。2017 年诞生时只是机器翻译的一个实验方案，如今它的变体驱动了全球几乎所有大语言模型——GPT-4、Claude、Gemini、DeepSeek——以及视觉（ViT）、语音、蛋白质折叠（AlphaFold）等 AI 前沿。</p>
+<p>Transformer 是一种完全基于注意力机制、彻底抛弃了循环神经网络的序列建模架构。2017 年诞生时只是机器翻译的一个实验方案，如今它的变体驱动了全球几乎所有大语言模型——GPT-5.5、Claude Opus 4、Gemini 3.1 Pro、DeepSeek V3/V4——以及视觉（ViT）、语音、蛋白质折叠（AlphaFold）等 AI 前沿。</p>
 <p>它解决了一个根本矛盾：<strong>RNN 串行计算的龟速 vs 长序列建模的刚需</strong>。解决方式是自注意力——每个 token 同时看到序列中所有其他 token，训练完全并行。</p>
 <p>代价是 O(n²) 的注意力复杂度。九年来，几乎所有的架构创新都在跟这个代价搏斗。</p>
 <hr>
@@ -490,7 +490,7 @@ td:last-child { text-align: center; }
 <h4>Q4: LayerNorm 在 Transformer 中为什么用 Pre-LN（前置）？</h4>
 <p>原始论文用 Post-LN（Attention 后面接 LN），后来大家发现 Pre-LN（LN 放在 Attention 前面）训练更稳定。</p>
 <p>原因：Post-LN 中，残差分支的梯度要穿过 LayerNorm 才能回到输入——这个路径更复杂、容易梯度爆炸。Pre-LN 中残差分支有干净的恒等映射路径，梯度直接流过。这在深层网络中（>20 层）区别巨大。</p>
-<p>现代所有大模型（LLaMA、GPT-4、Claude、DeepSeek）都用的 Pre-RMSNorm（LayerNorm 的简化版，去掉了均值的 centering，只做 scaling）。</p>
+<p>现代所有大模型（LLaMA、GPT-5.5、Claude、DeepSeek）都用的 Pre-RMSNorm（LayerNorm 的简化版，去掉了均值的 centering，只做 scaling）。</p>
 <h4>Q5: 为什么 Transformer 能 scale 到万亿参数，而 RNN/LSTM 不行？</h4>
 <p>三个原因：</p>
 <ol>
