@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>多模态大模型 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>多模态大模型 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉 CLIP、Q-Former、视觉编码器等概念，可以直接翻阅主报告。</blockquote>
+<hr>
+<h2>一、什么是多模态大模型？</h2>
+<p>多模态大模型（Multi-modal Large Language Model, MLLM）是<strong>能同时理解和处理多种信息类型（文本、图像、视频、音频）的大模型</strong>。</p>
+<p>普通 LLM 只能读写文字。你把一张照片给它，它"看不见"。多模态大模型不一样——它能"看"图片、"听"音频、"读"图表，并且结合文字理解来做推理。</p>
+<h3>举个具体的例子</h3>
+<pre><code>你给模型一张照片：一只猫坐在笔记本电脑旁边<br>你问："这只猫在干什么？"<br>普通 LLM：看不懂图片，只能回答"我没有办法看到图片"<br>多模态 LLM："这只猫坐在一台打开的笔记本电脑旁边，看起来像是在'用电脑'"</code></pre>
+<h3>关键能力</h3>
+<ul>
+<li><strong>图片问答</strong>：分析照片、图表、截图、漫画</li>
+<li><strong>OCR / 文档理解</strong>：读出图片中的文字、理解表格和合同</li>
+<li><strong>视频理解</strong>：看懂一段视频的内容</li>
+<li><strong>多图推理</strong>：比较两张图的异同</li>
+</ul>
+<hr>
+<h2>二、多模态模型是怎么"看"的？</h2>
+<p>一个直觉模型：多模态大模型 = 眼睛（视觉编码器）+ 翻译器（连接器）+ 大脑（LLM）。</p>
+<p><strong>视觉编码器（眼睛）</strong>：把图片拆成小片（patch），每个小片转换成一个向量（token）。一张 448x448 的图片被拆成 1024 个 patch，每个 patch 变成一个 token。最常用的编码器是 ViT（Vision Transformer）。</p>
+<p><strong>连接器（翻译器）</strong>：把视觉 token 翻译成 LLM 能理解的"语言"。最简单的是 MLP（几层神经网络），复杂一点的有 Q-Former（一个专门的 Transformer）。</p>
+<p><strong>LLM（大脑）</strong>：把文本 token 和视觉 token 放在一起处理，进行推理和回答。</p>
+<pre><code>图片 → [视觉编码器] → 视觉 token → [连接器] → LLM 能理解的 token → [LLM] → 回答<br>"这张图里有什么？" → [分词] → 文本 token → ------------------------↑</code></pre>
+<hr>
+<h2>三、CLIP——多模态的"基础语言"</h2>
+<p>CLIP（OpenAI, 2021）是多模态领域的奠基之作。它的核心理念非常简单：</p>
+<p><strong>用 4 亿张图文对照的图片来训练一个模型，让它学会"一句话和一张图是不是在说同一件事"</strong>。</p>
+<p>训练数据格式：</p>
+<pre><code>[图片: 一只金毛在草地上奔跑] ← 匹配 → "一只金毛在草地上奔跑"<br>[图片: 一只金毛在草地上奔跑] ← 不匹配 → "一辆红色汽车停在路边"</code></pre>
+<p>训练完成后，CLIP 学会了把"语义相近"的图片和文字在数学空间中放在很近的位置。这就是 Contrastive Learning（对比学习）——核心直觉：配对的正样本拉近，不配对的负样本推远。</p>
+<p>CLIP 的贡献在于：它第一次证明了<strong>不需要人工标注，直接用互联网上的图文对就能训练出强大的视觉理解能力</strong>。后来的多模态模型几乎都建立在 CLIP 或它的改进版本之上。</p>
+<hr>
+<h2>四、Q-Former——高效"翻译官"</h2>
+<p>Q-Former（Salesforce, 2023）是 BLIP-2 的核心创新，解决了一个关键问题：怎么把大量视觉信息"压缩"成 LLM 能高效处理的少量 token。</p>
+<h3>问题</h3>
+<p>一张图片经过 ViT 编码后会产生几百到几千个视觉 token。如果全部送进 LLM，序列太长、计算量太大。</p>
+<h3>Q-Former 的解决方案</h3>
+<p>引入一组"可学习的查询向量"（learnable queries），比如 32 个。这些 query 通过交叉注意力机制从视觉编码器的输出中"提取"关键信息。</p>
+<p><strong>直觉</strong>：Q-Former 像是一个助手，它拿着一张"问题清单"（32 个查询），仔细扫描视觉编码器的输出，把最相关的信息摘录下来，然后浓缩成简短的摘要递给 LLM。</p>
+<h3>为什么这重要？</h3>
+<p>因为 LLM 的上下文窗口有限，计算量随序列长度平方增长。Q-Former 把几百个视觉 token 压缩成 32 个，大幅降低了计算成本。</p>
+<hr>
+<h2>五、原生多模态 vs 后期拼接</h2>
+<p>这是多模态领域最重要的技术路线分歧。</p>
+<h3>后期拼接（主流方案）</h3>
+<p>先把 LLM 在纯文本上训练好，再通过连接器把视觉能力"接"上去。</p>
+<p><strong>代表</strong>：LLaVA、Qwen-VL、InternVL、Llama 3.2 Vision</p>
+<p><strong>优点</strong>：实现简单、可以利用已有的文本 LLM、训练成本低</p>
+<p><strong>缺点</strong>：视觉和语言的对齐不够深入</p>
+<h3>原生多模态</h3>
+<p>从模型设计之初就把所有模态放在一起训练。</p>
+<p><strong>代表</strong>：Gemini、GPT-4o</p>
+<p><strong>优点</strong>：模态间交互更深、理论性能上限更高</p>
+<p><strong>缺点</strong>：训练成本极高、技术门槛高</p>
+<p>打个比方：后期拼接是给一个已经毕业的法律专家配一副眼镜让他能看证据材料；原生多模态是培养一个从入学就同时学法律和取证分析的学生。</p>
+<hr>
+<h2>六、动态分辨率——看清细节的关键</h2>
+<p>早期多模态模型把图片全都缩放到固定大小（如 336x336）再处理。但这样会丢失细节——合同上的小字、发票上的数字都看不清楚。</p>
+<p><strong>动态分辨率</strong>（Dynamic Resolution）的解决方案：不缩放图片，而是根据图片的实际尺寸动态决定处理方式。对于一张高分辨率文档图片，把它切成多个子图块（tiles），每个子图单独编码再拼起来。</p>
+<p>Qwen2-VL 的做法是"保留原始宽高比，按原生分辨率处理"。一张 2048x2048 的图片会被切成多个 448x448 的 tile，每个 tile 独立编码。这大幅提升了 OCR 和文档理解能力。</p>
+<hr>
+<h2>七、多模态幻觉——模型在"瞎编"</h2>
+<p>跟普通 LLM 的幻觉问题类似，多模态模型也会"看到不存在的东西"。</p>
+<p>最常见的类型：</p>
+<ul>
+<li><strong>对象幻觉</strong>：说图片里有不存在的东西（"这张图里有一辆车"——其实没有）</li>
+<li><strong>属性幻觉</strong>：物体的颜色、大小、位置说错（"猫是白色的"——其实是橘色的）</li>
+<li><strong>关系幻觉</strong>：物体之间的关系说错（"狗在猫的左边"——实际在右边）</li>
+</ul>
+<p>根源往往是 LLM 的"语言先验"太强——模型"猜"出常见的搭配（"草地上通常有狗"），而不是真的从图片中看到了狗。</p>
+<hr>
+<h2>八、多模态评测——怎么衡量好不好</h2>
+<table>
+<tr><th>评测</th><th>测试什么</th><th>简单理解</th></tr>
+<tr><td><strong>MMMU</strong></td><td>多学科理解</td><td>给模型看含图的高考/大学题目，看能不能答对</td></tr>
+<tr><td><strong>MMBench</strong></td><td>通用多模态能力</td><td>涵盖 20 种视觉能力的综合测试</td></tr>
+<tr><td><strong>MathVista</strong></td><td>数学推理</td><td>带图的数学题</td></tr>
+<tr><td><strong>ChartQA</strong></td><td>图表理解</td><td>看柱状图/折线图回答问题</td></tr>
+<tr><td><strong>OCRBench</strong></td><td>文字识别</td><td>识别图片中的文字</td></tr>
+<tr><td><strong>Video-MME</strong></td><td>视频理解</td><td>看懂视频内容</td></tr>
+</table>
+<hr>
+<h2>九、一张图总结</h2>
+<pre><code>多模态大模型 = 眼睛 + 翻译器 + 大脑<br><br>          ┌─────────────────────────────────────┐<br>          │             多模态大模型              │<br>          │                                     │<br> 图片 →   │  视觉编码器 (ViT/SigLIP)             │<br>          │      ↓                               │<br>          │  连接器 (MLP/Q-Former)               │<br>          │      ↓                               │<br> 文字 →   │  LLM (理解 + 推理 + 回答)            │  → 回答<br>          │                                     │<br>          └─────────────────────────────────────┘<br><br> 技术路线分歧：<br>   后期拼接 (LLaVA)  vs  原生多模态 (Gemini)<br>     简单便宜                 性能上限高<br>     可复用已有 LLM           训练成本极高<br><br> 关键挑战：<br>   • 分辨率 vs 成本（越清晰 token 越多）<br>   • 多模态幻觉（瞎编图片里没有的东西）<br>   • 视频理解（帧太多，算不过来）</code></pre>
+</div>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>多模态大模型横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>多模态大模型横纵分析报告</h1>
+<blockquote>从 CLIP 到 GPT-4o，从"看图说话"到"全模态统一"，大模型如何长出了眼睛和耳朵。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>多模态大模型（Multi-modal Large Language Model, MLLM）是在传统文本大模型基础上扩展了<strong>图像、视频、音频等模态理解与生成能力</strong>的 AI 模型。它的核心挑战是：如何让一个以文本为中心训练的神经网络，"看懂"像素构成的世界，并在不同信息形态之间建立深层的语义关联。</p>
+<hr>
+<h2>二、技术背景</h2>
+<h3>核心矛盾：文本和图像是两种完全不同的"语言"</h3>
+<p>文本是离散符号——每个字是一个 token，有明确的边界和语法规则。图像是连续信号——像素构成的矩阵，没有天然的"词边界"，语义信息隐藏在颜色、纹理、形状的组合中。</p>
+<p>让一个模型同时理解这两种"语言"，需要解决三个关键问题：</p>
+<ol>
+<li><strong>视觉编码</strong>：怎么把图片变成模型能处理的 token 序列？</li>
+<li><strong>模态对齐</strong>：怎么让"狗的图片"和"狗的文字"在模型内部指向同一个语义概念？</li>
+<li><strong>融合推理</strong>：怎么让模型同时利用视觉信息和文本信息做综合推理？</li>
+</ol>
+<p>这三条线分别对应多模态模型的三大组件：</p>
+<table>
+<tr><th>组件</th><th>功能</th><th>典型方案</th></tr>
+<tr><td>1</td><td>视觉编码器</td><td>图片 → token 序列</td><td>ViT → SigLIP → InternViT</td></tr>
+<tr><td>2</td><td>模态连接器</td><td>视觉 token → LLM 可理解</td><td>MLP → Q-Former → Perceiver Resampler</td></tr>
+<tr><td>3</td><td>LLM 本体</td><td>融合推理</td><td>文本 LLM + 视觉 token 输入</td></tr>
+</table>
+<blockquote>前置知识请参考独立文档 <a href="多模态大模型_前置知识.md">《多模态大模型_前置知识》</a>，涵盖 CLIP、Q-Former、动态分辨率等基础概念的通俗讲解。</blockquote>
+<hr>
+<h2>三、纵向分析：从 CLIP 到全模态统一</h2>
+<h3>3.1 奠基期：视觉-语言表征学习（2021-2022）</h3>
+<p>多模态大模型的起点，不是"给 LLM 加眼睛"，而是先解决一个更基础的问题：<strong>怎么让计算机学会"看图说话"？</strong></p>
+<p><strong>2021 年 2 月，CLIP（OpenAI）</strong> 给出了一个极简但强大的答案。Alec Radford 和 Ilya Sutskever 的团队用 4 亿对互联网图文数据训练了一个对比学习模型，核心任务极其简单：给定一张图和一段文字，判断它们是否匹配。</p>
+<p>CLIP 的贡献在于两件事：一是证明了<strong>弱监督的图文对数据足以学到可迁移的视觉表征</strong>——不需要人工标注，互联网上天然存在海量的图文对（新闻配图、产品描述等）。二是它的零样本分类能力——不需要任何训练数据，直接给 CLIP 看一张猫的图片，它就能在 ImageNet 的 1000 个类别中找到"猫"。</p>
+<p>回头看，CLIP 的意义超越了"又一篇好论文"。<strong>它为整个多模态领域提供了一种"共同语言"</strong>——后来的几乎所有多模态模型，不管架构多复杂，都以 CLIP 或其变体作为视觉编码的基础。</p>
+<p><strong>2022 年 4 月，Flamingo（DeepMind）</strong> 迈出了从"视觉理解"到"多模态对话"的关键一步。Jean-Baptiste Alayrac 等人的核心创新是<strong>桥接预训练的纯视觉和纯语言模型</strong>，通过门控交叉注意力（Gated Cross-Attention）在 LLM 的每一层注入视觉信息。</p>
+<p>Flamingo 的架构设计后来被证明非常有远见：它处理任意交错的图文序列，支持图像和视频输入，而且 LLM 本身不需要微调——视觉信息通过交叉注意力"旁路"注入。这种设计让 Flamingo 不需要大规模多模态预训练，就可以在少量示例下（in-context few-shot）理解图片内容。</p>
+<p>Flamingo 的局限也很明显：架构过于复杂（每层交叉注意力），推理成本高，而且门控机制本身引入了额外参数。但它证明了"把已经存在的单模态模型拼在一起"是一条可行的技术路线。</p>
+<p><strong>这个阶段的本质是"积攒积木"</strong>：CLIP 贡献了视觉编码器，Flamingo 贡献了跨模态连接的架构思路。2023 年之前，多模态模型还处于"从零开始造轮子"的阶段。</p>
+<h3>3.2 爆发期：高效连接与指令微调（2023）</h3>
+<p>2023 年是多模态大模型的元年。不是因为某篇论文突然突破，而是<strong>几条独立的技术线在这一年同时成熟</strong>，产生了化学反应。</p>
+<p><strong>2023 年 1 月，BLIP-2（Salesforce）</strong> 的 Q-Former 解决了"连接器效率"问题。Q-Former 本质上是一个"信息瓶颈"——用一组可学习的 query 向量从视觉编码器的输出中提取关键信息，压缩成少量 token 后送入 LLM。</p>
+<p>Q-Former 的巧妙之处在于"模块化"：视觉编码器冻结、LLM 冻结，只有 Q-Former 本身被训练。训练分三个阶段，前两个阶段在图文数据上预训练 Q-Former，第三阶段才把它接到 LLM 上。只用少量可训练参数就超越了 Flamingo-80B 在 VQAv2 上 8.7% 的性能——<strong>可训练参数只有 Flamingo 的 1/54</strong>。</p>
+<p>2023 年 4 月问世的 <strong>LLaVA（UW / Microsoft）</strong> 则走向另一个极端：<strong>最大程度的简化</strong>。Haotian Liu 和 Chunyuan Li 用最简单的 MLP 做连接器，直接把 ViT 的输出 token 映射到 LLM 的嵌入空间。结构简单到让人怀疑"这也行？"——但配上 GPT-4 生成的高质量指令数据，LLaVA 证明了简单的架构+好的数据可以达到惊人的效果。</p>
+<p>但 LLaVA 和 Q-Former 走的是同一条路的不同分支：<strong>都是用轻量级连接器把视觉 token 映射到 LLM 空间</strong>。这条路后来被证明是多模态模型最实用的路线——简单、高效、可扩展。</p>
+<p>2023 年 3 月，Google 的 <strong>SigLIP</strong> 提出了一个看似微小但影响深远的改进：用 sigmoid loss 替代 CLIP 的 softmax 对比损失。CLIP 需要在一个 batch 内做全局归一化（计算所有图文对的相似度），batch size 跟计算量平方相关，导致小 batch 训练效果差。SigLIP 的 sigmoid loss 逐对计算，不依赖 batch 内其他样本——这意味着可以用小得多的 batch 达到同等效果。</p>
+<p>与此同时，<strong>InstructBLIP（Salesforce, 2023.05）</strong> 在 BLIP-2 基础上引入了"指令感知"的 Q-Former——根据用户的指令提取针对性特征，而不是一股脑把视觉信息都传给 LLM。这个直觉很简单：问"这里有什么动物？"和问"这个场景在室内还是室外？"需要从图片中提取完全不同的信息。</p>
+<p>8 月，阿里巴巴发布了 <strong>Qwen-VL</strong>——一个三阶段训练的视觉语言模型（预训练 → 多任务微调 → 对话微调），支持视觉定位（说"狗" → 指出狗在图中的位置）和文本阅读。Qwen-VL 的意义在于它是<strong>国内第一个系统级的多模态工作</strong>，后续 Qwen-VL 系列的一路领先从这时就已埋下伏笔。</p>
+<p><strong>CogVLM（清华/智谱, 2023.11）</strong> 走了一条不同的路：不是"浅层连接"（MLP 或 Q-Former 都在 LLM 外面接），而是在 LLM 的 Attention 和 FFN 层中引入可训练的"视觉专家"模块。这种"深度融合"的设计在理论上更优，但代价是实现复杂、训练成本高。</p>
+<p><strong>这个阶段的本质是"寻找最简路径"</strong>：从 Flamingo 的复杂桥接到 LLaVA 的简单拼接，行业在用最快的速度收敛到"够用且简单"的方案。Q-Former 和 MLP 两条路线并行发展，但方向一致——轻量连接器 + 冻结视觉/LM。</p>
+<h3>3.3 商用化爆发（2023 年末–2024）</h3>
+<p><strong>2023 年 9 月 25 日，GPT-4V</strong>——行业等待已久的时刻。OpenAI 发布了第一个商用多模态模型，让 GPT-4 能够"看"图片。</p>
+<p>GPT-4V 的发布是一个分水岭。在此之前，多模态大模型是学术论文里的概念。在此之后，它是每个开发者都能调用的 API 能力。开发者社区迅速发现了它的能力边界：强大的通用图像理解、不错的 OCR、在医学影像和专业图表上的出色表现——但也存在幻觉、对细微视觉差异不敏感等问题。</p>
+<p>3 个月后，<strong>Google DeepMind 发布 Gemini 1.0</strong>（2023.12），技术报告标题直接写着"原生多模态"。Gemini 从设计之初就不是"文本模型+视觉能力"的组合，而是所有模态一起训练的。这在当时是一个冒险的技术选择——因为它需要从头开始训练，成本极高，且无法利用已有的纯文本 LLM。</p>
+<p>但原生多模态的优势在后续迭代中逐渐显现：Gemini 1.5 Pro（2024.02）支持 1M token 上下文，Gemini 2.0 强调多模态输出和 Agent 能力。Google 的算力储备（TPU 集群）让这条昂贵的路线变得可行。</p>
+<p><strong>2024 年 3 月，Claude 3 Vision</strong> 姗姗来迟。Anthropic 明确走"稳妥路线"——先在文本模型上做到极致，再把视觉能力接上去。Claude 3 的视觉能力在发布时被广泛认为是<strong>最精确的</strong>，尤其在图表和文档理解上。但它的架构选择（后期拼接）也决定了它的上限——在需要深度视觉-语言融合的任务上不如原生多模态方案。</p>
+<p>5 月，<strong>GPT-4o</strong> 发布，OpenAI CEO Sam Altman 在 X 上只发了一个词："her"。"o"代表"omni"——全模态。GPT-4o 统一了文本、图像、音频的处理，所有输入输出由同一个神经网络处理。音频响应延迟最低 232ms，接近人类对话反应时间。</p>
+<p>GPT-4o 的发布标志着一个判断：<strong>多模态不是"附加功能"，而是模型的核心能力</strong>。单独的文本模型、视觉模型、语音模型正在被统一的"全模态模型"取代。</p>
+<p><strong>2024 年 4 月，InternVL 1.5（上海 AI Lab）</strong> 发表时，论文标题就很直白："我们还离 GPT-4V 有多远？"答案是：越来越近了。InternVL 1.5 的三大改进——更强的视觉编码器（InternViT-6B 持续学习）、动态高分辨率（支持 4K 分辨率输入）、高质量双语数据集——让它在 18 个基准中的 8 个上达到 SOTA。SOTA 不意味着跟 GPT-4V 一样好，但差距从"不可逾越"缩小到了"可以追赶"。</p>
+<p>9 月是开源多模态的双响炮。<strong>Qwen2-VL</strong>（阿里）引入了"朴素动态分辨率"——不缩放、不裁剪，按原生宽高比处理图片。<strong>Llama 3.2 Vision</strong>（Meta）首次将视觉能力引入 Llama 系列。前者在做技术突破，后者在做生态扩展。</p>
+<p>动态分辨率是 2024 年最重要的技术演进之一。之前的多模态模型把所有图片缩放到固定尺寸（如 336x336），大尺寸的文档、高分辨率的图片中的细节全部丢失。Qwen2-VL 的方案：根据图片的实际尺寸动态决定切分方式，每个子图块（tile）独立编码再拼接。这看起来是实现细节，实际上彻底改变了模型对高分辨率场景（文档分析、医学影像、专业图表）的处理能力。</p>
+<p><strong>这个阶段的本质是"商业验证"</strong>：GPT-4V 和 GPT-4o 验证了多模态的商业可行性，Gemini 验证了原生多模态的技术可行性，Qwen2-VL 和 InternVL 验证了开源可以追赶闭源。</p>
+<h3>3.4 成熟与普及（2025-2026）</h3>
+<p>2025-2026 年，多模态大模型完成从"前沿技术"到"基础能力"的转变。</p>
+<p><strong>技术层面的收敛</strong>：2023 年的"连接器之争"（MLP vs Q-Former vs Perceiver）基本平息。行业主流偏向动态分辨率 + ViT/SigLIP 变体 + MLP 或轻量 Q-Former + LLM 的架构。更重要的进步发生在：视觉 token 压缩（InternVL-X, 2025.03）、单体式架构尝试（Mono-InternVL, 2024.10）、渐进式训练策略的成熟。</p>
+<p><strong>产品层面的渗透</strong>：多模态能力不再是"高端模型"的专属。Claude Haiku（最便宜的 Claude 模型）也支持图像输入，GPT-4o-mini 同样。Gemini 2.5 Flash 的低价视觉 API 把每张图片的分析成本打到接近零。</p>
+<p><strong>格局的奠定</strong>：Qwen3-VL 在 MMMU 上达到 86.0%，超越所有闭源模型——标志着<strong>开源多模态正式在基准测试上追平甚至超过闭源</strong>。Gemini 3.1 Pro 在科学推理多模态维度（MMMU-Pro 82%）保持领先。Claude Opus 4.x 在需要精细视觉分析的场景保持优势。</p>
+<p>2026 年的多模态市场格局：</p>
+<table>
+<tr><th>梯队</th><th>特征</th><th>代表</th></tr>
+<tr><td>闭源旗舰</td><td>性能最强，生态成熟</td><td>GPT-5.1, Gemini 3.1 Pro, Claude Opus 4.x</td></tr>
+<tr><td>闭源高性价比</td><td>性能接近旗舰，价格低</td><td>Gemini 2.5 Flash, GPT-4o-mini, Claude Haiku</td></tr>
+<tr><td>开源领跑</td><td>基准追平闭源，可私有部署</td><td>Qwen3-VL, InternVL2.5</td></tr>
+<tr><td>国内闭源</td><td>国内合规，本土优化</td><td>Qwen-VL Max, 豆包, GLM-4V, Kimi-VL</td></tr>
+</table>
+<h3>3.5 三条技术线演进的总结</h3>
+<p>回顾从 2021 到 2026 的进程，多模态大模型的演进可以归结为三条并行线：</p>
+<p><strong>线一——视觉编码</strong>：CLIP (ViT) → SigLIP → InternViT-6B → 动态分辨率。从固定尺寸到动态分辨率，从通用编码器到多模态专用编码器。</p>
+<p><strong>线二——模态连接</strong>：Flamingo 交叉注意力 → Q-Former → MLP（LLaVA）→ 视觉专家模块（CogVLM）。从复杂到极简再回归合理复杂度。</p>
+<p><strong>线三——训练范式</strong>：冻结编码器+冻结 LLM → 只训练连接器 → 全参数微调 → 渐进式训练。从"怕动参数"到"大胆全量调"。</p>
+<p><strong>2026 年的状态</strong>："后期拼接"和"原生多模态"两条路线依然并存，但差距在缩小。Qwen3-VL（后期拼接）在 MMMU 上超越 GPT-5.1（原生多模态）——说明"架构选择不再决定性能上限，规模和数据才是。"</p>
+<hr>
+<h2>四、横向分析：竞争图谱</h2>
+<h3>4.1 场景判断</h3>
+<p>竞品充分（场景 C）。选取最具代表性的闭源旗舰（3个）、开源领跑（2个）、高性价比（2个）进行详细分析。</p>
+<h3>4.2 核心模型对比</h3>
+<table>
+<tr><th>模型</th><th>发布方</th><th>时间</th><th>MMMU</th><th>MMMU-Pro</th><th>视觉编码器</th><th>连接方式</th><th>定价 $/M输入</th><th>开源</th></tr>
+<tr><td>GPT-5.1</td><td>OpenAI</td><td>2025-Q4</td><td>85.4%</td><td>81%</td><td>私有</td><td>原生多模态</td><td>$1.25</td><td>❌</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>Google</td><td>2026-02</td><td>82.0%</td><td><strong>82%</strong></td><td>私有</td><td>原生多模态</td><td>$2-4</td><td>❌</td></tr>
+<tr><td>Claude Opus 4.6</td><td>Anthropic</td><td>2025-2026</td><td>~78%</td><td>未公开</td><td>私有</td><td>后期拼接</td><td>$15.00</td><td>❌</td></tr>
+<tr><td>Qwen3-VL-72B</td><td>Alibaba</td><td>2025</td><td><strong>86.0%</strong></td><td>未公开</td><td>动态ViT</td><td>后期拼接</td><td>~$0.20</td><td>✅</td></tr>
+<tr><td>Gemini 2.5 Flash</td><td>Google</td><td>2025</td><td>79.7%</td><td>未公开</td><td>私有</td><td>原生多模态</td><td>$0.30</td><td>❌</td></tr>
+<tr><td>InternVL2.5-78B</td><td>上海AI Lab</td><td>2024-2025</td><td>~68%</td><td>未公开</td><td>InternViT-6B</td><td>后期拼接</td><td>免费</td><td>✅</td></tr>
+</table>
+<h3>4.3 三家闭源旗舰的深度分析</h3>
+<h4>OpenAI GPT 系列：全模态通用选手</h4>
+<p>GPT-4o（2024.05）是第一个全模态统一的商用模型。它的核心差异化优势不是单项能力最强，而是<strong>所有模态都能做到 80 分以上</strong>——文本、图像、语音、代码，没有明显短板。</p>
+<p>GPT-5.1（2025）在 MMMU 上达到 85.4%——推理能力的大幅提升让它在处理复杂的多模态推理任务时更有优势。API 生态依然是行业最成熟的，工具链（Function Calling、Assistants API、Structured Outputs）与多模态能力的整合最顺畅。</p>
+<p><strong>短板</strong>：长上下文不如 Gemini（标准 128K vs Gemini 的 2M），多模态输出能力有限（生成图像需要依赖 DALL-E 而非原生）。在特定垂直场景（如科学推理、精细 OCR）不是最强。</p>
+<h4>Google Gemini 系列：长上下文+科学推理之王</h4>
+<p>Gemini 1.5 Pro（2024.02）在长上下文多模态上建立了持续领先——1M token 的上下文不是噱头，而是能真正处理长视频、长篇文档、多图序列的实际能力。</p>
+<p>Gemini 3.1 Pro（2026.02）在科学推理维度（Science Horizon multi-modal 88.85 分）全面领先。MMMU-Pro 82% 是所有模型中最高的——MMMU-Pro 是 MMMU 的强化版，需要更深层的推理能力。</p>
+<p><strong>Gemini 的真正优势在于 Google 的基础设施整合</strong>：从 YouTube 视频直接输入、与 Google Drive 文档的深度集成、2M token 上下文窗口。在"多模态 + 长上下文"的交叉场景（分析一个 1 小时的讲座视频并回答关于其中某个细节的问题），Gemini 没有对手。</p>
+<p><strong>短板</strong>：编程和写作质量在 Reddit 社区的反馈中略逊于 Claude。开发者生态不如 OpenAI 成熟。</p>
+<h4>Anthropic Claude 系列：精确度至上</h4>
+<p>Claude 系列在多模态上走了一条保守但有效的路线。Claude 3 Sonnet（2024.06）的 MMMU 68.3% 在发布时不如 GPT-4V，但它在图表理解、文档 OCR 上的精确度被广泛认可——模型不会"瞎编"图片中的细节，不会"过度解读"模糊内容。</p>
+<p>Claude Opus 4.x（2025-2026）在 SWE-bench 上领先（82-87%），加上 Computer Use 能力（2024年底推出），使它在"屏幕理解 + 代码编写"的 Agent 场景上占据了独特定位。如果你是做一个需要"看屏幕→写代码→操作界面"的 Agent，Claude 是最优选择。</p>
+<p>社区口碑（Reddit、X/Twitter）上，Claude 的标签是"最聪明也最贵"。在需要精细视觉分析的场景（错误排查、UI 测试、文档审核），用户会优先选择 Claude。</p>
+<p><strong>短板</strong>：MMMU 基准落后于 OpenAI 和 Google。上下文窗口（200K）不如 Gemini 的大。价格是三者中最贵的。后期拼接架构在多模态深度融合的理论上限可能不如原生多模态。</p>
+<h3>4.4 开源领跑者：Qwen3-VL 和 InternVL</h3>
+<p><strong>Qwen3-VL</strong> 在 2025-2026 年成为开源多模态的绝对标杆。MMMU 86.0% 超越所有闭源模型，且价格极低（72B 约 $0.20/M input，7B 模型可本地部署）。Qwen3.5-Plus 在科学地平线多模态评分 84.56，仅次于 Gemini 3.1 系列。</p>
+<p>Qwen 的成功在于<strong>兼顾了性能、价格和生态</strong>：动态分辨率 ViT 保证了文档/图表的处理能力，三层训练管线保证了模型质量，Apache 2.0 协议和积极的社区运营保证了开源生态。Hugging Face 上下载量最高，社区贡献最活跃。</p>
+<p><strong>InternVL2.5-78B</strong> 的视觉编码器最强（InternViT-6B），在 MMBench 等视觉细分任务上有时能超过 Qwen。但整体生态（推理框架支持、社区工具）不如 Qwen 成熟，部署成本也更高（6B + 78B）。</p>
+<p><strong>开源 vs 闭源的格局变化</strong>：2024 年还是"开源追赶闭源"，2025-2026 年已经是"开源在某些任务上超越闭源"。这不是因为开源突然有了更好的算法，而是因为<strong>开源模型的规模追上来</strong>了——Qwen3-VL-72B 的参数量级和训练数据规模已经和闭源旗舰处于同一水平。</p>
+<h3>4.5 技术路线对比</h3>
+<table>
+<tr><th>维度</th><th>原生多模态</th><th>后期拼接</th></tr>
+<tr><td>代表</td><td>GPT-4o, Gemini</td><td>LLaVA, Qwen-VL, InternVL, Claude</td></tr>
+<tr><td>训练成本</td><td>极高（全模态联合训练）</td><td>低（复用已有 LLM）</td></tr>
+<tr><td>模态融合深度</td><td>深层</td><td>浅层</td></tr>
+<tr><td>最优性能潜力</td><td>理论上更高</td><td>受限于连接器瓶颈</td></tr>
+<tr><td>实际差距（2026）</td><td>已不明显</td><td>已不明显</td></tr>
+</table>
+<p><strong>关键发现</strong>：到 2026 年，"原生 vs 拼接"的性能差距已被规模和数据稀释。Qwen3-VL（后期拼接）在 MMMU 上超越 GPT-5.1（原生多模态），说明决定模型质量的更多是训练数据、视觉编码器、训练策略，而非连接方式本身。</p>
+<h3>4.6 用户口碑与社区评价</h3>
+<p>Reddit r/OpenAI、r/LocalLLaMA、r/singularity 上关于多模态的热门讨论：</p>
+<ul>
+<li><strong>最佳编程+视觉</strong>：Claude Opus 4.x</li>
+<li><strong>最佳本地运行</strong>：Qwen3-VL 7B/72B —— "一个 7B 模型能做 Image Captioning + VQA + OCR，不可思议"</li>
+<li><strong>最佳性价比 API</strong>：Gemini 2.5 Flash —— "价格是 Claude 的 1/50，质量差不到 20%"</li>
+<li><strong>最通用的</strong>：GPT-5 系列 —— "什么都行，但不是某个单项最佳"</li>
+<li><strong>最大的槽点</strong>：几乎所有模型在多图推理和视频理解上都不稳定——"问它两张图的区别，有时第二张图它根本没看"</li>
+</ul>
+<p><strong>中文社区（知乎、即刻）</strong>：</p>
+<ul>
+<li>Qwen-VL 系列被公认为国产最强，"阿里在开源上做的最大贡献"</li>
+<li>Kimi-VL 的长文+多模态差异化受到好评</li>
+<li>开发者普遍反馈国内闭源多模态 API 价格偏高</li>
+</ul>
+<h3>4.7 成本对比</h3>
+<table>
+<tr><th>模型</th><th>输入 $/1M tokens</th><th>输出 $/1M tokens</th><th>缓存输入</th><th>Batch</th></tr>
+<tr><td>Claude Opus 4.6</td><td>$15.00</td><td>$75.00</td><td>$0.30（读）</td><td>50%</td></tr>
+<tr><td>GPT-5.1</td><td>$1.25</td><td>$10.00</td><td>—</td><td>50%</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>$2-4</td><td>$8-10</td><td>—</td><td>50%</td></tr>
+<tr><td>Gemini 2.5 Flash</td><td>$0.30</td><td>$2.50</td><td>—</td><td>50%</td></tr>
+<tr><td>Qwen2.5-VL 72B</td><td>~$0.20</td><td>~$0.60</td><td>—</td><td>—</td></tr>
+</table>
+<p>注意：多模态调用通常涉及大量视觉 token。一张高分辨率图片可能产生几千个视觉 token。Claude Opus $15/M 的输入价格听起来还好，但一次含 5 张高分辨率图片的调用 token 消耗很容易超过 10K——单次调用成本接近 $0.15。这比文本调用贵一个数量级。</p>
+<p>Batch API 是降成本的关键杠杆。50% 的折扣下，Geimini 3.1 Pro 的 batch 多模态调用价格极具竞争力。</p>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 CLIP 的遗产：对比学习的范式</h3>
+<p>纵向历史的起点（CLIP, 2021）锚定了一个范式：<strong>对比学习 + 弱监督数据 = 可迁移的视觉表征</strong>。这个范式直到 2026 年仍然是多模态模型的基石。</p>
+<p>CLIP 的对比学习目标（把匹配的图文对拉近，不匹配的推远）被 SigLIP（sigmoid loss 替代 softmax）改进后，仍然是视觉编码器训练的核心方式。即便是 Qwen3-VL 和 GPT-5 的内部视觉编码器，也建立在对比学习的思想之上。</p>
+<p>这个范式的持久性告诉我们一个行业规律：<strong>"好的基础问题定义"比"花哨的架构创新"更有生命力</strong>。对比学习定义了正确的问题（"图文是否匹配"），而后续所有工作都是这个答案的不同实现。</p>
+<h3>5.2 Q-Former vs MLP：效率与性能的 trade-off 最终被规模抹平</h3>
+<p>纵向历史中的一个有趣节点是 2023 年的"连接器之争"：</p>
+<ul>
+<li>Q-Former：188M 参数，用 query 从视觉特征中"提取"信息，压缩成少量 token</li>
+<li>MLP（LLaVA）：~2M 参数，直接把视觉 token 映射过去</li>
+</ul>
+<p>Q-Former 效率更高（更少 token → LLM 计算量更小），MLP 保留信息更多（更多 token → 细节保留更好）。</p>
+<p>到了 2024-2025 年，当 LLM 的上下文窗口从 4K 扩展到 128K-1M，"token 多了怎么办"这个问题不再成立——LLM 已经能处理大量视觉 token。MLP 路线因此胜出。Q-Former 的"效率优势"被 LLM 上下文窗口的扩展直接抹平。</p>
+<p>这个案例揭示了一个深层 trade-off：<strong>中间件的价值取决于主件的瓶颈</strong>。当 LLM 的上下文很贵时，Q-Former 有价值；当上下文变便宜时，Q-Former 的价值就稀释了。</p>
+<h3>5.3 开源追赶闭源的"时间窗口"越来越短</h3>
+<p>2023 年 9 月的 GPT-4V 到 2024 年 4 月的 InternVL 1.5——开源花了 7 个月追到接近水平。</p>
+<p>2024 年 5 月的 GPT-4o 到 2024 年 9 月的 Qwen2-VL——开源花了 4 个月追到同等水平。</p>
+<p>2025-2026 年：Qwen3-VL 在 MMMU 上超越闭源——开源在基准测试上正式领跑。</p>
+<p>这个"追赶窗口"从 7 个月缩短到几乎同步。原因不是开源突然开窍了，而是多模态的架构已经收敛到"视觉编码器 + 连接器 + LLM"的标准范式——在这个范式下，计算的规模效应超过架构的设计差异。<strong>谁有更多的算力和数据，谁就能训练出更好的模型</strong>。而阿里（Qwen）和上海 AI Lab（InternVL）的算力投入已经不比闭源厂商少多少。</p>
+<h3>5.4 多模态的趋势：从"看懂"到"全模态"</h3>
+<p>2021-2023：模型努力学会"看懂"一张图片。</p>
+<p>2024：GPT-4o 统一文本+图像+音频，Gemini 统一文本+图像+视频。</p>
+<p>2025-2026：多模态进入"全模态"阶段。模型不再区分"你是文本任务"还是"你是图像任务"——所有输入都被当作同一个模态空间中的序列来处理。</p>
+<p>这个趋势的最终形态是：<strong>未来的大模型将没有"单模态版本"</strong>。文本-only 的模型将会像"不支持表格输入的数据库"一样古怪。</p>
+<h3>5.5 三个未来剧本</h3>
+<p><strong>剧本一：多模态成为基础能力，竞争转向 Agent（概率 70%）</strong></p>
+<p>多模态视觉能力不再是差异化因素——所有主流模型都能理解图片、处理文档。竞争焦点转移到"多模态 Agent"：模型能不能看屏幕、操作界面、执行代码、做端到端任务。Claude 的 Computer Use、GPT-4o 的实时语音对话、Gemini 的 Agent 框架将成为下一代竞争的核心。</p>
+<p><strong>剧本二：视频理解取得突破（概率 20%）</strong></p>
+<p>长视频理解（>30 分钟）在当前是几乎所有模型的短板——帧采样会丢失关键信息，全帧处理算力不够。如果 Ring Attention + 高效的时空编码取得突破，视频理解将成为下一个"上下文竞赛"级别的战场。这将兑现原生多模态路线的长期赌注。</p>
+<p><strong>剧本三：多模态幻觉问题引发信任危机（概率 10%）</strong></p>
+<p>如果多模态幻觉（模型"看到"不存在的物体、读错关键数字）不能得到有效控制，在高风险场景（医疗影像、法律文档）的落地将受阻。对比解码等技术正在缓解但未根治。信任问题可能成为多模态普及的隐形天花板。</p>
+<h3>5.6 一条暗线：训练数据的诅咒</h3>
+<p>多模态大模型的训练数据高度依赖互联网图文对。但互联网图文对的质量并不均匀——电商页面、社交媒体帖子、新闻配图占了大多数，而高质量的专业领域图文数据（医学影像报告、工程图纸、科学图表）稀缺且分散。</p>
+<p>这意味着当前的模型在通用场景上好用，但在专业垂直场景上可能"不够好"。2025-2026 年出现的一个趋势是<strong>垂直多模态模型</strong>——在医疗、法律、金融等领域的专业图文数据上做继续训练。这可能成为多模态领域的下一个增长点。</p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>核心论文</h3>
+<table>
+<tr><th>论文</th><th>arXiv ID</th><th>访问时间</th></tr>
+<tr><td>CLIP</td><td>arxiv.org/abs/2103.00020</td><td>2026-04-30</td></tr>
+<tr><td>Flamingo</td><td>arxiv.org/abs/2204.14198</td><td>2026-04-30</td></tr>
+<tr><td>BLIP-2 (Q-Former)</td><td>arxiv.org/abs/2301.12597</td><td>2026-04-30</td></tr>
+<tr><td>LLaVA</td><td>arxiv.org/abs/2304.08485</td><td>2026-04-30</td></tr>
+<tr><td>InstructBLIP</td><td>arxiv.org/abs/2305.06500</td><td>2026-04-30</td></tr>
+<tr><td>SigLIP</td><td>arxiv.org/abs/2303.15343</td><td>2026-04-30</td></tr>
+<tr><td>SigLIP 2</td><td>arxiv.org/abs/2502.14786</td><td>2026-04-30</td></tr>
+<tr><td>Qwen-VL</td><td>arxiv.org/abs/2308.12966</td><td>2026-04-30</td></tr>
+<tr><td>CogVLM</td><td>arxiv.org/abs/2311.03079</td><td>2026-04-30</td></tr>
+<tr><td>Gemini (family)</td><td>arxiv.org/abs/2312.11805</td><td>2026-04-30</td></tr>
+<tr><td>InternVL</td><td>arxiv.org/abs/2312.14238</td><td>2026-04-30</td></tr>
+<tr><td>InternVL 1.5</td><td>arxiv.org/abs/2404.16821</td><td>2026-04-30</td></tr>
+<tr><td>InternVL-X</td><td>arxiv.org/abs/2503.21307</td><td>2026-04-30</td></tr>
+<tr><td>Qwen2-VL</td><td>arxiv.org/abs/2409.12191</td><td>2026-04-30</td></tr>
+<tr><td>LLaVA-NeXT-Interleave</td><td>arxiv.org/abs/2407.07895</td><td>2026-04-30</td></tr>
+<tr><td>MLLM Survey</td><td>arxiv.org/abs/2306.13549</td><td>2026-04-30</td></tr>
+<tr><td>MLLM Alignment Survey</td><td>arxiv.org/abs/2503.14504</td><td>2026-04-30</td></tr>
+<tr><td>Multimodal Hallucination</td><td>arxiv.org/abs/2407.00569</td><td>2026-04-30</td></tr>
+<tr><td>HIVE</td><td>arxiv.org/abs/2604.00086</td><td>2026-04-30</td></tr>
+<tr><td>Encoder Redundancy</td><td>arxiv.org/abs/2507.03262</td><td>2026-04-30</td></tr>
+<tr><td>Mavors</td><td>arxiv.org/abs/2504.10068</td><td>2026-04-30</td></tr>
+<tr><td>mPLUG-DocOwl</td><td>arxiv.org/abs/2307.02499</td><td>2026-04-30</td></tr>
+<tr><td>Video Understanding Survey</td><td>arxiv.org/abs/2312.17432</td><td>2026-04-30</td></tr>
+<tr><td>Vision-Flan</td><td>arxiv.org/abs/2402.11690</td><td>2026-04-30</td></tr>
+</table>
+<h3>产品发布来源</h3>
+<table>
+<tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
+<tr><td>OpenAI GPT-4V System Card</td><td>openai.com/index/gpt-4v-system-card/</td><td>2026-04-30</td></tr>
+<tr><td>OpenAI GPT-4o 发布</td><td>openai.com/index/hello-gpt-4o/</td><td>2026-04-30</td></tr>
+<tr><td>Google Gemini 发布</td><td>blog.google (2023-12-06)</td><td>2026-04-30</td></tr>
+<tr><td>Anthropic Claude 3 发布</td><td>anthropic.com (2024-03-04)</td><td>2026-04-30</td></tr>
+<tr><td>Meta Llama 3.2 发布</td><td>ai.meta.com</td><td>2026-04-30</td></tr>
+<tr><td>llm-stats.com MMMU 排行</td><td>llm-stats.com</td><td>2026-04-30</td></tr>
+<tr><td>科学地平线多模态排行</td><td>科学地平线（2026-03）</td><td>2026-04-30</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 11 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法，融合语言学历时-共时分析、社会科学纵向-横截面研究设计、以及竞争战略分析的核心思想。</em></p>
+</div>
+</body>
+</html>
