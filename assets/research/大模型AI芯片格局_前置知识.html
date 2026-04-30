@@ -248,7 +248,11 @@ td:last-child { text-align: center; }
 <li>所有 AI 框架（PyTorch、TensorFlow、JAX）底层都调 CUDA</li>
 <li>大量优化库（cuDNN、cuBLAS、TensorRT）只有 CUDA 版本</li>
 </ul>
+<p><strong>cuDNN</strong> 是其中最关键的库——专为深度学习优化的 GPU 加速库。所有主流框架的 GPU 加速层都基于 cuDNN 构建。它的战略意义在于：开发者写的 PyTorch 代码底层全是 cuDNN 调用，换成 AMD 的 ROCm 就得重新适配。</p>
 <p>这就导致了"CUDA lock-in"——你想换 AMD 的 ROCm，但你的代码库里全是 CUDA 调用，迁移成本极高。行业里有一句话："CUDA is not just a moat, it's an ocean."</p>
+<h2>7.5 MIG（多实例 GPU）</h2>
+<p>MIG（Multi-Instance GPU）是 NVIDIA 从 A100 开始引入的技术，把一块物理 GPU 切分成最多 7 个独立实例。每个实例拥有独立的内存和计算资源，互不干扰。</p>
+<p>意义：云厂商可以像卖虚拟机一样卖 GPU 切片。你不需要租一整块 H100（每月数千美元），可以只租 1/7 块做小模型推理。这大大降低了 GPU 云服务的使用门槛。</p>
 <h2>8. 什么是 Chiplet？</h2>
 <p>传统芯片是把所有功能做在一大块硅片上（monolithic die）。Chiplet 是把芯片拆成几个小块，用高速互联组装起来。</p>
 <p>好处：</p>
@@ -286,7 +290,9 @@ td:last-child { text-align: center; }
 <tr><td>Chiplet</td><td>用小芯片组装大芯片的设计方法</td></tr>
 <tr><td>ASIC</td><td>专为特定任务设计的芯片</td></tr>
 <tr><td>CoWoS</td><td>台积电的先进封装技术，用于整合 chiplet</td></tr>
-<tr><td>InfiniBand</td><td>超算和 AI 集群用的高性能网络</td></tr>
+<tr><td>InfiniBand</td><td>超算和 AI 集群用的高性能网络，万卡 GPU 集群的通信基石（Mellanox 公司）</td></tr>
+<tr><td>cuDNN</td><td>NVIDIA 专为深度学习优化的 GPU 加速库，所有 AI 框架的基础</td></tr>
+<tr><td>MIG</td><td>多实例 GPU，一块物理 GPU 切成多个独立小 GPU</td></tr>
 <tr><td>TDP</td><td>芯片最大功耗（瓦特），决定散热需求</td></tr>
 <tr><td>Die</td><td>芯片的最小物理单元（从晶圆上切下来的一小块）</td></tr>
 </table>
