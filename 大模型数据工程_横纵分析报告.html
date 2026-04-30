@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大模型预训练数据工程：从清洗到配比的四代演进</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>大模型预训练数据工程：从清洗到配比的四代演进</h1>
+<blockquote><strong>副标题：OpenAI 的 Reddit 到 DCLM 的评分器——预训练数据质量工程的进化之路</strong></blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>大模型预训练数据工程，是一套从互联网海量原始文本中<strong>采集、清洗、去重、筛选、配比</strong>，最终产出用于训练语言模型的高质量语料的系统性方法论。它回答的根本问题是：给你 240TB 的原始网页文本，你怎么把它变成让模型变聪明的"养料"？</p>
+<hr>
+<h2>二、技术背景：为什么数据工程成了大模型竞争的主战场？</h2>
+<h3>2.0 前置知识</h3>
+<p>数据工程的底层概念（CommonCrawl 的格式、Token 的计算方式、清洗 Pipeline 的核心流程、数据配比的比喻等）已整理为独立的前置知识文档，供不熟悉背景的读者提前阅读：</p>
+<blockquote><strong>📖 <a href="./assets/大模型数据工程_前置知识.md">大模型数据工程前置知识</a></strong> — 读完再读主报告</blockquote>
+<p>2022 年，DeepMind 的 Chinchilla 论文给行业泼了一盆冷水——大多数模型都是"欠训练"的，模型参数和训练数据量应该按 1:20 的比例匹配。这意味着如果你有一个 70B 的模型，你至少需要 1.4T token 的数据来训练它。</p>
+<p>但这还只是<strong>数量</strong>上的问题。更关键的问题藏在 DCLM 的一篇 2024 年论文里：DCLM-Baseline 数据集只用 2.6T token 训练的 7B 模型，在 MMLU 上达到了 64%，接近 Llama 3 8B 用 15T token 训出的 66%。<strong>2.6T 对 15T——数据质量的差距相当于把数据量差了 6 倍</strong>。</p>
+<p>这就是数据工程的价值。</p>
+<h3>2.1 问题的规模</h3>
+<p>预训练数据的核心原料是 <strong>CommonCrawl</strong>——一个每月爬取约 50-80 TiB 网页文本的非营利项目。2025 年的 CommonCrawl 快照积累了超过 240T token 的原始数据。但这里面包含了大量的"垃圾"：</p>
+<ul>
+<li>机器翻译的乱码文本</li>
+<li>SEO 垃圾站点的关键词堆砌</li>
+<li>电商网站的产品目录</li>
+<li>论坛的自动回复模板</li>
+<li>广告弹窗的文字残留</li>
+<li>跨网站的完全重复内容</li>
+</ul>
+<p>一条典型的 CommonCrawl 数据流水线，需要从原始 WARC 格式中提取文本（约 1/10 的信息密度），经过语言检测、质量过滤、去重等多个环节，最终可能只剩 10%-30% 的原始量。</p>
+<h3>2.2 数据工程的三层架构</h3>
+<p>从工程角度看，预训练数据处理可以抽象为三层：</p>
+<ol>
+<li><strong>采集层</strong>：从 CommonCrawl、书籍、代码仓库、学术论文等渠道获取原始数据</li>
+<li><strong>清洗层</strong>：去噪、去重、语言过滤、安全过滤、PII 剥离</li>
+<li><strong>配比层</strong>：决定各数据源的混合比例，以及从大规模候选池中选取最优子集</li>
+</ol>
+<p>前两层解决的是"把坏的扔掉"，第三层解决的是"把好的挑出来"——后者在 2024-2025 年成为最核心的研究方向。</p>
+<hr>
+<h2>三、纵向分析：从 Reddit 到 DCLM 的四代演进</h2>
+<h3>3.1 史前时期（2018 以前）：有数据就行</h3>
+<p>在 Transformer 诞生初期（BERT、GPT-1），预训练数据工程几乎没有独立的存在感。BERT 用 Wikipedia + BookCorpus，GPT-1 用 BooksCorpus。逻辑很简单：找一堆不是明显乱码的文本，训完再说。</p>
+<p>当时没人认真思考过"什么样的数据能让模型更好"——因为只要模型能跑起来就是胜利。这就像原始人发现火能烤熟肉，还没来得及研究什么火候烤什么肉最好吃。</p>
+<h3>3.2 第一代：质量代理信号（2019-2020）</h3>
+<h4>催化剂：GPT-2 的 Reddit Karma 实验</h4>
+<p>2019 年，OpenAI 在 GPT-2 论文里做了件很朴素但开创性的事：他们不再随便找个语料库，而是去 Reddit 上抓取获得至少 3 个赞的外链对应的网页。<strong>Reddit 的点赞数就是质量的代理信号</strong>——一个社区帮你完成了初步筛选。</p>
+<p>这个"代理信号"的思路现在看来很简单，却是第一次有人认真思考"怎么从互联网上挑好数据"。GPT-2 仅用了 40GB 的数据，比今天的数据集小了几个数量级，但产生的论文在写作质量和连贯性上远超当时所有模型。</p>
+<h4>C4：第一个系统化清洗 Pipeline</h4>
+<p>同一年，Google 的 T5 论文带来了 <strong>C4（Colossal Clean Crawled Corpus）</strong>。C4 不只是个数据集，它定义了一套完整的清洗规则：</p>
+<ul>
+<li>用 langdetect 做语言识别，只留英文</li>
+<li>移除包含脏词的页面</li>
+<li>移除包含占位符文本（"lorem ipsum"）的页面</li>
+<li>移除包含过多标点符号的页面</li>
+<li>移除过短或过长的文档</li>
+<li>移除重复 3-gram 超过 50% 的页面</li>
+</ul>
+<p>这些规则在今天看来理所当然，但在当时是革命性的——它第一次把"数据清洗"从"有就行"变成了"可以系统化定义和优化"的问题。C4 的规则集成为后续所有工作的基线，直到 2024 年，FineWeb 和 DCLM 仍以 C4 作为对比的对照组。</p>
+<h4>CCNet：分类器替代规则</h4>
+<p>就在 C4 发布后的一个月，Facebook AI 的 CCNet 来了。CCNet 做了一件比 C4 更激进的事：<strong>用训练好的语言模型来替代人工规则</strong>。</p>
+<p>它在一个小型高质量语料（Wikipedia）上训练 n-gram 语言模型，然后用这个模型给 CommonCrawl 的每个文档算 perplexity——perplexity 越低，说明这个文档在风格上与 Wikipedia 越接近，质量就越高。</p>
+<p>这是一个范式的转换：从"人定规则"到"模型判断"。CCNet 证明了语言模型本身可以成为数据筛选的工具，这个思路在 5 年后被 DCLM 和 FineWeb-Edu 推向极致。</p>
+<h4>GPT-3：多源混合的提出</h4>
+<p>2020 年的 GPT-3 把数据工程推到了一个新高度。不是因为 OpenAI 公开了多少细节——实际上他们什么都没公开——而是 GPT-3 论文里披露的数据配比（CommonCrawl 60%、WebText2 22%、Books 8%、Wikipedia 3%）成了后续所有工作的参考模板。</p>
+<p>GPT-3 证明了"多样化数据源混合"的有效性。纯 Web 文本不够，需要加图书培养长文理解、加 Wikipedia 培养事实准确性、加代码培养逻辑推理。这个"多源混合"的思想直接影响了一年后的 LLaMA 和 The Pile。</p>
+<p><strong>小结：第一代的核心特征是"用简单规则和代理信号来做初步筛选"。这时候的数据工程还没有独立的身份，只是模型训练流水线的一个附属环节。但关键的范式转换已经发生：从"有什么用什么"到"什么好才用什么"。</strong></p>
+<hr>
+<h3>3.3 第二代：开源运动与透明化（2020-2022）</h3>
+<p>这一时期最关键的推动力来自开源社区——EleutherAI、BigScience、Together Computer 等组织不相信只有大公司闭门才能做出好数据，他们用完全开源的方式复制并超越了工业界的数据工程方法。</p>
+<h4>The Pile：多样性与开源</h4>
+<p>2020 年末，EleutherAI 发布了 The Pile——825GB、22 个子集的开源预训练数据集。它不只是个数据集，更是一次宣言：预训练数据的构建应该透明、可复现、社区驱动。</p>
+<p>The Pile 第一次系统地分析了数据多样性对模型的影响。论文中的 ablation 实验表明，混合多源数据可以系统性弥补单一源的不足——比如只从 Web 文本训练的模型在学术写作上表现极差，加入 PubMed 和 ArXiv 后显著改善。</p>
+<p>但 The Pile 也有明显的工程粗糙：不同数据源的质量参差不齐，版权争议（Books3）为后来埋了雷。它更像一个"把所有东西扔进锅里"的早期尝试，为后续更精细化的工程实践铺了路。</p>
+<h4>ROOTS：多语言与数据治理</h4>
+<p>2022 年，BigScience 项目的 ROOTS 数据集把数据工程带入了一个新维度：多语言和数据伦理。</p>
+<p>ROOTS 包含了 59 种语言的 1.6TB 数据，而且首次把<strong>数据溯源和伦理审查</strong>纳入了 pipeline。每个数据源都要追溯来源、记录许可状态、分析潜在偏差。这种"数据治理"思维在几年后越发重要——当版权诉讼成为 AI 行业的核心风险时，ROOTS 的实践方式看起来颇有先见之明。</p>
+<p>不足之处也很明显：低资源语言的数据量严重不足，部分语言的语料只有几十 MB。多语言数据工程的不平衡问题至今仍未被解决，只是在 FineWeb-2（2024）中得到了部分改善。</p>
+<h4>LAION：模型评分进入图片领域</h4>
+<p>LAION-5B 是多模态领域的 C4。它从 CommonCrawl 提取 58.5 亿图片-文本对，用 CLIP 模型给每对匹配度打分，只保留高质量对。核心方法论与 CCNet 一脉相承——用训练好的模型来评定数据质量——但把应用场景从纯文本扩展到了图文多模态。</p>
+<p>LAION 的 CLIP Score 过滤方法直接影响了后来 DCLM 的模型过滤方案，而它引发的版权争议（Stable Diffusion 基于 LAION-5B 训练后被艺术家起诉）也成为后续数据工程不可回避的问题。</p>
+<h4>LLaMA：公开数据也能打</h4>
+<p>2023 年 2 月，Meta 的 LLaMA 论文震动了整个行业。不是因为模型架构有什么创新，而是它证明了一个简单的命题：<strong>只用公开数据，也能训练出比 GPT-3（175B）更强的模型</strong>。LLaMA-13B 在多项基准上超越了 GPT-3。</p>
+<p>LLaMA 的数据配方在论文里写得非常清楚：</p>
+<table>
+<tr><th>数据源</th><th>占比</th><th>处理方式</th></tr>
+<tr><td>CommonCrawl</td><td>67%</td><td>CCNet pipeline + linear classifier 过滤</td></tr>
+<tr><td>C4</td><td>15%</td><td>保留原始过滤版本</td></tr>
+<tr><td>GitHub</td><td>4.5%</td><td>按编程语言分，过滤低星仓库</td></tr>
+<tr><td>Wikipedia</td><td>4.5%</td><td>20 种语言</td></tr>
+<tr><td>书籍</td><td>4.5%</td><td>古腾堡计划 + Books3</td></tr>
+<tr><td>ArXiv</td><td>4.5%</td><td>论文全文</td></tr>
+<tr><td>StackExchange</td><td>-</td><td>问答对</td></tr>
+</table>
+<p>LLaMA 的数据配比后来成为开源社区的标准参考。它验证了几条原则：CommonCrawl 虽然质量参差但量大管饱，高质量源（书籍、Wikipedia）应该过采样，代码数据虽然占比较小（当时）但贡献巨大。</p>
+<p><strong>小结：第二代的核心特征是"透明化、开源化和社区协作"。数据工程第一次从"只有大公司能做的事"变成了"社区驱动的科研协作"。但这一时期的 pipeline 还比较粗放——主要是"清洗→训练"两步走，缺少对"到底哪些操作真正有用"的系统验证。这个问题要等到 2024 年才被 Dolma 和 FineWeb 解决。</strong></p>
+<hr>
+<h3>3.4 第三代：精耕细作的消融时代（2023-2024）</h3>
+<p>第三代的标志性变化是：数据工程从"我清洗了数据"进入到"我验证了清洗的每一步都有效"的阶段。核心方法论是<strong>消融实验（ablation）</strong>——把每个处理步骤独立出来，在受控实验中测试它对模型性能的贡献。</p>
+<h4>Dolma：处理步骤的中间态消融</h4>
+<p>2024 年 1 月，Allen AI 的 Dolma 论文做了一个之前没人做过的事：他们把数据处理的每个中间状态（原始→清洗→去重→质量过滤→最终输出）都保留下来，在每个中间点上训练一个 OLMo 模型，然后看哪个步骤真正提升了性能。</p>
+<p>结果有些反直觉：某些过滤操作对下游性能的提升远不如预期。一些大家习以为常的清洗规则，在 Dolma 的消融实验下被证明效果有限。</p>
+<p>Dolma 最大的贡献不是数据集本身（虽然 3T token 的规模也不小），而是它建立的<strong>数据消融实验框架</strong>——让数据工程从"你觉得好用"变成了"实验证明有效"。</p>
+<h4>RedPajama v2：40 维质量信号</h4>
+<p>2023 年 11 月，Together Computer 的 RedPajama v2 采取了不同的思路。他们没有在"怎么过滤"上预设答案，而是为每个文档计算 40 多个维度的质量信号（perplexity、重复率、URL 多样性、符号占比等），然后把这些信号连同文档一起发布。</p>
+<p>下游用户可以根据自己的需求灵活组合过滤条件——比如做知识密集型任务时可以侧重教育质量，做创意写作时可以侧重风格多样性。这个"释放信号而非预设过滤"的设计思想后来被 FineWeb 借鉴，用于探索不同过滤策略的组合效果。</p>
+<h4>FineWeb：最透明的数据工程</h4>
+<p>2024 年 6 月，HuggingFace 的 FineWeb 论文让行业对数据工程的认识全面提升。FineWeb 不仅是一个 15T token 的预训练数据集，更是一套完整的、完全透明的数据工程方法论。</p>
+<p>FineWeb 的消融实验揭示了一些此前长期被忽略的关键细节：</p>
+<ol>
+<li><strong>MinHash 去重的阈值选择极其重要</strong>。阈值设得太激进（去重率太高）会损失有效数据；太保守又保留冗余。最优阈值需要精细调节。</li>
+</ol>
+<ol>
+<li><strong>URL 去重比文档级质量过滤更有效</strong>。移除已知的低质量域名（如代码镜像站、垃圾站点等）比用分类器判断单个文档的质量更可靠——这跟大多数人的直觉相反。</li>
+</ol>
+<ol>
+<li><strong>多项在之前工作中被认为重要的质量信号，实际效果有限</strong>。比如 RedPajama v2 提供了 40+ 维信号，但 FineWeb 在 ablation 中发现其中大部分对模型性能没有显著影响。</li>
+</ol>
+<ol>
+<li><strong>教育质量过滤的惊人效果</strong>。FineWeb 用 Llama 3 70B 标注了 50 万个网页的教育质量（0-5 分），训练了一个 DistilBERT 分类器，然后用这个分类器从 15T token 中筛选出教育相关性高的 1.3T token（FineWeb-Edu）。结果：MMLU 提升 6.2%，ARC 提升 8.4%。</li>
+</ol>
+<p>这就是 "FineWeb-Edu 效应"——一个专门训练的轻量分类器，通过一个维度的质量判定，产出了在推理任务上全面超越更大数据集的子集。</p>
+<h4>DCLM：数据筛选的标准化评估</h4>
+<p>与 FineWeb 几乎同期发布的 DCLM（DataComp for Language Models）走了一条互补的路。它的核心方法论是：<strong>把数据筛选变成一个标准化的 benchmark</strong>。</p>
+<p>DCLM 提供了：</p>
+<ul>
+<li>240T token 的统一候选池（CommonCrawl 预处理版）</li>
+<li>固定的 OpenLM 训练框架（412M / 1.4B / 7B 三种规模）</li>
+<li>53 个下游评估任务</li>
+<li>两个赛道：Filtering Track（怎么筛数据）和 Mixing Track（怎么混合数据）</li>
+</ul>
+<p>参赛者只需要把自己的数据处理策略跑一遍，然后在 DCLM 的标准化框架下训练和评估，就能公平对比不同数据策略的效果。</p>
+<p>DCLM 的关键发现直接挑战了业界对数据规模的认知：<strong>DCLM-Baseline 用 2.6T token 训练的 7B 模型，在 MMLU 上达到 64%（5-shot），跟 Llama 3 8B 用 15T token 训出的 66% 相差不远</strong>。训练计算量只有后者的 1/6。</p>
+<p>这个发现的意义在于——如果数据质量足够好，你不需要盲目扩大数据规模。2.6T 高质量 token 的效果可以接近 15T 一般质量 token。</p>
+<p><strong>小结：第三代的核心特征是"用实验证明每一步的价值"。数据工程从"清洗→训练"升级为"假设→实验→验证→优化"的闭环。FineWeb 的 ablation 和 DCLM 的 benchmark 共同确立了数据工程的实验科学属性。</strong></p>
+<hr>
+<h3>3.5 第四代：模型辅助的质量再提升（2024-2025）</h3>
+<p>到了 2025 年，数据工程面临一个新局面：原始文本的"浅层质量"（语法正确、拼写无误、不是乱码）已经被前三代 pipeline 很好地解决了。问题是，质量还有没有提升空间？</p>
+<p>答案是：有，而且空间还很大。关键在于一个反直觉的事实——<strong>高质量和低质量数据的界限不是"好的英语 vs 破碎的英语"，而是"有用的信息密度 vs 无用的废话"</strong>。</p>
+<p>第四代的创新集中在这个方向：用更强的模型来筛选训练数据，甚至生成合成数据来补充训练。</p>
+<h4>DCLM 的 Model-Based Filtering</h4>
+<p>DCLM 论文中的一个关键实验是用一个小模型（OpenLM-1B）在候选数据上训练，然后用训练过程中的 loss 值来反向评估数据质量。核心假设是：如果某条数据在训练中 loss 下降快，说明它包含的"可学信息"多，是高质量数据。</p>
+<p>这等于用模型自己来给数据打分——不是一个独立的质量分类器，而是让训练信号本身成为质量度量。DCLM 发现这种做法选出的子集比使用外部质量分类器效果更好。</p>
+<p>这是一个递归的隐喻：<strong>用模型来筛选训练更好的模型所需的数据。</strong> 模型越强，筛选能力越强，产出的数据质量越高，又能训练出更强的模型。</p>
+<h4>FineWeb-Edu 的 LLM 蒸馏方法</h4>
+<p>FineWeb-Edu 的方法在产业链上更实用：用最强的模型（Llama 3 70B）来做标注者，把它的判断能力蒸馏到一个轻量分类器（DistilBERT）上。</p>
+<p>具体流程：Llama 3 70B 评估 50 万个网页的教育质量（从 0 到 5 分），这些标注数据训练一个 DistilBERT 分类器，然后用这个分类器扫描 15T token 的全部数据。最终筛选出 1.3T token 的高教育质量子集。</p>
+<p>把一个 70B 模型的能力"压缩"到一个轻量分类器中，让它可以处理 TB 级别的数据——这是模型辅助数据处理的实用化方案。</p>
+<h4>DCLM-Pool：社区驱动的竞赛平台</h4>
+<p>2025 年的 DCLM-Pool 把这一范式推到了极致。MLCommons 提供了一个 240T token 的标准候选池，任何人都可以提交自己的数据筛选策略，在标准化的框架下验证效果。</p>
+<p>数据工程从"每个团队关起门来搞"变成了"社区竞赛"。你不需要再自己处理 TB 级的原始数据——直接在预处理好的池上做创新的筛选实验就好。这与 ImageNet 在计算机视觉中的地位异曲同工。</p>
+<h4>合成数据：从 SFT 到预训练</h4>
+<p>合成数据的使用在 2024-2025 年经历了一个重要转向：从主要用于 SFT 和 RLHF，开始进入预训练阶段。</p>
+<ul>
+<li><strong>DeepSeek</strong> 在 V3 的 14.8T token 中加入了大量的合成数学和代码数据（估计占 20-30%），用于增强推理能力</li>
+<li><strong>Phi-3（Microsoft）</strong> 大量依赖合成教科书和练习数据，仅 3.8B 参数就达到了 7B 模型的性能——证明了高质量合成数据的 scaling law 优于低质量网络数据</li>
+<li><strong>Cosmopedia（HuggingFace）</strong> 完全由 Mixtral 8x7B 合成生成，包含 300 亿 token 的教科书、博客、故事等</li>
+</ul>
+<p>合成数据带来了一个"鸡生蛋蛋生蛋"的可能性：用模型生成数据 → 用这些数据训练更好的模型 → 更好的模型生成更高质量的数据 → 循环。</p>
+<p><strong>小结：第四代的核心特征是"模型辅助数据——用更强的模型来筛选和生成训练数据"。从分类器到评分器到数据蒸馏到合成数据生成，模型本身已经成为数据工程流水线中最重要的工具。</strong></p>
+<hr>
+<h3>3.6 去重技术的演进：一个独立的平行故事</h3>
+<p>去重是数据工程中最容易被低估但实际效果最大的环节之一。从 2019 年到 2025 年，去重技术保持了独立的迭代路线：</p>
+<table>
+<tr><th>阶段</th><th>时间</th><th>方法</th><th>代表工作</th></tr>
+<tr><td>精确去重</td><td>2019-2020</td><td>URL 去重、MD5 哈希去重</td><td>C4、CCNet</td></tr>
+<tr><td>近似去重</td><td>2020-2023</td><td>MinHash + LSH</td><td>C4、LLaMA、RedPajama</td></tr>
+<tr><td>语义去重</td><td>2023-2024</td><td>嵌入空间余弦相似度</td><td>SemDeDup (Meta)</td></tr>
+<tr><td>SSL 去重</td><td>2024-2025</td><td>自监督学习特征</td><td>探索中</td></tr>
+</table>
+<p>去重技术的发展反映了一个核心洞察：<strong>冗余数据不仅浪费计算，更可能损害模型泛化</strong>——重复暴露在高度相似的文本下会让模型倾向于记忆而非理解。</p>
+<p>FineWeb 的 ablation 揭示了一个关键细节：MinHash 去重的阈值不是越大越好。过于激进地去重（阈值设得太高）会损失大量有效数据，反而降低下游性能。最优阈值取决于具体的数据集和目标任务。</p>
+<p>SemDeDup 的发现则更令人吃惊——在 LAION 子集上，移除 50% 的"语义重复"数据后，模型性能几乎不变，训练时间减半。这意味着数据集中存在大量"内容不同但语义冗余"的文档，它们对训练的边际贡献接近于零。</p>
+<hr>
+<h3>3.7 配比优化：从人工到自动化</h3>
+<p>数据配比的历史可以看作一条从"手调"到"自动"的进化路径：</p>
+<h4>手调时期（2020-2023）</h4>
+<p>GPT-3：CommonCrawl 60%、WebText2 22%、Books 16%、Wikipedia 3%</p>
+<p>LLaMA：CommonCrawl 67%、C4 15%、GitHub 4.5%、Wikipedia 4.5%、Books 4.5%、ArXiv 4.5%</p>
+<p>这些配比都是靠经验和直觉调出来的。Chinchilla 给出了"总量应该多大"的指导，但没回答"各来源怎么分"的问题。</p>
+<h4>自动配比（2023-2024）</h4>
+<p><strong>DoReMi（2023）</strong> 首次实现了数据配比的自动化。核心创新是用 Group DRO（分布鲁棒优化）训练一个小代理模型，自动学习各数据域的最优权重。损失下降慢的领域获得更多权重。在 The Pile 上平均提升下游准确率 6.5 个百分点，训练步数减半。</p>
+<p><strong>Data Mixing Laws（2024）</strong> 建立了混合数据配比的数学形式——不同数据源间存在复杂的交互效应，不是简单的加性关系。通过小规模实验可以预测大规模混合的性能。</p>
+<p><strong>RegMix（2024）</strong> 用回归模型学习配比与性能的映射关系，在小模型上跑大量不同配比的实验，训练回归模型预测最佳配比。</p>
+<p>这些工作的方法论共性：<strong>用小模型做代理实验，把结果外推到大模型</strong>。跟 DCLM 的"用小模型评估数据质量"一脉相承。</p>
+<hr>
+<h2>四、横向分析：各家的数据策略对比</h2>
+<blockquote><strong>场景判断：该领域竞品充分（场景 C）。</strong> 各家 AI 公司在数据策略上既有共识（代码占提升、合成数据、去重心法），也有明显分化（数据规模偏好、多语言策略、透明度）。以下按 skill 框架的梯队划分逐一展开，选取最具代表性的 6 家做对比表。</blockquote>
+<h3>4.1 前沿梯队（OpenAI / Anthropic / Google DeepMind）</h3>
+<p>skill 框架将这三家定义为"前沿梯队"——它们掌握着最强的模型能力，在数据工程上投入最大、走得最前沿，但也是公开信息最少的三家。</p>
+<h4>OpenAI：最早但最不透明</h4>
+<p>OpenAI 是数据工程的先驱——GPT-2 的 Reddit karma 过滤、GPT-3 的多源混合都是开创性工作。但 GPT-4 之后 OpenAI 变得极其不透明，数据配比、清洗方法、过滤策略全部没有公开。</p>
+<p>据第三方估计，GPT-4 的训练数据约 13T token，来源基本沿用了 GPT-3 的框架：CommonCrawl + WebText + 书籍 + 代码 + Wikipedia。合成数据有使用但比例未知。</p>
+<p>值得注意的变化是，截至 2024 年，约 45% 的 C4 数据集因为版权诉讼和网站 paywall 而无法使用。OpenAI 因此与多家新闻机构签订了数据许可协议，但这部分数据的具体规模和用法同样没有公开。</p>
+<h4>Anthropic：合成数据是核心武器</h4>
+<p>Anthropic 的数据策略跟其他公司有一个根本性的不同——它在预训练方面的公开信息最少，却最重视合成数据。</p>
+<p>Anthropic 的 Constitutional AI 本质上是一个<strong>大规模合成数据生成流程</strong>：模型生成回答 → 自我批评 → 根据宪法原则修订 → 形成训练数据。这与"从网上爬数据再清洗"的传统路线完全不同——数据不是被采集的，而是被生成的。</p>
+<p>2025 年后，Claude Code 也被用于生成合成代码训练数据。Anthropic 的 Clio 工具实现了用户对话数据的自动化匿名化处理，这成为另一个数据来源。</p>
+<p>透明度中心文档提到，Anthropic 的数据策略强调"过滤的激进程度"——宁可砍掉大量网页文本，也要确保剩余数据的质量可控。这与 OpenAI 的"规模优先"形成鲜明对照。</p>
+<h4>Google DeepMind：全模态覆盖</h4>
+<p>Google 的数据策略跟它的业务版图一样大——PaLM 是纯文本，Gemini 则是文本 + 图像 + 音频 + 视频 + 代码的全模态数据。</p>
+<p>Gemini 论文披露了数据处理的基本框架：启发式规则过滤 + 基于模型的分类器 + 安全过滤 + 全局文档级去重。但具体的配比和过滤细节没有公开。</p>
+<p>Google 的优势在于拥有 YouTube、Google Books、Google Scholar、Google Search 索引等多条数据管道，数据来源的多样性和规模在业界无出其右。Gemma 作为开源模型的数据处理 pipeline 是相对透明的，采用了全局去重和严格的质量过滤。</p>
+<h3>4.2 落后梯队（Meta）</h3>
+<p>skill 将 Meta 放在"落后梯队"——不是因为它的模型差，而是因为它在数据策略上处于追赶位置。但 Meta 在<strong>数据透明的公开程度上恰恰是业界第一</strong>。</p>
+<h4>Meta（LLaMA）：数据配比优化的教科书</h4>
+<p>Meta 的 LLaMA 系列是数据配方最透明的工业级模型。从 LLaMA 1 到 LLaMA 3，Meta 展示了一条从"规模扩展"到"配比优化"的清晰路径：</p>
+<p><strong>LLaMA 1（2023）</strong>：1.0-1.4T token。CommonCrawl 占 67%，代码仅 4.5%。核心贡献是证明了"只用公开数据可以打闭源模型"。</p>
+<p><strong>LLaMA 2（2023）</strong>：2T token。配方与 LLaMA 1 类似但过滤质量提升。</p>
+<p><strong>LLaMA 3（2024）</strong>：15T+ token（405B 版本）。这是数据配比发生质变的一代：</p>
+<table>
+<tr><th>数据类别</th><th>LLaMA 2 占比</th><th>LLaMA 3 占比</th></tr>
+<tr><td>通用数据（网页、书籍）</td><td>~86%</td><td>~50%</td></tr>
+<tr><td>代码</td><td>~4.5%</td><td>~17%</td></tr>
+<tr><td>数学与推理</td><td>-</td><td>~25%</td></tr>
+<tr><td>多语言</td><td>-</td><td>~8%</td></tr>
+</table>
+<p>代码数据从 4.5% 增至 17%（增加近 4 倍），数学与推理数据专门开辟了 25% 的配额。直接结果：LLaMA 3 在代码生成和数学推理上的能力远超 LLaMA 2——这是数据配比优化的经典案例。</p>
+<p>Meta 还把 Tokenizer 从 LLaMA 2 扩展到新增 27,744 个 token（48.5% 非英文、30.2% 代码），反映了对多语言和编程能力的方向性投入。</p>
+<h3>4.3 独立实验室</h3>
+<h4>DeepSeek：精炼数据 + 合成推理</h4>
+<p>DeepSeek-V3 的 14.8T token 数据是"精选自然数据 + 大量合成数据"路线的代表：</p>
+<ul>
+<li><strong>语言/语义评估</strong>：对文档做多维度质量评估，移除低质量内容</li>
+<li><strong>综合去重</strong>：跨整个语料库去除重复或高度相似内容</li>
+<li><strong>数据再平衡（Remixing）</strong>：通过补充代表性不足领域的内容来平衡数据集</li>
+<li><strong>合成数据</strong>：加入大量合成数学和代码数据（估计占 20-30%）</li>
+</ul>
+<p>DeepSeek 的一个重要特点是训练过程零不稳定——全 14.8T token 的预训练没有出现任何 loss spike，训练成本仅 557.6 万美元。这背后是数据质量和配比的精心设计。</p>
+<p>DeepSeek-R1 在 V3 的基础上增加了推理导向的合成数据（长链推理轨迹），使用基于规则奖励的强化学习训练。这是"合成数据 + 强化学习"路线的典型代表。</p>
+<h4>xAI（Grok）</h4>
+<p>xAI 的核心差异化在于 X（Twitter）平台实时数据的集成。Grok-3 的训练数据截至 2025 年 2 月，使用约 1,500 人团队做数据策展、分类和标注，聚焦 STEM、代码、金融等领域。Grok-3/4 引入了合成数据生成，聚焦多步推理和代码任务。具体数据规模和配比未公开。</p>
+<h4>Mistral AI</h4>
+<p>Mistral 的策略强调效率优先，利用 SMoE 架构在较小激活参数量下获得高性能。多语言焦点明确——强调欧洲语言（英法意德西）。Magistral 系列开始使用 GRPO 生成的大规模合成数据。Codestral 使用专用代码和 STEM 数据。总体转向精选高质量数据路线。</p>
+<h3>4.4 国内主要玩家</h3>
+<p>中国公司的数据策略有一个共同特征：中英双语 + 更大规模。各家都把自己的模型做成双语甚至多语言，数据量也普遍高于同期的海外模型。</p>
+<p><strong>Qwen（阿里巴巴）</strong>：18T token，是已知规模最大的公开数据量之一。使用前代模型 Qwen2 生成合成数据用于增强。分阶段训练策略，强调代码和数学。</p>
+<p><strong>智谱 AI（GLM）</strong>：中英双语焦点，构建大规模图像-文本描述数据集的精细策展流水线。智能体导向训练数据（工具调用、长链执行）。支持达 1M token 的长上下文。</p>
+<p><strong>MiniCPM（面壁智能）</strong>：独树一帜的小模型路线。2.4B 模型用超过 1T token 训练，<strong>数据-参数比超过 160:1</strong>，远超 Chinchilla 最优的 20:1。核心方法论是"模型风洞"——先在 ~100M 规模的代理模型上测试超参数和数据策略，再做全量训练。</p>
+<p><strong>Kimi K2（月之暗面）</strong>：15.5T token，四个关键领域（网页、代码、数学、知识）。使用 MuonClip 优化器保证超大规模训练的稳定性。智能体任务使用真实世界数据 + 模拟环境克服数据稀缺。</p>
+<p><strong>字节跳动</strong>：充分利用抖音生态数据，构建四维拓扑网络，通过细粒度聚类在降采样的同时保持语义多样性。30,000+ 名词和 2,000+ 动词的分类系统嵌入文化特征。截至 2025 年 12 月，豆包日均 token 使用量超过 50 万亿。</p>
+<p><strong>零一万物（Yi）</strong>：3T token 的多语言语料库，中英双语焦点。Yi-34B 在同等规模开源模型中性能领先。</p>
+<h3>4.5 横向对比总览</h3>
+<table>
+<tr><th>维度</th><th>OpenAI (GPT-4)</th><th>Google (Gemma 2)</th><th>Meta (LLaMA 3)</th><th>DeepSeek (V3)</th><th>Qwen 2.5</th><th>Kimi K2</th></tr>
+<tr><td>发布时间</td><td>2023-03</td><td>2024-06</td><td>2024-04</td><td>2024-12</td><td>2024-09</td><td>2025-07</td></tr>
+<tr><td>训练数据规模</td><td>~13T (估)</td><td>6T (2B) / 2T (7B)</td><td>15T+</td><td>14.8T</td><td>18T</td><td>15.5T</td></tr>
+<tr><td>代码占比</td><td>不详</td><td>高 (含代码)</td><td><strong>~17%</strong></td><td><strong>显著</strong></td><td>高</td><td>显著</td></tr>
+<tr><td>多语言</td><td>英文为主</td><td><strong>原生多语言</strong></td><td><strong>8%+ (30+)</strong></td><td>中英</td><td>中英为主</td><td>英文为主</td></tr>
+<tr><td>去重</td><td>MinHash</td><td>全局文档级去重</td><td>三重去重(行/文档/模型)</td><td>综合去重</td><td>有</td><td>有</td></tr>
+<tr><td>合成数据</td><td>使用(比例未知)</td><td>不详</td><td>用于质量过滤</td><td><strong>推理链合成</strong></td><td>Qwen2 生成</td><td>模拟环境+合成</td></tr>
+<tr><td>数据策略理念</td><td>规模驱动</td><td><strong>全模态覆盖</strong></td><td>配比优化</td><td>精炼+合成</td><td>大而全</td><td>智能体导向</td></tr>
+</table>
+<h3>4.6 核心趋势</h3>
+<p>从横向对比可以清晰看到几个共识性趋势：</p>
+<ol>
+<li><strong>代码占比普遍大幅提升</strong>。从早期模型的 4-5% 到当前的 17%+，代码数据被公认为提升推理能力的关键杠杆。这是个一石三鸟的操作：代码数据既训练了编程能力，又强化了逻辑推理，还给模型提供了结构化的长程依赖建模经验。</li>
+</ol>
+<ol>
+<li><strong>合成数据从"可选"变成"标配"</strong>。2023 年以前合成数据主要用于 SFT 和 RLHF，2024-2025 年已经进入预训练环节。DeepSeek 的推理链合成、Phi-3 的教科书合成、Cosmopedia 的完全合成数据集，都指向同一个方向。</li>
+</ol>
+<ol>
+<li><strong>数据规模仍在增长但增速放缓</strong>。头部模型从 2020 年（GPT-3）的 300B token 增长到 2024-2025 年的 15T+ token，五年增长了 50 倍。但 DCLM 的 2.6T token ≈ 15T token 的实验结果暗示，继续扩大规模可能已经不是最优策略。</li>
+</ol>
+<ol>
+<li><strong>配比优化成为新的竞争焦点</strong>。LLaMA 3 把代码占比增加了近 4 倍，数学和推理数据占比达到 25%，而多语言数据只占 8%——这些决策背后有明确的"期望能力导向"逻辑。你是想模型什么都会一点，还是在特定能力上做到极致？配比决定了一切。</li>
+</ol>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 历史的锁扣：为什么数据工程走到了今天？</h3>
+<p>把纵向演进和横向格局放在一起看，能发现几条清晰的因果链。</p>
+<p><strong>第一条链：从"量"到"质"的范式转移</strong></p>
+<p>纵向看，数据工程经历了从"WebText 的 40GB"到"C4 的 750GB"到"The Pile 的 825GB"到"LLaMA 的 1.4T"到"FineWeb 的 15T"到"DCLM 的 240T 候选池"——数据规模的膨胀曲线几乎是垂直的。</p>
+<p>但转折点发生在 2024 年。当 DCLM 证明 2.6T 高质量 token 的效果接近 15T 一般质量 token，当 FineWeb-Edu 用 1.3T token 在推理任务上超越更大数据集，行业开始反思一个根本问题：<strong>我们真的需要那么多数据吗？</strong></p>
+<p>横向看，这个反思的落地速度在各家之间差异巨大。Meta 在 LLaMA 3 上已经用 17% 的代码占比 + 25% 的数学推理占比做出了选择，Qwen 仍然在走"大而全"的 18T 路线。两条路现在都能出好模型，但方向的分化已经开始了。</p>
+<p><strong>第二条链：开源社区对透明度的倒逼</strong></p>
+<p>OpenAI 的不透明（GPT-4 的数据策略至今是黑盒）反而催生了开源社区对透明数据工程的极致追求。从 EleutherAI 的 Pile 到 HuggingFace 的 FineWeb 再到 MLCommons 的 DCLM-Pool，每一条开源数据集的发布都在推高行业对数据工程透明度的期待。</p>
+<p>横向看，这造成了有趣的分化：Anthropic 和 OpenAI 在闭门状态下走合成数据路线，Meta 和开源社区走透明化路线。<strong>透明路线产出了更好的方法论（ablation 框架、benchmark 平台），但不透明路线在原材料（合成数据）上更激进。</strong> 两条路线谁会在 3-5 年后胜出，取决于合成数据的天花板在哪里。</p>
+<p><strong>第三条链：模型本身才是最好的数据工具</strong></p>
+<p>最反直觉的洞察在于第四代的发现——用模型来筛选数据，比任何人工规则都有效。而且这个循环是可以自增强的：更强的模型 → 更精确的数据筛选 → 更好的训练数据 → 更强的模型。</p>
+<p>这个递归逻辑指向一个结论：<strong>数据工程的终点不是"更好的 pipeline"，而是"更好的模型成为 pipeline 的一部分"。</strong> FineWeb-Edu 用 Llama 3 70B 做标注器，DCLM 用 OpenLM 做评分器——模型本身已经从数据工程的消费者变成了参与者和驱动者。</p>
+<h3>5.2 三个剧本</h3>
+<h4>剧本一（最可能）：配比优化的黄金时代</h4>
+<p>未来 1-2 年，行业会沿着 LLaMA 3 的路线加速——代码和推理数据占比持续提升，配比优化自动化（DoReMi 类方法工业化），合成数据稳定占据预训练数据的 20-30%。DCLM 类的 benchmark 成为数据工程的标配，每个模型研发团队都有一个专门的数据工程组来做 iterating 和验证。</p>
+<p>这会是一条稳定爬坡的路线：模型的推理能力持续提升，但幅度不会像过去两年那么戏剧化。数据工程的竞争焦点从"谁的数据多多"变成"谁的配比更聪明"。</p>
+<h4>剧本二（最危险）：合成数据的幻灭</h4>
+<p>合成数据的 scaling law 可能比预期的更早遇到天花板——模型生成的数据受限于生成模型自身的表达能力和偏差，多样性不足导致边际收益递减。如果合成数据超过 30-40% 后出现显著的性能回退，整个"用模型生成→用模型训练→用模型评测"的闭环可能形成"回音室效应"——模型之间互相学习，但都在一个受限的空间里。</p>
+<p>如果这个剧本发生，数据工程会回到"找到更多更好的原始数据"的老路上，合成数据退回到仅用于 SFT 的定位。那些在合成数据上押注最多的公司（如 Anthropic）可能面临短期挫折。</p>
+<h4>剧本三（最乐观）：数据工程成为验证范式的输出</h4>
+<p>模型的持续增强使"模型辅助数据"的循环达到临界点——最强模型几乎可以完全自动化数据筛选和生成 pipeline。数据工程不再是模型训练前的一个准备阶段，而是与训练并行运行、持续反馈的在线系统。</p>
+<p>在这个剧本里，每个训练 checkpoint 都可以用来重新评估数据质量、动态调整配比、甚至生成缺失领域的新数据。数据工程和模型训练完全融合，不再有明确的边界。</p>
+<p>剧本三的关键前提是"模型能力增长持续超越数据需求增长"——也就是模型变得足够强，强到可以近乎完美地筛选和生成训练自身所需的数据。从 DCLM 的 model-based filtering 来看，这个趋势的迹象已经出现了，但距离完全实现还有技术鸿沟要跨越。</p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>论文与技术报告</h3>
+<ol>
+<li>GPT-2: <em>Language Models are Unsupervised Multitask Learners</em> (2019) — https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf</li>
+<li>T5/C4: <em>Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</em> (arXiv:1910.10683) — https://arxiv.org/abs/1910.10683</li>
+<li>CCNet: <em>Extracting High Quality Monolingual Datasets from Web Crawl Data</em> (arXiv:1911.00359) — https://arxiv.org/abs/1911.00359</li>
+<li>GPT-3: <em>Language Models are Few-Shot Learners</em> (arXiv:2005.14165) — https://arxiv.org/abs/2005.14165</li>
+<li>The Pile: <em>An 800GB Dataset of Diverse Text for Language Modeling</em> (arXiv:2101.00027) — https://arxiv.org/abs/2101.00027</li>
+<li>LAION-5B: <em>An open large-scale dataset for training next generation image-text models</em> (arXiv:2210.08402) — https://arxiv.org/abs/2210.08402</li>
+<li>ROOTS: <em>The BigScience ROOTS Corpus: A 1.6TB Composite Multilingual Dataset</em> (arXiv:2303.03915) — https://arxiv.org/abs/2303.03915</li>
+<li>LLaMA: <em>Open and Efficient Foundation Language Models</em> (arXiv:2302.13971) — https://arxiv.org/abs/2302.13971</li>
+<li>Chinchilla: <em>Training Compute-Optimal Large Language Models</em> (arXiv:2203.15556) — https://arxiv.org/abs/2203.15556</li>
+<li>Dolma: <em>an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research</em> (arXiv:2402.00159, ACL 2024) — https://arxiv.org/abs/2402.00159</li>
+<li>FineWeb: <em>Decanting the Web for the Finest Text Data at Scale</em> (arXiv:2406.17557) — https://arxiv.org/abs/2406.17557</li>
+<li>DCLM: <em>DataComp-LM: In search of the next generation of training sets for language models</em> (arXiv:2406.11794) — https://arxiv.org/abs/2406.11794</li>
+<li>PaLM: <em>Scaling Language Modeling with Pathways</em> (arXiv:2204.02311) — https://arxiv.org/abs/2204.02311</li>
+<li>Gemini: <em>A Family of Highly Capable Multimodal Models</em> (arXiv:2312.11805) — https://arxiv.org/abs/2312.11805</li>
+<li>LLaMA 2: <em>Foundation and Fine-Tuned Chat Models</em> (arXiv:2307.09288) — https://arxiv.org/abs/2307.09288</li>
+<li>LLaMA 3: <em>Herds of Models</em> (arXiv:2407.21783) — https://arxiv.org/abs/2407.21783</li>
+<li>DeepSeek-V3: <em>A Foundation Language Model</em> (arXiv:2412.19437) — https://arxiv.org/abs/2412.19437</li>
+<li>Qwen2.5: <em>A Foundation Language Model</em> (arXiv:2412.15115) — https://arxiv.org/abs/2412.15115</li>
+<li>MiniCPM: <em>Unveiling the Potential of Small Language Models with Scalable Training Strategy</em> (arXiv:2404.06395) — https://arxiv.org/abs/2404.06395</li>
+<li>Kimi K2: Technical Report (arXiv:2507.21104) — https://arxiv.org/abs/2507.21104</li>
+<li>ChatGLM: <em>A Family of Large Language Models from GLM-130B to GLM-4</em> (arXiv:2406.12793) — https://arxiv.org/abs/2406.12793</li>
+<li>Yi: <em>Open Foundation Models by 01.AI</em> (arXiv:2403.04652) — https://arxiv.org/abs/2403.04652</li>
+<li>DoReMi: <em>Optimizing Data Mixtures Speeds Up Language Model Pretraining</em> (arXiv:2305.10429) — https://arxiv.org/abs/2305.10429</li>
+<li>Data Mixing Laws: <em>Optimizing Data Mixtures by Predicting Language Model Performance</em> (arXiv:2403.16952) — https://arxiv.org/abs/2403.16952</li>
+<li>DSIR: <em>Data Selection for Importance Resampling</em> (arXiv:2310.19545) — https://arxiv.org/abs/2310.19545</li>
+<li>Phi-1: <em>Textbooks Are All You Need</em> (arXiv:2306.11644) — https://arxiv.org/abs/2306.11644</li>
+<li>Phi-3: Technical Report (arXiv:2404.14219) — https://arxiv.org/abs/2404.14219</li>
+<li>Nemotron-4 340B Technical Report (arXiv:2406.11704) — https://arxiv.org/abs/2406.11704</li>
+<li>WIMBD: <em>What's in My Big Data?</em> (arXiv:2310.18512) — https://arxiv.org/abs/2310.18512</li>
+<li>Pythia: <em>A Suite for Analyzing Large Language Models across Training and Scaling</em> (arXiv:2304.01373) — https://arxiv.org/abs/2304.01373</li>
+<li>Data Filtering Networks (arXiv:2403.19735) — https://arxiv.org/abs/2403.19735</li>
+<li>SemDeDup: <em>Data Deduplication for Efficient Deep Learning</em> (Meta, 2023)</li>
+<li>RegMix: <em>Data Mixing Augmentation for Language Model Pretraining</em> (2024)</li>
+</ol>
+<h3>数据与开源项目</h3>
+<ul>
+<li>RedPajama v1/v2 — https://huggingface.co/datasets/togethercomputer</li>
+<li>FineWeb / FineWeb-2 — https://huggingface.co/HuggingFaceFW</li>
+<li>DCLM / DCLM-Pool — https://datacomp.ai/dclm/</li>
+<li>Dolma Toolkit — https://github.com/allenai/dolma</li>
+<li>CCNet Pipeline — https://github.com/facebookresearch/cc_net</li>
+<li>text-dedup — https://github.com/ChenghaoMou/text-dedup</li>
+<li>Cosmopedia — HuggingFace (2024)</li>
+</ul>
+<h3>公司透明度报告</h3>
+<ul>
+<li>Anthropic 透明度中心 — https://www.anthropic.com/transparency</li>
+<li>Stanford CRFM 透明度指数 — https://crfm.stanford.edu</li>
+<li>Mozilla Foundation 2024 Common Crawl 分析报告</li>
+</ul>
+<h3>方法论说明</h3>
+<p>本报告采用<strong>横纵分析法（Horizontal-Vertical Analysis）</strong>，该方法由数字生命卡兹克提出，融合了索绪尔的历时-共时分析、社会科学中的纵向-横截面研究设计。纵向部分追溯预训练数据工程从 2019 年到 2025 年的完整演进史；横向部分对比当前主要 AI 公司的数据策略；横纵交汇部分给出综合性判断和未来推演。</p>
+<blockquote>报告生成时间：2026 年 4 月 30 日</blockquote>
+</div>
+</body>
+</html>
