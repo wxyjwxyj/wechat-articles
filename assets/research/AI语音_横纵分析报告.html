@@ -244,12 +244,36 @@ td:last-child { text-align: center; }
 </ul>
 <p>GPT-4o voice 的演示视频在 2024 年 5 月引爆了社交媒体——一位用户跟 GPT-4o 聊天，AI 能感知到用户呼吸急促、语气紧张，然后问"你是不是有点紧张？我们来慢慢聊"——这种体验在之前的语音 AI 中从未出现过。</p>
 <p>同期，字节跳动的 <strong>豆包语音</strong> 也在快速迭代。豆包的优势是"全栈"：字节同时有自研的语音识别、TTS、大模型能力，而且有抖音这样的超级 App 做分发。2024 年下半年，豆包的语音对话功能开始在抖音和今日头条上大规模铺开。</p>
-<h3>3.5 开源追赶与多元分化（2025-2026）</h3>
-<p>2025 年到 2026 年是 AI 语音"技术普及化"的阶段。 OpenAI 和 ElevenLabs 展示了前沿，开源社区用更快的速度在追赶。</p>
-<p><strong>阿里 CosyVoice 3（2025）</strong> 是开源语音合成的一个里程碑。0.5B 参数的模型，在自然度评测中接近甚至超过了商业产品。更重要的是 CosyVoice 3 的 bi-streaming 技术——端到端延迟做到了 ~150ms，比 GPT-4o 还要快。这意味着开源方案在"自然度"上追赶闭源的同时，在"延迟"上已经领先了。</p>
-<p><strong>ChatTTS 和 Fish Speech</strong> 强化了开源社区的生态位。ChatTTS 主打中文 TTS 的自然度，在中文语音合成上比很多商业产品都好。Fish Speech 走多语言路线，支持中英日韩，社区活跃度高。<strong>GPT-SoVITS</strong> 则在少样本语音克隆上做到了极致——用户只需要 1 分钟参考音频就能克隆一个声音。</p>
-<p><strong>Deepgram 转向语音 Agent</strong> 体现了行业趋势。Deepgram 不满足于只做 ASR——它在 2025-2026 年推出了 Voice Agent 平台，让开发者能快速搭建语音对话机器人。它把语音识别、语音合成和 LLM 集成在一起，封装成一个可调用 API。</p>
-<p>这个阶段的本质是：<strong>AI 语音的"基础能力"（文字转语音、语音转文字）已经被开源攻克，竞争从"谁能做"转向"谁做得更自然、更快、更便宜"。</strong></p>
+<h3>3.5 开源追赶、语音 Agent 爆发与多元分化（2025-2026）</h3>
+<p>2025 年到 2026 年是 AI 语音从"技术突破"到"产业爆发"的阶段。</p>
+<p><strong>开源的密集突破。</strong> 阿里 CosyVoice 3（2025）以 0.5B 参数在自然度上接近商业产品，bi-streaming 技术将端到端延迟做到 ~150ms。2026 年 3 月升级到 <strong>CosyVoice 3.5</strong>——引入 FreeStyle 自然语言控制（"用温柔的语气、稍微快一点说这句话"），支持 9 种语言 + 18+ 方言，生僻字错误率降至 5.3%。同时被整合进"通义百聆"品牌，3 秒录音即可无缝切换语种和情绪。</p>
+<p><strong>ChatTTS 和 Fish Speech</strong> 强化了开源社区生态位。ChatTTS 主打中文 TTS 自然度，Fish Speech 走多语言路线。<strong>Fish Audio S2（2026.03）</strong> 实现了词级情绪控制——支持对特定词语独立控制愤怒、悲伤、兴奋、低语等情绪，论文已发 arXiv。同期发布 <strong>OpenAudio S1</strong>——号称"世界首个 AI 配音演员"，支持实时情感控制，2 万+ 开发者，ARR $500 万。Fish Audio 已从纯 TTS 扩展到 ASR 领域。</p>
+<p><strong>GPT-SoVITS</strong> 则把少样本语音克隆做到极致——用户只需 1 分钟参考音频。</p>
+<p><strong>闭源也在快速迭代。</strong> ElevenLabs 发布 <strong>v3 模型</strong>（Audio Tags 精细情感控制，错误率比 v2 降低 68%）和 <strong>Flash 模型</strong>（首包时间 75ms——目前业界最快）。2026 年与德国电信合作将 AI 通话助手嵌入电信网络。ElevenLabs 的"自然度第一"地位在 2026 年被多个竞品逼近，但仍是最受认可的消费级语音品牌。</p>
+<p><strong>字节豆包发布语音合成 2.0（2025.10）</strong>——更强的情感表现力、复杂公式朗读。产品矩阵已扩展到 7 大领域（合成、识别、复刻、实时语音、同声传译、音乐、播客）。Seed Speech 2.0 支持提示词控制情感。汽车业务上车超 700 万辆（奇瑞、奥迪等合作）。Seed LiveInterpret 2.0 端到端同传延迟 3 秒。</p>
+<p><strong>语音 Agent 赛道全线爆发（这是 2025-2026 年最大的结构性变化）：</strong></p>
+<ul>
+<li><strong>Microsoft Copilot Studio 实时语音 Agent</strong>：首个将语音 Agent 深度整合到企业级 AI Agent 平台的产品</li>
+<li><strong>RingCentral AIR Pro</strong>：语音优先的全渠道 AI Agent 平台，面向客服场景</li>
+<li><strong>SoundHound Agentic Voice Commerce</strong>（CES 2026）：车载和电视端的语音 Agent，通过语音订餐/订酒店/买电影票</li>
+<li><strong>Amazon Nova Sonic</strong>（2025.04）：端到端语音模型，延迟优于级联方案，价格比 GPT-4o Realtime 低 80%。Nova 2 Sonic（2026）支持全自动双人播客对话</li>
+<li><strong>Giga 融资 $61M</strong>（企业级语音 AI，DoorDash 等客户）</li>
+<li><strong>多家创业公司完成融资</strong>：Synthflow（$20M）、Simple AI（$14M）、Smallest.ai（$8M）等</li>
+</ul>
+<p><strong>端到端语音模型群雄并起——不再是 GPT-4o voice 一家独大：</strong></p>
+<ul>
+<li><strong>Moshi</strong>（Kyutai 法国实验室）：最具代表性的开源端到端语音对话模型，全双工对话</li>
+<li><strong>GLM-4-Voice</strong>（智谱）：国产端到端语音对话替代方案</li>
+<li><strong>Step-Audio 2</strong>（阶跃星辰）：端到端多模态音频大模型，2025 年发布</li>
+<li><strong>Qwen2.5-Omni-7B</strong>（阿里 2025.03）：真正全模态——文本+图像+音频+视频统一输入输出</li>
+<li><strong>Kimi-Audio-7B</strong>（月之暗面 2025.04）：音频理解+生成+对话的 foundation model</li>
+<li><strong>SpeechGPT 2.0</strong>（复旦）：<200ms 端到端实时语音交互</li>
+<li><strong>Cartesia Sonic 3</strong>：TTFB 120ms，40+ 语言，已在 Amazon SageMaker 上线</li>
+</ul>
+<p><strong>延迟竞赛白热化。</strong> 2026 年实时语音延迟已从 2024 年的 320ms（GPT-4o）全面压到 200ms 以下：ElevenLabs Flash 75ms TTFB、Deepgram Aura-2 90ms、Cartesia Sonic 3 120ms、CosyVoice 3 150ms bi-streaming、MiniMax Speech 2.6 Turbo <250ms、Moonshine 开源亚百毫秒级 ASR。</p>
+<p><strong>价格战也打响了。</strong> xAI Grok 2026 年 4 月推出语音 API——STT+TTS 比 ElevenLabs 便宜近 10 倍。BytePlus ASR 海外降价 75%。阶跃星辰 StepAudio 2.5 ASR 定价骤减 90%，推理速度提升 400%。OpenAI Realtime API 多次降价约 20-30%。</p>
+<p><strong>语音情感表达从"标签式"走向"自然语言指令式"。</strong> IndexTTS 2.0/2.5（Bilibili 开源，AAAI 2025 收录）支持情感可控+时长可控。GLM-TTS（智谱）基于多奖励强化学习实现可控情感。Cartesia Sonic 3 在 API 层开放情感控制接口。行业在从"给语音打标签悲/喜"走向"用户说'用温柔、关切一点的语气说这句话'，模型自动调整"。</p>
+<p>这个阶段的本质是：<strong>AI 语音的"基础能力"已被开源攻克，"语音 Agent"成为新的爆发赛道，端到端模型不再是 GPT-4o voice 的独角戏。</strong></p>
 <hr>
 <h2>四、横向分析：2026 年 AI 语音竞争图谱</h2>
 <h3>4.1 竞争格局概况</h3>
@@ -259,8 +283,10 @@ td:last-child { text-align: center; }
 <tr><th>产品</th><th>开发商</th><th>核心优势</th><th>技术路线</th><th>商业模式</th></tr>
 <tr><td><strong>GPT-4o / GPT-realtime-1.5</strong></td><td>OpenAI</td><td>最自然的实时语音对话</td><td>端到端语音模型</td><td>API $64/1M tokens(出站音频)</td></tr>
 <tr><td><strong>Azure Speech</strong></td><td>微软</td><td>企业级全栈，多语言覆盖好</td><td>传统 neural TTS + ASR</td><td>API 按用量付费</td></tr>
-<tr><td><strong>豆包语音</strong></td><td>字节跳动</td><td>抖音生态集成，2.27 亿 MAU</td><td>自研全栈</td><td>免费+生态</td></tr>
-<tr><td><strong>Kimi 语音</strong></td><td>月之暗面</td><td>长上下文+语音结合</td><td>VALL-E 延续 + 自研</td><td>免费</td></tr>
+<tr><td><strong>Amazon Nova Sonic</strong></td><td>AWS</td><td>端到端语音，比 GPT-4o低 80%</td><td>端到端语音模型</td><td>API</td></tr>
+<tr><td><strong>豆包语音</strong></td><td>字节跳动</td><td>抖音生态集成，3.5 亿 MAU，700 万车上量</td><td>自研全栈 2.0</td><td>免费+API</td></tr>
+<tr><td><strong>Kimi 语音</strong></td><td>月之暗面</td><td>长上下文+语音结合</td><td>VALL-E 延续 + Kimi-Audio</td><td>免费</td></tr>
+<tr><td><strong>xAI Grok Speech</strong></td><td>xAI</td><td>价格杀器（比 ElevenLabs 便宜 ~10x）</td><td>STT + TTS</td><td>API $0.012/分钟</td></tr>
 <tr><td><strong>科大讯飞</strong></td><td>讯飞</td><td>中国企业语音市场第一</td><td>传统+AI 混合</td><td>B 端项目制</td></tr>
 </table>
 <p><strong>第二层：TTS 专业厂商</strong></p>
@@ -268,7 +294,9 @@ td:last-child { text-align: center; }
 <tr><th>产品</th><th>首次发布</th><th>核心技术</th><th>自然度</th><th>延迟</th><th>克隆质量</th><th>API 价格（/百万字符）</th><th>开源</th></tr>
 <tr><td><strong>ElevenLabs</strong></td><td>2023-01</td><td>自研神经编解码</td><td>⭐⭐⭐⭐⭐</td><td>~500ms</td><td>极好（30s 样本）</td><td>$0.30-2.70</td><td>❌</td></tr>
 <tr><td><strong>OpenAI TTS</strong></td><td>2023-11</td><td>GPT 模型衍生</td><td>⭐⭐⭐⭐</td><td>~700ms</td><td>6 种预设声音</td><td>$0.60</td><td>❌</td></tr>
-<tr><td><strong>CosyVoice 3</strong></td><td>2025</td><td>自回归编解码+bi-streaming</td><td>⭐⭐⭐⭐</td><td><strong>~150ms</strong></td><td>好（10s 样本）</td><td>免费</td><td><strong>✅</strong></td></tr>
+<tr><td><strong>CosyVoice 3.5</strong></td><td>2025→2026</td><td>自回归编解码+FreeStyle NL控制</td><td>⭐⭐⭐⭐</td><td><strong>~150ms</strong></td><td>好（10s 样本）</td><td>免费</td><td><strong>✅</strong></td></tr>
+<tr><td><strong>Fish Audio S2</strong></td><td>2026-03</td><td>自回归编解码+词级情绪</td><td>⭐⭐⭐⭐</td><td>~400ms</td><td>好（30s 样本）</td><td>免费+$5.5/月</td><td><strong>✅</strong></td></tr>
+<tr><td><strong>IndexTTS 2.5</strong></td><td>2025</td><td>情感可控+时长可控</td><td>⭐⭐⭐⭐</td><td>~500ms</td><td>好</td><td>免费</td><td><strong>✅</strong></td></tr>
 <tr><td><strong>ChatTTS</strong></td><td>2024</td><td>自回归编解码</td><td>⭐⭐⭐⭐</td><td>~500ms</td><td>有限</td><td>免费</td><td><strong>✅</strong></td></tr>
 <tr><td><strong>Fish Speech</strong></td><td>2023</td><td>VITS 衍生</td><td>⭐⭐⭐</td><td>~400ms</td><td>好（30s 样本）</td><td>免费</td><td><strong>✅</strong></td></tr>
 <tr><td><strong>GPT-SoVITS</strong></td><td>2024</td><td>SoVITS 衍生</td><td>⭐⭐⭐</td><td>~500ms</td><td>好（60s 样本）</td><td>免费</td><td><strong>✅</strong></td></tr>
