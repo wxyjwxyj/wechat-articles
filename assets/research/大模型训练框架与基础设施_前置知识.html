@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>大模型训练框架与基础设施 前置知识</title>
+<title>大模型训练框架与基础设施前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -225,6 +225,10 @@ td:last-child { text-align: center; }
 <p>把模型的不同层放在不同的卡上，数据像流水线一样流过。类似工厂流水线——每个人只做自己的那一道工序。</p>
 <h3>Sequence Parallelism（序列并行）</h3>
 <p>大模型处理长文本时，在"文本长度"这个维度上切分。A 卡处理文章的前半段，B 卡处理后半段。</p>
+<h3>Expert Parallelism（专家并行）</h3>
+<p>MoE（混合专家）模型的专属并行策略。MoE 模型中有多个"专家"子网络，每个 token 只激活少数专家。专家并行把这些专家分布到不同 GPU 上——每个 token 在计算时可能需要跨卡访问专家，这称为 <strong>All-to-All 通信</strong>。EP 在 2024-2026 年的 MoE 大模型（如 DeepSeek-V3、Mixtral）中被广泛使用。</p>
+<h3>NCCL——GPU 通信的"通用语"</h3>
+<p>NCCL（NVIDIA Collective Communications Library）是 NVIDIA 的高性能 GPU 通信库，所有主流框架（PyTorch、DeepSpeed、Megatron）底层都调它。AllReduce、All-to-All 等通信操作都通过 NCCL 完成。它的存在让用户不用手写 GPU 间的数据传输代码——框架替你调好了。</p>
 <hr>
 <h2>三、显存去哪了？</h2>
 <p>训练大模型时，GPU 的显存被三件事占用了：</p>
