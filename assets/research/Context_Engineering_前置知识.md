@@ -18,6 +18,16 @@
 
 ## 二、核心概念
 
+### Token（词元）
+
+Token 是大模型处理文本的最小单位。简单说：**模型不读"字"，它读"词元"。**
+
+- "你好世界" = 4 个 token（你/好/世/界）
+- "Hello world" = 2 个 token（Hello / world）
+- 一篇 1000 字的中文文章 ≈ 800-1500 个 token
+
+在 Context Engineering 中，token 是核心度量单位——上下文窗口能装多少 token、每次调用花多少钱（按 token 计费）、缓存命中省了多少 token。**理解 token 才能理解这个领域的工程权衡。**
+
 ### 上下文窗口（Context Window）
 
 模型一次能"看到"的最大 token 数。类比工作记忆：
@@ -46,7 +56,17 @@
 
 Prompt Caching 的解决方案：把计算过的 prompt 状态缓存起来。下次请求的前缀跟缓存内容匹配时，直接复用计算结果。
 
-效果：延迟降低 80%+，输入 token 成本降低 90%。核心是个"trade-off"：缓存写入贵 25% 但读取便宜 90%——适合"写一次、读很多次"的场景。
+效果：延迟降低 80%+，输入 token 成本降低 90%。
+
+**定价机制（理解 cache 经济学的关键）：**
+
+| 概念 | 含义 | 定价影响 |
+|------|------|---------|
+| **Cache Write** | 第一次写入缓存（处理原始 prompt） | 比普通输入贵 25-100%（各厂商不等） |
+| **Cache Read** | 命中缓存（复用计算结果） | 约为普通输入价格的 10% |
+| **TTL** | 缓存过期时间（各厂商 5min-24h 不等）| 过期后需要重新 Cache Write |
+
+核心 trade-off：Cache Write 更贵，Cache Read 更便宜。适合"写一次、读很多次"的场景。如果你每次的 system prompt 都不一样，caching 不仅不省钱还更贵。
 
 | 场景 | 是否适合 Caching |
 |------|----------------|
@@ -61,6 +81,30 @@ Transformer 模型在生成每个 token 时，需要重新计算之前所有 tok
 
 这是推理加速的核心技术。Context Engineering 中的压缩技术很多都在 KV Cache 层面做文章——不是压缩"输入文本"，而是压缩"模型内部的中间计算结果"。
 
+### RAG（检索增强生成）
+
+RAG（Retrieval-Augmented Generation）是让模型在回答问题前先去外部知识库"查资料"的技术。流程极简版：
+
+```
+收到问题 → 从知识库检索相关文档 → 把文档拼进 prompt → 模型基于资料回答
+```
+
+RAG 是 Context Engineering 最经典的应用场景——**把"外部知识"动态注入上下文窗口**。难点在于查什么、查多少、结果怎么放、放什么位置——这些全都是 context 编排的问题。
+
+### MCP（Model Context Protocol）
+
+Anthropic 在 2024 年底推出的开放协议，标准化了 Agent 与外部工具的连接方式，被称为"AI 的 USB-C"。到 2026 年已被 ThoughtWorks 评为最具影响力的 AI 基础设施之一。
+
+MCP 对 Context Engineering 的意义：它统一了"工具定义和数据源怎么注入上下文"的格式。之前每个框架各搞一套，MCP 之后工具提供方只需实现一个 Server，所有兼容 Agent 都能拿到格式统一的上下文。
+
+### Attention Budget（注意力预算）与 Context Rot（上下文衰减）
+
+Anthropic 在 2025 年提出的两个重要概念：
+
+**Attention Budget**：Transformer 的注意力机制决定了 token 越多，每个 token 分到的注意力越稀疏。就像一张照片——像素越多，每个像素的细节越少。所以上下文窗口不能无限填。
+
+**Context Rot**：随着上下文增长，模型准确回忆早期信息的能力会渐进式下降。不是突然忘记，而是越来越模糊——类似人记不住半年前的聊天细节。这对 Agent 系统的影响是：长对话中模型越往后越"迷失"在前面的信息里。
+
 ### Memory（记忆）
 
 多轮对话中，模型需要记住之前聊过什么。Context Engineering 中的"记忆"不是一个东西，而是一套策略：
@@ -70,6 +114,16 @@ Transformer 模型在生成每个 token 时，需要重新计算之前所有 tok
 | 滑动窗口 | 只保留最近几轮对话 | 简单闲聊 |
 | 摘要压缩 | 把旧对话总结成几句话 | 长对话 |
 | 向量检索 | 把历史存入向量库，按需检索 | 超长历史 |
+
+### 上下文压缩——把 prompt "挤一挤"
+
+除了管理记忆，Context Engineering 还直接压缩 prompt 本身。主要方法：
+
+**LLMLingua（Microsoft, 2023）**：用一个小模型识别出 prompt 中"不太重要"的 token 删掉，实现 2-20x 压缩。效果最好的场景是 RAG——挤掉文档中的噪音后，模型反而表现更好。这是唯一大规模工程落地的压缩技术。
+
+**StreamingLLM（MIT & Meta, 2023）**：发现了 Attention Sink 现象——prompt 的第一个 token 即使语义无关也会获得极高的注意力分数。利用这个特性，模型可以处理无限长度序列——只保留初始 token + 最近窗口，其他全部丢掉。
+
+**RadixAttention（SGLang, 2024）**：在推理引擎层面，用基数树自动复用 KV Cache。common prompt 前缀（如工具定义、few-shot 示例）会被自动共享——多个请求不需要重复计算相同的开头部分，吞吐量最高提升 5x。这是"让引擎自己管理上下文"的路线，开发者不需要手动优化。
 
 ---
 
