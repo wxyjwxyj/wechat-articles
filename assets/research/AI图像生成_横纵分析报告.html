@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI 图像生成横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>AI 图像生成 / 图像智能 横纵分析报告</h1>
+<blockquote>从 GAN 到扩散模型到 DiT，DALL-E 到 Midjourney 到 Stable Diffusion 到 Flux——AI 图像生成如何在十年内从"实验室怪图"变成了"十亿人使用的创作工具"，以及为什么它可能是 AI 所有赛道中第一个真正"成熟"的品类。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>AI 图像生成是<strong>用生成式 AI 模型从文本描述或参考图像创建视觉内容的技术</strong>。它的核心矛盾在于：<strong>"画得好看"和"画得对"是两种不同的能力</strong>——一个模型可以生成视觉上惊艳的图像，但可能把猫画成六条腿，或者把"红色气球"画成蓝色。这两条能力线的差距在 2026 年已经大幅缩小，但完全消除可能还需要很长时间。</p>
+<p>在所有 AI 生成赛道中，图像生成是 <strong>第一个跨越了"技术可行"和"商业可行"之间鸿沟的品类</strong>——Sora 死了、AI 搜索还在找商业模式、AI 编程还在 $200/月的定价上试探，但图像生成已经是一个稳定盈利的真实市场。</p>
+<hr>
+<h2>二、技术背景：AI 是怎么"画图"的？</h2>
+<blockquote>前置知识已整理为独立文档 <a href="./AI图像生成_前置知识.md">《AI 图像生成前置知识》</a>，涵盖扩散模型、潜在扩散、DiT、文本编码器、ControlNet/LoRA 等基础概念的通俗讲解。以下仅做快速串联。</blockquote>
+<p>AI 图像生成的技术栈经历了三代更替：</p>
+<p><strong>GAN 时代（2014-2021）</strong>：生成器和判别器对抗博弈。"画图"像是伪造者和鉴定者的猫鼠游戏——伪造者不断改进，鉴定者不断升级鉴别能力。问题是对抗训练极度不稳定。</p>
+<p><strong>扩散模型时代（2021-2024）</strong>：从纯噪点逐步去噪到清晰图像。训练稳定、质量高。Stable Diffusion 的"潜在扩散"让生成速度快到可以实时交互。</p>
+<p><strong>DiT 时代（2024-2026）</strong>：用 Transformer 替代 U-Net 做扩散主体。扩展性更好、质量更高。Flux 是第一个成功的 DiT 图像模型。</p>
+<p>与其他生成赛道不同，图像生成的技术成熟度是最高的——成本低（生成一张图 ~$0.002-0.05）、速度快（秒级）、质量高（很多场景已超过人类平均水平）。</p>
+<hr>
+<h2>三、纵向分析：从 GAN 到十亿用户创作工具</h2>
+<h3>3.1 GAN 时代：对抗的不稳定（2014-2021）</h3>
+<p>2014 年，Ian Goodfellow 提出 GAN（生成对抗网络）。这不仅是图像生成的起点，也是整个生成式 AI 的起点。</p>
+<p>GAN 由两个网络组成：<strong>生成器</strong>负责根据随机噪声生成图片，<strong>判别器</strong>负责判断图片是"真"（来自训练数据）还是"假"（来自生成器）。两者对抗训练——生成器不断改进以骗过判别器，判别器不断升级以识别伪造品。</p>
+<p>这个框架在理论上很优雅，在实践中非常难训练。生成器和判别器之间的平衡极其脆弱，模式坍塌（生成器只学会生成几种图片，缺乏多样性）是 GAN 的顽疾。</p>
+<p>尽管如此，GAN 在 2014-2021 年间取得了不少进展：</p>
+<ul>
+<li><strong>DCGAN</strong>（2015）：用卷积网络做 GAN，稳定了训练</li>
+<li><strong>StyleGAN</strong>（2018-2020，NVIDIA）：控制不同层次的特征（粗糙形状、精细纹理），首次实现了"可控生成"</li>
+<li><strong>BigGAN</strong>（2018）：大规模训练 GAN，在 ImageNet 上生成高质量 512×512 图片</li>
+</ul>
+<p>但 GAN 始终没能成为"可靠的产品级技术"。你无法预知一次生成会不会翻车——这对任何产品来说都是致命伤。</p>
+<h3>3.2 扩散革命：DALL-E 2、Midjourney、Stable Diffusion 三箭齐发（2021-2022）</h3>
+<p>2020 年，Ho 等人的 DDPM（Denoising Diffusion Probabilistic Models）论文重新引起了学界对扩散模型的兴趣。扩散模型不是新东西（2015 年就有相关工作），但它提供了比 GAN 更好的生成质量和训练稳定性。</p>
+<p>接下来的两年，三件事同时发生，彻底改变了 AI 图像生成的历史：</p>
+<p><strong>2021 年 12 月，OpenAI 发布 GLIDE</strong>——第一个将文本引导与扩散模型有效结合的工作。GLIDE 证明了两个关键点：扩散模型在文本-图像生成上的质量可以超越 GAN，以及分类器自由引导（classifier-free guidance）是一种简单有效的文本-图像对齐方法。</p>
+<p><strong>2022 年 4 月，DALL-E 2 发布</strong>——GLIDE 的产品化版本。OpenAI 展示了从文字描述生成高分辨率、高质量图片的能力。"一只柯基犬穿着宇航服在火星上散步"——这类提示词在 DALL-E 2 上第一次变得可行。</p>
+<p>DALL-E 2 当时在内测阶段，用户需要通过候补名单才能使用。这制造了巨大的"饥饿感"——社交媒体上充斥着 DALL-E 2 生成的图片，"AI 画画"的概念在这一刻进入了大众视野。</p>
+<p><strong>2022 年 3 月，Midjourney Beta 发布</strong>——一个独立实验室，做了一件事：在 Discord 里建了个机器人，用户发 <code>/imagine</code> 命令，机器人返回图片。</p>
+<p>Midjourney 的产品设计极具反差感：它的生成质量在 2022 年甚至不如 DALL-E 2，但它选择的渠道是天才级的——在 Discord 里用。用户不需要注册新账号，不需要学新 UI，直接在开黑的聊天框里发命令就行。社区效应极其强烈：Midjourney 频道里大家都在生成、分享、讨论，这种"在线创作社区"的氛围是 DALL-E 2 的网页界面无法复制的。</p>
+<p><strong>2022 年 8 月，Stable Diffusion 开源发布</strong>——由 Stability AI 资助、慕尼黑大学团队开发。这是 AI 图像生成历史上转折点：SD 不仅开源了模型权重，而且可以在消费级 GPU（6GB+ VRAM）上运行。</p>
+<p>DALL-E 2 只能在 OpenAI 的服务器上用，Midjourney 只能在他们的 Discord 机器人上用。但 Stable Diffusion——任何人都可以在自己电脑上运行，可以修改代码、微调模型、做二次开发。</p>
+<p>这个开源决策催生了 AI 图像生成史上最庞大的生态：ControlNet（给生成加额外控制）、LoRA（低资源微调）、ComfyUI（节点式工作流）、AUTOMATIC1111（Web UI）——所有这些都建立在 Stable Diffusion 的基础之上。到 2023 年底，Stable Diffusion 的开源生态已经拥有比 DALL-E 2 和 Midjourney 总和还要丰富的工具链。</p>
+<p>2022 年核心洞察：<strong>DALL-E 2 证明了大公司能做 AI 图像，Midjourney 证明了小团队也能做并靠产品体验胜出，Stable Diffusion 证明了开源能创造最庞大的生态。</strong> 这三条路线在 2022 年同时启动，影响了此后四年的竞争格局。</p>
+<h3>3.3 质量大战与生态分化（2023-2024）</h3>
+<p>2023-2024 年是 AI 图像生成在"质量"和"生态"两个维度上剧烈竞争的阶段。</p>
+<p><strong>Midjourney V5→V6</strong> 是质量竞赛的领跑者。2023 年 3 月的 V5 已经显著优于 DALL-E 2，2023 年 12 月的 V6 更是达到了"摄影级"——生成的图片在写实度、光影、纹理上接近专业摄影师的作品。Midjourney 最强的不是"技术先进性"——它用了什么模型架构没有公开——而是<strong>审美</strong>。Midjourney 的模型被训练得"知道什么画面好看"，它的默认输出在构图、配色、光影上远超其他产品。</p>
+<p><strong>DALL-E 3（2023 年 10 月）</strong> 走了另一条路线——跟 ChatGPT 深度集成。你可以在 ChatGPT 里直接描述需求，ChatGPT 帮你优化提示词，然后 DALL-E 3 生成。这解决了一个重要问题：很多用户不知道怎么写好的提示词。DALL-E 3 的文字理解力是所有模型中最强的，但生成风格偏"二次元"或"插画感"，不如 Midjourney 写实。</p>
+<p><strong>2024 年 8 月，Flux 发布</strong>——Black Forest Labs，由原 Stability AI 核心团队成员创办。Flux 用 DiT 架构（扩散 Transformer），在 120 亿参数规模上训练。Flux 的写实度直接对标 Midjourney——这是第一个在质量上与 Midjourney 正面竞争的开源/半开源模型。Flux.2（2025 年 11 月）进一步缩小了差距。</p>
+<p><strong>Adobe Firefly（2023 年 3 月）</strong> 走"商用安全"路线——所有训练数据都有合法授权，生成的图片可用于商业用途（不涉及版权风险）。这让它在企业市场有独特优势，但生成质量在 2024 年被 Midjourney V6 和 Flux 拉开了差距。</p>
+<h3>3.4 格局渐定与国产追赶（2024-2026）</h3>
+<p>2024-2026 年，AI 图像生成市场的格局开始稳定：</p>
+<p><strong>Midjourney</strong> 已成为一个稳定盈利的公司。未公开估值但据估计已 $10B+，年收入约 $2 亿（主要来自 $10-60/月的订阅）。团队规模极小（约 50 人），利润率极高。Midjourney 始终不做公开 API——它的所有用户必须通过 Discord 或 Web App 使用，这保持了极低的获客成本和极高的用户粘性。</p>
+<p><strong>GPT Image（2025 年 3 月）取代了 DALL-E</strong>——OpenAI 把图像生成能力直接内嵌到了 GPT 模型中，不再是独立的 DALL-E 服务。这对用户是更好的体验（在 ChatGPT 一句话就能生成图片），但对独立的图像生成产品是巨大的冲击——ChatGPT 的 4 亿用户现在都能直接生成图片了。</p>
+<p><strong>Stability AI</strong> 经历了艰难的财务困境。2023-2024 年，Stability AI 烧光了投资者的耐心，CEO 多次更换。尽管 SD 3.5 在技术上依然优秀，但公司能否持续运营是悬在开源生态头上的一个问号。SD 的开源生态（ComfyUI、LoRA、ControlNet）反而健康得惊人——但这不是 Stability AI 的功劳，而是社区的力量。</p>
+<p><strong>Flux</strong> 代表了"从开源走出的商业公司"路线：开源核心模型吸引开发者，商业版本（Flux Pro、API）赚收入。Black Forest Labs 在 2025 年完成了 B 轮融资，估值约 $5-10 亿。</p>
+<p><strong>国产玩家</strong>：通义万相（阿里）、文心一格（百度）、即梦（字节）、可图（快手）、CogView（智谱）——各有优势但都没有达到 Midjourney 或 Flux 的质量水平。中国市场在图像生成上的角色跟视频生成相反：视频生成中国是领先的（可灵），但图像生成中国是追赶者。</p>
+<p>这个阶段的本质是：<strong>AI 图像生成从"技术竞赛"进入"产品竞赛"阶段。</strong> 技术差异在缩小——所有主流模型在"一张好看图片"上的差距已经不大。真正的竞争在"产品体验"和"生态集成"上。</p>
+<hr>
+<h2>四、横向分析：2026 年 AI 图像生成竞争图谱</h2>
+<h3>4.1 竞争格局概况</h3>
+<p>2026 年的 AI 图像生成市场是 AI 所有赛道中最"成熟"的——有明确的领导者、稳定的商业模型、成熟的开源生态。</p>
+<table>
+<tr><th>产品</th><th>开发商</th><th>首次发布</th><th>最新版本</th><th>核心技术</th><th>产品形态</th><th>定价</th><th>开源</th></tr>
+<tr><td><strong>Midjourney</strong></td><td>独立</td><td>2022-03</td><td>V7/V8</td><td>自研扩散</td><td>Discord/Web</td><td>$10-60/月</td><td>❌</td></tr>
+<tr><td><strong>GPT Image</strong></td><td>OpenAI</td><td>2025-03</td><td>GPT-4o</td><td>多模态 LLM</td><td>ChatGPT 内建</td><td>ChatGPT Plus $20/月</td><td>❌</td></tr>
+<tr><td><strong>Flux</strong></td><td>Black Forest Labs</td><td>2024-08</td><td>Flux.2</td><td>DiT (12B)</td><td>API/开源</td><td>API 定价+开源</td><td>✅(部分)</td></tr>
+<tr><td><strong>Stable Diffusion 3.5</strong></td><td>Stability AI</td><td>2023</td><td>SD 3.5</td><td>MMDiT</td><td>开源</td><td>免费</td><td>✅</td></tr>
+<tr><td><strong>Adobe Firefly</strong></td><td>Adobe</td><td>2023-03</td><td>Firefly 3</td><td>扩散</td><td>Photoshop 内建</td><td>Creative Cloud $55/月</td><td>❌</td></tr>
+<tr><td><strong>Imagen 4</strong></td><td>Google</td><td>2025-05</td><td>Imagen 4</td><td>扩散</td><td>Gemini/ImageFX</td><td>Gemini 免费+付费</td><td>❌</td></tr>
+<tr><td><strong>Ideogram</strong></td><td>Ideogram</td><td>2023</td><td>3.0</td><td>扩散</td><td>Web</td><td>免费+付费</td><td>❌</td></tr>
+<tr><td><strong>Recraft</strong></td><td>Recraft</td><td>2023</td><td>V4</td><td>扩散</td><td>Web</td><td>免费+付费 $10-48/月</td><td>❌</td></tr>
+</table>
+<h3>4.2 产品形态对决</h3>
+<p><strong>Midjourney——设计生态的孤岛</strong></p>
+<p>Midjourney 是所有 AI 图像产品中最独特的：它在 Discord 里运作，不做公开 API，不跟任何平台集成。这个策略的优点是极低的获客成本（Discord 的社交裂变）、极高的用户粘性（社区氛围）。缺点是用户群被限制在"愿意用 Discord 的人"——企业用户、合规团队、大规模 API 调用者都不是 Midjourney 的目标用户。</p>
+<p>到 2026 年，Midjourney 在"设计圈"的地位仍然无可撼动——"Midjourney 一下"已经成了动词。但它的增长瓶颈也很明显：不上 API、不集成到 Photoshop、不跟任何企业工具合作——$2 亿的年收可能是这个模式的天花板。</p>
+<p><strong>GPT Image——AI 图像变成 AI 聊天的附加功能</strong></p>
+<p>GPT Image 取代 DALL-E 后，OpenAI 的图像生成战略变成了"把图像生成当作 ChatGPT 的一个功能"——不是独立的图片生成工具，而是"你在 ChatGPT 里聊着聊着顺便生成张图"。</p>
+<p>这个策略的杀伤力极大：ChatGPT 的 4 亿用户都能通过对话直接生成图片，不需要学习任何新的 UI、不需要切换到独立的 App。问题是 GPT Image 的生成质量仍然不如 Midjourney——尤其在写实度和审美上。</p>
+<p><strong>Flux + SD——开源生态的力量</strong></p>
+<p>Flux 和 SD 3.5 代表了两种开源策略：Flux 是"开源模型赚钱"（开源核心+商业 API），SD 是"开源生态养公司"（完全开源但公司快撑不住了）。</p>
+<p>两者的共同优势是"社区驱动的创新"——ControlNet、LoRA、ComfyUI 都是社区贡献的。没有任何闭源产品能复制这个生态。劣势是"使用门槛"——开源自部署需要技术基础。</p>
+<p><strong>Adobe Firefly——合法商用，但不够好</strong></p>
+<p>Firefly 的核心卖点不是技术领先——而是"合规"。所有训练数据来自 Adobe Stock 等已授权来源，生成的图片没有版权风险。对大型企业来说，这比"画质好一点"重要得多。</p>
+<p>但 Firefly 的生成质量在 2026 年已经被 Midjourney 和 Flux 甩开。Adobe 的策略似乎不是"做最好的图像生成"——而是"做最安全的图像生成"。这个策略在企业市场是有效的，但在消费者市场没有竞争力。</p>
+<h3>4.3 定价对比：一个已经竞争充分的赛道</h3>
+<table>
+<tr><th>产品</th><th>免费层</th><th>入门级</th><th>专业级</th><th>每张图成本（估算）</th></tr>
+<tr><td><strong>Midjourney</strong></td><td>❌</td><td>$10/月(200张)</td><td>$60/月(无限)</td><td>~$0.05-0.30</td></tr>
+<tr><td><strong>GPT Image</strong></td><td>ChatGPT 免费版有限制</td><td>ChatGPT Plus $20/月</td><td>ChatGPT Pro $200/月</td><td>~$0.02-0.10</td></tr>
+<tr><td><strong>Flux</strong></td><td>❌</td><td>API 按量</td><td>API 按量</td><td>~$0.003-0.01</td></tr>
+<tr><td><strong>Stable Diffusion</strong></td><td>✅ 完全免费(自托管)</td><td>免费</td><td>免费</td><td>~$0.001(电费)</td></tr>
+<tr><td><strong>Adobe Firefly</strong></td><td>有限额度</td><td>Creative Cloud $55/月</td><td>企业定制</td><td>~$0.05-0.20</td></tr>
+<tr><td><strong>Ideogram</strong></td><td>✅ 有限免费</td><td>$20/月</td><td>$60/月</td><td>~$0.02-0.10</td></tr>
+<tr><td><strong>Recraft</strong></td><td>✅ 有限免费</td><td>$10/月</td><td>$48/月</td><td>~$0.01-0.05</td></tr>
+</table>
+<p>图像生成的定价是所有 AI 赛道中最低的——原因很简单：技术成熟度最高，竞争最充分。生成一张 1024×1024 图片的推理成本在 2026 年已经降到了 $0.001-0.01，比两年前降低了 10-20 倍。</p>
+<h3>4.4 用户口碑：选谁不选谁？</h3>
+<p><strong>Midjourney vs 所有其他人</strong>：在写实度和审美上 Midjourney 仍然是标杆。"要让图片看起来像真的，用 Midjourney"。但吐槽集中在"Midjourney 的审美太强了，你生成的每一张图都是精修的——有时你不想这么精致，你只是要一张示意图。"</p>
+<p><strong>GPT Image vs 便利性</strong>："我懒得开 Midjourney 了，直接在 ChatGPT 里说一句就出图"。GPT Image 的准确率不如 Midjourney 但便利性完胜。</p>
+<p><strong>Flux vs 开源 vs Midjourney</strong>：技术社区的评价是"Flux 是唯一在写实度上能跟 Midjourney 掰手腕的开源/半开源模型"。"Flux.2 的写实度让我惊讶——如果不是特意找的话，我分不出它和 MJ 的区别。"但 Flux 在"创意性"上不如 Midjourney——"Midjourney 知道怎么把一张图拍得好看，Flux 只是把像素渲染对了"。</p>
+<p><strong>SD 3.5 vs ComfyUI 生态</strong>：用户对 SD 最深的感情来自它的社区。"Stability AI 可能不行了，但 SD 的生态永远不会死——ComfyUI、LoRA、ControlNet，这些东西已经独立于 Stability AI 存在了。"</p>
+<p><strong>Adobe Firefly vs 企业合规</strong>："我们公司选了 Firefly，不是因为图片质量最好——而是法务部说只有 Firefly 的许可证能过。"这是 Firefly 最真实但最无奈的评价。</p>
+<p><strong>Ideogram vs 文字生成</strong>："如果你要在图里写字——海报、封面、Logo——Ideogram 是唯一选择。其他模型生成的文字都是鬼画符。"</p>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 历史如何塑造了今天的格局</h3>
+<p>AI 图像生成是所有 AI 生成赛道中最"成熟"的一个。这个成熟的根源来自三个历史因素：</p>
+<p><strong>第一，开源生态（Stable Diffusion）把"能不能做"的问题彻底解决了。</strong> 2022 年 8 月 Stable Diffusion 的开源是一个鲶鱼效应——它逼着所有商业产品（Midjourney、DALL-E）必须持续提升质量，因为任何人都可以在自己电脑上免费生成图片。没有 SD，AI 图像生成可能仍然是 DALL-E 2 内测时代的"小圈子玩具"。</p>
+<p><strong>第二，Midjourney 证明了一个产品可以靠"审美"建立护城河。</strong> Midjourney 的技术路径并没有公开，但行业共识是 Midjourney 在"训练数据的挑选"和"生成过程中的美学引导"上做得远比竞品好。这让它的生图效果在审美上——不是技术上——全面领先。Midjourney 不是技术最强的，但它的产品是"最好用的"。</p>
+<p><strong>第三，OpenAI 把图像生成变成了 ChatGPT 的一个功能。</strong> 2025 年 3 月 GPT Image 取代 DALL-E 后，AI 图像生成从一个"独立产品品类"变成了"AI 助手的一个功能"。这对 Midjourney 等独立产品是降温——独立图像生成市场在 2025-2026 年增长放缓了，但"使用 AI 生图的人数"在 ChatGPT 的带动下急剧膨胀。</p>
+<h3>5.2 竞品的纵向差异</h3>
+<p><strong>Midjourney（2022.03）起步最晚但跑得最快</strong>——不是技术最早，但产品定位最准。2022 年选 Discord 渠道是一个天才决策：零开发 UI，却创造了一个社区氛围极强的创作空间。2023 年 V5/V6 持续拉开质量差距。2024 年后不做 API、不开放平台——这个决策帮它保持了质量控制和品牌调性，但也限制了增长天花板。</p>
+<p><strong>DALL-E（2022.04）起步最早但被 OpenAI 自己"杀死"了</strong>——DALL-E 2 到 DALL-E 3 的迭代并不快，到 2025 年被 GPT Image 融合进 ChatGPT 后，DALL-E 作为一个独立品牌消失了。OpenAI 不是做不出更好的图像生成——而是它不认为图像生成应该是一个独立的产品。</p>
+<p><strong>Stable Diffusion（2022.08）最大的贡献不是模型本身，是开源生态</strong>。SD 的开源引出了 ControlNet、LoRA、ComfyUI 等一系列至今仍被广泛使用的工具。但 Stability AI 作为公司没有跑通商业模式——2024-2025 年的财务困境让 SD 的未来不确定。</p>
+<p><strong>Flux（2024.08）是最新的挑战者</strong>——SD 核心团队出走创办 Black Forest Labs，用 DiT 架构在写实度上逼近了 Midjourney。Flux 的策略是"开源核心+商业 API"，目前看是最可持续的模式。</p>
+<h3>5.3 核心优势的历史根源</h3>
+<p><strong>Midjourney 的优势来自"审美"——一个无法被技术赶超的软实力。</strong> Midjourney 的团队规模极小（~50 人），但有一个在图像美学上极其挑剔的核心团队。这个审美能力是"训练过程中数据挑选+参数微调+社区反馈循环"积累出来的，其他团队很难快速复制。</p>
+<p><strong>Flux 的优势来自"DiT 架构的正规军"</strong>——SD 核心团队出走做的 Flux，从第一天就用 DiT 架构，没有历史包袱。120 亿参数 + DiT + 大规模训练，效果直接对标 Midjourney。Flux 证明了"用最新架构、最大规模从头训练"是一条有效的追赶路线。</p>
+<p><strong>GPT Image 的优势来自"ChatGPT 的渠道"</strong>——4 亿用户的渠道优势是所有独立图像产品无法匹敌的。GPT Image 不需要是最好的图像生成产品——它只需要是 ChatGPT 用户能用到的最方便的图像生成工具。</p>
+<p><strong>Stable Diffusion 生态的优势来自"社区"</strong>——ComfyUI、LoRA、ControlNet 这些东西没有一家公司能单独做出来。SD 开源社区是 AI 图像生成领域最强大的集体智能。</p>
+<h3>5.4 劣势的历史根源</h3>
+<p><strong>Midjourney 的劣势来自"不做 API 和平台集成"</strong>——这让它被限制在 Discord 和 Web App 的用户群中。企业用户、云平台、SaaS 产品集成——这些市场 Midjourney 碰不到。</p>
+<p><strong>Stability AI 的劣势来自"烧钱太快"</strong>——SD 开源吸引了大量用户但没给公司带来收入。Stability AI 在 2023-2024 年烧掉了数亿美元，到现在还没找到可持续的商业模式。</p>
+<p><strong>Adobe Firefly 的劣势来自"质量落后"</strong>——Firefly 是企业最安全的选择，但它在画质上已经被 Midjourney 和 Flux 远远甩开。如果 Midjourney 或者 Flux 推出企业版并提供合规数据承诺，Firefly 的企业市场会受到威胁。</p>
+<h3>5.5 未来推演</h3>
+<p><strong>剧本一：最可能的方向——图像生成成为 AI 的标准能力，不再有独立产品</strong></p>
+<p>GPT Image 模式（图像生成是 AI 助手的一个功能）成为主流。大多数用户通过 ChatGPT、Gemini、Claude 生成图片。独立的 AI 图像生成产品（Midjourney）做高端设计师市场。</p>
+<p>这个剧本里，图像生成市场从"通用"走向"分层"：消费者级（ChatGPT 内建）× 设计专业级（Midjourney）× 企业合规级（Adobe Firefly）× 开源自部署（SD/Flux）。</p>
+<p><strong>剧本二：最令人兴奋的方向——DiT 统一图像和视频的生成架构</strong></p>
+<p>DiT 架构已经在图像（Flux）和视频（Sora）上证明了有效性。未来 1-2 年内，图像和视频可能共享同一个底层模型——训练时一起训，生成时按需输出静态或动态内容。这会大幅降低视频生成的成本，加速视频生成的商业化。</p>
+<p><strong>剧本三：最危险的方向——版权问题导致合规收紧</strong></p>
+<p>AI 图像生成面临最大的风险不是技术——是版权。如果法律最终裁定"在未经授权的作品上训练 AI 模型构成侵权"，所有基于互联网数据训练的模型（Midjourney、SD、Flux）都需要推倒重来。只有 Adobe Firefly（合法训练数据）能活下来。</p>
+<p>这个风险在 2026 年还没有落地——但 Getty Images 诉 Stability AI 的案子、纽约时报诉 OpenAI 的案子都在审理中。如果判例对 AI 公司不利，整个 AI 图像生成行业会面临结构性重整。</p>
+<hr>
+<h3>最后的想法</h3>
+<p>AI 图像生成是所有 AI 生成赛道中最成熟的——不是因为它的技术最前沿，而是因为它最早跨过了"能不能用"的门槛。2022 年 DALL-E 2 / Midjourney / SD 三箭齐发，2026 年这个赛道已经是一个稳定运转的产业。</p>
+<p>但"成熟"也意味着"不再令人兴奋"——2024 年的 Sora 展示了视频生成的可能性，但同年没有图像生成产品做出类似的跨越式进步。当视频生成终于追上来（或者 DiT 把两者统一），图像和视频的边界会模糊。但在那之前，AI 图像生成可能已经进入了"稳定但不激动"的成熟期——这恰恰是它最健康的生存状态。</p>
+<hr>
+<h2>六、信息来源</h2>
+<ul>
+<li>GAN 论文: arXiv:1406.2661 (Goodfellow 2014)</li>
+<li>DDPM 论文: arXiv:2006.11239 (Ho et al. 2020)</li>
+<li>GLIDE 论文: arXiv:2112.10741 (OpenAI 2021)</li>
+<li>DALL-E 2: https://openai.com/index/dall-e-2/ (2022.04)</li>
+<li>Stable Diffusion: https://stability.ai/stable-diffusion (2022.08)</li>
+<li>Midjourney: https://www.midjourney.com</li>
+<li>DALL-E 3: https://openai.com/index/dall-e-3/ (2023.10)</li>
+<li>Flux/Black Forest Labs: https://blackforestlabs.ai/</li>
+<li>Adobe Firefly: https://www.adobe.com/products/firefly.html</li>
+<li>Google Imagen: https://deepmind.google/technologies/imagen/</li>
+<li>Ideogram: https://ideogram.ai</li>
+<li>Recraft: https://www.recraft.ai</li>
+<li>通义万相: https://tongyi.aliyun.com/wanxiang</li>
+<li>文心一格: https://yige.baidu.com</li>
+</ul>
+<hr>
+<p><em>本文是横纵分析系列的第 24 篇，也是补充计划的最后一篇报告。方法论：横纵分析法——纵向沿时间轴追溯技术演进，横向对比当下竞争格局。</em></p>
+</div>
+</body>
+</html>
