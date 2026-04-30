@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>LLM 大模型前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>LLM 大模型 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉语言模型的基本概念，可以直接翻主报告。</blockquote>
+<hr>
+<h2>一、语言模型是什么？</h2>
+<p>语言模型就是"会预测下一个词的 AI"。</p>
+<p>给它"今天天气真"，它预测"好"。</p>
+<p>给它"今天天气真好，适合出去"，它预测"散步"。</p>
+<p>这个"预测下一个词"的能力训练到极致后，模型开始涌现出理解、推理、对话、编程等能力。没人教过它"2+3=5"，但它在海量文本中见过无数次类似的模式，就能自己学会算术。</p>
+<hr>
+<h2>二、关键概念</h2>
+<h3>参数（Parameter）</h3>
+<p>参数是模型内部的"可调节刻度盘"。参数越多，模型能存储的知识和模式越多。简单理解：</p>
+<ul>
+<li><strong>1亿参数</strong> ≈ 小学课本厚度</li>
+<li><strong>10亿参数</strong> ≈ 书架</li>
+<li><strong>1000亿参数</strong> ≈ 图书馆</li>
+<li><strong>万亿级参数</strong> ≈ 几个大图书馆</li>
+</ul>
+<p>当前主流的 LLM 通常在 7B-671B 参数之间（1B = 10亿）。</p>
+<h3>Token</h3>
+<p>模型不认字，只认 token。Token 是模型处理文本的最小单位：</p>
+<ul>
+<li>"Hello world" = 2 个 token</li>
+<li>"你好世界" = 4 个 token</li>
+<li>100 个 token ≈ 75 个英文单词 ≈ 50 个中文字</li>
+</ul>
+<h3>上下文窗口（Context Window）</h3>
+<p>模型一次能"看到"多少内容。从 GPT-1 的 512 token 到 Gemini 1.5 Pro 的 200 万 token——相当于从"只能看一句话"到"能看 20 本书"。</p>
+<h3>Transformer</h3>
+<p>2017 年 Google 提出的神经网络架构。几乎所有现代 LLM（GPT、Claude、Gemini、Llama）都基于它。核心机制是<strong>注意力</strong>（Attention）——模型能判断句子中哪些词跟当前任务相关。</p>
+<h3>预训练（Pre-training）</h3>
+<p>把模型放在海量互联网文本上"读书"。学会语法、知识、推理模式。这步占模型训练成本的 95% 以上。</p>
+<h3>MoE（混合专家，Mixture of Experts）</h3>
+<p>传统的 Dense 模型：每个 token 激活全部参数。</p>
+<p>MoE 模型：模型内部被分成多个"专家"，每个 token 只激活其中几个。训练成本更低、推理效率更高。2024-2026 年几乎所有新模型都在转向 MoE。</p>
+<h3>推理时计算扩展（Test-time Compute Scaling）</h3>
+<p>传统方式：模型一次推理直接给答案。</p>
+<p>新方式（o1、DeepSeek-R1）：生成答案前先用更多计算"思考"——类似考试时打草稿。</p>
+<hr>
+<h2>三、如何评价一个模型？</h2>
+<table>
+<tr><th>基准</th><th>测什么</th></tr>
+<tr><td><strong>MMLU</strong></td><td>综合知识（57个学科，从物理到法律）</td></tr>
+<tr><td><strong>MMLU-Pro</strong></td><td>MMLU 的加强版（更难的推理题）</td></tr>
+<tr><td><strong>HumanEval</strong></td><td>写代码的准确率</td></tr>
+<tr><td><strong>SWE-bench</strong></td><td>真实软件工程任务（修 Bug）</td></tr>
+<tr><td><strong>Chatbot Arena ELO</strong></td><td>人类主观评分（盲测对比）</td></tr>
+<tr><td><strong>MATH/GSM8K</strong></td><td>数学推理</td></tr>
+<tr><td><strong>AIME</strong></td><td>数学竞赛级别</td></tr>
+</table>
+<hr>
+<h2>四、主流模型一句话</h2>
+<table>
+<tr><th>模型家族</th><th>开发商</th><th>一句话</th></tr>
+<tr><td><strong>GPT 系列</strong></td><td>OpenAI</td><td>LLM 的定义者和持续领跑者</td></tr>
+<tr><td><strong>Claude 系列</strong></td><td>Anthropic</td><td>安全优先，编程最强，全面且可靠</td></tr>
+<tr><td><strong>Gemini 系列</strong></td><td>Google</td><td>原生多模态，超长上下文（2M）</td></tr>
+<tr><td><strong>Llama 系列</strong></td><td>Meta</td><td>开源大模型的旗帜</td></tr>
+<tr><td><strong>DeepSeek 系列</strong></td><td>深度求索</td><td>中国开源效率革命，训练成本仅为同级 1/10</td></tr>
+<tr><td><strong>Qwen 系列</strong></td><td>阿里巴巴</td><td>中国最强开源多模态，迭代速度极快</td></tr>
+<tr><td><strong>Mistral 系列</strong></td><td>Mistral AI</td><td>欧洲最强，参数利用率极高</td></tr>
+<tr><td><strong>Grok 系列</strong></td><td>xAI</td><td>马斯克的"叛逆"AI，实时接入 X 平台</td></tr>
+</table>
+<hr>
+<h2>五、一个简单直觉</h2>
+<pre><code>LLM 的进化史 = 从"鹦鹉学舌"到"能推理"<br><br>2018-2020（GPT-1→GPT-3）：能流畅说话了，但不懂逻辑<br>2022（ChatGPT）：会聊天了，能回答问题<br>2023（GPT-4）：通过律师考试了，能看懂图片<br>2024（GPT-4o/Gemini/DeepSeek-V3）：能实时语音对话，开源追平闭源<br>2025（R1/o1）：学会"思考"了——回答前先推理<br>2026 年的状态：<br>- 最强模型在大多数基准上超过人类平均水平<br>- 开源模型在各项能力上与闭源模型差距大幅缩小<br>- 推理成本持续下降，端侧部署日益可行<br>- 竞争焦点从"谁能做"转向"谁更安全、更可控、更便宜"</code></pre>
+<p>LLM 大模型在 2026 年是整个 AI 生态的基石——所有 AI Agent、AI 搜索、AI 编程、多模态应用，底层都是 LLM 在驱动。</p>
+</div>
+</body>
+</html>
