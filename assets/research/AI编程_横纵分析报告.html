@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>AI编程/代码智能 横纵分析报告</title>
+<title>AI 编程横纵分析报告</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -285,6 +285,7 @@ td:last-child { text-align: center; }
 <tr><td><strong>GitHub Copilot</strong></td><td>GitHub/Microsoft</td><td>2021-06</td><td>VS Code 插件</td><td>$10-$39/月</td><td>多模型（OpenAI/Claude/Gemini）</td><td>~$5-8.5 亿（估）</td><td>❌</td></tr>
 <tr><td><strong>Cursor</strong></td><td>Anysphere</td><td>2023</td><td>Fork IDE</td><td>$20-$40/月</td><td>多模型（Claude/GPT/Gemini/Grok）+ 自研 Composer 2</td><td><strong>$20 亿+</strong></td><td>❌</td></tr>
 <tr><td><strong>Claude Code</strong></td><td>Anthropic</td><td>2025-02</td><td>CLI Agent + GUI</td><td>含在 Claude 订阅中（$20-200/月）</td><td>仅 Claude</td><td>$10 亿+</td><td>❌</td></tr>
+<tr><td><strong>OpenCode</strong></td><td>Anomaly Innovations</td><td>2025</td><td>CLI Agent</td><td>免费开源</td><td><strong>模型无关</strong>（任何模型）</td><td>—</td><td>✅</td></tr>
 <tr><td><strong>Devin</strong></td><td>Cognition</td><td>2024-03</td><td>SaaS Agent</td><td>$20-$200/月</td><td>多模型编排</td><td>~$7300 万（2025.06）</td><td>❌</td></tr>
 <tr><td><strong>Windsurf</strong></td><td>Cognition（原 Codeium）</td><td>2024-11</td><td>Fork IDE</td><td>$20-$200/月</td><td>多模型 + 自研 SWE-1.5</td><td>~$8200 万（2025.07）</td><td>❌</td></tr>
 <tr><td><strong>Replit Agent</strong></td><td>Replit</td><td>2024-09</td><td>在线 IDE</td><td>$18-$90/月</td><td>自研模型</td><td>未公开</td><td>❌</td></tr>
@@ -315,6 +316,10 @@ td:last-child { text-align: center; }
 <li><strong>GUI 扩展：Claude Cowork</strong>：用 Cowork 覆盖非 CLI 用户</li>
 </ul>
 <p>Claude Code 的劣势也很明显：<strong>它不适合前端开发、UI 开发、以及对 GUI 有依赖的场景。</strong> 你没法用 Claude Code 做拖拽式 UI 设计。</p>
+<p><strong>OpenCode — 开源 CLI Agent，模型无关</strong></p>
+<p>OpenCode 是 2025 年 Anomaly Innovations 发布的开源终端编程 Agent，到 2026 年 4 月已累积 126k+ Stars。它和 Claude Code 走的是同一条 CLI 路线，但有一个核心差异：<strong>Claude Code 只能用 Claude，OpenCode 可以用任何模型</strong>——从 GPT-5 到 DeepSeek 到本地模型，用户自己选。这解决了开发者"我不想被某个模型厂商绑定"的需求。</p>
+<p>OpenCode 的生态策略很激进：40+ 社区插件、Oh My OpenAgent（OMO）多智能体编排框架、Red Hat OpenShift 集成。它的增长曲线和 Claude Code 几乎同步——两条 CLI 路线在验证同一件事：<strong>开发者想在自己的终端里编程，但他们对"锁不锁模型"有分歧。</strong></p>
+<p>Claude Code 在 Agent 能力和 Git 集成上更强，但 OpenCode 的免费 + 模型自由 + 开源路线对成本敏感的开发者有致命吸引力。一句话对比：Claude Code 是"顶配但不自由的奔驰"，OpenCode 是"自由改装的开源赛道车"。</p>
 <p><strong>Devin — SaaS Agent 模式</strong></p>
 <p>Devin 押注的是"AI 作为独立贡献者"的终极形态——开发者只需要提需求，Devin 自动完成所有编码工作，最后出报告。</p>
 <p>这个愿景很宏大，但 2025-2026 年的现实是：Devin 在 SWE-bench 上表现不错，但在真实项目中"翻车"的案例不少。2024 年 Devin 发布时的演示视频被指过度包装——AI 在精心挑选的 Demo 场景中表现完美，但在真实 Issue 中常常迷失方向。</p>
@@ -325,6 +330,7 @@ td:last-child { text-align: center; }
 <li><strong>Cursor</strong> 走"都要"路线：既支持 Claude 4.7 Opus、GPT-5.3 Codex、Gemini 3.1 Pro、Grok 4.20 等多模型，又自研 Composer 2 作为底座</li>
 <li><strong>Copilot</strong> 过去只绑定 OpenAI 的专用代码模型（Codex 系列），2024 年 10 月开放多模型</li>
 <li><strong>Claude Code</strong> 只调用 Claude——Anthropic 的垂直整合战略</li>
+<li><strong>OpenCode</strong> 模型无关——你想用什么模型就用什么，GPT/Claude/Gemini/DeepSeek/本地模型全支持，是"反垂直整合"的旗帜</li>
 <li><strong>Windsurf</strong> 自研 SWE-1.5（2025 年 10 月发布），同时支持第三方模型</li>
 <li><strong>Devin</strong> 走多模型编排——不同子任务用不同模型</li>
 </ul>
@@ -367,6 +373,12 @@ td:last-child { text-align: center; }
 <li>选 Cursor 的理由：GUI 友好、前端开发、多模型灵活、适合全栈开发者</li>
 <li>选 Claude Code 的理由：CLI 原生、Agent 能力更强、Git 集成出色、后端/DevOps 场景</li>
 <li>很多开发者的配置：日常编码用 Cursor，复杂重构/大规模任务切到 Claude Code</li>
+</ul>
+<p><strong>OpenCode vs Claude Code</strong>：</p>
+<ul>
+<li>选 OpenCode 的理由：完全免费、模型自由（不想被 Anthropic 绑定的第一选择）、开源可审计、40+ 插件生态、社区活跃</li>
+<li>选 Claude Code 的理由：Agent 能力更强、Git 集成更紧密、Anthropic 官方支持、不需要自己调模型</li>
+<li>一句话分歧：你是想要"自由但自己折腾"还是"省心但被锁定"？</li>
 </ul>
 <p><strong>Devin vs 上述三者</strong>：</p>
 <ul>
