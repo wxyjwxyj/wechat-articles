@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>多模态大模型 前置知识</title>
+<title>多模态大模型前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -227,7 +227,9 @@ td:last-child { text-align: center; }
 <p>训练数据格式：</p>
 <pre><code>[图片: 一只金毛在草地上奔跑] ← 匹配 → "一只金毛在草地上奔跑"<br>[图片: 一只金毛在草地上奔跑] ← 不匹配 → "一辆红色汽车停在路边"</code></pre>
 <p>训练完成后，CLIP 学会了把"语义相近"的图片和文字在数学空间中放在很近的位置。这就是 Contrastive Learning（对比学习）——核心直觉：配对的正样本拉近，不配对的负样本推远。</p>
-<p>CLIP 的贡献在于：它第一次证明了<strong>不需要人工标注，直接用互联网上的图文对就能训练出强大的视觉理解能力</strong>。后来的多模态模型几乎都建立在 CLIP 或它的改进版本之上。</p>
+<p>CLIP 的贡献在于：它第一次证明了<strong>不需要人工标注，直接用互联网上的图文对就能训练出强大的视觉理解能力</strong>（这被称为"弱监督"——监督信号比人工标注弱，但数据量大得多）。后来的多模态模型几乎都建立在 CLIP 或它的改进版本之上。</p>
+<h3>SigLIP——CLIP 的改进版</h3>
+<p>Google 在 2023 年提出的 SigLIP 改进了 CLIP 的训练方式。CLIP 需要在一个 batch 内做全局归一化（对比所有图文对的相似度），batch 小了效果就差。SigLIP 换了一种损失函数（sigmoid loss），逐对独立计算，小 batch 训练同样有效。到 2026 年，SigLIP 已成为新版多模态模型的首选视觉编码器。</p>
 <hr>
 <h2>四、Q-Former——高效"翻译官"</h2>
 <p>Q-Former（Salesforce, 2023）是 BLIP-2 的核心创新，解决了一个关键问题：怎么把大量视觉信息"压缩"成 LLM 能高效处理的少量 token。</p>
