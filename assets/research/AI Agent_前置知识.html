@@ -205,6 +205,10 @@ td:last-child { text-align: center; }
 <p><strong>Agent = 大模型 + 工具 + 记忆 + 自主行动。</strong></p>
 <p>传统的大模型（如 ChatGPT）是你问一句它答一句——你是那个主动方，它是被动的回答机。Agent 不一样，你给它一个目标（"帮我订一张下周去东京的机票"），它会自己规划步骤、调用工具查询航班、对比价格、确认行程，甚至主动问你几个关键问题，最终把事情办完。</p>
 <p>打个比方：ChatGPT 是你的百科词典，Agent 是你的私人助理。</p>
+<h3>SOAR——历史上第一个 Agent 架构</h3>
+<p>AI Agent 不是 2023 年才有的概念。1983 年，卡内基梅隆大学的 John Laird 等人创建了 <strong>SOAR（State, Operator And Result）</strong>——历史上第一个可计算的通用智能体架构。SOAR 的核心思想是"在状态空间中搜索，不断选择操作、观察结果、再选下一步"，这个模式跟今天 Agent 的"思考→行动→观察"循环本质上是同构的。区别在于：SOAR 的操作（Operator）需要人手工编写规则，今天 Agent 的"操作"由大模型动态生成。</p>
+<h3>Symbolic AI（符号 AI）——为什么早期 Agent 没做成</h3>
+<p>1983-2010 年代的 Agent 基于 <strong>Symbolic AI</strong>——用人类手写的逻辑规则来表示知识。比如你写"如果温度低于 20 度，就开暖气"。这种方法的问题很明显：真实世界太复杂了，你没法把所有情况都写成规则。一个搬箱子机器人在模拟环境里完美运行，放到仓库里就会被阴影、灯光变化搞崩溃。Symbolic AI 的瓶颈不是规划算法，而是<strong>感知和理解真实世界的能力</strong>。直到 LLM 出现，Agent 才有了真正"理解世界"的引擎。</p>
 <hr>
 <h2>二、LLM 和 Agent 有什么区别？</h2>
 <table>
@@ -237,6 +241,7 @@ td:last-child { text-align: center; }
 <p>每一步都在"我想知道什么→去查→查到什么→下一步该做什么"之间循环。</p>
 <h3>为什么 ReAct 很重要？</h3>
 <p>没有 ReAct 的 Agent 就像蒙着眼睛做决策——推理了老半天，但得不到外部世界的验证。ReAct 让 Agent 能<strong>用真实世界的信息纠正自己的推理偏差</strong>。</p>
+<p>一个关键背景：<strong>大模型存在"幻觉"（Hallucination）问题</strong>——模型会在不确定时编造看起来合理但实际错误的内容。没有外部验证的纯推理（CoT 模式）容易放大幻觉：模型在一本正经地推理一个错误的前提。ReAct 通过"推理→查证→再推理"的循环，用真实数据打断幻觉链条。</p>
 <hr>
 <h2>五、Planning（规划）——Agent 怎么决定先做什么</h2>
 <p>复杂任务不能一步到位，Agent 需要把大目标拆成小步骤。</p>
@@ -250,6 +255,8 @@ td:last-child { text-align: center; }
 <h3>Tree of Thoughts（思维树，ToT）</h3>
 <p>CoT 是一条直线。ToT 是一棵树：在每一步生成多个可能的思考方向，搜索最好的那条路。</p>
 <p>比如解一个数学谜题，模型可以同时考虑 3 种不同的解法，评估每种方法有沒有前途，然后沿着最有希望的方向继续探索。</p>
+<h3>Graph of Thoughts（思维图，GoT）</h3>
+<p>GoT 是 2024 年的进一步扩展——从"树"变成"图"。树的分支不能合并，但图中的节点可以互相连接。这更适合需要"综合多个思路"的任务：Agent 同时探索 3 种解决方案，发现方案 A 和方案 B 中的某两个步骤可以合并，形成更好的方案 C。思维图允许 Agent <strong>合并不同分支的洞察</strong>，而不是死守一条路线。</p>
 <h3>Plan-and-Execute（先规划后执行）</h3>
 <p>ReAct 是边想边做。Plan-and-Execute 是<strong>先想好再做</strong>——先列出完整的步骤计划，然后按计划执行。适合步骤明确的流程化任务（比如"注册一个账号"）。</p>
 <hr>
@@ -269,6 +276,16 @@ td:last-child { text-align: center; }
 <hr>
 <h2>七、Multi-Agent（多智能体协作）</h2>
 <p>有时候一个 Agent 不够用，需要多个 Agent 分工合作。</p>
+<h3>BDI 模型——多 Agent 的理论基础</h3>
+<p>BDI（Belief-Desire-Intention，信念-愿望-意图）模型是 1987 年由哲学家 Michael Bratman 提出的 Agent 理论框架。核心思想：一个理性的 Agent 不是每时每刻重新计算所有选择，而是"承诺"于当前计划，只在必要时才重新评估。</p>
+<ul>
+<li><strong>信念（Belief）</strong>：Agent 对世界的认知（"数据库里有 100 条记录"）</li>
+<li><strong>愿望（Desire）</strong>：Agent 想达成的状态（"把数据库备份到云端"）</li>
+<li><strong>意图（Intention）</strong>：Agent 当前正在执行的计划（"步骤 1：连接云端 → 步骤 2：传输数据"）</li>
+</ul>
+<p>这个模型至今仍是多 Agent 系统设计的理论基础。</p>
+<h3>涌现（Emergence）——多 Agent 的"1+1>2"</h3>
+<p>多 Agent 系统最迷人的特性是<strong>涌现</strong>——多个简单的 Agent 各自执行自己的任务，却在整体上表现出意想不到的复杂行为。2023 年 Stanford 的 "Generative Agents" 论文把 25 个 Agent 放进一个模拟小镇，它们自主社交、组织派对、传播新闻，没有人写脚本规定它们"应该举办派对"——这个行为是自发涌现出来的。这就是多 Agent 比单 Agent 更有想象空间的原因。</p>
 <h3>典型的例子</h3>
 <p>写一份市场分析报告：</p>
 <ul>
@@ -329,10 +346,13 @@ td:last-child { text-align: center; }
 <table>
 <tr><th>框架</th><th>谁开发的</th><th>特点</th></tr>
 <tr><td><strong>LangChain</strong></td><td>LangChain Inc</td><td>最流行的 Agent 框架，生态最丰富</td></tr>
+<tr><td><strong>LangGraph</strong></td><td>LangChain Inc</td><td>LangChain 的 Agent 编排引擎，用"状态图"控制 Agent 流程</td></tr>
 <tr><td><strong>Dify</strong></td><td>LangGenius</td><td>可视化界面，不用写代码也能做 Agent</td></tr>
+<tr><td><strong>AutoGPT</strong></td><td>个人项目</td><td>2023 年引爆 Agent 概念的项目，183k stars，自主任务分解</td></tr>
 <tr><td><strong>AutoGen</strong></td><td>微软</td><td>多 Agent 对话框架</td></tr>
 <tr><td><strong>CrewAI</strong></td><td>CrewAI Inc</td><td>角色扮演式多 Agent 协作</td></tr>
-<tr><td><strong>OpenAI Agents SDK</strong></td><td>OpenAI</td><td>OpenAI 官方 Agent 开发包</td></tr>
+<tr><td><strong>OpenAI Agents SDK</strong></td><td>OpenAI</td><td>OpenAI 官方 Agent 开发包，核心机制是 Handoff（Agent 间移交控制权）</td></tr>
+<tr><td><strong>Coze / 扣子</strong></td><td>字节跳动</td><td>国内最流行的低代码 Agent 平台，月活领先</td></tr>
 </table>
 <h3>Agent 产品（终端用户工具）</h3>
 <p>给普通人用的成品：</p>
@@ -345,7 +365,23 @@ td:last-child { text-align: center; }
 <tr><td><strong>Devin</strong></td><td>Cognition AI</td><td>AI 软件工程师，端到端修复 bug</td></tr>
 </table>
 <hr>
-<h2>十二、Agent-as-a-Service——Agent 怎么赚钱</h2>
+<h2>十二、Token（词元）——理解 Agent 成本的关键</h2>
+<h3>Token 是什么？</h3>
+<p>Token 是大模型处理文本的最小单位。简单理解：<strong>模型不读"字"，它读"词元"。</strong></p>
+<ul>
+<li>"你好世界" = 4 个 token（你/好/世/界）</li>
+<li>"Hello world" = 2 个 token（Hello/ world）</li>
+<li>一篇 1000 字的中文文章大约 = 800-1500 个 token</li>
+</ul>
+<h3>为什么 Token 对 Agent 很重要？</h3>
+<p>Agent 跑一次任务的 token 消耗是普通聊天的几十倍。原因：</p>
+<ol>
+<li><strong>多轮推理</strong>：Agent 每一步推理都要消耗 token（"想了什么→查到了什么→下一步该做什么"）</li>
+<li><strong>工具返回结果</strong>：调用 API 返回的数据要拼回 prompt 给模型看</li>
+<li><strong>长上下文</strong>：记忆和历史记录让上下文越来越长</li>
+</ol>
+<p>按目前主流 API 价格（每百万 token 约 $3-15），一个复杂 Agent 任务可能消耗 50 万-200 万 token，单次成本 $1.5-$30。这就是 Agent 商业化最大的瓶颈——<strong>用得起 vs 用得值</strong>之间的平衡。</p>
+<h2>十三、Agent-as-a-Service——Agent 怎么赚钱</h2>
 <p>目前 Agent 的商业模式还在探索中，主要有几种：</p>
 <ol>
 <li><strong>订阅制</strong>：按月收费（Manus $39/月，Cursor $20/月）</li>
@@ -355,7 +391,7 @@ td:last-child { text-align: center; }
 </ol>
 <p><strong>核心矛盾</strong>：Agent 跑一次任务消耗的 token 是普通聊天的几十倍，成本太高是商业化最大的瓶颈。</p>
 <hr>
-<h2>十三、一张图总结</h2>
+<h2>十四、一张图总结</h2>
 <pre><code>用户说："帮我计划一次东京旅行"<br>                    ↓<br>┌─────────────────────────────────────┐<br>│            Agent（智能体）             │<br>│                                     │<br>│  1. 推理（ReAct）：需要查天气、机票、酒店   │<br>│  2. 规划：先查日期 → 再查价格 → 再下单    │<br>│  3. 调用工具（Tool Calling）：           │<br>│     - search_flights("东京", 日期)      │<br>│     - search_hotels("东京", 日期)       │<br>│  4. 记忆：记住用户偏好（靠窗座位、禁烟房）  │<br>│  5. 输出：完整的行程方案                  │<br>└─────────────────────────────────────┘<br>                    ↓<br>用户收到："已为您订好 5月10日 国航CA925...<br>           酒店在新宿华盛顿，禁烟双床房..."</code></pre>
 </div>
 </body>
