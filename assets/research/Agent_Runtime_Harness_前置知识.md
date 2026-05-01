@@ -20,7 +20,7 @@
 
 四种方案：
 - **API 级沙箱**（OpenAI）：限制 Agent 只能调用白名单 API，不准碰文件系统
-- **Firecracker**（AWS）：每个 Agent 会话跑在一个微型虚拟机里（~125ms 启动）
+- **Firecracker**（AWS）：每个 Agent 会话跑在一个微型虚拟机里（~125ms 启动）（Agache et al., AWS, 2020）
 - **gVisor**（Google）：在应用和内核之间加一层"拦网"
 - **Tank OS**（Red Hat）：把整个 Agent 环境打包成不可变的 Linux 镜像
 
@@ -34,7 +34,7 @@
 
 ### Guardrails（护栏）
 
-Agent 的**安全过滤层**。像一个门卫，检查 Agent 的输入和输出有没有问题。
+Agent 的**安全过滤层**。像一个门卫，检查 Agent 的输入和输出有没有问题（NVIDIA）。
 
 三种护栏：
 - **话题护栏**：不准 Agent 讨论某些话题
@@ -43,7 +43,7 @@ Agent 的**安全过滤层**。像一个门卫，检查 Agent 的输入和输出
 
 ### MCP（Model Context Protocol，模型上下文协议）Gateway
 
-**MCP 协议的流量入口**。就像 Web 应用的 API Gateway——所有 Agent 到外部工具的连接都经过 Gateway，在这里做认证、速率限制、审计日志。
+**MCP 协议的流量入口**（Anthropic, 2024）。就像 Web 应用的 API Gateway——所有 Agent 到外部工具的连接都经过 Gateway，在这里做认证、速率限制、审计日志。
 
 ### 可观测性（Observability）
 
@@ -51,7 +51,7 @@ Agent 的**运行监控系统**。传统应用监控的是"这个 API 返回了 
 
 ### Durable Execution（持久化执行）
 
-Agent 在任何步骤中断后都能恢复到中断前的状态。想象你让 Agent 做一个三天的研究任务，它在第 2.8 天崩溃了——没有 Durable Execution 就得重来。Temporal 是这个领域的代表方案。
+Agent 在任何步骤中断后都能恢复到中断前的状态。想象你让 Agent 做一个三天的研究任务，它在第 2.8 天崩溃了——没有 Durable Execution 就得重来。Temporal 是这个领域的代表方案（Temporal Technologies）。
 
 ---
 
@@ -65,7 +65,7 @@ Agent Runtime 的进化 = 从"马路上随便跑"到"有交通规则"
 2026（Harness 范式）：不是"更好的路"，而是"操作系统"——统一管理所有车的运行
 ```
 
-Agent Runtime 在 2026 年还是一个非常年轻的领域——OpenAI 刚把 Harness 定义出来，Martin Fowler 刚把它列为正式工程实践。未来很可能会像 DevOps 一样，成为一个专门的工种。
+Agent Runtime 在 2026 年还是一个非常年轻的领域——OpenAI 刚把 Harness 定义出来（OpenAI, 2025），Martin Fowler 刚把它列为正式工程实践。未来很可能会像 DevOps 一样，成为一个专门的工种。
 
 ---
 

@@ -97,7 +97,7 @@ TTFT、TPOT、吞吐量，三者不能同时优化到极致：
 
 ### Continuous Batching（连续批处理）
 
-vLLM 在 2023 年推广开来的技术。它彻底改变了批处理的粒度：**不再等一批请求的步调一致，把每个请求的每一步独立调度。**
+vLLM 在 2023 年推广开来的技术（Kwon et al., 2023）。它彻底改变了批处理的粒度：**不再等一批请求的步调一致，把每个请求的每一步独立调度。**
 
 传统模式里，一个批次的请求必须"同时开始 prefill → 同时 decode → 同时结束"。Continuous Batching 的做法是：
 
@@ -112,7 +112,7 @@ vLLM 在 2023 年推广开来的技术。它彻底改变了批处理的粒度：
 - **Dynamic Batching** = 公交车，要么坐满发车，要么到点发车
 - **Continuous Batching** = 流水线自助餐，谁先到谁先吃，吃完就走，新来的随时加入
 
-**效果**：吞吐量提升 2-5 倍，显存利用率从 ~40% 提升到 ~95%。今天所有主流推理框架都支持 Continuous Batching。
+**效果**：吞吐量提升 2-5 倍，显存利用率从 ~40% 提升到 ~95%（Kwon et al., 2023）。今天所有主流推理框架都支持 Continuous Batching。
 
 ---
 
@@ -135,9 +135,9 @@ vLLM 在 2023 年推广开来的技术。它彻底改变了批处理的粒度：
 - **预留浪费**：不知道用户最终会生成多少字，只能按最大值（如 8K tokens）预留。绝大多数请求只用了 20% 的预留空间
 - **碎片化**：不同请求生成的 token 数不同，释放的时间不同，显存出现大量碎片
 
-**PagedAttention（vLLM 的核心创新）** 把 KV Cache 切成固定大小的"页"（page），像操作系统的虚拟内存一样按需分配。不用再预留整个空间，需要新 token 就多分配一页，请求结束后整页释放。
+**PagedAttention（vLLM 的核心创新）（Kwon et al., 2023）** 把 KV Cache 切成固定大小的"页"（page），像操作系统的虚拟内存一样按需分配。不用再预留整个空间，需要新 token 就多分配一页，请求结束后整页释放。
 
-效果：显存利用率从传统方式的 ~40% 提升到 ~95%。
+效果：显存利用率从传统方式的 ~40% 提升到 ~95%（Kwon et al., 2023）。
 
 ### 量化 KV Cache
 
@@ -167,7 +167,7 @@ Transformer 推理时一次只能生成一个 token。生成 100 个字要跑 10
 
 ### 效果与权衡
 
-- **典型加速**：2-3x（理论上可以达到 K 倍，但实际受限于小模型的准确率）
+- **典型加速**：2-3x（Leviathan et al., 2023）（理论上可以达到 K 倍，但实际受限于小模型的准确率）
 - **额外开销**：需要加载一个小模型，多占显存
 - **适用场景**：对延迟敏感的服务，批大小较小时效果最好。大 batch 下 GPU 已经接近满载，投机的边际收益下降
 
@@ -226,10 +226,10 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 
 | 框架 | 定位 | 核心优势 | 适用场景 |
 |------|------|---------|---------|
-| **vLLM** | 通用吞吐王者 | PagedAttention + Continuous Batching + Prefix Caching，生态最广 | 云端推理服务，LLM API |
+| **vLLM**（Kwon et al., 2023） | 通用吞吐王者 | PagedAttention + Continuous Batching + Prefix Caching，生态最广 | 云端推理服务，LLM API |
 | **TensorRT-LLM** | NVIDIA 性能极致 | 手写 kernel + 图优化 + FP4 原生支持，单卡性能最强 | 对延迟极度敏感的场景，H100 集群 |
 | **TGI** | HuggingFace 生态 | 一键部署 HF 模型，集成度最高 | 快速原型验证，HF 用户 |
-| **llama.cpp** | 消费级/边缘 | GGUF 格式 + CPU/GPU 混合，低配硬件也能跑 | 个人电脑、边缘设备、隐私敏感场景 |
+| **llama.cpp**（Gerganov, 2023） | 消费级/边缘 | GGUF 格式 + CPU/GPU 混合，低配硬件也能跑 | 个人电脑、边缘设备、隐私敏感场景 |
 | **MLX** | Apple 生态 | Apple Silicon 原生优化，Metal GPU 加速 | Mac 本地推理，Apple 开发者 |
 
 ### 各框架定位详解
@@ -240,7 +240,7 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 
 **TGI**（Text Generation Inference）是 HuggingFace 出品的推理引擎，最大优势是跟 HuggingFace 生态无缝衔接。从 HF Hub 拉模型、加载 tokenizer 都是零配置。适合快速验证和 prototype，但性能和灵活性不如 vLLM 和 TensorRT-LLM。
 
-**llama.cpp** 主打"让大模型在普通电脑上跑"。使用 GGUF 格式，支持 CPU 推理、CPU+GPU 混合推理，甚至 ARM 芯片。量化支持最丰富（从 Q2 到 Q8 各种精度）。适合个人电脑、笔记本、树莓派等低配置环境。不支持多卡并行，不适合生产级高并发服务。
+**llama.cpp**（Gerganov, 2023）主打"让大模型在普通电脑上跑"。使用 GGUF 格式，支持 CPU 推理、CPU+GPU 混合推理，甚至 ARM 芯片。量化支持最丰富（从 Q2 到 Q8 各种精度）。适合个人电脑、笔记本、树莓派等低配置环境。不支持多卡并行，不适合生产级高并发服务。
 
 **MLX** 是 Apple 的机器学习框架，专门针对 M 系列芯片优化。利用 Apple Silicon 统一的显存架构（M2 Ultra 192GB 统一内存，CPU 和 GPU 共享）和 Metal GPU 加速，Mac 上的推理体验非常好。适合 Mac 本地开发和调试大模型，也适合需要端侧推理的 Apple 应用。
 

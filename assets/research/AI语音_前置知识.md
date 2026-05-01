@@ -22,15 +22,15 @@ AI 语音技术栈分成三大块：
 
 **第一代：拼接合成**。录一个真人读几小时语音，然后像拼积木一样拼出句子。效果：机械感强，不自然。
 
-**第二代：参数合成 + 神经网络（Tacotron、WaveNet）**。2016 年 DeepMind 的 WaveNet 是关键突破——用神经网络直接生成原始音频波形。效果：自然度大幅提升，但计算量大、速度慢。
+**第二代：参数合成 + 神经网络（Tacotron、WaveNet）**。2016 年 DeepMind 的 WaveNet 是关键突破（van den Oord et al., 2016）——用神经网络直接生成原始音频波形。效果：自然度大幅提升，但计算量大、速度慢。
 
-**第三代：神经编解码（2023-2024）**。把语音压缩成离散的"token"（类似于把文字变成 token），像语言模型一样生成语音 token，再解码成音频。Meta 的 EnCodec、微软的 VALL-E 是代表。特点：速度快、能保留语音特征（语气、情感）、支持零样本克隆。
+**第三代：神经编解码（2023-2024）**。把语音压缩成离散的"token"（类似于把文字变成 token），像语言模型一样生成语音 token，再解码成音频。Meta 的 EnCodec、微软的 VALL-E 是代表（Wang et al., 2023）。特点：速度快、能保留语音特征（语气、情感）、支持零样本克隆。
 
 **第四代：端到端语音模型（2024-2025）**。GPT-4o voice 为代表的——不再分 ASR→理解→TTS 三步，一个模型同时处理语音输入和输出。特点：延迟极低、能理解语气和情感、支持实时打断。
 
 ### 零样本语音克隆
 
-只用几秒（3-30 秒）的参考音频就能克隆一个人的声音。ElevenLabs 在 2023 年把这项技术带火。核心原理：神经编解码把语音分解成内容 token 和说话人 token，克隆时提取说话人 token 但换成新的内容。
+只用几秒（3-30 秒）的参考音频就能克隆一个人的声音（Wang et al., 2023）。ElevenLabs 在 2023 年把这项技术带火（ElevenLabs）。核心原理：神经编解码把语音分解成内容 token 和说话人 token，克隆时提取说话人 token 但换成新的内容。
 
 ### 语音 Token / 编解码器
 
@@ -68,7 +68,7 @@ ASR 市场更成熟（准确率已经超过人类水平），TTS 市场差异化
 - **最自然的语音**：用大模型（如 GPT-4o）做端到端生成，但需要 300-1000ms 的延迟
 - **最快的语音**：用轻量模型（如 CosyVoice 的 bi-streaming），延迟能做到 150ms，但自然度不如大模型
 
-**TTFB（Time To First Byte，首包时间）** 是衡量语音延迟的核心指标——从用户说完话到 AI 开始回话的第一个音频字节传回来的时间。延迟超过 500ms 用户就会觉得"不自然"。2026 年的延迟竞赛数据：ElevenLabs Flash 75ms TTFB（目前最快），Deepgram Aura-2 90ms，CosyVoice 3 bi-streaming ~150ms，GPT-4o voice ~320ms。行业正在全面压向 100ms 以下。
+**TTFB（Time To First Byte，首包时间）** 是衡量语音延迟的核心指标——从用户说完话到 AI 开始回话的第一个音频字节传回来的时间。延迟超过 500ms 用户就会觉得"不自然"。2026 年的延迟竞赛数据：ElevenLabs Flash 75ms TTFB（目前最快）（ElevenLabs），Deepgram Aura-2 90ms，CosyVoice 3 bi-streaming ~150ms（FunAudioLLM / Alibaba, 2024），GPT-4o voice ~320ms。行业正在全面压向 100ms 以下。
 
 ---
 
@@ -76,10 +76,10 @@ ASR 市场更成熟（准确率已经超过人类水平），TTS 市场差异化
 
 | 产品 | 类型 | 一句话 |
 |------|------|--------|
-| **ElevenLabs** | TTS | 语音克隆领导者，2023 爆红，2025 估值 $3B+ |
+| **ElevenLabs** | TTS | 语音克隆领导者，2023 爆红，2025 估值 $3B+（ElevenLabs） |
 | **OpenAI TTS / Whisper** | TTS+ASR | 2023 TTS API，2022 Whisper 开源 |
 | **GPT-4o voice** | 实时对话 | 目前最自然的 AI 语音对话体验 |
-| **CosyVoice 3** | TTS（开源） | 阿里开源，0.5B 参数，指标逼近商业产品 |
+| **CosyVoice 3** | TTS（开源） | 阿里开源，0.5B 参数（FunAudioLLM / Alibaba, 2024），指标逼近商业产品 |
 | **Fish Speech** | TTS（开源） | 开源语音合成，活跃社区 |
 | **Deepgram** | ASR | 企业级语音识别，NVIDIA 投资 |
 | **Azure Speech** | TTS+ASR | 微软企业级服务 |
