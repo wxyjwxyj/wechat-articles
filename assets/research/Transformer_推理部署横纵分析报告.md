@@ -519,44 +519,42 @@ KV cache per request：80 层 × 2（K、V）× 8 KV heads × 128 d_head × 4096
 
 ## 七、信息来源
 
-### 核心论文
+### 核心论文与文章
 
-- Kwon et al., "Efficient Memory Management for Large Language Model Serving with PagedAttention" (2023) — https://arxiv.org/abs/2309.06180
-- Dao et al., "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness" (2022) — https://arxiv.org/abs/2205.14135
-- Frantar et al., "GPTQ: Accurate Post-Training Quantization for Generative Pre-Trained Transformers" (2023) — https://arxiv.org/abs/2210.17323
-- Lin et al., "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration" (2024) — https://arxiv.org/abs/2306.00978
-- Leviathan et al., "Fast Inference from Transformers via Speculative Decoding" (2023) — https://arxiv.org/abs/2211.17192
-- Pope et al., "Efficiently Scaling Transformer Inference" (2023) — https://arxiv.org/abs/2211.05102
-- Sheng et al., "S-LoRA: Serving Thousands of Concurrent LoRA Adapters" (2023) — https://arxiv.org/abs/2311.03285
-- Zhong et al., "DISTFLASHATTN: Distributed Memory-efficient Attention for Long-context LLMs Training" (2024) — https://arxiv.org/abs/2310.03294
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
+| Kwon et al., "Efficient Memory Management for Large Language Model Serving with PagedAttention" (2023) | arxiv.org/abs/2309.06180 | 2026-04-30 |
+| Dao et al., "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness" (2022) | arxiv.org/abs/2205.14135 | 2026-04-30 |
+| Frantar et al., "GPTQ: Accurate Post-Training Quantization for Generative Pre-Trained Transformers" (2023) | arxiv.org/abs/2210.17323 | 2026-04-30 |
+| Lin et al., "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration" (2024) | arxiv.org/abs/2306.00978 | 2026-04-30 |
+| Leviathan et al., "Fast Inference from Transformers via Speculative Decoding" (2023) | arxiv.org/abs/2211.17192 | 2026-04-30 |
+| Pope et al., "Efficiently Scaling Transformer Inference" (2023) | arxiv.org/abs/2211.05102 | 2026-04-30 |
+| Sheng et al., "S-LoRA: Serving Thousands of Concurrent LoRA Adapters" (2023) | arxiv.org/abs/2311.03285 | 2026-04-30 |
+| Zhong et al., "DISTFLASHATTN: Distributed Memory-efficient Attention for Long-context LLMs Training" (2024) | arxiv.org/abs/2310.03294 | 2026-04-30 |
 
-### 推理框架
+### 产品与技术来源
 
-- vLLM 官方文档 — https://docs.vllm.ai/
-- TensorRT-LLM 官方文档 — https://nvidia.github.io/TensorRT-LLM/
-- TGI 官方文档 — https://huggingface.co/docs/text-generation-inference
-- llama.cpp 仓库 — https://github.com/ggerganov/llama.cpp
-- Ollama 官方文档 — https://ollama.ai/
-- MLX 官方文档 — https://ml-explore.github.io/mlx/
-
-### 硬件架构
-
-- NVIDIA H100 Tensor Core GPU 架构白皮书 — https://resources.nvidia.com/en-us-tensor-core
-- NVIDIA Blackwell GPU 架构 — https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/
-- Apple M3 Ultra 技术指标 — https://www.apple.com/mac-studio/
-- AMD MI300X Instinct 加速器 — https://www.amd.com/en/products/accelerators/instinct/mi300x.html
-- Groq LPU 推理架构 — https://groq.com/
-
-### 分析报道
-
-- "The Infrastructure Behind AI: A Comprehensive Guide to LLM Inference" — SemiAnalysis (2024)
-- "LLM Inference Performance Engineering: From Framework to Hardware" — Anyscale (2024) — https://www.anyscale.com/blog/llm-inference-performance-engineering
-- "vLLM: A Year of Serving the Open-Source Community" — Berkeley Sky Computing Lab (2024) — https://blog.vllm.ai/2024/06/15/vllm-one-year.html
-- "The Cost of Inference: How the Market for LLM APIs is Evolving" — Latent Space (2025)
-- "2025 LLM Inference Survey: Frameworks, Hardware, and the State of the Art" — Modal (2025) — https://modal.com/blog/llm-inference-survey-2025
-- "Transformer Inference: From BERT to DeepSeek V3" — Chris Deotte, NVIDIA Developer Blog (2025)
-- "LLM Inference in the Consumer Era" — LocalAI 博客 (2025) — https://localai.io/blog/consumer-inference-2025
-- "The Future of LLM Inference: Reasoning-Time Compute Changes Everything" — Scale AI Blog (2026) — https://scale.com/blog/llm-inference-reasoning-time
+| 来源 | URL | 访问时间 |
+|------|-----|---------|
+| vLLM 官方文档 | https://docs.vllm.ai/ | 2026-04-30 |
+| TensorRT-LLM 官方文档 | https://nvidia.github.io/TensorRT-LLM/ | 2026-04-30 |
+| TGI 官方文档 | https://huggingface.co/docs/text-generation-inference | 2026-04-30 |
+| llama.cpp 仓库 | https://github.com/ggerganov/llama.cpp | 2026-04-30 |
+| Ollama 官方文档 | https://ollama.ai/ | 2026-04-30 |
+| MLX 官方文档 | https://ml-explore.github.io/mlx/ | 2026-04-30 |
+| NVIDIA H100 Tensor Core GPU 架构白皮书 | https://resources.nvidia.com/en-us-tensor-core | 2026-04-30 |
+| NVIDIA Blackwell GPU 架构 | https://www.nvidia.com/en-us/data-center/technologies/blackwell-architecture/ | 2026-04-30 |
+| Apple M3 Ultra 技术指标 | https://www.apple.com/mac-studio/ | 2026-04-30 |
+| AMD MI300X Instinct 加速器 | https://www.amd.com/en/products/accelerators/instinct/mi300x.html | 2026-04-30 |
+| Groq LPU 推理架构 | https://groq.com/ | 2026-04-30 |
+| "The Infrastructure Behind AI" — SemiAnalysis (2024) | SemiAnalysis | 2026-04-30 |
+| "LLM Inference Performance Engineering" — Anyscale (2024) | https://www.anyscale.com/blog/llm-inference-performance-engineering | 2026-04-30 |
+| "vLLM: A Year of Serving the Open-Source Community" — Berkeley Sky Computing Lab (2024) | https://blog.vllm.ai/2024/06/15/vllm-one-year.html | 2026-04-30 |
+| "The Cost of Inference" — Latent Space (2025) | Latent Space | 2026-04-30 |
+| "2025 LLM Inference Survey" — Modal (2025) | https://modal.com/blog/llm-inference-survey-2025 | 2026-04-30 |
+| "Transformer Inference: From BERT to DeepSeek V3" — Chris Deotte, NVIDIA Developer Blog (2025) | NVIDIA Developer Blog | 2026-04-30 |
+| "LLM Inference in the Consumer Era" — LocalAI 博客 (2025) | https://localai.io/blog/consumer-inference-2025 | 2026-04-30 |
+| "The Future of LLM Inference: Reasoning-Time Compute Changes Everything" — Scale AI Blog (2026) | https://scale.com/blog/llm-inference-reasoning-time | 2026-04-30 |
 
 ---
 

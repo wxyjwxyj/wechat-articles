@@ -373,10 +373,10 @@ Prompt Engineering 的终极问题是：**我们到底是在"跟模型说话"，
 
 ## 六、信息来源
 
-### 核心论文
+### 核心论文与文章
 
-| 论文 | arXiv ID | 访问时间 |
-|------|----------|---------|
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
 | GPT-3 (In-Context Learning) | arxiv.org/abs/2005.14165 | 2026-04-30 |
 | Prefix-Tuning | arxiv.org/abs/2101.00190 | 2026-04-30 |
 | Prompt Tuning | arxiv.org/abs/2104.08691 | 2026-04-30 |
@@ -400,7 +400,7 @@ Prompt Engineering 的终极问题是：**我们到底是在"跟模型说话"，
 | Self-Ask | arxiv.org/abs/2210.03350 | 2026-04-30 |
 | Self-Refine | arxiv.org/abs/2303.17651 | 2026-04-30 |
 
-### 产品与工具来源
+### 产品与技术来源
 
 | 来源 | URL | 访问时间 |
 |------|-----|---------|
@@ -414,11 +414,6 @@ Prompt Engineering 的终极问题是：**我们到底是在"跟模型说话"，
 | Agenta GitHub | github.com/agenta-ai/agenta | 2026-04-30 |
 | Promptfoo GitHub | github.com/promptfoo/promptfoo | 2026-04-30 |
 | Meta Purple Llama | ai.meta.com/purple-llama | 2026-04-30 |
-
-### 其他来源
-
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
 | IEEE Spectrum: AI Prompt Engineering Is Dead | spectrum.ieee.org (2024-03-06) | 2026-04-30 |
 | WSJ: The Hottest AI Job of 2023 Is Already Obsolete | wsj.com (2025-04-25) | 2026-04-30 |
 | Lilian Weng: Prompt Engineering 博客 | lilianweng.github.io (2023-03-15) | 2026-04-30 |

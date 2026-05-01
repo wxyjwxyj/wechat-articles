@@ -663,43 +663,44 @@ MFU 预估：1 × 0.95（TP comm）× 0.95（PP bubble）× 0.90（EP comm）× 
 
 ## 七、信息来源
 
-### 核心论文
+### 核心论文与文章
 
-- Rajbhandari et al., "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models" (2020) — https://arxiv.org/abs/1910.02054
-- Shoeybi et al., "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism" (2020) — https://arxiv.org/abs/1909.08053
-- Narayanan et al., "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM" (2021) — https://arxiv.org/abs/2104.04473
-- Brown et al., "Language Models are Few-Shot Learners" (GPT-3, 2020) — https://arxiv.org/abs/2005.14165
-- Chowdhery et al., "PaLM: Scaling Language Modeling with Pathways" (2022) — https://arxiv.org/abs/2204.02311
-- Touvron et al., "LLaMA: Open and Efficient Foundation Language Models" (2023) — https://arxiv.org/abs/2302.13971
-- DeepSeek-AI, "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model" (2024) — https://arxiv.org/abs/2405.04434
-- DeepSeek-AI, "DeepSeek-V3 Technical Report" (2024) — https://arxiv.org/abs/2412.19437
-- DeepSeek-AI, "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning" (2025) — https://arxiv.org/abs/2501.12948
-- Micikevicius et al., "Mixed Precision Training" (2018) — https://arxiv.org/abs/1710.03740
-- Micikevicius et al., "FP8 Formats for Deep Learning" (2022) — https://arxiv.org/abs/2209.05433
-- Lepikhin et al., "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding" (2021) — https://arxiv.org/abs/2006.16668
-- Xu et al., "1-bit Adam: Communication Efficient Large-Scale Training with Adam's Convergence Speed" (2021) — https://arxiv.org/abs/2102.02888
-- Fedus et al., "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity" (2022) — https://arxiv.org/abs/2101.03961
-- Zhao et al., "Exascale Deep Learning for Scientific Inverse Problems" (2023) — https://arxiv.org/abs/2309.05787
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
+| Rajbhandari et al., "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models" (2020) | arxiv.org/abs/1910.02054 | 2026-04-30 |
+| Shoeybi et al., "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism" (2020) | arxiv.org/abs/1909.08053 | 2026-04-30 |
+| Narayanan et al., "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM" (2021) | arxiv.org/abs/2104.04473 | 2026-04-30 |
+| Brown et al., "Language Models are Few-Shot Learners" (GPT-3, 2020) | arxiv.org/abs/2005.14165 | 2026-04-30 |
+| Chowdhery et al., "PaLM: Scaling Language Modeling with Pathways" (2022) | arxiv.org/abs/2204.02311 | 2026-04-30 |
+| Touvron et al., "LLaMA: Open and Efficient Foundation Language Models" (2023) | arxiv.org/abs/2302.13971 | 2026-04-30 |
+| DeepSeek-AI, "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model" (2024) | arxiv.org/abs/2405.04434 | 2026-04-30 |
+| DeepSeek-AI, "DeepSeek-V3 Technical Report" (2024) | arxiv.org/abs/2412.19437 | 2026-04-30 |
+| DeepSeek-AI, "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL" (2025) | arxiv.org/abs/2501.12948 | 2026-04-30 |
+| Micikevicius et al., "Mixed Precision Training" (2018) | arxiv.org/abs/1710.03740 | 2026-04-30 |
+| Micikevicius et al., "FP8 Formats for Deep Learning" (2022) | arxiv.org/abs/2209.05433 | 2026-04-30 |
+| Lepikhin et al., "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding" (2021) | arxiv.org/abs/2006.16668 | 2026-04-30 |
+| Xu et al., "1-bit Adam: Communication Efficient Large-Scale Training with Adam's Convergence Speed" (2021) | arxiv.org/abs/2102.02888 | 2026-04-30 |
+| Fedus et al., "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity" (2022) | arxiv.org/abs/2101.03961 | 2026-04-30 |
+| Zhao et al., "Exascale Deep Learning for Scientific Inverse Problems" (2023) | arxiv.org/abs/2309.05787 | 2026-04-30 |
 
-### 框架与工具
+### 产品与技术来源
 
-- DeepSpeed 官方文档 — https://www.deepspeed.ai/
-- Megatron-LM 仓库 — https://github.com/NVIDIA/Megatron-LM
-- PyTorch FSDP 文档 — https://pytorch.org/docs/stable/fsdp.html
-- JAX 官方文档 — https://jax.readthedocs.io/
-- DeepSpeed MoE 文档 — https://www.deepspeed.ai/tutorials/moe/
-
-### 分析报道
-
-- "The Infrastructure Behind AI: Large-Scale Training" — SemiAnalysis (2024)
-- "DeepSeek-V3: Everything You Need to Know About the Latest Open-Source MoE Model" — Latent Space (2025)
-- "Understanding DeepSeek-V3's FP8 Training: How It Works and Why It Matters" — interconnects.ai (2025)
-- "Scaling Laws vs. System Efficiency: The Real Story Behind Training Costs" — Gradient Flow (2025)
-- "Why DeepSeek-V3 Training Cost So Little: A Deep Dive into MFU and System Optimization" — Evan Miller (2025) — https://evanmiller.org/deepseek-v3-training-cost.html
-- "The Cost of Training LLMs: A Longitudinal Analysis from GPT-3 to DeepSeek-V3" — Stanford CRFM Blog (2025)
-- "FSDP vs DeepSpeed: A Practical Guide for PyTorch Users" — PyTorch 官方博客 (2024) — https://pytorch.org/blog/fsdp-vs-deepspeed/
-- "Distributed Training at Scale: Lessons from Training 500B+ Models" — Microsoft Research Blog (2024)
-- "The Return of Dense Models? A Comparative Analysis of Dense vs MoE Training" — Yuchen Jin, 知乎 (2025)
+| 来源 | URL | 访问时间 |
+|------|-----|---------|
+| DeepSpeed 官方文档 | https://www.deepspeed.ai/ | 2026-04-30 |
+| Megatron-LM 仓库 | https://github.com/NVIDIA/Megatron-LM | 2026-04-30 |
+| PyTorch FSDP 文档 | https://pytorch.org/docs/stable/fsdp.html | 2026-04-30 |
+| JAX 官方文档 | https://jax.readthedocs.io/ | 2026-04-30 |
+| DeepSpeed MoE 文档 | https://www.deepspeed.ai/tutorials/moe/ | 2026-04-30 |
+| "The Infrastructure Behind AI: Large-Scale Training" — SemiAnalysis (2024) | SemiAnalysis | 2026-04-30 |
+| "DeepSeek-V3: Everything You Need to Know" — Latent Space (2025) | Latent Space | 2026-04-30 |
+| "Understanding DeepSeek-V3's FP8 Training" — interconnects.ai (2025) | interconnects.ai | 2026-04-30 |
+| "Scaling Laws vs. System Efficiency" — Gradient Flow (2025) | Gradient Flow | 2026-04-30 |
+| "Why DeepSeek-V3 Training Cost So Little" — Evan Miller (2025) | https://evanmiller.org/deepseek-v3-training-cost.html | 2026-04-30 |
+| "The Cost of Training LLMs" — Stanford CRFM Blog (2025) | Stanford CRFM | 2026-04-30 |
+| "FSDP vs DeepSpeed" — PyTorch 官方博客 (2024) | https://pytorch.org/blog/fsdp-vs-deepspeed/ | 2026-04-30 |
+| "Distributed Training at Scale" — Microsoft Research Blog (2024) | Microsoft Research | 2026-04-30 |
+| "The Return of Dense Models?" — Yuchen Jin, 知乎 (2025) | 知乎 | 2026-04-30 |
 
 ---
 

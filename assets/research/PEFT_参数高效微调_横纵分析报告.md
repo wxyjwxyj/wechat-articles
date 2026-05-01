@@ -300,10 +300,10 @@ DARE 的答案是"99% 的更新都可以扔掉"。
 
 ## 六、信息来源
 
-### 核心论文
+### 核心论文与文章
 
-| 论文 | arXiv ID | 访问时间 |
-|------|----------|---------|
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
 | Houlsby Adapter | arxiv.org/abs/1902.00751 | 2026-04-30 |
 | AdapterFusion | arxiv.org/abs/2005.00247 | 2026-04-30 |
 | Prefix Tuning | arxiv.org/abs/2101.00190 | 2026-04-30 |
@@ -321,7 +321,7 @@ DARE 的答案是"99% 的更新都可以扔掉"。
 | LoRA-XS | arxiv.org/abs/2405.17604 | 2026-04-30 |
 | PEFT Survey | arxiv.org/abs/2403.14608 | 2026-04-30 |
 
-### 框架与工具来源
+### 产品与技术来源
 
 | 来源 | URL | 访问时间 |
 |------|-----|---------|
@@ -332,11 +332,6 @@ DARE 的答案是"99% 的更新都可以扔掉"。
 | vLLM GitHub | github.com/vllm-project/vllm | 2026-04-30 |
 | LoRAX GitHub | github.com/predibase/lorax | 2026-04-30 |
 | DeepSpeed GitHub | github.com/microsoft/DeepSpeed | 2026-04-30 |
-
-### 社区与其他来源
-
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
 | Reddit r/LocalLLaMA | reddit.com/r/LocalLLaMA | 2026-04-30 |
 | Hugging Face PEFT 文档 | huggingface.co/docs/peft | 2026-04-30 |
 

@@ -281,7 +281,7 @@ LLM 应用框架的终极问题是：**当 LLM 能力足够强时，框架还有
 
 ## 六、信息来源
 
-### 框架官方来源
+### 产品与技术来源
 
 | 来源 | URL | 访问时间 |
 |------|-----|---------|
@@ -297,11 +297,6 @@ LLM 应用框架的终极问题是：**当 LLM 能力足够强时，框架还有
 | DSPy GitHub | github.com/stanfordnlp/dspy | 2026-04-30 |
 | CrewAI GitHub | github.com/crewAIInc/crewAI | 2026-04-30 |
 | AutoGen GitHub | github.com/microsoft/autogen | 2026-04-30 |
-
-### 其他来源
-
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
 | OpenAI Agents SDK 升级 (Sandbox+Harness) | openai.com | 2026-04-30 |
 | Google ADK 1.0 发布 | infoq.com | 2026-04-30 |
 | LangChain 1.0 Alpha 发布 | langchain.com/blog | 2026-04-30 |
