@@ -233,7 +233,9 @@ Anthropic 的 Claude 4/4.5 系列是唯一坚持 **Dense 架构**的旗舰模型
 
 替代架构这边，Mamba（Gu & Dao, 2023）把选择性状态空间模型从信号处理带入 NLP——O(n) 复杂度，6x 吞吐，1/3 内存，2024 年底的 Mamba-2 进一步提升了效率。RWKV 走了一条"训练像 Transformer、推理像 RNN"的混合路线。各种 Linear Attention、Gated DeltaNet 的尝试也在推进。
 
-2026 年最值得关注的信号是 **Qwen3.5**——用 Gated DeltaNet 替换了 75% 的标准 attention 层。不是全部替换，是混着用。这个务实的方向很可能成为这个十年的答案：**不是 Transformer vs X，是 Transformer + X 的最优配比**。
+2026 年最值得关注的信号是 **Qwen3.5**——用 Gated DeltaNet 替换了 75% 的标准 attention 层。"Nobody Agrees on Attention Anymore" 是 Hugging Face 技术博客对 Qwen3.5 的评价——不是全部替换 Transformer，是混着用。这个务实的方向很可能成为这个十年的答案：**不是 Transformer vs X，是 Transformer + X 的最优配比**。
+
+**Google Titans + MIRAS（2025.12-2026.01）** 是另一个重量级声音。Titans 引入三个独立记忆模块——短期记忆（当前上下文的 attention）、长期记忆（训练中学习的固定参数）、**持久记忆**（推理时动态更新的神经记忆单元）——让模型在推理中"记住"跨越百万 token 的信息而不需要线性增长的 KV Cache。MIRAS 框架在此基础上提供测试时训练：推理时根据具体输入动态微调记忆参数。这被 Google 明确定位为"可能通向持续学习 AI 的路径"。
 
 ---
 

@@ -98,6 +98,12 @@ Context Engineering 作为一个命名概念的诞生，故事线惊人地集中
 
 **2026 年 AAAI 会议**发表论文 "Algorithms for Context Engineering in LLM Inference"——这是顶级 AI 会议首次以 Context Engineering 为主题。
 
+**"Don't Break the Cache"（2026.01, arXiv:2601.06007）** 是第一篇系统评估 Prompt Caching 在长周期 Agent 任务中实际表现的论文。核心发现是：Agent 的多轮工具调用极易"打破缓存"——一次工具调用的返回内容改变了后续 prompt 的前缀结构，导致缓存失效次数远超预期。论文提出了"缓存友好"的 prompt 结构设计指南。
+
+**TTT-E2E（Test-Time Training End-to-End, 2026 Q1）** 是 NVIDIA、Hyperbolic 与 Stanford 合作的突破性工作，代表着 Context Engineering 的一个激进方向：不是管理上下文，而是让上下文直接改变模型权重。传统理解里，模型在推理时权重是冻结的——上下文只能通过 attention 机制间接影响输出。TTT-E2E 打破了这条线：在推理时将上下文当作训练数据，通过端到端的测试时训练，让模型在"阅读"超长输入后动态更新自己的参数。效果惊人：在 128K 长上下文任务上，TTT-E2E 比标准方法在无额外 KV Cache 的情况下提升 2.7 倍速度。这提出了一个根本性问题：**如果上下文能直接改变模型，那"Context Engineering"和"Fine-tuning"的边界在哪？**
+
+**MiMo HySparse（2026 Q1）** 是小米 MiMo 团队在 Agent 场景下的稀疏注意力架构。核心贡献是混合稀疏策略——对"信息型"token（文档、事实）和"指令型"token（任务描述、格式要求）采用不同的稀疏模式，KV Cache 减负 80%，在保持长上下文精度的同时将计算量压缩到可部署水平。这代表 Context Engineering 向硬件端侧的延伸：不是 prompt 层的优化，而是 attention 层的优化。
+
 到 2026 年 4 月，Context Engineering 已经从一个推文概念变成了有论文、有框架、有工具的实践领域。Manning 出版社甚至出版了同名专著（Boni Garcia, 2026）。
 
 ### 3.5 对话历史管理的四条技术路线
@@ -296,6 +302,9 @@ ACE 框架（2025.10）和 SGLang 的路线都指向"交给模型/引擎"。Lang
 | Anthropic: Effective context engineering | docs.anthropic.com (2025-09) | 2026-04-30 |
 | Redis: Context engineering best practices | redis.io (2025-09-26) | 2026-04-30 |
 | Manning: Context Engineering 专著 | manning.com (2026) | 2026-04-30 |
+| "Don't Break the Cache" | arxiv.org/abs/2601.06007 | 2026-05-01 |
+| TTT-E2E (Test-Time Training End-to-End) | NVIDIA/Hyperbolic/Stanford (2026 Q1) | 2026-05-01 |
+| MiMo HySparse — 混合稀疏注意力 | 小米 MiMo (2026 Q1) | 2026-05-01 |
 
 ### 产品与技术来源
 

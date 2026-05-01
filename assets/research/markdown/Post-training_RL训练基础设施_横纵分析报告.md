@@ -101,8 +101,12 @@ R1 最惊人的发现是：**纯 RL（没有人类标注的推理轨迹）就能
 
 到 2026 年，post-training 基础设施已经非常成熟：
 
-- **6 大框架形成明确梯队**：LLaMA Factory（71k stars）微调首选、VeRL（21k stars）大规模训练首选、TRL（18k stars）中小规模快速验证、OpenRLHF（9k stars）算法最全、DeepSpeed-Chat 已进入维护、NeMo-Aligner 已归档
+- **框架格局再度更新**：LLaMA Factory（71k stars）微调首选、VeRL（21k stars）大规模训练首选、TRL v1.0（2026.04 正式发布）中小规模首选、OpenRLHF（9k stars）算法最全、**NVIDIA NeMo-RL（2026 年新入局）** 整合 GPU 优化与 GRPO 支持、DeepSpeed-Chat 已进入维护、NeMo-Aligner 已归档
+- **TRL v1.0 是一个里程碑**（2026 年 4 月）。Hugging Face 团队在博客中强调 TRL 的设计哲学是"随领域而动"（chaos-adaptive）：post-training 算法迭代太快了，框架不能为某一种方法做深度优化，而是要保持灵活性。v1.0 全面支持 GRPO、DPO、在线 RL、多轮对话 RL、视觉语言模型 RL，并引入了"可配置的 rollout engine"——用户可以自由选择用 vLLM、SGLang 还是其他推理引擎
+- **NVIDIA NeMo-RL 的入局值得关注**。2026 年它以 NGC 容器形式发布，第一个公开的用例就是"用 GRPO 复现 DeepScaleR 配方"。NVIDIA 的入场逻辑是"自家 GPU 上的 RL 训练 Optimized by NVIDIA"，如果 NeMo-RL 能在 H200/B200 上提供显著优于 VeRL/OpenRLHF 的性能，它可能重新定义框架选择
 - **GRPO 和 REINFORCE++ 正在替代 PPO**：去掉 critic 网络成为行业共识
+- **"Do Post-Training Algorithms Actually Differ?"（2026.03, arXiv:2603.19335）** 给出了一个反直觉的答案：算法排名**依赖于模型规模**——7B 上 DPO 最好，70B 上 GRPO 最好，更大规模上算法差异缩小。这打破了"一种算法在所有规模上都最好"的假设，意味着团队的算法选择应该随模型规模而改变
+- **RLVR 成为 OpenAI 的公开策略**：2026 年 OpenAI 的 Josh McGrath 在 Latent Space 访谈中披露了从 GPT-4.1 到 5.1 的 post-training 管线——核心是用 RLVR（而非传统 RLHF）驱动推理能力提升。RLVR 不需要人类标注偏好，只需要可自动验证的奖励信号（数学答案对错、代码测试通过、Agent 任务成功），这让 RL 训练可以完全自动化、规模化
 - **推理时计算扩展成为标配**：从 o1 到 R1 到 o3，每半年一代，每代的推理精度大幅提升但成本也在增长
 
 ---
@@ -119,6 +123,13 @@ R1 最惊人的发现是：**纯 RL（没有人类标注的推理轨迹）就能
 | **KTO** | 2024 | 2 | ❌ | ❌ | ~2x 模型 | ⭐⭐ | 只有"好/坏"标签，无成对偏好 |
 | **ORPO** | 2024 | 1 | ❌ | ❌ | ~1x 模型 | ⭐ | 在 SFT 中联合优化，最轻量 |
 | **REINFORCE++** | 2025 | 1-2 | ❌ | ✅ | ~1-2x 模型 | ⭐⭐ | GRPO 的进一步简化 |
+| **DAPO** | 2025.03 | 2 | ❌ | ✅ | ~2x 模型 | ⭐⭐⭐ | GRPO 改进版，动态采样+clip 优化 |
+
+**DAPO（Dynamic sAmpling Policy Optimization, arXiv:2503.14476）** 是字节跳动在 2025 年 3 月提出的 GRPO 升级版。核心改进在两个地方：
+1. **动态采样策略**——不是固定地生成 G 个回答，而是根据问题难度动态调整采样数量。简单题少采样，难题多采样，算力分配更高效
+2. **Clip higher 机制**——GRPO 的 group-based advantage 可能过度惩罚"好但不够好"的回答，DAPO 改进了裁剪策略
+
+DAPO 已被字节的 VeRL 框架内置支持，也在 OpenRLHF 中得到实现。在 GPT-5 级别模型的训练中，字节披露 DAPO 比 GRPO 在数学推理上高出约 2-3 个百分点。
 
 **趋势非常清晰：从复杂到简单。** 2022 年的 PPO-RLHF 需要 4 个模型，2025 年的 ORPO 只需要 1 个。但需要注意的是，"简单"不等于"效果更好"——DPO 比 PPO 简单，但在复杂推理任务上的效果上限不如 PPO+在线探索。
 
@@ -129,8 +140,9 @@ GRPO 是目前最有吸引力的折中方案：训练中只有 2 个模型（没
 | 框架 | 开发商 | 发布时间 | 活跃度 | 支持算法 | 最大规模 | 核心特点 |
 |------|--------|---------|:------:|---------|:-------:|---------|
 | **DeepSpeed-Chat** | 微软 | 2023-08 | 维护模式 | PPO | 100B+ | 最早的 RLHF 工具，混合引擎 |
-| **TRL** | Hugging Face | 2023 | ⭐⭐⭐⭐ | PPO/DPO/GRPO/KTO | 7-70B | HuggingFace 生态，易上手 |
-| **NeMo-Aligner** | NVIDIA | 2024 | ❌已归档 | PPO/DPO | 企业级 | GPU 优化最强但不再维护 |
+| **TRL v1.0** | Hugging Face | 2023→2026.04 | ⭐⭐⭐⭐⭐ | PPO/DPO/GRPO/KTO/VLM RL | 7-70B | v1.0 里程碑，chaos-adaptive 设计 |
+| **NeMo-RL** | NVIDIA | 2026 | ⭐⭐⭐⭐ | GRPO/PPO | 企业级 | 新入局，GPU 深度优化 + DeepScaleR 配方 |
+| **NeMo-Aligner** | NVIDIA | 2024 | ❌已归档 | PPO/DPO | 企业级 | 已归档，被 NeMo-RL 取代 |
 | **OpenRLHF** | 社区 | 2024 | ⭐⭐⭐⭐ | PPO/DAPO/REINFORCE++/多模态 | 大规模 | 算法最全，架构现代 |
 | **VeRL** | 字节跳动 | 2025 | ⭐⭐⭐⭐⭐ | PPO/GRPO/DAPO | **超大规模** | vLLM+Ray 调度，增长最快 |
 | **LLaMA Factory** | 社区 | 2023 | ⭐⭐⭐⭐⭐ | DPO/ORPO/KTO（有限 RL） | ~70B | **71k stars**，微调场景绝对领先 |
@@ -265,11 +277,15 @@ Post-training 可能是 AI 行业最"不被看见但至关重要"的一层。预
 | ORPO | arxiv.org/abs/2403.07691 | 2026-04-30 |
 | DeepSeek-R1 | arxiv.org/abs/2501.12948 | 2026-04-30 |
 | DAPO | arxiv.org/abs/2503.14476 | 2026-04-30 |
+| "Do Post-Training Algorithms Actually Differ?" | arxiv.org/abs/2603.19335 | 2026-05-01 |
+| [State of Post-Training] GPT-4.1 to 5.1 — Josh McGrath, OpenAI | latent.space/p/state-of-post-training-from-gpt-41 | 2026-05-01 |
 
 ### 产品与技术来源
 
 | 来源 | URL | 访问时间 |
 |------|-----|---------|
+| TRL v1.0 Release | huggingface.co/blog/trl-v1 | 2026-05-01 |
+| NVIDIA NeMo-RL | catalog.ngc.nvidia.com / github.com/NVIDIA-NeMo/RL | 2026-05-01 |
 | OpenAI o1 发布 | https://openai.com/index/learning-to-reason-with-llms/ | 2026-04-30 |
 | OpenAI o3 | 2026.04 发布 | 2026-04-30 |
 | OpenRLHF | https://github.com/OpenRLHF/OpenRLHF | 2026-04-30 |
