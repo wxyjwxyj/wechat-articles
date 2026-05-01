@@ -256,6 +256,26 @@ td:last-child { text-align: center; }
 <p><strong>为什么是革命</strong>：RNN 需要逐时间步串行，"我"要知道"你"的内容得等前面的步骤算完。Transformer 里所有 token 同时互相关注——完全并行，训练速度从"数周"降到"数天"。</p>
 <p>详见 <a href="Transformer_横纵分析报告.md">Transformer 横纵分析报告</a> 获取完整架构分析。</p>
 <hr>
+<h3>3.6 Transformer 家族的三大变体（2018）—— 同一个架构，三种用法</h3>
+<p>Transformer 的原版论文是一个<strong>编码器-解码器（Encoder-Decoder）</strong>架构——编码器处理输入，解码器生成输出。但 2018 年，两个团队各自取了一半，分别开创了整个 NLP 的未来：</p>
+<pre><code>              Transformer (original, 2017)<br>              Encoder + Decoder（完整版）<br>                     /        \<br>                    /          \<br>         BERT (2018.10)     GPT (2018.06)<br>         只用 Encoder        只用 Decoder<br>         双向理解            单向生成</code></pre>
+<table>
+<tr><th></th><th>Transformer (原版)</th><th>BERT</th><th>GPT</th></tr>
+<tr><td>架构</td><td>Encoder + Decoder</td><td>Encoder-only</td><td>Decoder-only</td></tr>
+<tr><td>核心任务</td><td>序列到序列（翻译）</td><td>完形填空（MLM）</td><td>下一个词预测（自回归）</td></tr>
+<tr><td>上下文方向</td><td>编码器双向 + 解码器单向</td><td><strong>双向</strong>（同时看左右）</td><td><strong>单向</strong>（只看左边）</td></tr>
+<tr><td>最强能力</td><td>翻译、摘要</td><td>理解（分类、NER、QA）</td><td><strong>生成（代码、文章、对话）</strong></td></tr>
+<tr><td>生成能力</td><td>✅（Decoder 负责）</td><td>❌（只能填一个空）</td><td>✅（逐 token 生成）</td></tr>
+<tr><td>代表模型</td><td>T5, BART</td><td>BERT, RoBERTa, ModernBERT</td><td>GPT-1→GPT-5.5, Llama, Qwen</td></tr>
+<tr><td>2026 年状态</td><td>特定场景（翻译）</td><td>Embedding/分类场景</td><td><strong>主导 LLM 世界</strong></td></tr>
+</table>
+<p><strong>为什么 GPT（decoder-only）最终统治了世界？</strong></p>
+<ol>
+<li><strong>生成是元能力</strong>：你能生成，理解就隐含其中。GPT-3 证明了足够大的 decoder-only 在理解和生成上都能做到 SOTA。但 BERT 天生不会生成。</li>
+<li><strong>架构更简洁</strong>：Decoder-only 推理时只有一层自注意力（causal attention），比 encoder-decoder 少了一整个编码器。少一层的代价是速度和显存节省 30-50%。</li>
+<li><strong>扩展性更好</strong>：decoder-only 的因果注意力可以复用 KV Cache（前面的 token 不会变，只需要算最后一个的注意力），这对长文本推理至关重要。</li>
+</ol>
+<p><strong>但 BERT 没有死</strong>——ModernBERT（2024）用 RoPE 和 FlashAttention 把 encoder-only 架构现代化，BGE/E5 等嵌入模型继承了 BERT 的双向编码基因。在"把文本变成向量"这个任务上，encoder-only 仍然是最优选择。</p>
 <h2>四、横向分析：三大核心架构对比</h2>
 <table>
 <tr><th>架构</th><th>擅长</th><th>核心机制</th><th>并行度</th><th>衰落原因</th></tr>
