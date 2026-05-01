@@ -133,6 +133,15 @@ class ItemRepository:
                     ),
                 )
 
+    def update_item_summary(self, item_id: int, summary: str) -> None:
+        now = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        with closing(get_connection(self.db_path)) as conn:
+            with conn:
+                conn.execute(
+                    "update items set summary=?, updated_at=? where id=?",
+                    (summary, now, item_id),
+                )
+
     def update_item_translations(self, item_id: int, title_zh: str, summary_zh: str) -> None:
         """回写翻译结果到数据库。"""
         now = datetime.now(timezone.utc).isoformat(timespec='seconds')

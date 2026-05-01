@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大模型评估与对齐：从 RLHF 到 GRPO 的四次范式转换</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>大模型评估与对齐：从 RLHF 到 GRPO 的四次范式转换</h1>
+<blockquote><strong>副标题：InstructGPT 打开的门，GRPO 推开的窗——对齐方法如何从人类反馈走向规则自博弈</strong></blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>评估与对齐是大模型从"会考试的好学生"变成"懂事的助手"的关键工序——评估回答"模型变强了吗？"，对齐回答"模型听人话了吗？"。对齐是一套让模型行为符合人类期望的方法论（RLHF、DPO、GRPO 等），评估是一套衡量模型能力的基准体系（MMLU、SWE-Bench 等）。两者共同构成大模型从"能跑"到"好用"的最后一道关卡。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解 RLHF、DPO、GRPO 四次范式转换各自解决什么问题和引入什么新问题，能解释为什么 MMLU 高分不代表模型"好用"、评估基准的局限性在哪里。</blockquote>
+<hr>
+<h3>阅读指南</h3>
+<p><strong>如果你只有 5 分钟</strong>：读<a href="#一一句话定义">一句话定义</a> + <a href="#五横纵交汇洞察">横纵交汇洞察</a>的 5.2（三个剧本）。你能在 5 分钟内理解对齐技术的演进方向和评估体系面临的危机。</p>
+<p><strong>如果你想理解评估与对齐但不碰技术细节</strong>：读<a href="#二技术背景">技术背景</a>的 2.0（前置知识速览：三个模型一句话说清 + 对齐在解决什么问题）+ <a href="#三纵向分析从人类反馈到规则自博弈的四次转换">纵向分析</a>每次转换的标题和一句话总结 + <a href="#四横向分析2026-年对齐与评估全景">横向分析</a>的评估基准概览。约 25 分钟。</p>
+<p><strong>如果你是研究者/对齐工程师</strong>：直接跳<a href="#三纵向分析从人类反馈到规则自博弈的四次转换">纵向分析</a>的 3.2-3.5（四次范式转换的完整技术细节）和<a href="#四横向分析2026-年对齐与评估全景">横向分析</a>的对齐方法对比矩阵。<a href="#五横纵交汇洞察">横纵交汇洞察</a>的 5.1（核心矛盾的转移）和"对齐税"讨论是理解整个领域的关键。</p>
+<hr>
+<h2>二、技术背景</h2>
+<h3>2.0 前置知识</h3>
+<p>对齐与评估的底层概念（RLHF 的三阶段流程、PPO 的直觉、Bradley-Terry 模型、奖励模型与策略模型的区别、评估基准的基本原理等）已整理为独立的前置知识文档，供不熟悉背景的读者提前阅读：</p>
+<blockquote><strong>📖 <a href="../markdown/./大模型评估与对齐_前置知识.md">大模型评估与对齐前置知识</a></strong></blockquote>
+<p>用一个直觉快速建立框架：预训练给模型塞了海量文本，模型学会了"能写出通顺的句子"。SFT 教会了模型"回答问题"。但这两个阶段都没解决一个关键问题——<strong>模型不知道什么回答是好的、什么是不好的</strong>。它可能诚恳地告诉你错误信息，或者详细地教你做坏事。对齐就是来解决这个问题的。</p>
+<h4>对齐到底在解决什么问题？</h4>
+<p>想象你训练了一个超级学霸——它能回答任何问题，但它的"道德感"是空白的。你问它"怎么制造炸弹"，它会像回答"怎么写Hello World"一样认真地给出步骤。你问它"1+1=3对吗"，它可能说"对的"因为它在某个错误网页上读到过。</p>
+<p>对齐要做的三件事：</p>
+<ol>
+<li><strong>有用性（Helpful）</strong>：模型应该尽力帮用户解决问题，而不是敷衍</li>
+<li><strong>无害性（Harmless）</strong>：模型不应该生成有害内容（暴力、仇恨、危险信息）</li>
+<li><strong>诚实性（Honest）</strong>：模型应该承认自己不知道的事，而不是编造</li>
+</ol>
+<p>这三者之间存在张力——一个"非常有用"的模型可能为了帮用户而不惜编造信息，一个"非常安全"的模型可能拒绝回答所有可能敏感的问题。<strong>对齐税就是这种张力的量化体现。</strong></p>
+<h4>评估在干什么？</h4>
+<p>评估和对话是硬币的两面。没有评估，你就不知道对齐有没有生效。但评估本身面临一个致命问题：<strong>如果测试数据出现在训练数据中，评估结果就是作弊的。</strong> 这就是评估污染（contamination）——讨论对齐之前必须理解这个前提。</p>
+<hr>
+<h3>2.1 评估与对齐的引擎：三个模型一句话说清</h3>
+<p>对齐流程中涉及的三个核心组件：</p>
+<table>
+<tr><th>组件</th><th>做什么</th><th>类比</th></tr>
+<tr><td><strong>SFT 模型</strong></td><td>先教模型"回答的格式和基本风格"</td><td>告诉你答题卡怎么填</td></tr>
+<tr><td><strong>奖励模型</strong></td><td>判断"哪个回答更好"的打分器</td><td>阅卷老师</td></tr>
+<tr><td><strong>策略模型</strong></td><td>真正用来回答用户的模型</td><td>考生</td></tr>
+</table>
+<p>RLHF 的核心流程就是：让"考生"写答案 → "阅卷老师"打分 → 根据分数改进"考生"。这个循环重复很多次后，"考生"就学会了写出高分答案。</p>
+<h3>2.2 为什么这是个难题？</h3>
+<p>对齐之所以成为 AI 最前沿的研究方向，不是因为技术上做不到，而是因为<strong>你没法给"好回答"写一个精确的数学定义</strong>。一个回答是好的，可能是因为它准确、可能是因为它简洁、可能是因为它考虑了用户的情感需求——这些维度很难用一个公式来量化。</p>
+<p>所以对齐方法的演进史，说到底就是<strong>人类不断寻找更好的方式来表达"什么是对的回答"这个模糊概念</strong>。</p>
+<hr>
+<blockquote><strong>📚 关联报告</strong></blockquote>
+<blockquote>- <a href="../markdown/./Post-training_RL训练基础设施_横纵分析报告.md">Post-training RL 训练基础设施</a> — RLHF/GRPO 等对齐方法依赖 RL 训练基础设施，本报告与它是姐妹篇</blockquote>
+<blockquote>- <a href="../markdown/./AI_Safety_横纵分析报告.md">AI Safety</a> — 对齐是 Safety 的技术实现手段，Safety 是对齐的目标和哲学框架</blockquote>
+<blockquote>- <a href="../markdown/./LLM大模型_横纵分析报告.md">LLM 基础大模型</a> — 对齐和评估的对象正是这些基础模型，模型能力决定对齐的难度</blockquote>
+<h2>三、纵向分析：从人类反馈到规则自博弈的四次转换</h2>
+<h3>3.1 史前时期（2022 以前）：预训练 + 指令微调</h3>
+<p>在 RLHF 提出之前，大模型对齐的手段极其有限：预训练完成后，在少量人工标注的指令-回答数据上进行 SFT。GPT-3（2020）展示了惊人的能力，但它经常生成无意义的、有毒的、或者与用户意图完全不符的回复。</p>
+<p>当时行业的状态是：模型的能力在飞速提升，但其行为的可靠性完全跟不上。就像一个智商 150 但情商为负的天才——什么都能回答，但回答出来的东西你不敢用。</p>
+<p>这一矛盾在 ChatGPT 发布后更加尖锐：亿级用户每天和模型交互，模型生成有害内容的后果变得不可接受。对齐从"锦上添花"变成了"产品命门"。</p>
+<h3>3.2 第一次转换：RLHF——用人类偏好做信号（2022）</h3>
+<h4>InstructGPT：对齐的"大爆炸"时刻</h4>
+<p>2022 年 3 月，OpenAI 的 InstructGPT 论文（arXiv:2203.02155）开启了一个新纪元。</p>
+<p><strong>之前</strong>：对齐约等于 SFT——给模型看一些"好回答"的例子。</p>
+<p><strong>之后</strong>：对齐变成了一个三阶段流程，核心变化是引入了<strong>偏好信号</strong>：</p>
+<ol>
+<li><strong>SFT 阶段</strong>：收集人类标注员写的 prompt-response 示例，微调 GPT-3</li>
+<li><strong>奖励模型训练</strong>：对同一个 prompt，让模型生成多个回答，人类标注员排序。用这些排序数据训练一个奖励模型</li>
+<li><strong>PPO 优化</strong>：用奖励模型的分数作为信号，通过 Proximal Policy Optimization 强化学习算法优化策略模型</li>
+</ol>
+<p>这个三阶段流程的巧妙之处在于：你不需要告诉模型"好回答长什么样"，只需要告诉它"把这两个回答排个序"。<strong>排序比生成容易得多</strong>——这是 RLHF 的核心洞察。</p>
+<p>InstructGPT 的一个实验结果震撼了业界：<strong>1.3B 参数的 InstructGPT 在人类评估中优于 175B 参数的 GPT-3</strong>。参数量差了 100 倍，但人类更偏好经过对齐的小模型。对齐的价值被彻底证明。</p>
+<p><strong>代价</strong>：三阶段流程极其复杂。需要同时维护政策模型、参考模型、奖励模型、价值函数网络四个模型。训练不稳定（PPO 超参数敏感）。奖励模型容易过拟合，出现 reward hacking——模型学会欺骗奖励模型而非真正变好。</p>
+<h4>ChatGPT：RLHF 的工业化爆发</h4>
+<p>2022 年 11 月，ChatGPT 发布。技术上它用的就是 InstructGPT 的 RLHF 流程（只是数据规模更大、标注质量更高），但它把 RLHF 塞进了亿级用户每天使用的产品里。</p>
+<p>ChatGPT 的意义不在技术而在验证——它证明了 RLHF 可以在产品环境中正常工作。同时也暴露了对齐的新问题：用户用各种越狱 prompt 绕过安全限制、模型在长对话中逐渐偏离原始设定、模型在不知道答案时会自信地编造。这些问题至今没被完全解决。</p>
+<h4>Constitutional AI：让模型自己批评自己</h4>
+<p>就在 ChatGPT 发布后的一个月，Anthropic 的 Constitutional AI 论文（arXiv:2212.08073）开辟了另一条路。</p>
+<p>RLHF 的一个根本问题是：<strong>人类标注太贵了</strong>。为每个 prompt 生成偏好数据需要大量人力。Anthropic 的思路是：让模型自己来批评和纠正自己的回答。</p>
+<p>具体做法：</p>
+<ol>
+<li>给模型一套"宪法"原则（比如"回答应该尊重人类尊严"）</li>
+<li>模型回答一个 prompt → 根据宪法自我批评 → 根据批评修改回答</li>
+<li>用修订后的回答做训练数据</li>
+</ol>
+<p>这套方法被称为 RLAIF（Reinforcement Learning from AI Feedback）。Anthropic 证明了<strong>用 AI 监督 AI 可以做对齐</strong>，虽然效果略逊于人类标注，但成本低了几个数量级。</p>
+<p>Anthropic 的"宪法"本身也在不断进化——2022 年第一版只是一个原则列表，2023 年扩展到 75 条指南，到 2026 年已经变成 23,000 字的详细文件，由哲学家 Amanda Askell 执笔，融入了《世界人权宣言》的精神。</p>
+<p><strong>小结：第一代对齐的核心特征是用"人类偏好"作为信号，但对"好回答"没有精确数学定义。</strong> RLHF 确立了三阶段流程的基本框架，Constitutional AI 则展示了一条减少人力依赖的替代路线。但两者的共同问题是：流程复杂、成本高、对奖励模型过度依赖。</p>
+<hr>
+<h3>3.3 第二次转换：DPO——让策略模型自身成为奖励模型（2023）</h3>
+<h4>DPO 的本质洞察</h4>
+<p>2023 年 5 月，Stanford 的 DPO 论文（arXiv:2305.18290）从一个数学推导中找到了 RLHF 的"冗余"环节。</p>
+<p>RLHF 需要训练一个独立的奖励模型，是因为 PPO 需要一个奖励信号来进行优化。但 DPO 揭示了 RLHF 的数学本质：在最优策略和奖励函数之间存在一个闭式关系。也就是说，<strong>你可以直接从策略模型自身的对数概率比来推导出奖励</strong>，而不需要单独训练一个奖励模型。</p>
+<p>这个推导的直观理解：如果一个回答很"好"，策略模型应该倾向于以更高的概率生成它（相对于参考模型）。反之亦然。<strong>策略模型对回答的偏好程度，本身就是最好的奖励信号。</strong></p>
+<h4>DPO 改变了什么</h4>
+<table>
+<tr><th>维度</th><th>RLHF</th><th>DPO</th></tr>
+<tr><td>需要几个模型</td><td>策略 + 参考 + 奖励 + 价值函数 = 4个</td><td>策略 + 参考 = 2个</td></tr>
+<tr><td>训练阶段</td><td>SFT → RM → PPO (三阶段)</td><td>SFT → DPO (两阶段)</td></tr>
+<tr><td>训练稳定性</td><td>低（PPO超参数敏感）</td><td>高（只需要一个二分类损失）</td></tr>
+<tr><td>实现复杂度</td><td>高</td><td>低</td></tr>
+<tr><td>效果上限</td><td>高（因为在线采样+显式RM）</td><td>接近RLHF（隐式RM容量受限）</td></tr>
+</table>
+<p>DPO 最大的贡献不是"更好"，而是<strong>更简单</strong>。它把对齐从"只有大公司玩得起"变成了"任何有 GPU 的人都能跑"。DPO 的损失函数说到底就是一个交叉熵——这是深度学习中最基础的工具之一。</p>
+<h4>DPO 之后：KTO 和 ORPO——继续简化</h4>
+<ul>
+<li><strong>KTO（2024.02）</strong>(arXiv:2402.01306)：连成对数据都不需要了，只需要知道一个回答是"好"或"不好"的二元信号。基于前景理论（Prospect Theory），KTO 发现人类对"损失"的敏感度高于"收益"——回答不好比回答好更需要惩罚。</li>
+</ul>
+<ul>
+<li><strong>ORPO（2024.03）</strong>(arXiv:2403.07691)：把 SFT 和对齐合并为一个阶段。在微调的同时，通过 odds ratio（几率比）来惩罚不偏好的回答、奖励偏好的回答。不需要参考模型，不需要单独的奖励模型。</li>
+</ul>
+<p><strong>小结：第二次转换的核心特征是"简化"。</strong> DPO 去掉了奖励模型，KTO 去掉了成对数据，ORPO 去掉了单独的对齐阶段。对齐从"火箭科学"变成了"分类损失"。但这种简化是有代价的——隐式奖励模型的容量有限，在复杂场景下可能不如精心调参的 PPO。</p>
+<hr>
+<h3>3.4 第三次转换：GRPO——去掉价值函数，组内比较定输赢（2024）</h3>
+<h4>GRPO 的诞生背景</h4>
+<p>2024 年 2 月，DeepSeek 的 DeepSeekMath 论文（arXiv:2402.03300）引入了 GRPO（Group Relative Policy Optimization）。</p>
+<p>GRPO 解决的痛点很具体：RLHF 中 PPO 需要价值函数网络（Critic），这个网络和策略模型几乎一样大。两个大模型的内存消耗让 PPO 对齐的门槛极高。</p>
+<p>GRPO 的改进思路很直接：<strong>用组内采样替代价值函数。</strong> 对同一个 prompt，让策略模型生成 G 个输出（组）。组内每个输出的优势 =（该输出的奖励 - 组内平均奖励）/ 组内标准差。</p>
+<h4>GRPO vs PPO 的关键差异</h4>
+<table>
+<tr><th></th><th>PPO (RLHF)</th><th>GRPO</th></tr>
+<tr><td>价值函数</td><td>需要一个和策略同规模的价值网络</td><td><strong>不需要</strong></td></tr>
+<tr><td>优势估计</td><td>$A = r + \gamma V(s') - V(s)$</td><td>$A_i = (r_i - \mu_r) / \sigma_r$</td></tr>
+<tr><td>显存占用</td><td>高</td><td>降低约 30-40%</td></tr>
+<tr><td>训练稳定性</td><td>低</td><td>高（组内标准化天然自适应）</td></tr>
+</table>
+<h4>DeepSeek-R1：GRPO 的大规模实践</h4>
+<p>2025 年 1 月的 DeepSeek-R1 论文（arXiv:2501.12948）将对齐带入了一个全新的范式。</p>
+<p>在 DeepSeek-R1 之前，对齐的核心假设是：<strong>你需要人类反馈来告诉模型什么是对的。</strong> DeepSeek-R1 证明了：在数学和编程等规则可验证的领域，你只需要告诉模型"答案对不对"（规则奖励），然后让它自己通过强化学习去摸索出对的路径。</p>
+<p>对齐管道：</p>
+<ol>
+<li><strong>冷启动 SFT</strong>：少量人工编写的长思维链数据</li>
+<li><strong>大规模 GRPO</strong>：用规则奖励（数学答案格式、代码测试通过率）</li>
+<li><strong>拒绝采样</strong>：从多个 checkpoint 选高质量输出</li>
+<li><strong>再次 SFT + GRPO</strong>：迭代循环</li>
+</ol>
+<p>DeepSeek 做了一个关键的"拿来主义"：人类不需要告诉模型怎么推理——模型只需要知道最终答案对不对，然后通过 GRPO 自己去发现推理模式。论文报告了一个令人惊叹的现象：<strong>仅通过 RL 训练，模型就涌现出了自我反思（self-reflection）、验证（verification）、动态策略调整等复杂的推理行为，而在训练数据中从未显式出现过这些模式。</strong></p>
+<p>这和 AlphaGo Zero 的哲学如出一辙：规则+自博弈，不需要人类知识。</p>
+<p><strong>小结：第三次转换的核心特征是"强化学习的重新归来"。</strong> DPO 简化了 RLHF 但实质上走向了"偏好学习"而非真正的强化学习。GRPO + 规则奖励让 RL 再次成为对齐的核心，而且比 PPO 更轻量、更稳定。</p>
+<hr>
+<h3>3.5 现在的状态：四条路线并行</h3>
+<p>2025-2026 年的对齐领域，四条技术路线并行发展，各有侧重：</p>
+<ol>
+<li><strong>RLHF (PPO)</strong> — 最成熟，效果上限最高，但最复杂。OpenAI 的 o1/o3 系列继续使用</li>
+<li><strong>DPO 及其变体</strong> — 最简洁，门槛最低。开源社区的首选（Llama 3 使用 DPO 变体）</li>
+<li><strong>GRPO + 规则奖励</strong> — 在可验证任务上效果最佳。DeepSeek-R1 的代表作</li>
+<li><strong>Constitutional AI (RLAIF)</strong> — 减少人类标注依赖最彻底。Anthropic 的独门路线</li>
+</ol>
+<p>行业正在向一个"四阶段生产线"收敛：SFT → 偏好优化 → Verifier-Driven RL → 智能体自改进。</p>
+<hr>
+<h3>3.6 评估基准的演进：从"考知识"到"考能力"</h3>
+<h4>第一代：知识测试（MMLU, 2020）</h4>
+<p>MMLU（arXiv:2009.03300）的 57 个学科多项选择是评估的起点。它简单、直观、好复现——但也正因为简单，容易被刷爆。GPT-4 的 MMLU 86% 曾经是标志性成就，到 2026 年头部模型已经逼近 90%+。</p>
+<p>对 MMLU 的核心批评：<strong>多选题和真实使用场景完全不同</strong>。模型在 A/B/C/D 中选择和在真实对话中自由生成，是两个能力维度。</p>
+<h4>第二代：推理与代码（GSM8K, MATH, HumanEval, 2021）</h4>
+<p>GSM8K（小学数学题）和 MATH（高中数学题）开启了"推理能力"的评估。HumanEval（代码生成）开启了"编程能力"的评估。</p>
+<p>这些基准比 MMLU 更有"难度"，但问题类似——到 2025 年头部模型在 GSM8K 上已达 97%，HumanEval 达 95%+。<strong>饱和了。</strong></p>
+<h4>第三代：真实任务（SWE-Bench, GAIA, 2023-2024）</h4>
+<p>SWE-Bench（arXiv:2310.06770）的突破在于：不是让模型写一个函数，而是给它一个包含复杂 bug 的代码仓库，让它自己找到问题并修复。这与"真实软件开发"之间的距离大大缩小。</p>
+<p>GAIA（arXiv:2311.12983）更进一步：要求模型完成多步推理、工具调用、网页浏览等综合任务。人类正确率 92%，GPT-4 加插件只有 15%——这个差距远大于 MMLU 等基准上的差距。</p>
+<p><strong>第四代：动态与抗污染（2025-2026）</strong></p>
+<p>LiveBench（每月更新题库）、ARC-AGI-2（视觉推理）、Humanity's Last Exam 等新基准的出现，反映了行业对"静态测评被污染"的焦虑。评估正在从"一次考好"转向"持续验证"。</p>
+<p><strong>评估基准饱和的速度在加速——这不是因为评估不好，而是因为模型进步太快。</strong> 2020 年的 MMLU 用了 3 年才饱和，2024 年的 SWE-Bench 只用了 1 年半就开始饱和了。</p>
+<hr>
+<h2>四、横向分析：各方对齐策略与评估格局</h2>
+<blockquote><strong>场景判断：该领域竞品充分（场景 C）。</strong> 对齐方法论多家并行（RLHF/DPO/GRPO/CAI），评估基准快速迭代。以下按 skill 框架的梯队划分展开。</blockquote>
+<h3>4.1 前沿梯队（OpenAI / Anthropic / Google DeepMind）</h3>
+<h4>OpenAI：最成熟的工业化对齐</h4>
+<p>OpenAI 的对齐路线最完整，覆盖了从 RLHF（InstructGPT）到 PRM（o1/o3）到 Deliberative Alignment（直接教模型推理安全规则）的全谱系。但也是<strong>最不透明</strong>的。</p>
+<p>OpenAI 的特殊优势：拥有最多的用户交互数据（ChatGPT 亿级用户）。这些数据可以通过隐式反馈（用户是否重新生成、是否点赞）来持续优化对齐。但 OpenAI 完全不公开这些数据和训练细节。</p>
+<p>路线特点：大规模人力标注 + 全方法覆盖。从目前的效果来看，效果最好但成本最高。</p>
+<h4>Anthropic：原则驱动的独门路线</h4>
+<p>Anthropic 是唯一一家把"可解释性"纳入对齐流程的公司。Golden Gate Claude 实验（通过放大特定神经元改变模型行为）展示了机制可解释性在对齐中的潜力。</p>
+<p>"宪法"的持续进化是另一个独特之处：从 2022 年的简单原则列表到 2026 年 23,000 字的详细文件，体现了原则驱动的对齐方法的可迭代性。哲学家 Amanda Askell 的深度参与，使 Anthropic 的对齐方法在行业中独树一帜。</p>
+<p>路线特点：减少人类标注依赖 + 原则驱动 + 可解释性辅助。成本低但哲学色彩重，效果验证周期长。</p>
+<h4>Google DeepMind：理论基础最扎实</h4>
+<p>DeepMind 在 RL 领域的积累无人能及（AlphaGo、AlphaZero 的经验），但在对齐领域的公开贡献反而少于 OpenAI 和 Anthropic。Sparrow 论文（2022）提出的"基于规则的奖励"影响了后来的 RBR 方法。ReST 和 ReST-MCTS 等自训练框架是重要的技术贡献。</p>
+<p>路线特点：RL 理论深厚，但产品化对齐的公开细节最少。</p>
+<h3>4.2 落后梯队（Meta）</h3>
+<h4>Meta (LLaMA)：最透明的开源对齐</h4>
+<p>Meta 在开源和对齐透明度上贡献最大。LLaMA 2 Chat 完整公开了 RLHF 的细节（包括 27,540 个 SFT 样本、1,418,091 个人类偏好标注）。LLaMA 3 的指令模型在 10M+ 人工标注示例上微调。LLaMA Guard 填补了开源安全工具的空白。</p>
+<p>有趣的是，Meta 虽然在对齐的"技术先进性"上落后于前沿梯队（主要使用 RLHF + DPO），但在<strong>开源对齐的基础设施</strong>上贡献最大——让全世界的研究者都能复现和研究对齐方法。</p>
+<h3>4.3 独立实验室</h3>
+<h4>DeepSeek：GRPO 的开拓者</h4>
+<p>DeepSeek 的对齐策略是"另类"的——在其他公司还在用人类偏好时，DeepSeek 用规则奖励替代了大部分人类反馈。GRPO + DeepSeek-R1 走通了一条"少人类标注、多计算"的新路。</p>
+<p>核心差异：<strong>在可验证的任务上（数学、代码），你可以用计算替代人力。</strong> 一个数学题的答案对不对，让计算机验证比让人来判断更可靠。这个思路在推理模型时代极具前瞻性。</p>
+<h4>Mistral / xAI</h4>
+<p>Mistral 走小规模 RLHF + 蒸馏路线。xAI 的 Grok-3 据报使用约 1500 人标注团队——这是已知最大的标注团队之一。两家公开细节有限。</p>
+<h3>4.4 国内主要玩家</h3>
+<p>中国公司在对齐策略上基本跟随全球趋势，但有两个特色：</p>
+<ol>
+<li><strong>RLHF + DPO 混合策略</strong>为主（Qwen、GLM 等），鲜有独立的理论创新。唯一的例外是 DeepSeek 的 GRPO——这也是中国公司在对齐领域最大的技术贡献。</li>
+</ol>
+<ol>
+<li><strong>长上下文 + 智能体对齐</strong>成为差异化方向。Kimi 在超长对话和智能体任务上的对齐投入显著大于海外同行。这反映了中国 AI 产品策略的差异——比拼落地场景而非基础理论。</li>
+</ol>
+<h3>4.5 评估基准对比总览</h3>
+<table>
+<tr><th>基准</th><th>类型</th><th>提出时间</th><th>当前 SOTA（2026Q1）</th><th>饱和状态</th></tr>
+<tr><td>MMLU</td><td>通用知识</td><td>2020-09</td><td>~90%+</td><td>严重饱和</td></tr>
+<tr><td>MMLU-Pro</td><td>通用知识（增强）</td><td>2024-06</td><td>~80%+</td><td>开始饱和</td></tr>
+<tr><td>GSM8K</td><td>数学推理</td><td>2021-10</td><td>~97%</td><td>严重饱和</td></tr>
+<tr><td>MATH-500</td><td>数学竞赛</td><td>2024</td><td>~95%+</td><td>接近饱和</td></tr>
+<tr><td>HumanEval</td><td>代码生成</td><td>2021-07</td><td>~95%+</td><td>严重饱和</td></tr>
+<tr><td>SWE-Bench Verified</td><td>代码工程</td><td>2024-10</td><td>~80%</td><td>有信号</td></tr>
+<tr><td>GPQA</td><td>科学推理</td><td>2023-11</td><td>~85%+</td><td>快速进步</td></tr>
+<tr><td>AIME 2025</td><td>数学竞赛</td><td>2025</td><td>~90%+</td><td>接近饱和</td></tr>
+<tr><td>LiveBench</td><td>动态更新</td><td>2024</td><td>持续更新</td><td>未饱和</td></tr>
+<tr><td>Humanity's Last Exam</td><td>专家级</td><td>2025</td><td><50%</td><td>未饱和</td></tr>
+</table>
+<h3>4.6 对齐税争议全景</h3>
+<p><strong>对齐税</strong>（Alignment Tax）——对齐训练是否以牺牲通用能力为代价——是行业最具争议的话题之一。</p>
+<p><strong>支持对齐税存在的一方</strong>（来自 InstructGPT 论文、LLaMA 2 Chat vs base 对比、以及 2025 年多篇论文）有数据支撑：对齐后的模型在部分推理基准上确实有可测量的性能下降。特别是 2025 年的论文 "Safety Alignment Makes Your Large Reasoning Models Less Reasonable" 系统性证明安全对齐降低了推理准确性。</p>
+<p><strong>反对对齐税存在的一方</strong>（DPO 论文的 trade-off 声称、GPT-4 全面超越 GPT-3 的案例）也有论据：关键在于方法——早期的 PPO-based RLHF 的税存在，但 DPO、GRPO 等新方法大幅减少了税。2026 年的几何理论（arXiv:2603.00047）甚至将对齐税分解为"不可约成分"和"可消除成分"，指出大部分对齐税可以通过更好的方法消除。</p>
+<p>当前的行业共识正在形成：</p>
+<ol>
+<li><strong>早期方法（PPO-RLHF）的对齐税真实存在</strong>，有明确的实验证据</li>
+<li><strong>新技术（DPO、GRPO、合模、BSO）大幅减少了但未完全消除</strong>对齐税</li>
+<li><strong>安全税在边缘案例上仍然存在</strong>——过度安全对齐会让模型变得过于谨慎，拒绝回答大量正常问题</li>
+<li><strong>方法决定结果</strong>——不同方法导致的税不同，不能一概而论</li>
+</ol>
+<h3>4.7 评估污染的信任危机</h3>
+<p>评估污染（训练数据中包含测试集样本）在 2025-2026 年已成为评估体系的最大威胁：</p>
+<ul>
+<li>性能通胀幅度估计在 1% 到 45% 之间</li>
+<li>n-gram overlap 检测法已明显不够用</li>
+<li>一个 2026 年的重要发现：<strong>后训练阶段（SFT / RL）也可能引入或放大污染</strong>——即使 base model 的预训练数据是干净的，对齐阶段也可能重新引入测试数据</li>
+</ul>
+<p>应对方案：LiveBench（每月出新题）、AntiLeakBench（自动构建未污染测试）、推理时去污染等。但根本性的解决方案还没有出现。</p>
+<h3>4.8 核心趋势</h3>
+<ol>
+<li><strong>对齐正在从"经验工程"走向"数学科学"</strong>。从 RLHF 的经验调参到 DPO 的闭式推导到 GRPO 的自适应训练到对齐税的几何理论，理论化程度在快速提升。</li>
+</ol>
+<ol>
+<li><strong>人类标注正在被计算替代</strong>。RLHF 需要大量人类 → DPO 需要成对偏好 → KTO 需要二元信号 → GRPO + 规则奖励几乎不需要人类。虽然开放的对话对齐仍然依赖人类，但可验证任务的闭环已经打通。</li>
+</ol>
+<ol>
+<li><strong>评估基准的"军备竞赛"加速</strong>。旧基准迅速饱和，新基准寿命在缩短。评估污染正在侵蚀所有基准的可信度。实时评估（LiveBench）和动态评估（Chatbot Arena）可能成为未来方向。</li>
+</ol>
+<ol>
+<li><strong>对齐税从"共识"变为"可控"。</strong> 随着方法进步，对齐税正在被逐步压缩。但对齐和安全之间的根本张力——模型既要"有用"又要"无害"——不会完全消失。</li>
+</ol>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 历史的锁扣</h3>
+<p><strong>第一条链：简化驱动创新，创新又创造新的复杂度</strong></p>
+<p>从 RLHF 到 DPO 到 GRPO，对齐方法的演进方向几乎全是"简化"——减少模型数量、减少训练阶段、减少人类标注。但每一次简化又创造了新的需求：DPO 简化了流程但对数据质量更敏感，GRPO 简化了训练但在开放任务上不如 RLHF。</p>
+<p>这背后有一个根本矛盾：<strong>对齐方法的简化与对齐效果的提升，不一定同时发生。</strong> 简单的方法门槛低但上限有限，复杂的方法效果更好但只有大公司用得起。</p>
+<p><strong>第二条链：规则奖励的崛起改变了"人工"的定位</strong></p>
+<p>DeepSeek-R1 的最深远影响不是 GRPO 这个算法，而是<strong>证明了"用规则替代人工"在可验证场景下是完全可行的</strong>。这改变了对齐行业的底层假设——以前默认"好的对齐需要好的数据→好的数据需要好的标注员"，现在有了第二条路："好的对齐需要好的规则→好的规则不需要人工"。</p>
+<p>数学和代码只是开始。下一个问题是：还有哪些任务可以被规则化？如果能对"写作质量"写出一套可靠的规则评分器，那对齐可能完全不需要人类。</p>
+<p><strong>第三条链：评估的信任危机正在倒逼方法创新</strong></p>
+<p>评估污染不是小问题——如果基准不可信，整个行业就无法判断"模型是否变好了"。但讽刺的是，<strong>这个问题没有完美的解决方案</strong>：只要训练数据来自互联网，测试数据就可能出现在训练集中。除非你创建完全不依赖互联网的评估方式（如动态生成、人工交互），否则污染只能缓解不能杜绝。</p>
+<p>LiveBench 和 Chatbot Arena 代表了两条不同的路：一个靠"出题快过模型学习"，一个靠"用人类判断替代静态测试"。</p>
+<h3>5.2 三个剧本</h3>
+<h4>剧本一（最可能）：技术收敛 + 评估重构</h4>
+<p>未来 1-2 年，对齐方法向 "SFT → 偏好优化 → RL（规则奖励） → 智能体自改进"四阶段生产线收敛。DPO 和 GRPO 持续改进，质量接近 PPO-RLHF。评估基准转向动态化和实时化，MMLU-Ultra 和 Humanity's Last Exam 成为新的区分标尺。OpenAI 和 Anthropic 继续保持领先，但开源社区通过对齐数据共享逐步缩小差距。</p>
+<h4>剧本二（最危险）：评估体系崩溃</h4>
+<p>评估污染问题持续恶化，静态基准完全失效。模型之间"比谁刷分强"，而不是"比谁真的好"。行业失去统一的比较标准，陷入"我信谁"的混乱。社区可能回到小规模人工评测或转向纯粹的应用场景评测（聊天机器人 A/B 测试）。对齐税问题被重新激活——当基准不再可信时，无法判断对齐是否导致了能力退化。评估研究的资金和关注度下降，对齐的评估反馈循环被打破。</p>
+<h4>剧本三（最乐观）：完全可验证对齐 + 自动评估</h4>
+<p>推理模型的持续进步使"规则化"范围大幅扩展。规则奖励从数学/代码扩展到科学推理、创意写作、事实准确性。对齐完全自动化——模型的自我对抗训练替代了人类标注和偏好判断。评估也实现自动化——LLM-as-a-Judge 持续改进，加上实时生成的动态测试，污染问题不再是威胁。对齐税被证明是一个"工程问题"而非"原则问题"，通过方法优化可以被减小到可忽略的程度。</p>
+<p>剧本三的关键前提是：<strong>可验证的领域能够持续扩展到不可验证的领域。</strong> 这高度依赖推理模型本身的能力进步——模型越强，它能验证的领域就越多。这是一个"用更好的对齐生成更好的数据来训练更好的模型"的正循环，和 DCLM 的"用模型筛选数据训练更好的模型"异曲同工。</p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>核心论文与文章</h3>
+<table>
+<tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
+<tr><td>InstructGPT: Training language models to follow instructions with human feedback</td><td>arxiv.org/abs/2203.02155</td><td>2026-04-30</td></tr>
+<tr><td>Constitutional AI: Harmlessness from AI Feedback</td><td>arxiv.org/abs/2212.08073</td><td>2026-04-30</td></tr>
+<tr><td>DPO: Direct Preference Optimization</td><td>arxiv.org/abs/2305.18290</td><td>2026-04-30</td></tr>
+<tr><td>DeepSeekMath/GRPO: Pushing the Limits of Mathematical Reasoning</td><td>arxiv.org/abs/2402.03300</td><td>2026-04-30</td></tr>
+<tr><td>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via RL</td><td>arxiv.org/abs/2501.12948</td><td>2026-04-30</td></tr>
+<tr><td>KTO: Model Alignment as Prospect Theoretic Optimization</td><td>arxiv.org/abs/2402.01306</td><td>2026-04-30</td></tr>
+<tr><td>ORPO: Monolithic Preference Optimization without Reference Model</td><td>arxiv.org/abs/2403.07691</td><td>2026-04-30</td></tr>
+<tr><td>MMLU: Measuring Massive Multitask Language Understanding</td><td>arxiv.org/abs/2009.03300</td><td>2026-04-30</td></tr>
+<tr><td>MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark</td><td>arxiv.org/abs/2406.01574</td><td>2026-04-30</td></tr>
+<tr><td>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</td><td>arxiv.org/abs/2310.06770</td><td>2026-04-30</td></tr>
+<tr><td>GAIA: a benchmark for General AI Assistants</td><td>arxiv.org/abs/2311.12983</td><td>2026-04-30</td></tr>
+<tr><td>Let's Verify Step by Step (PRM)</td><td>arxiv.org/abs/2305.20050</td><td>2026-04-30</td></tr>
+<tr><td>GPQA: A Graduate-Level Google-Proof Q&A Benchmark</td><td>arxiv.org/abs/2311.12022</td><td>2026-04-30</td></tr>
+<tr><td>BIG-Bench: Beyond the Imitation Game</td><td>arxiv.org/abs/2206.04615</td><td>2026-04-30</td></tr>
+<tr><td>GSM8K: Training Verifiers to Solve Math Word Problems</td><td>arxiv.org/abs/2110.14168</td><td>2026-04-30</td></tr>
+<tr><td>Scaling LLM Test-Time Compute Optimally</td><td>arxiv.org/abs/2408.03314</td><td>2026-04-30</td></tr>
+<tr><td>What Is the Alignment Tax?</td><td>arxiv.org/abs/2603.00047</td><td>2026-04-30</td></tr>
+<tr><td>Mitigating the Alignment Tax of RLHF</td><td>arxiv.org/abs/2309.06256</td><td>2026-04-30</td></tr>
+<tr><td>Safety Alignment Makes Large Reasoning Models Less Reasonable</td><td>arXiv (2025)</td><td>2026-04-30</td></tr>
+<tr><td>LLaMA 2: Open Foundation and Fine-Tuned Chat Models</td><td>arxiv.org/abs/2307.09288</td><td>2026-04-30</td></tr>
+<tr><td>LLaMA 3: Herds of Models</td><td>arxiv.org/abs/2407.21783</td><td>2026-04-30</td></tr>
+</table>
+<h3>产品与技术来源</h3>
+<table>
+<tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
+<tr><td>OpenAI Process Supervision Blog</td><td>https://openai.com/index/improving-mathematical-reasoning-with-process-supervision/</td><td>2026-04-30</td></tr>
+<tr><td>OpenAI Deliberative Alignment</td><td>https://openai.com/index/deliberative-alignment/</td><td>2026-04-30</td></tr>
+<tr><td>OpenAI o1 System Card</td><td>https://openai.com/index/openai-o1-system-card/</td><td>2026-04-30</td></tr>
+<tr><td>Anthropic Constitutional AI</td><td>https://www.anthropic.com</td><td>2026-04-30</td></tr>
+<tr><td>DeepMind Sparrow Blog</td><td>https://deepmind.google/discover/blog/building-safer-dialogue-agents/</td><td>2026-04-30</td></tr>
+<tr><td>LMSYS Chatbot Arena</td><td>https://lmsys.org</td><td>2026-04-30</td></tr>
+<tr><td>Stanford HAI AI Index Report 2025</td><td>https://hai.stanford.edu</td><td>2026-04-30</td></tr>
+</table>
+<hr>
+<blockquote><strong>方法论说明</strong>：本报告采用横纵分析法（Horizontal-Vertical Analysis），由数字生命卡兹克提出。纵向部分追溯大模型评估与对齐技术从 2020 年到 2026 年的完整演进史；横向部分对比当前主要 AI 公司的对齐策略与评估基准格局；横纵交汇部分给出综合性判断和未来推演。</blockquote>
+<blockquote></blockquote>
+<blockquote>报告生成时间：2026 年 4 月 30 日</blockquote>
+<h3>方法论说明</h3>
+<p>本报告采用<strong>横纵分析法（Horizontal-Vertical Analysis）</strong>，由数字生命卡兹克提出。纵向部分追溯大模型评估与对齐技术从 2020 年到 2026 年的完整演进史；横向部分对比当前主要 AI 公司的对齐策略与评估基准格局；横纵交汇部分给出综合性判断和未来推演。</p>
+<blockquote>报告生成时间：2026 年 4 月 30 日</blockquote>
+<hr>
+<p><em>本文是横纵分析系列的第 9 篇报告。方法论：横纵分析法——纵向沿时间轴追溯技术演进，横向对比当下竞争格局。</em></p>
+</div>
+</body>
+</html>

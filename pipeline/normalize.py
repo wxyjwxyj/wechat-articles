@@ -1,7 +1,9 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import hashlib
 import json
 import re
+
+_CST = timezone(timedelta(hours=8))
 
 
 def _clean_text(text: str) -> str:
@@ -14,7 +16,7 @@ def _clean_text(text: str) -> str:
 
 def normalize_wechat_article(source: dict, raw_article: dict) -> dict:
     time_str = raw_article.get("time")
-    published_at = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S") if time_str else datetime.now()
+    published_at = datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S").replace(tzinfo=_CST) if time_str else datetime.now(_CST)
     
     source_name = source.get("name", "")
     title = raw_article.get("title", "")

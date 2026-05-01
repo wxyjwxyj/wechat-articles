@@ -38,6 +38,8 @@ AI_KEYWORDS = [
     "GPT-5.5",
     "MoE",
     "huawei",
+    "vibe coding",
+    "jcode",
 ]
 
 # 排除的关键词（减少误匹配）

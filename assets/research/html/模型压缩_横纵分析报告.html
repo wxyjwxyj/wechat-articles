@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>模型压缩横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>模型压缩横纵分析报告</h1>
+<blockquote>从 8-bit 到 4-bit 再到 FP4，从 GPTQ 到 AWQ 到 GGUF，大模型如何在精度、大小和速度之间走出"既要又要还要"的路。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>模型压缩（Model Compression）是<strong>在尽可能保持模型质量的前提下，减小模型体积、降低推理计算量的技术集合</strong>。它的核心矛盾在于：模型越大、越精确，但部署成本和延迟也越高——压缩是在"精度损失"和"效率提升"之间找最优平衡点。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：在精度损失、模型体积、推理速度之间做出合理的量化方案选择，理解 4-bit 量化为什么能在精度损失不到 1% 的前提下把模型缩小到原来的 1/4。</blockquote>
+<hr>
+<h2>二、技术背景</h2>
+<h3>核心矛盾：模型越强，部署越难</h3>
+<p>从 2018 年的 BERT-Base（110M 参数, 440MB）到 2026 年的 GPT-5.5（数万亿参数），6 年间模型规模增长了约 10000 倍。如果不做压缩：</p>
+<ul>
+<li><strong>显存</strong>：一个 70B FP16 模型需 140GB 显存——4 块 A100 80G 才跑得动。每次推理成本约 $0.5-1。</li>
+<li><strong>延迟</strong>：KV Cache 随序列长度二次增长，128K 上下文时单次生成可能需要几十秒。</li>
+<li><strong>吞吐</strong>：如果不压缩，高吞吐服务的 GPU 成本线性增长。</li>
+</ul>
+<p>模型压缩的所有工作都围绕一个核心洞察：<strong>模型参数中存储了大量冗余信息——不是每个比特都对输出质量同等重要。</strong> 量化和剪枝利用这个冗余，蒸馏则在参数量级上直接缩减。</p>
+<blockquote>前置知识请参考独立文档 <a href="../markdown/模型压缩_前置知识.md">《模型压缩_前置知识》</a>，涵盖量化、蒸馏、剪枝等基础概念的通俗讲解。</blockquote>
+<hr>
+<blockquote><strong>📚 关联报告</strong></blockquote>
+<blockquote>- <a href="../markdown/./MoE_横纵分析报告.md">MoE 混合专家模型</a> — MoE 模型显存占用大，量化压缩是其落地部署的关键依赖</blockquote>
+<blockquote>- <a href="../markdown/./PEFT_参数高效微调_横纵分析报告.md">PEFT 参数高效微调</a> — PEFT 和压缩共享"少即是多"的效率哲学，LoRA + 量化是标配组合</blockquote>
+<blockquote>- <a href="../markdown/./大模型推理部署_横纵分析报告.md">大模型推理部署</a> — 压缩后的模型最终在推理框架（vLLM/TensorRT-LLM）里跑起来</blockquote>
+<blockquote>- <a href="../markdown/./大模型AI芯片格局_横纵分析报告.md">大模型 AI 芯片格局</a> — 芯片的 INT4/FP4 硬件支持决定了量化的收益天花板</blockquote>
+<h2>三、纵向分析：从边缘设备必需品到 LLM 标配</h2>
+<h3>3.1 深度学习时代：压缩技术的起源（2015-2021）</h3>
+<p>模型压缩的三条技术线在深度学习时代就已经成熟，但在 LLM 时代之前，它们主要服务于边缘设备（手机、IoT）上的模型部署。</p>
+<p><strong>蒸馏（2015）</strong>：Geoffrey Hinton 在 "Distilling the Knowledge in a Neural Network"（NIPS 2014 Workshop）中正式提出知识蒸馏——训练一个"学生"网络去匹配"老师"网络的软目标（soft targets），而非直接学习硬标签。Hinton 的直觉是：老师输出的概率分布（如"这张图 80% 像猫，15% 像狗，5% 像兔子"）比硬标签（"猫"）包含了更多信息。</p>
+<p>在 2015-2021 年间，蒸馏被广泛用于图像分类和语音识别，但核心应用场景是<strong>模型大小受限的移动端部署</strong>——从 ResNet-152 蒸馏到 MobileNet，从 BERT-Large 蒸馏到 TinyBERT。</p>
+<p><strong>量化（2016-2021）</strong>：量化的历史比蒸馏更长。早期的 INT8 量化（TensorRT, 2017）主要用于 NVIDIA GPU 推理加速。2020 年，Google 的 BERT INT8 量化和 Intel 的 INC（Neural Compressor）证明了 NLP 模型可以被压缩到 8-bit 而精度损失可忽略。</p>
+<p><strong>剪枝（2019）</strong>：Frankle & Carbin 在 "The Lottery Ticket Hypothesis"（ICLR 2019）中提出：大型神经网络的子网络（winning tickets）在独立训练时可以达到跟原网络相当的精度。这个假设引发了对结构化剪枝的大量研究。</p>
+<p>这个阶段的本质是：<strong>三套技术的核心原理在深度学习时代已经奠定，但 LLM 的到来将它们的"紧迫性"从"不错"提升到了"必须"。</strong></p>
+<h3>3.2 GPTQ 与量化转折点：让 LLM 部署变得可行（2022-2023）</h3>
+<p>2022-2023 年是 LLM 量化的关键转折期。在 GPT-3（2020）和 ChatGPT（2022.11）大火之后，所有人都想要部署自己的 LLM——但 175B 参数模型的部署成本远超大多数团队的承受能力。</p>
+<p><strong>GPTQ（2022.10, arXiv:2210.17323）</strong> 是 Frantar 等人的突破性工作。它将 Optimal Brain Quantizer（OBQ）改造为不适配 LLM 的海量参数场景：用 128 个校准样本，在 4 小时内将 OPT-175B 从 FP16 量化为 INT4，perplexity 损失不到 0.5。Hugging Face 上第一个广泛使用的 LLM 量化方法。</p>
+<p>GPTQ 的意义在于：<strong>它第一次证明了 LLM 可以被量化为 4-bit 而几乎不损失质量。</strong> 它的二阶优化方法（用 Hessian 矩阵评估每个权重的重要性）虽然计算复杂，但在质量上设定了基准。</p>
+<p><strong>SmoothQuant（2022.11, arXiv:2211.10438）</strong> 解决了另一个问题：LLM 的激活值中存在极端异常值（比正常值大 100x+），导致直接 INT8 量化激活值时精度崩溃。SmoothQuant 将激活值的"量化难度"平滑迁移到权重上，实现了 W8A8（权重和激活都是 8-bit）的 LLM 推理加速。</p>
+<p><strong>AWQ（2023.06, arXiv:2306.00978）</strong> 来自 MIT 韩松团队，代表了另一个方向：与其对所有参数一视同仁地量化，不如观察激活值的分布，找到"重要"的 1% 权重通道做更高精度保护，其余大胆量化。AWQ 的理论巧妙——不需要校准集上的反向传播，只需统计激活幅度。</p>
+<p>AWQ 在 2023-2024 年的工程能力快速超越 GPTQ。在同等位宽下，AWQ 的推理速度通常比 GPTQ 快 10-20%，质量接近或略优。到 2026 年，AWQ 成为 vLLM 和 TensorRT-LLM 的首选量化格式。</p>
+<p><strong>GGUF 与 llama.cpp（2023.03）</strong> 是社区工程力量的爆发。ggerganov 的 llama.cpp 项目将"在 CPU 上运行 LLaMA"变成了一个周末就能做的事。GGUF 作为其原生格式，支持从 Q2_K 到 Q8_0 的全系列量化级别，无需校准数据，直接内存映射加载。</p>
+<p>GGUF 的统治地位不是技术上的（它的质量通常略低于 GPTQ/AWQ），而是工程上的——配合 LM Studio、Ollama 等前端工具，GGUF 构成了 2026 年最完整的本地 LLM 运行生态。对于"不想折腾、让模型跑起来就行"的用户，GGUF 是唯一选择。</p>
+<p><strong>SpQR（2023.06, arXiv:2306.03078）</strong> 走了一条更极致的路：找出"异常权重"并用更高精度单独存储，其余大胆量化到 3-4-bit。在 1% 左右的精度损失下将模型压缩到 4-bit 以下，但实现复杂度和运行时效率限制了它的大规模工程落地。</p>
+<p>这个阶段的本质是：<strong>学术界和工程界同时意识到——LLM 的冗余比想象中大得多，4-bit 是最佳实用点。</strong></p>
+<h3>3.3 降低比特率：向 2-bit 和 1-bit 冲锋（2024-2025）</h3>
+<p>在 4-bit 成为标配之后，研究者的目标自然地转向了更低比特。</p>
+<p><strong>AQLM（2024.01, arXiv:2401.06118）</strong> 是 Yandex 和 IST Austria 的合作成果，目标是在 2-bit 级别做到可接受的质量。核心创新是残差量化——每个权重块用一个码本（codebook）表示，多级残差逐步缩小误差。在 2-bit 级别，AQLM 的 perplexity 显著优于 GPTQ 和 AWQ。</p>
+<p><strong>QuIP#（2024.02, arXiv:2402.04396, ICML 2024）</strong> 从信息论角度提出了一种新的量化框架。核心思想是"潜在处理"（lattice trellis coding）——用结构化的码本替代逐元素量化，在 2-bit 下达到当时最优质量。</p>
+<p><strong>FP8 硬件原生支持（2024-2025）</strong>：NVIDIA Hopper（H100/H200）原生支持 FP8 计算。FP8 推理速度约为 FP16 的 2 倍，TensorRT-LLM 和 vLLM 迅速跟进。</p>
+<p>2025-2026 年，FP8 混合精度训练成为行业标准——BF16 训练正在被 FP8 取代。<strong>推理的 FP8 标准也在形成</strong>：权重用 E4M3（更高精度），激活用 E5M2（更大范围）。</p>
+<p>但这个阶段的"2-bit 突破"更多是学术上的——在大规模工程部署中，2-bit 量化仍受限于：</p>
+<ul>
+<li>特殊内核的缺乏（不像 4-bit 有 Marlin 等成熟内核）</li>
+<li>异常值敏感任务（代码、数学）上的质量不可控</li>
+<li>硬件加速有限</li>
+</ul>
+<h3>3.4 蒸馏在 LLM 时代的复兴（2024-2026）</h3>
+<p>蒸馏在 LLM 时代的路线跟传统蒸馏有本质不同。</p>
+<p><strong>DeepSeek-R1 蒸馏（2025.01）</strong> 是 LLM 蒸馏的里程碑。DeepSeek 用 R1 671B（MoE，实际激活 37B）生成了大量包含推理链的数据，然后用这些数据微调 Qwen 和 LLaMA 的小模型。</p>
+<p>结果惊人：Distill-Qwen-32B 在 MATH 上达到 83.8%，接近 GPT-4 的 84.1%。7B 模型在数学推理上超越 GPT-4o mini。这不是传统的"soft label 蒸馏"，而是<strong>推理方式蒸馏</strong>——学生模型学到的不是老师的最终答案，而是老师的思考过程。</p>
+<p><strong>Microsoft Phi 系列（2023-2025）</strong> 走了另一条路：不是从单一 teacher 蒸馏，而是用大量合成数据训练小模型。Phi-1（1.3B, 2023.06）用"教科书质量"的合成数据训练，就达到了参数量 10x 模型的水平。Phi-4（14B, 2024.12）在 MMLU 上接近 84%，在数学推理上接近 Llama-3 70B。</p>
+<p>Phi 系列证明了：<strong>数据质量 > 参数量。</strong> 这不是严格意义上的"蒸馏"（因为没有单个 teacher），但归根到底，是在利用大模型的知识来生成训练数据，是"数据层面的蒸馏"。</p>
+<p>蒸馏在 LLM 时代的现实影响超过了量化：<strong>70B 模型蒸馏到 7B + 4-bit 量化 → 最终模型大小从 140GB 降到 4GB，在 MacBook 上就能跑，特定领域能力接近原版的 80-90%。</strong></p>
+<h3>3.5 剪枝：最不成功的一条路（2023-2026）</h3>
+<p>剪枝在 LLM 时代的发展比量化和蒸馏困难得多。</p>
+<p><strong>SparseGPT（2023.01, arXiv:2301.00774）</strong> 是剪枝领域最有影响力的工作。Frantar 和 Alistarh（也是 GPTQ 的作者团队）提出了一种一步式剪枝方法，不需要训练或微调，就能移除 OPT-175B 中 50% 的参数——这是一个令人惊讶的发现。</p>
+<p><strong>Wanda（2023.06, arXiv:2306.11695）</strong> 进一步简化：只考虑权重和激活值的乘积，不需要 Hessian 矩阵计算。速度比 SparseGPT 快得多，质量接近。</p>
+<p>问题在于：<strong>剪枝后的稀疏模型在标准硬件上几乎没有速度提升</strong>——通用的 GPU 矩阵乘法内核不支持稀疏计算。要真正从剪枝受益，需要 N:M 稀疏（NVIDIA Ampere 及更新架构支持 2:4 稀疏）或专用稀疏计算内核——后者在 2026 年仍未普及。</p>
+<p>量化同时降低存储和计算需求，蒸馏降低模型参数量级——两种方法都在标准硬件上直接受益。剪枝只降低存储，不降低计算（除非特殊硬件），这是它在 LLM 时代未能成为主流的原因。</p>
+<h3>3.6 聚合趋势：FP8 训练 + 4-bit 推理成标准（2025-2026）</h3>
+<p>2025-2026 年，模型压缩的格局趋于稳定：</p>
+<table>
+<tr><th>场景</th><th>推荐方案</th><th>模型大小示例（70B）</th></tr>
+<tr><td>训练</td><td>FP8 混合精度</td><td>—</td></tr>
+<tr><td>服务端高吞吐</td><td>AWQ 4-bit + vLLM / TensorRT-LLM</td><td>~40GB</td></tr>
+<tr><td>端侧/本地</td><td>GGUF Q4_K_M + llama.cpp / LM Studio</td><td>~40GB</td></tr>
+<tr><td>Apple Silicon</td><td>MLX 4-bit</td><td>~40GB</td></tr>
+<tr><td>极致压缩</td><td>Q3_K_M / IQ3_XXS</td><td>~25GB</td></tr>
+<tr><td>领域特化</td><td>蒸馏（7B）+ 量化 4-bit</td><td>~4GB</td></tr>
+</table>
+<p><strong>Blackwell FP4（2025-2026）</strong> 是下一个关键演变。NVIDIA B200 原生支持 FP4，TensorRT-LLM 已适配。NVFP4 KV Cache 可将 KV Cache 显存降低 4 倍——这对于长上下文推理场景是巨大的突破。</p>
+<hr>
+<h2>四、横向分析：竞争图谱</h2>
+<h3>4.1 场景判断</h3>
+<p>模型压缩是充分竞争的市场（场景 C），从量化方法、推理框架到蒸馏方案，每个子方向都有多个成熟选择。</p>
+<h3>4.2 量化方法对比</h3>
+<table>
+<tr><th>方法</th><th>发布时间</th><th>核心原理</th><th>位宽</th><th>质量</th><th>推理速度</th><th>需要校准</th><th>GitHub 生态</th></tr>
+<tr><td>GPTQ</td><td>2022.10</td><td>OBQ + Hessian 二阶优化</td><td>2/3/4/8-bit</td><td>高</td><td>中等</td><td>是 (128 samples)</td><td>6k+ stars</td></tr>
+<tr><td>AWQ</td><td>2023.06</td><td>激活值感知，保护 1% 重要通道</td><td>4-bit</td><td>更高</td><td><strong>最快</strong></td><td>是 (128 samples)</td><td>5k+ stars</td></tr>
+<tr><td>SmoothQuant</td><td>2022.11</td><td>逐通道平滑，激活值 INT8</td><td>8-bit</td><td>高</td><td>快</td><td>否</td><td>通用组件</td></tr>
+<tr><td>GGUF</td><td>2023.03</td><td>逐块 MSE 最小化</td><td>Q2-Q8, IQ</td><td>中-高</td><td>中等</td><td><strong>不需要</strong></td><td>75k+ (llama.cpp)</td></tr>
+<tr><td>NF4</td><td>2023</td><td>正态分布适配 4-bit</td><td>4-bit</td><td>高</td><td>中等</td><td>否</td><td>7k+ (bitsandbytes)</td></tr>
+<tr><td>AQLM</td><td>2024.01</td><td>残差码本量化</td><td><strong>2-bit</strong></td><td>中</td><td>慢</td><td>是</td><td>2k+</td></tr>
+<tr><td>QuIP#</td><td>2024.02</td><td>Lattice trellis coding</td><td><strong>2-bit</strong></td><td>中</td><td>慢</td><td>是</td><td>1k+</td></tr>
+</table>
+<p><strong>关键数据对比</strong>（Llama-2 7B wiki perplexity 越低越好）：</p>
+<table>
+<tr><th>方法</th><th>FP16</th><th>Q8_0</th><th>Q4_K_M</th><th>Q4 (AWQ)</th><th>Q4 (GPTQ)</th><th>Q3_K_M</th><th>Q2_K</th></tr>
+<tr><td>PPL</td><td>5.12</td><td>5.13</td><td>5.24</td><td>~5.20</td><td>~5.25</td><td>5.56</td><td>6.22</td></tr>
+</table>
+<p>GGUF Q4_K_M 的 perplexity 惩罚约 0.12（2.3%），AWQ 约 0.08（1.6%）——对于大多数场景，这个差异人类不可感知。</p>
+<h3>4.3 推理框架量化支持对比</h3>
+<table>
+<tr><th>框架</th><th>支持格式</th><th>最佳场景</th><th>发布时间</th><th>GitHub Stars</th></tr>
+<tr><td>llama.cpp</td><td>GGUF (Q2-Q8, IQ)</td><td>本地/CPU/端侧</td><td>2023.03</td><td>~75k</td></tr>
+<tr><td>vLLM</td><td>AWQ, GPTQ, FP8, INT4, GGUF</td><td><strong>通用高吞吐</strong></td><td>2023.06</td><td>~78k</td></tr>
+<tr><td>TensorRT-LLM</td><td>FP4, FP8, INT8, INT4, AWQ, GPTQ</td><td>NVIDIA 生产环境</td><td>2023.10</td><td>~15k</td></tr>
+<tr><td>SGLang</td><td>AWQ, GPTQ, FP8</td><td>结构化生成</td><td>2024.01</td><td>~15k</td></tr>
+<tr><td>ExLlamaV2</td><td>GPTQ, EXL2</td><td><strong>单 GPU 极速推理</strong></td><td>2023.07</td><td>~6k</td></tr>
+<tr><td>MLX</td><td>4-bit, 8-bit</td><td>Apple Silicon</td><td>2023.12</td><td>~20k</td></tr>
+<tr><td>bitsandbytes</td><td>NF4, FP4, INT8</td><td>PyTorch 训练/推理</td><td>2022.08</td><td>~7k</td></tr>
+</table>
+<p><strong>选型逻辑：</strong></p>
+<ul>
+<li><strong>vLLM</strong>：量化支持最广泛（从 AWQ 到 GGUF 到 bitsandbytes），配合 Marlin 内核在 Ada/Hopper GPU 上吞吐最高。2026 年的通用首选。</li>
+<li><strong>llama.cpp</strong>：本地运行的绝对王者。配合 LM Studio 和 Ollama，"让模型在你的笔记本上跑"的唯一实际方案。</li>
+<li><strong>TensorRT-LLM</strong>：如果你在 NVIDIA 硬件上做大规模生产部署，TensorRT-LLM 的 NVIDIA 内核深度优化无可替代。Blackwell FP4 的唯一支持框架。</li>
+<li><strong>ExLlamaV2</strong>：单 GPU 场景的"隐藏王者"——在 RTX 4090 上跑 70B Q4 的速度可能超过 vLLM。</li>
+</ul>
+<h3>4.4 蒸馏方案对比</h3>
+<table>
+<tr><th>项目</th><th>方法</th><th>学生模型</th><th>学生 MMLU</th><th>学生 MATH</th><th>教师模型</th></tr>
+<tr><td>DeepSeek-R1</td><td>推理链 SFT</td><td>Qwen-32B → Distill</td><td>~72%</td><td>~84%</td><td>R1 671B</td></tr>
+<tr><td>DeepSeek-R1</td><td>推理链 SFT</td><td>Qwen-7B → Distill</td><td>~67%</td><td>~73%</td><td>R1 671B</td></tr>
+<tr><td>Phi-4</td><td>合成数据训练</td><td>14B 从头训练</td><td>~84%</td><td>~82%</td><td>GPT-4 数据</td></tr>
+<tr><td>Phi-3</td><td>合成数据 + 精筛</td><td>3.8B/7B/14B</td><td>~69%</td><td>—</td><td>—</td></tr>
+<tr><td>Gemma 2</td><td>Logit-level 蒸馏</td><td>9B/27B</td><td>~75%</td><td>~58%</td><td>Gemini</td></tr>
+</table>
+<p>DeepSeek-R1 的蒸馏路线被证明是目前最有效的方式——不是因为方法多高明，而是因为<strong>teacher 模型的推理数据质量极高</strong>。这与 Phi 系列的"合成数据"路线形成了有趣的对照：前者强调"怎么生成数据"（用最好的模型），后者强调"怎么筛选数据"（教科书质量）。</p>
+<h3>4.5 量化 vs 蒸馏 vs 剪枝——终极对比</h3>
+<table>
+<tr><th>维度</th><th>量化</th><th>蒸馏</th><th>剪枝</th></tr>
+<tr><td>部署普遍性</td><td>最高（默认配置）</td><td>高（特定领域）</td><td>低</td></tr>
+<tr><td>压缩比</td><td>4x (4-bit) / 2x (8-bit)</td><td>10x+ (70B→7B)</td><td>2x (50% 稀疏)</td></tr>
+<tr><td>精度损失</td><td>极小 (Q4) / 可忽略 (Q8)</td><td>领域相关</td><td>中等-大</td></tr>
+<tr><td>推理加速</td><td>明显（小模型/低比特内核）</td><td>明显（模型更小）</td><td>几乎无（硬件不支持）</td></tr>
+<tr><td>硬件依赖</td><td>低（通用 CPU/GPU）</td><td>无</td><td>高（NVIDIA 2:4 稀疏）</td></tr>
+<tr><td>流程复杂度</td><td>低（即量即用）</td><td>高（需要 teacher + SFT）</td><td>中</td></tr>
+<tr><td>2026 年推荐</td><td>✅ 必做</td><td>✅ 领域特化首选</td><td>❌ 等硬件支持</td></tr>
+</table>
+<h3>4.6 社区生态量级对比</h3>
+<p>本地运行（GGUF + llama.cpp）是 2026 年模型压缩最大的社区生态。75k+ stars 和数千个 GGUF 模型库让它成为个人开发者的首选。</p>
+<p>Hugging Face 生态中，GPTQ 模型数量仍然最多（最大基数），但 AWQ 的增长速度更快（被 vLLM 和 TensorRT-LLM 同时支持的复合效应）。</p>
+<p><strong>一个有趣的竞争格局</strong>：量化框架的竞争不是在"质量"上——几种主流方法的实际质量差异极小，人类几乎无法区分。竞争的核心是：</p>
+<ol>
+<li><strong>生态兼容性</strong>：vLLM 支持越多格式 → 该格式的模型越多 → 开发者选择该格式</li>
+<li><strong>工具链完善度</strong>：GGUF 的统治来自 LM Studio + Ollama + text-gen-webui 的完整体验</li>
+<li><strong>推理速度</strong>：AWQ → Marlin 内核 → vLLM → 高速推理，形成正向循环</li>
+</ol>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 量化的"超预期"成功：为什么它比理论上更好？</h3>
+<p>一个反直觉的事实：4-bit 量化理论上应该丢失大量信息（从 16-bit 降到 4-bit，精度损失 75%），但实际质量损失极小（perplexity 增加不到 3%）——这个"为什么"至今没有圆满的理论解释。</p>
+<p>最被接受的假说是：<strong>LLM 的参数空间存在巨大的冗余。</strong> 训练过程中的随机梯度下降本身引入了大量噪声，模型学会在噪声中保持鲁棒性——量化的"冲击"只是另一种噪声。模型对噪声的宽容度远高于理论估计。</p>
+<p>这个假说的启发性在于：<strong>量化的"甜点"不是由理论精度限制决定的，而是由模型在训练中接触到的噪声水平决定的。</strong> 如果这个假说成立，更大、训练更充分的模型，对量化的容忍度反而更高——而实践恰好证明了这一点（70B 量化到 4-bit 的损失比 7B 小得多）。</p>
+<h3>5.2 蒸馏的"非主流"崛起</h3>
+<p>纵向历史中最有趣的变化是蒸馏的路线变化。2015 年 Hinton 定义的"soft target"蒸馏在 LLM 时代被事实上的"data-level"蒸馏（合成数据 + SFT）取代——不是因为学术界不认可 Hinton 的框架，而是因为在 LLM 规模下：</p>
+<ul>
+<li>Soft target 蒸馏需要 logits 级别的访问——闭源 API 不可能提供</li>
+<li>Data-level 蒸馏只需要模型的输出——任何 API 都能获取</li>
+<li>Data-level 的数据还可以被筛选、增强、去重——质量可能超过原始 teacher</li>
+</ul>
+<p>DeepSeek-R1 的推理链蒸馏，说到底是一种<strong>更高效的模型压缩</strong>：不是压缩参数，而是压缩"能力"——student 模型不需要 671B 参数去理解数学，它只需要记住 teacher 的解题路径。这个思路可能比量化更接近模型压缩的本质：<strong>压缩的不是数字，是知识。</strong></p>
+<h3>5.3 "4-bit 是否够用"的争论已经平息</h3>
+<p>2023-2024 年，社区反复争论 "4-bit 到底够不够用"。到 2026 年，这个争论基本平息了——不是因为 4-bit 被证明无损，而是因为：</p>
+<ol>
+<li>Q4_K_M 和 AWQ 在实际使用中，用户无法可靠地区分与 FP16 的差异</li>
+<li>对于大多数消费级应用（聊天、摘要、翻译），微小的质量损失毫无影响</li>
+<li>对于需要极致质量的场景（代码生成、数学推理），保留 Q5_K_M 或 Q8 作为选项</li>
+</ol>
+<p>争论平息的模式跟"RAG is Dead"争论如出一辙——不是一方赢了，而是行业认识到"不同场景需要不同配置"。4-bit 不是"最好"的，但它是"大多数情况下最合理"的。</p>
+<h3>5.4 "先剪枝再量化"的流水线为什么没成主流</h3>
+<p>理论上最优的压缩流程应该是：先剪枝移除冗余参数，再量化降低剩余参数的精度。但实践中，这条流水线在 LLM 上几乎没有被大规模使用。</p>
+<p>原因在横纵对比中已经清楚：</p>
+<ul>
+<li>剪枝的收益在标准硬件上不兑现（没有速度提升）</li>
+<li>量化本身已经能做到 4x 压缩，边际收益递减</li>
+<li>剪枝 + 量化的质量不一定更好——量化已经在利用参数冗余，剪枝再去掉一部分，两者效果可能叠加而非互补</li>
+</ul>
+<p>"剪枝 → 量化"的流水线可能更适合未来的稀疏计算硬件（如 NVIDIA 2:4 稀疏）——而不是 2026 年的主流 GPU。</p>
+<h3>5.5 三个未来剧本</h3>
+<p><strong>剧本一：FP4 原生硬件终结软件量化时代（概率 45%）</strong></p>
+<p>NVIDIA Blackwell 的 FP4 原生支持改变了游戏规则。如果未来 3-5 年内所有新 GPU 都原生支持 FP4，当前的软件量化方法（GPTQ, AWQ, GGUF）的重要性将大幅下降。"量化"将从软件层的花样变成一个硬件开关。TensorRT-LLM 已经在适配，PyTorch 的 torchao 也在跟进。这个趋势几乎是不可逆的——硬件决定效率上限，软件只能在硬件没跟上时作为权宜之计。</p>
+<p><strong>剧本二：蒸馏 + 小模型取代量化大模型成为主流（概率 35%）</strong></p>
+<p>如果 DeepSeek-R1 的蒸馏路线被证明在更多领域有效，行业可能从"压缩大模型"转向"训练更好的小模型"。蒸馏 7B 模型 + 4-bit 量化 = 4GB，可以在笔记本上跑，特定领域能力接近 70B 的 80-90%。对于很多应用场景，"90% 的能力 + 1/10 的成本"是更好的商业选择。</p>
+<p>这个剧本的变数在于蒸馏的"天花板"——蒸馏模型在通用知识广度上还是不如大模型。但如果未来 2-3 年蒸馏技术能打破这个天花板，整个模型部署的格局将彻底改变。</p>
+<p><strong>剧本三：量化精度和模型规模同步增长，压缩沦为"可选优化"（概率 20%）</strong></p>
+<p>如果模型规模继续增长（万亿参数级别），但硬件能力（显存、带宽、算力）也同步增长——Blackwell B200 的显存已经达到 192GB——对部分用户来说，压缩的必要性可能降低。不是不需要压缩，而是"跑得起"的门槛在降低。</p>
+<p>但即使是这个剧本，量化的部署常规性也不会消失——成本优势不可能被硬件的线性增长抹平。只是压缩的"紧迫性"可能从"不得不做"变成"做了更好"。</p>
+<h3>5.6 第一性原理追问</h3>
+<p>模型压缩的终极问题是：<strong>模型的每个参数都有用吗？</strong></p>
+<p>如果答案是"是"，压缩就是对精度的系统性妥协——我们接受损失来换取效率。</p>
+<p>如果答案是"否"，压缩就是冗余挖掘——我们只是在去掉模型训练中不可避免产生的浪费。</p>
+<p>2026 年的证据指向后者。4-bit 量化几乎无损，SparseGPT 可以移除 50% 的参数而不显著影响质量。DeepSeek-R1-Distill-Qwen-7B 在数学推理上超越 GPT-4o mini——大模型的参数中存储了大量"重复的知识"。</p>
+<p>但这个冗余本身可能不是设计的缺陷，而是<strong>涌现的学习特征</strong>——就像人脑的神经元连接也是过度冗余的，冗余提供了容错性和泛化的基础。完全去掉冗余的模型可能失去"在分布外任务上涌现新能力"的潜力。</p>
+<p>这也意味着<strong>模型压缩的下限不是"精度能到多少"，而是"冗余的下限在哪里"</strong>——这是一个至今没有答案的问题。</p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>核心论文与文章</h3>
+<table>
+<tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
+<tr><td>GPTQ</td><td>arxiv.org/abs/2210.17323</td><td>2026-04-30</td></tr>
+<tr><td>AWQ</td><td>arxiv.org/abs/2306.00978</td><td>2026-04-30</td></tr>
+<tr><td>SmoothQuant</td><td>arxiv.org/abs/2211.10438</td><td>2026-04-30</td></tr>
+<tr><td>SpQR</td><td>arxiv.org/abs/2306.03078</td><td>2026-04-30</td></tr>
+<tr><td>SparseGPT</td><td>arxiv.org/abs/2301.00774</td><td>2026-04-30</td></tr>
+<tr><td>Wanda</td><td>arxiv.org/abs/2306.11695</td><td>2026-04-30</td></tr>
+<tr><td>AQLM</td><td>arxiv.org/abs/2401.06118</td><td>2026-04-30</td></tr>
+<tr><td>QuIP#</td><td>arxiv.org/abs/2402.04396</td><td>2026-04-30</td></tr>
+<tr><td>LLM-QAT</td><td>arxiv.org/abs/2305.17844</td><td>2026-04-30</td></tr>
+<tr><td>Knowledge Distillation (Hinton)</td><td>arxiv.org/abs/1503.02531</td><td>2026-04-30</td></tr>
+<tr><td>Lottery Ticket Hypothesis</td><td>arxiv.org/abs/1803.03635</td><td>2026-04-30</td></tr>
+<tr><td>DeepSeek-R1</td><td>arxiv.org/abs/2501.12948</td><td>2026-04-30</td></tr>
+<tr><td>Phi-1</td><td>arxiv.org/abs/2306.11644</td><td>2026-04-30</td></tr>
+<tr><td>LLM Compression Survey</td><td>arxiv.org/abs/2312.07629</td><td>2026-04-30</td></tr>
+</table>
+<h3>产品与技术来源</h3>
+<table>
+<tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
+<tr><td>llama.cpp GitHub</td><td>github.com/ggerganov/llama.cpp</td><td>2026-04-30</td></tr>
+<tr><td>vLLM 量化文档</td><td>docs.vllm.ai/en/latest/features/quantization.html</td><td>2026-04-30</td></tr>
+<tr><td>TensorRT-LLM 量化文档</td><td>nvidia.github.io/TensorRT-LLM</td><td>2026-04-30</td></tr>
+<tr><td>bitsandbytes 文档</td><td>huggingface.co/docs/bitsandbytes</td><td>2026-04-30</td></tr>
+<tr><td>AutoGPTQ GitHub</td><td>github.com/AutoGPTQ/AutoGPTQ</td><td>2026-04-30</td></tr>
+<tr><td>AutoAWQ GitHub</td><td>github.com/casper-hansen/AutoAWQ</td><td>2026-04-30</td></tr>
+<tr><td>ExLlamaV2 GitHub</td><td>github.com/turboderp/exllamav2</td><td>2026-04-30</td></tr>
+<tr><td>MLX GitHub</td><td>github.com/ml-explore/mlx</td><td>2026-04-30</td></tr>
+<tr><td>AI 模型压缩综述</td><td>arxiv.org/abs/2312.07629</td><td>2026-04-30</td></tr>
+<tr><td>SGLang GitHub</td><td>github.com/sgl-project/sglang</td><td>2026-04-30</td></tr>
+<tr><td>Reddit r/LocalLLaMA</td><td>reddit.com/r/LocalLLaMA</td><td>2026-04-30</td></tr>
+<tr><td>LM Studio 博客</td><td>lmstudio.ai/blog</td><td>2026-04-30</td></tr>
+<tr><td>Hugging Face Transformers 量化文档</td><td>huggingface.co/docs/transformers/quantization</td><td>2026-04-30</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 15 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法，融合语言学历时-共时分析、社会科学纵向-横截面研究设计、以及竞争战略分析的核心思想。</em></p>
+</div>
+</body>
+</html>

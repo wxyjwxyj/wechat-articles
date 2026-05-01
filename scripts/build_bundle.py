@@ -21,6 +21,7 @@ _CST = timezone(timedelta(hours=8))
 
 DB_PATH = Path(__file__).parent.parent / "content.db"
 OUTPUT_PATH = Path(__file__).parent.parent / "bundle_today.json"
+CDP_PROXY = "http://localhost:3456"
 
 
 def _published_date_cst(item: dict) -> str:
@@ -94,6 +95,55 @@ def _is_wechat_source(s: dict) -> bool:
     return bool(cfg.get("is_wechat"))
 
 
+def _fill_wechat_summaries(items: list[dict], item_repo) -> None:
+    """对摘要为空（digest 缺失）的微信文章，用 CDP 抓正文前几句填入 summary。"""
+    import requests, re
+    targets = [i for i in items if i.get("source_type") == "wechat" and i.get("id") and not i.get("summary")]
+    if not targets:
+        return
+    logger.info("用 CDP 补充微信摘要（共 %d 篇）...", len(targets))
+    # 从 CDP 获取可用的微信管理页 target
+    try:
+        resp = requests.get(f"{CDP_PROXY}/targets", timeout=10)
+        wechat_targets = [t for t in resp.json() if "mp.weixin.qq.com" in t.get("url", "")]
+        if not wechat_targets:
+            logger.warning("CDP 无微信管理页，跳过摘要补充")
+            return
+        target_id = wechat_targets[0]["targetId"]
+    except Exception as e:
+        logger.warning("CDP 连接失败（%s），跳过摘要补充", e)
+        return
+
+    ok = 0
+    for item in targets:
+        url = item.get("url", "")
+        if not url:
+            continue
+        js = f'''(() => {{
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '{url}', false);
+            xhr.send();
+            var h = xhr.responseText;
+            if (!h || h.length < 500) return '';
+            var m = h.match(/id="js_content"[^>]*>([\\s\\S]*?)<\\/div>/);
+            if (!m) return '';
+            var t = m[1].replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim();
+            return t.substring(0, 200);
+        }})()'''
+        try:
+            resp = requests.post(f"{CDP_PROXY}/eval?target={target_id}", data=js, timeout=15)
+            summary = resp.json().get("value", "")
+            if summary and len(summary) > 20:
+                item["summary"] = summary
+                item_repo.update_item_summary(item["id"], summary)
+                ok += 1
+            else:
+                logger.debug("摘要提取失败: id=%s %s", item["id"], item["title"][:30])
+        except Exception as e:
+            logger.debug("CDP 提取异常（%s）: id=%s", e, item["id"])
+    logger.info("摘要补充完成（成功 %d / 共 %d 篇）", ok, len(targets))
+
+
 def _tag_items(items: list[dict]) -> None:
     """为 items 打标签，优先用 Claude，失败时降级到关键词匹配。"""
     logger.info("使用 Claude 打标签（共 %d 篇）...", len(items))
@@ -151,6 +201,9 @@ def main() -> None:
         logger.info("微信公众号日期过滤：移除 %d 条非采集日文章（采集日=%s）", filtered, today)
 
     items = dedupe_items(raw_items)
+
+    # 补充微信空摘要（正文前几句 -> summary，避免评分扣分）
+    _fill_wechat_summaries(items, item_repo)
 
     # 打标签（Claude 优先，降级到关键词匹配）
     _tag_items(items)

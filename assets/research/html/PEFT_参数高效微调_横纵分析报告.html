@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>PEFT / 参数高效微调横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>PEFT / 参数高效微调横纵分析报告</h1>
+<blockquote>从 Adapter 到 LoRA 到 QLoRA，从"加补丁"到"低秩分解"到"单卡 65B"，大模型微调如何在成本和质量之间找到第三条路。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>PEFT（Parameter-Efficient Fine-Tuning，参数高效微调）是<strong>在冻结预训练模型绝大部分参数的前提下，通过训练少量新增参数来完成下游任务适配的方法集合</strong>。它的核心矛盾是：全量微调一个千亿参数模型的成本高到只有大公司能承受，但每个应用场景都需要专属适配——PEFT 让"一人一模型"从幻想变成了现实。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解 LoRA 和 QLoRA 的工作原理（低秩分解 + 量化），能在全量微调、LoRA 微调和直接 prompt 三者之间根据预算和精度需求做出正确选型。</blockquote>
+<hr>
+<h2>二、技术背景</h2>
+<h3>核心矛盾：模型增长快于硬件增长</h3>
+<p>模型的规模在过去 6 年增长了 10000 倍（BERT 110M → 2026 年万亿参数模型），但单 GPU 显存只增长了 4-8 倍（16GB → 80GB-192GB）。由此，全量微调的入场门槛越来越高：</p>
+<ul>
+<li>GPT-3 175B 全量微调需要数百块 GPU 运行数周，成本数十万美元</li>
+<li>每个任务需要存储 350GB 的完整模型副本——部署 10 个任务就是 3.5TB</li>
+<li>灾难性遗忘：在新任务上微调后，模型可能会忘记旧任务的能力</li>
+</ul>
+<p>PEFT 的核心假设很简单：<strong>预训练模型已经学到了足够丰富的知识，下游适配只需要对知识进行"微调"而非"重学"。</strong> 如果"调整"这个动作本身可以用低维空间表示，那就不需要更新全部参数。</p>
+<blockquote>前置知识请参考独立文档 <a href="../markdown/PEFT_前置知识.md">《PEFT_前置知识》</a>，涵盖 LoRA、QLoRA、Adapter、Prefix Tuning 等基础概念的通俗讲解。</blockquote>
+<hr>
+<blockquote><strong>📚 关联报告</strong></blockquote>
+<blockquote>- <a href="../markdown/./LLM大模型_横纵分析报告.md">LLM 基础大模型</a> — PEFT 是微调基础模型的主流方法，让"一人一模型"成为可能</blockquote>
+<blockquote>- <a href="../markdown/./模型压缩_横纵分析报告.md">模型压缩</a> — PEFT 和模型压缩共享"效率优先"的目标，LoRA 经常与量化叠加使用</blockquote>
+<blockquote>- <a href="../markdown/./Post-training_RL训练基础设施_横纵分析报告.md">Post-training RL 训练基础设施</a> — RL 训练阶段常结合 LoRA 等 PEFT 方法降低训练成本</blockquote>
+<h2>三、纵向分析：从 Adapter 到 LoRA 统治</h2>
+<h3>3.1 前 LoRA 时代：Adapters 和 Prompt Tuning 的探索（2019-2021）</h3>
+<p>LoRA 出现之前，PEFT 领域有两条独立的技术线在发展。</p>
+<p><strong>Adapter 系列（2019-2020）</strong>：Neil Houlsby 和 Google 团队在 2019 年 2 月提出 Houlsby Adapter（arXiv:1902.00751）——在 Transformer 每一层的 self-attention 和 FFN 之后插入 bottleneck 适配器（降维→非线性→升维）。在 BERT base 上，只训练 3.6% 的参数就能达到全量微调 99.6% 的性能。</p>
+<p>Adapter 的开创性在于它首次证明了"冻结主体、只训补丁"的可行性。但它有一个根本局限：推理时必须串行通过 adapter 模块，引入额外计算延迟。这对于延迟敏感的生产环境是个硬伤。</p>
+<p>后续的 AdapterFusion（2020.05）和 AdapterDrop（2020.10）分别在多任务组合和动态效率上做了改进，但没有解决核心的"延迟问题"。</p>
+<p><strong>Prefix/Prompt Tuning 系列（2021）</strong> 走了另一条路——不在模型中插入新模块，而是在输入或 hidden state 前加"可学习的虚拟 token"。</p>
+<p>Prefix Tuning（Li & Liang, 2021.01, arXiv:2101.00190, ACL 2021）在 Transformer 每一层的 hidden states 前拼接可学习向量，只有 0.1% 参数。Prompt Tuning（Lester et al., 2021.04, arXiv:2104.08691, EMNLP 2021）进一步简化——只在输入层加 soft prompt。后者的关键发现是：<strong>模型越大，prompt tuning 越接近全量微调</strong>——T5 XXL（11B）上完全匹配。</p>
+<p>P-Tuning v2（Xiao Liu, 清华, 2021.10, arXiv:2110.07602, ACL 2022）把"深层 prompt"的思路推向成熟，在每一层都加入 prompt token，解决了 prompt tuning 在小模型和序列标注任务上的不足。</p>
+<p>这个阶段的本质是：<strong>三种路线都在探索同一个问题——"怎么在最少打扰原始模型的情况下完成适配"。</strong> 但答案都不完美——Adapter 有延迟成本，Prompt Tuning 有场景局限，而即将登场的 LoRA 找到了一条两者兼顾的路。</p>
+<h3>3.2 LoRA 的诞生与统治（2021-2022）</h3>
+<p><strong>LoRA（Low-Rank Adaptation，2021.06, arXiv:2106.09685, ICLR 2022）</strong> 由 Edward Hu 和 Microsoft 团队提出。它的核心洞察极其简洁：<strong>模型微调时权重的变化量 ΔW 是低秩的</strong>——不需要用一个大矩阵来表示"调整了多少"，两个小矩阵的乘积就足够了。</p>
+<pre><code>h = W₀x + BAx<br><br>W₀: 冻结的原始权重（4096×4096）<br>B:  小矩阵（4096×r）<br>A:  小矩阵（r×4096）<br>r:  秩，远小于 4096</code></pre>
+<p>用直观的方式理解：4096×4096 = 16,777,216 个参数，而 4096×16 + 16×4096 = 131,072 个参数——训练参数减少了 128 倍。</p>
+<p>LoRA 在与当时两种主流方法的对比中展现出了压倒性优势：</p>
+<table>
+<tr><th></th><th>Adapter</th><th>Prefix Tuning</th><th>LoRA</th></tr>
+<tr><td>推理延迟</td><td>有（串行模块）</td><td>无</td><td><strong>无</strong>（可合并）</td></tr>
+<tr><td>训练参数</td><td>3.6%</td><td>0.1%</td><td>0.01-1%</td></tr>
+<tr><td>效果</td><td>高</td><td>中（因任务而异）</td><td>高</td></tr>
+<tr><td>与量化兼容</td><td>有限</td><td>有限</td><td>✅</td></tr>
+</table>
+<p>没有推理延迟是 LoRA 击败 Adapter 的关键——Adapters 的技术质量不差，但行业不会为"效果差不多但慢一截"的方案买单。<strong>低秩分解不增加推理路径</strong>——训练完后 BA 可以被合并回 W₀，推理时 W' = W₀ + BA 跟 W₀ 的维度完全一样。</p>
+<p>到了 ICLR 2022 发表时，LoRA 已经被社区广泛采用，并开始扩散到 NLP 之外（Stable Diffusion LoRA, 2022.12，成为图像生成领域最流行的概念训练方法之一）。</p>
+<h3>3.3 QLoRA：PEFT 的"桌面化"时刻（2023）</h3>
+<p><strong>QLoRA（2023.05, arXiv:2305.14314, NeurIPS 2023）</strong> 是 Tim Dettmers（bitsandbytes 作者）的作品。它把 PEFT 的普及推到了一个新的水平——不仅是"参数高效"，还是"硬件高效"。</p>
+<p>QLoRA 没有发明新的 PEFT 方法，而是把三个已有技术组合在一起：</p>
+<ol>
+<li><strong>NF4（4-bit NormalFloat）</strong>——信息论上对正态分布权重最优的 4-bit 数据类型</li>
+<li><strong>双重量化（Double Quantization）</strong>——对量化常数再做一次量化</li>
+<li><strong>分页优化器（Paged Optimizers）</strong>——利用 CPU 内存处理显存峰值</li>
+</ol>
+<p>结果：65B 模型在单块 48GB GPU 上微调 24 小时，达到 ChatGPT 99.3% 的性能。在此之前，微调 65B 模型需要 8 块 A100。</p>
+<p>QLoRA 的核心影响不是技术上的（三个组件都是已有的），而是<strong>经济上的</strong>——它把"微调大模型"这件事的硬件门槛从"8 块 A100"降到了"1 块 A100"，对于个人开发者和中小企业来说，这是从"不可能"到"在预算内"的跨越。</p>
+<h3>3.4 百花齐放：DoRA、VeRA 与模型合并（2024-2026）</h3>
+<p>QLoRA 之后，PEFT 领域的创新从"新的 PEFT 方法"转向"更好的 LoRA 变体"和"模型合并"两个方向。</p>
+<p><strong>DoRA（2024.02, arXiv:2402.09353, ICML 2024 Oral）</strong> 来自 NVIDIA 团队，将预训练权重分解为<strong>大小（magnitude）和方向（direction）</strong>两个分量。方向用 LoRA 更新，大小用可学习向量更新。实验结果持续优于 LoRA，缩小了与全量微调的差距。</p>
+<p>DoRA 的直觉很优雅：权重矩阵的本质作用不只是"幅度"（放缩输入），更是"方向"（决定输入在特征空间中的移动方向）。LoRA 同时改变两者，但方向信息可能比幅度信息更重要。分解后，更新可以更有针对性。</p>
+<p><strong>VeRA（2023.10, arXiv:2310.11454, ICLR 2024）</strong> 走向了极端轻量：所有层共享一对随机初始化的冻结低秩矩阵，只学习每层的缩放向量。参数量比 LoRA 减少约 100 倍。</p>
+<p><strong>模型合并（Model Merging）</strong> 是 2023-2026 年这个领域中一个有趣的方向——不训练模型，而是合并已有的微调参数。</p>
+<ul>
+<li>TIES-Merging（2023.06, arXiv:2306.01708, NeurIPS 2023）：三步法——修剪冲突量、解决符号冲突、只合并一致的参数</li>
+<li>DARE（2023.11, arXiv:2311.03099, ICML 2024）：发现 SFT 的权重更新极度冗余——随机丢弃 99% 的 delta 参数仍可恢复原能力</li>
+<li>2025-2026 的 LoRA 合并：多个 LoRA adapter 的组合使用而非单一 adapter</li>
+</ul>
+<h3>3.5 Hugging Face PEFT 库：生态的整合（2023-2026）</h3>
+<p>Hugging Face PEFT 库（2022.11 发布）对 PEFT 领域的影响怎么强调都不过分。它统一了 40+ 种 PEFT 方法的编程接口——<code>LoraConfig</code> + <code>get_peft_model()</code> + <code>PeftModel</code>——让开发者用 5 行代码就能完成 LoRA 微调。</p>
+<p>到 2026 年 4 月的 v0.19.1 版本，PEFT 库支持的方法从最初的 5-6 种增长到了 40+ 种：</p>
+<ul>
+<li><strong>LoRA 系列</strong>：LoRA, QLoRA, DoRA, PiSSA, AdaLoRA, LoRA-FA, LoRA-XS, VeRA, OLoRA 等</li>
+<li><strong>高级变体</strong>：RoAd（混合批处理）、ALoRA（选择性激活）、SHiRA（稀疏高秩）等</li>
+<li><strong>Prompt/Prefix</strong>：Prompt Tuning, P-Tuning, Prefix Tuning</li>
+</ul>
+<p>PEFT 库的版本演进本身就是 PEFT 领域创新的晴雨表——每几个月新增数种方法，说明这个方向仍然非常活跃。</p>
+<hr>
+<h2>四、横向分析：竞争图谱</h2>
+<h3>4.1 场景判断</h3>
+<p>PEFT 领域竞品充分（场景 C），但竞争格局已经收敛——LoRA 是事实标准，其他方法在其子方向竞争。</p>
+<h3>4.2 PEFT 方法对比</h3>
+<table>
+<tr><th>方法</th><th>发布时间</th><th>训练参数</th><th>推理延迟</th><th>效果</th><th>适用场景</th></tr>
+<tr><td>LoRA</td><td>2021.06</td><td>0.01-1%</td><td><strong>无</strong></td><td>高</td><td><strong>通用标准，首选</strong></td></tr>
+<tr><td>QLoRA</td><td>2023.05</td><td>0.01-1%</td><td>无</td><td>高-极高</td><td><strong>显存受限场景</strong></td></tr>
+<tr><td>DoRA</td><td>2024.02</td><td>0.01-1%</td><td>无</td><td><strong>极高</strong></td><td>追求极致质量</td></tr>
+<tr><td>Adapter</td><td>2019.02</td><td>3.6%</td><td>有</td><td>高</td><td>历史参考</td></tr>
+<tr><td>Prefix Tuning</td><td>2021.01</td><td>0.1%</td><td>无</td><td>中</td><td>生成任务</td></tr>
+<tr><td>Prompt Tuning</td><td>2021.04</td><td>0.01%</td><td>无</td><td>中-高</td><td>大模型（模型越大越好）</td></tr>
+<tr><td>P-Tuning v2</td><td>2021.10</td><td>0.1-3%</td><td>无</td><td>高</td><td>NLU 任务</td></tr>
+<tr><td>VeRA</td><td>2023.10</td><td><strong>0.0001%</strong></td><td>无</td><td>中高</td><td>极致参数效率</td></tr>
+<tr><td>IA3</td><td>2022.05</td><td>0.01%</td><td>无</td><td>中</td><td>最轻量</td></tr>
+</table>
+<p><strong>关键结论：</strong></p>
+<ol>
+<li><strong>LoRA 是 2026 年的通用标准</strong>——原因不是它效果最好（DoRA 在某些任务上更好），而是它"效果好 + 无延迟 + 生态最全"的综合得分最高。</li>
+<li><strong>QLoRA 是显存受限场景的唯一选择</strong>——当你在消费级 GPU 上微调时，从 LoRA 换到 QLoRA 可以省 50-75% 显存。</li>
+<li><strong>Adapter 已被 LoRA 取代</strong>——推理延迟是硬伤。</li>
+<li><strong>Prompt Tuning "模型越大越好"的发现</strong>影响了后来的许多工作，但本身没有被广泛采用。</li>
+</ol>
+<h3>4.3 训练框架对比</h3>
+<table>
+<tr><th>框架</th><th>发布时间</th><th>核心优势</th><th>显存优化</th><th>GitHub Stars</th></tr>
+<tr><td><strong>HF PEFT</strong></td><td>2022.11</td><td>统一 API，40+ 方法</td><td>通用</td><td><strong>21k</strong></td></tr>
+<tr><td><strong>Unsloth</strong></td><td>2023.11</td><td><strong>2x 速度，70% 显存节省</strong></td><td>极高</td><td><strong>63k</strong></td></tr>
+<tr><td>Axolotl</td><td>2023.04</td><td>生产级端到端工作流</td><td>高</td><td>12k</td></tr>
+<tr><td>LitGPT</td><td>2023.05</td><td>可读性好，实现透明</td><td>高</td><td>13k</td></tr>
+<tr><td>DeepSpeed</td><td>2021</td><td>大规模分布式</td><td>ZeRO 系列</td><td>37k</td></tr>
+<tr><td>LoRAX</td><td>2023</td><td>多 LoRA 并发推理</td><td>推理侧</td><td>4k</td></tr>
+</table>
+<p><strong>Unsloth</strong> 是 2025-2026 年增长速度最快的 PEFT 训练框架（63k stars）。它的核心卖点是自定义 Triton 内核——通过 Padding Free 和 Packing 等技术，在 FFT/LoRA/QLoRA 上训练速度提升 2x，显存节省 70%。对于个人开发者而言，Unsloth 正在取代 Hugging Face PEFT 的"默认选择"地位。</p>
+<p><strong>Hugging Face PEFT</strong> 仍然是生态最全的选择——不是最快的，但支持的模型和方法最多（40+ 方法、几乎所有主流模型架构）。</p>
+<p><strong>Axolotl</strong> 是生产级的选择——单 YAML 配置全流程，支持多模态训练、强化学习微调（DPO/GRPO）、ND 并行等企业级特性。</p>
+<h3>4.4 LoRA 推理/服务化框架对比</h3>
+<table>
+<tr><th>框架</th><th>核心能力</th><th>多 Adapter 支持</th><th>最佳场景</th></tr>
+<tr><td><strong>vLLM</strong></td><td>通用推理引擎</td><td>支持动态加载/卸载</td><td>生产级 LoRA 服务</td></tr>
+<tr><td><strong>LoRAX</strong></td><td>专为 LoRA 设计</td><td><strong>数千个</strong></td><td>多租户 LoRA 服务</td></tr>
+<tr><td><strong>PEFT merge</strong></td><td>简单合并</td><td>合并后不可热切换</td><td>单一任务部署</td></tr>
+</table>
+<p>微调和推理的框架选择是分离的：你用 Unsloth/HF PEFT 训练 LoRA adapter，然后可以用 vLLM/LoRAX 提供服务。训练完的 LoRA 权重可以合并回原模型（<code>merge_and_unload()</code>），此时推理速度与原始模型完全相同。</p>
+<h3>4.5 显存需求对比</h3>
+<table>
+<tr><th>模型</th><th>全量微调</th><th>LoRA</th><th>QLoRA</th><th>推荐 GPU</th></tr>
+<tr><td>7B</td><td>80GB+</td><td>24GB</td><td>12GB</td><td>RTX 3090/4090</td></tr>
+<tr><td>13B</td><td>160GB+</td><td>40GB</td><td>16GB</td><td>A5000 / 双卡 3090</td></tr>
+<tr><td>33B</td><td>320GB+</td><td>—</td><td><strong>24GB</strong></td><td>RTX 4090</td></tr>
+<tr><td>65B</td><td>640GB+</td><td>—</td><td><strong>48GB</strong></td><td>A100 48GB</td></tr>
+</table>
+<p>QLoRA 将 65B 模型的微调门槛降到了单块 A100。这是 PEFT 最大的实际价值。</p>
+<h3>4.6 训练框架速度对比（7B LoRA）</h3>
+<table>
+<tr><th>框架</th><th>相对速度</th><th>显存占用</th></tr>
+<tr><td>全量微调（基线）</td><td>1x</td><td>~80GB</td></tr>
+<tr><td>HF PEFT (LoRA)</td><td>1.2x</td><td>~24GB</td></tr>
+<tr><td>Unsloth</td><td><strong>2.4x</strong></td><td>~12GB</td></tr>
+<tr><td>Axolotl</td><td>1.5x</td><td>~24GB</td></tr>
+</table>
+<h3>4.7 社区口碑与用户评价</h3>
+<p><strong>Reddit r/LocalLLaMA 上的共识（2026）：</strong></p>
+<ul>
+<li>"Unsloth 在消费级 GPU 上微调 LLM 体验最好"——训练速度快、显存占用低。</li>
+<li>"QLoRA 是单卡微调的默认选择。LoRA 只有在你显存够的时候才用——效果差不太多，但 QLoRA 便宜得多。"</li>
+<li>"LoRA r=16 + target_modules=all-linear 是保险配置，90% 的场景都够用。"</li>
+<li>"数据量 < 1k 条时 LoRA 可能比全量微调更好——因为参数少，正则化效果更强，不容易过拟合。数据量 > 10k 时，全量微调有微弱优势。"</li>
+</ul>
+<p><strong>微调 vs RAG 的社区共识</strong>：</p>
+<ul>
+<li>微调改变"行为"（格式、风格、语调建模）</li>
+<li>RAG 提供"知识"（事实、最新信息）</li>
+<li>两者各司其职，实践中常组合使用</li>
+</ul>
+<p><strong>对大公司使用 PEFT 的观察</strong>：</p>
+<ul>
+<li>OpenAI/Anthropic 提供 Fine-tuning API，但他们自己不做 PEFT（做全量微调的预训练）</li>
+<li>Meta 推荐 LoRA/QLoRA 作为微调入门的官方选择</li>
+<li>Google 的 Vertex AI 支持 LoRA</li>
+</ul>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 LoRA 的"低秩假设"为什么成立？三个可能的原因</h3>
+<p>LoRA 有效的前提是"微调权重更新是低秩的"——这个假设在 2021 年提出时是被猜测的，到 2026 年我们有了三个可能的解释：</p>
+<p><strong>1. 预训练模型已经学到了足够的特征空间</strong>——下游任务只是在已有的特征空间中"微调"权重分配，不需要开辟全新的特征方向。因此更新量在特征空间中沿着几个主要方向进行，不需要高秩。</p>
+<p><strong>2. 下游任务的数据量远小于预训练数据</strong>——微调数据通常是几千到几万条，而预训练数据是数万亿 token。用少量数据做大的权重更新容易过拟合，低秩约束本身是一种正则化。</p>
+<p><strong>3. DARE 论文的间接证据</strong>——DARE 发现随机丢弃 99% 的微调 delta 参数，模型仍能恢复原能力。这说明微调产生的调整高度冗余，用一个低秩矩阵表示就足够了。</p>
+<h3>5.2 Adapter 被 LoRA 击败的真正原因</h3>
+<p>横向对比中，Adapter 在效果上不输 LoRA，但它"输"在了技术上不该被竞争的地方——<strong>推理延迟</strong>。</p>
+<p>这是一个重要的行业规律：<strong>在 LLM 领域，不能因为"训练时好"而牺牲"推理时"——推理调用次数是训练的上万倍，任何可感知的延迟增加都会被放大一万倍。</strong></p>
+<p>LoRA 的 genius 不是它比 Adapter 效果更好——在某些任务上甚至略有不如——而是它在推理时零开销。Merge-and-load 是 LoRA 最被低估的设计决策。</p>
+<h3>5.3 QLoRA 的"组合式创新"成功说明了什么</h3>
+<p>QLoRA 没有发明任何全新的技术。NF4 是 bitsandbytes 的已有工作，双重量化是信息论的经典思路，分页优化器是操作系统的基础概念。QLoRA 的贡献在于<strong>组合的时机和方式恰好命中了需求</strong>。</p>
+<p>它的成功说明了一个规律：<strong>LLM 时代的创新很多时候不是"找到新答案"，而是"在正确的时间把已有的答案组装起来解决一个紧迫的问题"。</strong></p>
+<p>全量微调 65B 的成本高到只有大公司能承受——这个"紧迫问题"在 2023 年达到了临界点。QLoRA 不是最佳的技术方案（如果是，QLoRA 之后的 DoRA 就不会有更好的效果），但它是第一个在"单卡 A100 微调 65B"这个用户故事上成立的方案。</p>
+<h3>5.4 PEFT 的"终局"在哪里</h3>
+<p>从 2019 到 2026，PEFT 的创新节奏从一个极端走向另一个：</p>
+<pre><code>Houlsby Adapter (2019):  3.6% 参数<br>Prefix Tuning (2021):    0.1% 参数<br>LoRA (2021):             0.01-1% 参数<br>VeRA (2023):             0.0001% 参数</code></pre>
+<p>创新在逐渐走向"参数最少"的极致——但参数最少不等于最好。LoRA 用 0.1% 的参数做到了 95-99% 的全量微调质量，VeRA 用 0.0001% 做到了 90-95%。</p>
+<p>PEFT 的终极问题是：<strong>如果适配只需要 0.0001% 的参数，那微调本身是不是在朝着"不需要"的方向演进？</strong></p>
+<p>几个趋势指向了这个方向：</p>
+<ul>
+<li><strong>模型合并</strong>（DARE/TIES）：不训练模型就能组合能力</li>
+<li><strong>Long CoT</strong>（o1/R1）：模型在推理层面做"自适应"，可能减少对微调的依赖</li>
+<li><strong>Context Engineering</strong>（2025-2026）：通过 prompt 设计而非模型修改来完成适配</li>
+</ul>
+<h3>5.5 三个未来剧本</h3>
+<p><strong>剧本一：LoRA 继续统治，QLoRA 普及到端侧（概率 60%）</strong></p>
+<p>LoRA 保持 PEFT 事实标准地位。随着硬件能力增长（Blackwell B200 192GB 显存），更多场景可以直接跑 LoRA 而非 QLoRA。QLoRA 向端侧迁移——手机、笔记本上的个人化模型通过 QLoRA 完成适配。Unsloth 类优化框架进一步降低训练门槛，"点击即微调"成为可能。</p>
+<p><strong>剧本二：模型合并和提示工程侵蚀 PEFT 领地（概率 25%）</strong></p>
+<p>如果模型合并（DARE/TIES）的效果继续提升——用"选 adapter → 合并"代替"训练 adapter"——PEFT 的使用场景可能被侵蚀。结合 Context Engineering 的发展，"写 prompt + 选工具"可能替代大多数需要微调的场景。</p>
+<p>但即使在这条剧本中，PEFT 也不会消失——它从"常规操作"退为"极致优化手段"。需要深度领域适配（医疗、法律）的场景仍然需要它。</p>
+<p><strong>剧本三：全量微调成本大幅降低，PEFT 退居"快速实验"角色（概率 15%）</strong></p>
+<p>如果推理成本的下降速度继续快于模型规模的增速（2023-2026 年推理成本下降了约 80%），加上更高效的分布式训练方案，未来可能全量微调 70B 模型的成本降低到跟今天 LoRA 微调一样。此时 PEFT 的"省钱"优势削弱，退居到"快速实验"和"原型验证"角色。</p>
+<h3>5.6 第一性原理追问</h3>
+<p>PEFT 的终极问题是：<strong>训练全部参数是否真的有必要？</strong></p>
+<p>LoRA 的答案是"没有必要"——权重更新是低秩的。</p>
+<p>VeRA 的答案是"几乎不需要"——共享的随机矩阵 + 缩放向量就够了。</p>
+<p>DARE 的答案是"99% 的更新都可以扔掉"。</p>
+<p>这些答案指向一个共同的结论：<strong>全量微调在做大量的"无效劳动"</strong>——超过 99% 的参数量在做冗余调整。如果这个判断成立，那么全量微调的"成本合理性"本身就是需要被追问的。</p>
+<p>但"微调是低秩的"不一定意味着"预训练也是低秩的"。<strong>理解"学习"和"适配"的本质区别</strong>，可能是理解大模型能力来源的关键——前者（预训练）确实需要大量参数来捕获世界知识的复杂性，后者（微调）只是在已有的知识结构中做细微调整。这两个过程的"信息密度"不同，所需要的参数规模也不同。</p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>核心论文与文章</h3>
+<table>
+<tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
+<tr><td>Houlsby Adapter</td><td>arxiv.org/abs/1902.00751</td><td>2026-04-30</td></tr>
+<tr><td>AdapterFusion</td><td>arxiv.org/abs/2005.00247</td><td>2026-04-30</td></tr>
+<tr><td>Prefix Tuning</td><td>arxiv.org/abs/2101.00190</td><td>2026-04-30</td></tr>
+<tr><td>P-Tuning v1</td><td>arxiv.org/abs/2103.10385</td><td>2026-04-30</td></tr>
+<tr><td>Prompt Tuning</td><td>arxiv.org/abs/2104.08691</td><td>2026-04-30</td></tr>
+<tr><td>LoRA</td><td>arxiv.org/abs/2106.09685</td><td>2026-04-30</td></tr>
+<tr><td>P-Tuning v2</td><td>arxiv.org/abs/2110.07602</td><td>2026-04-30</td></tr>
+<tr><td>IA3</td><td>arxiv.org/abs/2205.05638</td><td>2026-04-30</td></tr>
+<tr><td>QLoRA</td><td>arxiv.org/abs/2305.14314</td><td>2026-04-30</td></tr>
+<tr><td>TIES-Merging</td><td>arxiv.org/abs/2306.01708</td><td>2026-04-30</td></tr>
+<tr><td>LoRA-FA</td><td>arxiv.org/abs/2308.03303</td><td>2026-04-30</td></tr>
+<tr><td>VeRA</td><td>arxiv.org/abs/2310.11454</td><td>2026-04-30</td></tr>
+<tr><td>DARE</td><td>arxiv.org/abs/2311.03099</td><td>2026-04-30</td></tr>
+<tr><td>DoRA</td><td>arxiv.org/abs/2402.09353</td><td>2026-04-30</td></tr>
+<tr><td>LoRA-XS</td><td>arxiv.org/abs/2405.17604</td><td>2026-04-30</td></tr>
+<tr><td>PEFT Survey</td><td>arxiv.org/abs/2403.14608</td><td>2026-04-30</td></tr>
+</table>
+<h3>产品与技术来源</h3>
+<table>
+<tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
+<tr><td>Hugging Face PEFT GitHub</td><td>github.com/huggingface/peft</td><td>2026-04-30</td></tr>
+<tr><td>Unsloth GitHub</td><td>github.com/unslothai/unsloth</td><td>2026-04-30</td></tr>
+<tr><td>Axolotl GitHub</td><td>github.com/axolotl-ai-cloud/axolotl</td><td>2026-04-30</td></tr>
+<tr><td>LitGPT GitHub</td><td>github.com/Lightning-AI/litgpt</td><td>2026-04-30</td></tr>
+<tr><td>vLLM GitHub</td><td>github.com/vllm-project/vllm</td><td>2026-04-30</td></tr>
+<tr><td>LoRAX GitHub</td><td>github.com/predibase/lorax</td><td>2026-04-30</td></tr>
+<tr><td>DeepSpeed GitHub</td><td>github.com/microsoft/DeepSpeed</td><td>2026-04-30</td></tr>
+<tr><td>Reddit r/LocalLLaMA</td><td>reddit.com/r/LocalLLaMA</td><td>2026-04-30</td></tr>
+<tr><td>Hugging Face PEFT 文档</td><td>huggingface.co/docs/peft</td><td>2026-04-30</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 16 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法，融合语言学历时-共时分析、社会科学纵向-横截面研究设计、以及竞争战略分析的核心思想。</em></p>
+</div>
+</body>
+</html>

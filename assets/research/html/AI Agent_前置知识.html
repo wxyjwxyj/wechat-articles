@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>AI Agent 前置知识：从零开始理解智能体</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>AI Agent 前置知识：从零开始理解智能体</h1>
+<blockquote>这份文档是为完全零基础的读者准备的。如果你已经熟悉 AI Agent 的基本概念，可以直接翻阅主报告。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：判断一个场景该不该引入 Agent，能画出 Agent 的四件套架构（LLM → 工具调用 → 记忆 → 自主循环），并解释每层解决什么问题。</blockquote>
+<hr>
+<h2>一、Agent 到底是什么？用一句话说清楚</h2>
+<p><strong>Agent = 大模型 + 工具 + 记忆 + 自主行动。</strong></p>
+<p>传统的大模型（如 ChatGPT）是你问一句它答一句——你是那个主动方，它是被动的回答机。Agent 不一样，你给它一个目标（"帮我订一张下周去东京的机票"），它会自己规划步骤、调用工具查询航班、对比价格、确认行程，甚至主动问你几个关键问题，最终把事情办完。</p>
+<p>打个比方：ChatGPT 是你的百科词典，Agent 是你的私人助理。</p>
+<h3>SOAR——历史上第一个 Agent 架构</h3>
+<p>AI Agent 不是 2023 年才有的概念。1983 年，卡内基梅隆大学的 John Laird 等人创建了 <strong>SOAR（State, Operator And Result）</strong>——历史上第一个可计算的通用智能体架构。SOAR 的核心思想是"在状态空间中搜索，不断选择操作、观察结果、再选下一步"，这个模式跟今天 Agent 的"思考→行动→观察"循环本质上是同构的。区别在于：SOAR 的操作（Operator）需要人手工编写规则，今天 Agent 的"操作"由大模型动态生成。</p>
+<h3>Symbolic AI（符号 AI）——为什么早期 Agent 没做成</h3>
+<p>1983-2010 年代的 Agent 基于 <strong>Symbolic AI</strong>——用人类手写的逻辑规则来表示知识。比如你写"如果温度低于 20 度，就开暖气"。这种方法的问题很明显：真实世界太复杂了，你没法把所有情况都写成规则。一个搬箱子机器人在模拟环境里完美运行，放到仓库里就会被阴影、灯光变化搞崩溃。Symbolic AI 的瓶颈不是规划算法，而是<strong>感知和理解真实世界的能力</strong>。直到 LLM 出现，Agent 才有了真正"理解世界"的引擎。</p>
+<hr>
+<h2>二、LLM 和 Agent 有什么区别？</h2>
+<table>
+<tr><th>维度</th><th>普通 LLM（大模型）</th><th>Agent（智能体）</th></tr>
+<tr><td>主动性</td><td>被动回答，你问它答</td><td>主动规划，自主行动</td></tr>
+<tr><td>工具使用</td><td>不能（只能输出文字）</td><td>能调用 API、查数据库、操作网页</td></tr>
+<tr><td>记忆</td><td>会话内记忆（对话上下文）</td><td>有长期记忆，能记住之前的偏好和决定</td></tr>
+<tr><td>任务形式</td><td>单轮问答</td><td>多步任务，需要自己拆解步骤</td></tr>
+<tr><td>典型例子</td><td>你问"巴黎天气如何"，它回答</td><td>你让它"安排一次巴黎旅行"，它查天气、订酒店、做行程表</td></tr>
+</table>
+<p><strong>关键直觉</strong>：LLM 是大脑，Agent 是有了手脚和记忆的大脑。</p>
+<hr>
+<h2>三、Tool Calling（工具调用）——Agent 的"手"</h2>
+<p>Tool Calling（也叫 Function Calling）是 Agent 调用外部工具的能力。</p>
+<h3>它解决了什么问题？</h3>
+<p>普通 LLM 只能输出文字。如果用户问"今天北京的空气质量怎么样"，LLM 的知识截止日期可能是一年前，它没法知道今天的实时数据。有了 Tool Calling，LLM 可以输出一个结构化的请求：</p>
+<pre><code>调用函数：query_air_quality(city="北京")</code></pre>
+<p>系统收到这个请求后，真的去天气 API 查数据，把结果返回给 LLM，LLM 再用结果生成回答。</p>
+<h3>直观理解</h3>
+<pre><code>用户："今天北京空气好吗？"<br>LLM（思考后）→ 调用 query_air_quality("北京")<br>          → 返回 "AQI: 85, PM2.5: 65"<br>          → LLM 整理成回答："今天北京空气质量良，AQI 85..."</code></pre>
+<p><strong>2023 年 6 月，OpenAI 首次在 GPT-4 中引入 Function Calling</strong>（OpenAI, 2023），这是 Agent 历史上的一个关键节点。在此之前，让 LLM 调用工具需要写复杂的 prompt hack，非常不可靠。Function Calling 让工具调用变成模型的原生能力。</p>
+<hr>
+<h2>四、ReAct（推理+行动）——Agent 的"思考循环"</h2>
+<p>ReAct 是 "Reasoning + Acting" 的缩写，由普林斯顿大学和 Google 的研究者在 2022 年提出（Yao et al., 2022）。</p>
+<h3>核心思想</h3>
+<p>Agent 不要一次性输出答案，而是<strong>边思考边行动</strong>，把推理过程和工具调用交错进行。</p>
+<h3>举个例子</h3>
+<p>假设 Agent 要回答"特斯拉 2024 年在中国卖了多少辆车？"</p>
+<pre><code>思考1：我需要知道特斯拉2024年的全球销量和中国占比<br>行动1：调用 search("特斯拉 2024 中国 销量")<br>结果1：特斯拉2024年中国销量约65.7万辆<br>思考2：还需要确认这个数据是否包含出口<br>行动2：调用 search("特斯拉 2024 中国 销量 包含出口吗")<br>结果2：不包含，仅限国内交付<br>思考3：数据可靠，可以回答<br>回答：特斯拉2024年在中国交付约65.7万辆（不含出口）</code></pre>
+<p>每一步都在"我想知道什么→去查→查到什么→下一步该做什么"之间循环。</p>
+<h3>为什么 ReAct 很重要？</h3>
+<p>没有 ReAct 的 Agent 就像蒙着眼睛做决策——推理了老半天，但得不到外部世界的验证。ReAct 让 Agent 能<strong>用真实世界的信息纠正自己的推理偏差</strong>。</p>
+<p>一个关键背景：<strong>大模型存在"幻觉"（Hallucination）问题</strong>——模型会在不确定时编造看起来合理但实际错误的内容。没有外部验证的纯推理（CoT 模式）容易放大幻觉：模型在一本正经地推理一个错误的前提。ReAct 通过"推理→查证→再推理"的循环，用真实数据打断幻觉链条。</p>
+<hr>
+<h2>五、Planning（规划）——Agent 怎么决定先做什么</h2>
+<p>复杂任务不能一步到位，Agent 需要把大目标拆成小步骤。</p>
+<h3>Chain-of-Thought（思维链，CoT）</h3>
+<p>最简单的规划方式：让模型"一步一步思考"。Google 在 2022 年发现，在 prompt 里加一句"让我们一步一步来"，复杂推理的准确率能提升 30% 以上（Wei et al., 2022）。</p>
+<p>举个例子，问"超市里有 20 个苹果，卖掉了 7 个，又进了 3 箱每箱 12 个，现在有多少个？"</p>
+<ul>
+<li>普通回答：直接输出 "49 个"（可能算错）</li>
+<li>CoT：先写推理过程 "20-7=13, 13+36=49" → 输出 "49 个"</li>
+</ul>
+<h3>Tree of Thoughts（思维树，ToT）</h3>
+<p>CoT 是一条直线。ToT 是一棵树：在每一步生成多个可能的思考方向，搜索最好的那条路。</p>
+<p>比如解一个数学谜题，模型可以同时考虑 3 种不同的解法，评估每种方法有沒有前途，然后沿着最有希望的方向继续探索。</p>
+<h3>Graph of Thoughts（思维图，GoT）</h3>
+<p>GoT 是 2024 年的进一步扩展——从"树"变成"图"。树的分支不能合并，但图中的节点可以互相连接。这更适合需要"综合多个思路"的任务：Agent 同时探索 3 种解决方案，发现方案 A 和方案 B 中的某两个步骤可以合并，形成更好的方案 C。思维图允许 Agent <strong>合并不同分支的洞察</strong>，而不是死守一条路线。</p>
+<h3>Plan-and-Execute（先规划后执行）</h3>
+<p>ReAct 是边想边做。Plan-and-Execute 是<strong>先想好再做</strong>——先列出完整的步骤计划，然后按计划执行。适合步骤明确的流程化任务（比如"注册一个账号"）。</p>
+<hr>
+<h2>六、Memory（记忆）——Agent 怎么记住东西</h2>
+<p>Agent 的记忆分两个层次：</p>
+<h3>短期记忆（Context Window）</h3>
+<p>就是当前对话的上下文窗口。Claude 支持 200K token（Anthropic, 2024），Gemini 支持 1M+（Google, 2024），相当于能一次性"记住"几百页文档。但 Agent 一旦开始新任务，旧对话就忘了。</p>
+<h3>长期记忆（Long-term Memory）</h3>
+<p>Agent 需要记住用户的偏好、历史决策、已完成的任务。实现方式通常是：</p>
+<ul>
+<li><strong>向量数据库（Vector DB）</strong>：把信息转化为数学向量存起来，需要时搜索最相关的内容</li>
+<li><strong>RAG（检索增强生成）</strong>：从外部知识库检索相关信息，拼到 prompt 里让模型参考</li>
+<li><strong>MemGPT / Letta</strong>：专门的项目，让 Agent 像操作系统管内存一样管理自己的记忆——重要的放"内存"，不重要的归档到"磁盘"</li>
+</ul>
+<h3>一个直观的例子</h3>
+<p>你每周都让 Agent 订周五下午的会议室。没有长期记忆的话，它每次都要问"你一般订哪个会议室？几个人？需要投影吗？"。有了长期记忆，它记得你"每周五 14:00-16:00 订 3 楼小会议室，6 个人，不需要投影"。这就是记忆的价值。</p>
+<hr>
+<h2>七、Multi-Agent（多智能体协作）</h2>
+<p>有时候一个 Agent 不够用，需要多个 Agent 分工合作。</p>
+<h3>BDI 模型——多 Agent 的理论基础</h3>
+<p>BDI（Belief-Desire-Intention，信念-愿望-意图）模型是 1987 年由哲学家 Michael Bratman 提出的 Agent 理论框架。核心思想：一个理性的 Agent 不是每时每刻重新计算所有选择，而是"承诺"于当前计划，只在必要时才重新评估。</p>
+<ul>
+<li><strong>信念（Belief）</strong>：Agent 对世界的认知（"数据库里有 100 条记录"）</li>
+<li><strong>愿望（Desire）</strong>：Agent 想达成的状态（"把数据库备份到云端"）</li>
+<li><strong>意图（Intention）</strong>：Agent 当前正在执行的计划（"步骤 1：连接云端 → 步骤 2：传输数据"）</li>
+</ul>
+<p>这个模型至今仍是多 Agent 系统设计的理论基础。</p>
+<h3>涌现（Emergence）——多 Agent 的"1+1>2"</h3>
+<p>多 Agent 系统最迷人的特性是<strong>涌现</strong>——多个简单的 Agent 各自执行自己的任务，却在整体上表现出意想不到的复杂行为。2023 年 Stanford 的 "Generative Agents" 论文把 25 个 Agent 放进一个模拟小镇，它们自主社交、组织派对、传播新闻（Park et al., 2023），没有人写脚本规定它们"应该举办派对"——这个行为是自发涌现出来的。这就是多 Agent 比单 Agent 更有想象空间的原因。</p>
+<h3>典型的例子</h3>
+<p>写一份市场分析报告：</p>
+<ul>
+<li><strong>研究员 Agent</strong>：负责收集数据、查资料</li>
+<li><strong>分析师 Agent</strong>：负责解读数据、提炼洞察</li>
+<li><strong>写手 Agent</strong>：负责把分析结果写成报告</li>
+<li><strong>编辑 Agent</strong>：负责检查格式、校对细节</li>
+</ul>
+<p>四个 Agent 像一个小团队一样协同工作。</p>
+<h3>多 Agent 框架的代表</h3>
+<ul>
+<li><strong>AutoGen</strong>（微软）：Agent 之间通过对话协作，像几个人在聊天群里讨论问题</li>
+<li><strong>CrewAI</strong>：给每个 Agent 分配角色（Role）和任务（Task），像管理一个项目团队</li>
+<li><strong>MetaGPT</strong>：模拟整个软件公司的角色——产品经理、架构师、工程师、测试员各司其职</li>
+</ul>
+<hr>
+<h2>八、MCP（Model Context Protocol）——Agent 的"USB-C"</h2>
+<p>MCP 是 Anthropic 在 2024 年底推出的<strong>开放标准协议</strong>（Anthropic, 2024），用来统一 Agent 和外部工具之间的连接方式。</p>
+<h3>它解决了什么问题？</h3>
+<p>在 MCP 出现之前，每个 Agent 框架都要自己写代码来对接不同的工具。对接一个 GitHub API 要写一段代码，对接一个 Slack 又要写另一段。就像每个设备都需要自己的充电线。</p>
+<p>MCP 定义了<strong>一套通用的协议</strong>：工具提供方（MCP Server）按标准格式暴露功能，Agent（MCP Client）按标准格式调用。从此新工具只需实现一个 MCP Server，所有兼容 MCP 的 Agent 都能直接用。</p>
+<h3>MCP vs A2A（Agent-to-Agent Protocol，智能体间通信协议）</h3>
+<ul>
+<li><strong>MCP</strong>（Model Context Protocol）：Agent 连接工具的协议（垂直方向）</li>
+<li><strong>A2A</strong>（Agent-to-Agent Protocol，Google 2025 年推出）（Google, 2025）：Agent 之间互相通信的协议（水平方向）</li>
+</ul>
+<h3>OpenClaw：个人 Agent 操作系统</h3>
+<p>2025 年底诞生的开源项目，到 2026 年 4 月 GitHub Star 数突破 30 万（社区估算），超越 Linux 和 React 成为 GitHub 软件类星标历史第一。理念很直接：在你自己的电脑上跑一个 Agent 系统，让它自主管理文件、浏览网页、操作各种应用——不需要经过 App 的 UI。"用户不想用更多 App，他们想要一个能替自己操作所有 App 的 Agent"。之后 Hermes Agent（2026 年 3 月，Nous Research）以"持久记忆+自我进化"为差异化迅速崛起，10 万+ Stars（社区估算），形成 OpenClaw 追求"广度"、Hermes Agent 追求"深度"的双足鼎立格局。</p>
+<p>打个比方：MCP 是 USB 线（设备连电脑），A2A 是网线（电脑连电脑）。两者互补，不冲突。</p>
+<hr>
+<h2>九、Prompt Injection——Agent 的安全漏洞</h2>
+<p>这是 Agent 面临的最大安全威胁。</p>
+<h3>什么是 Prompt Injection？</h3>
+<p>通俗说：<strong>有人通过输入内容黑进你的 Agent。</strong></p>
+<p>普通 LLM 被注入最多是输出奇怪的回答。Agent 被注入，会导致它<strong>真的去执行危险操作</strong>——删除数据库、发送恶意邮件、修改密码。</p>
+<h3>真实案例</h3>
+<p>2026 年 4 月，Hacker News 上有一篇爆帖："我们 的 AI Agent 删除了生产数据库"。Agent 收到了一条包含恶意指令的输入，导致它调用了一个删除数据库的命令。这是 Agent 安全问题的标志性事件。</p>
+<h3>防护手段</h3>
+<ul>
+<li><strong>权限最小化</strong>：Agent 默认只读，需要特殊授权才能执行写操作</li>
+<li><strong>沙箱隔离</strong>：Agent 在隔离环境中运行，无法触及核心系统</li>
+<li><strong>人工确认</strong>：危险操作必须有人点击确认</li>
+<li><strong>内容过滤</strong>：对输入内容做安全检查</li>
+</ul>
+<hr>
+<h2>十、Agent 基准测试——怎么衡量 Agent 好不好</h2>
+<table>
+<tr><th>基准测试</th><th>测试什么</th><th>简单理解</th></tr>
+<tr><td><strong>SWE-Bench</strong></td><td>能不能修 GitHub 上的代码 bug</td><td>给 Agent 一个真实 Issue，看它能不能修好</td></tr>
+<tr><td><strong>GAIA</strong></td><td>通用 AI 助手能力（多步推理+工具使用）</td><td>给一个复杂问题，看 Agent 能不能自己找资料解决</td></tr>
+<tr><td><strong>AgentBench</strong></td><td>8 类真实任务（操作系统、网页、数据库等）</td><td>全面考核 Agent 在不同环境下的表现</td></tr>
+<tr><td><strong>WebArena</strong></td><td>在真实网页上完成任务的能力</td><td>让 Agent 像人一样操作网页</td></tr>
+<tr><td><strong>OSWorld</strong></td><td>操作桌面操作系统</td><td>让 Agent 用鼠标键盘操作电脑</td></tr>
+</table>
+<p>目前人类在 SWE-Bench 上的解决率约 85%（Jimenez et al., Princeton, 2024），最强的 Agent（Claude + Agent 框架）约 49%（社区估算），说明 Agent 还有很大提升空间。</p>
+<hr>
+<h2>十一、Agent 框架 vs Agent 产品——别搞混了</h2>
+<h3>Agent 框架（开发者工具）</h3>
+<p>给程序员用的，用来构建 Agent 应用的工具包：</p>
+<table>
+<tr><th>框架</th><th>谁开发的</th><th>特点</th></tr>
+<tr><td><strong>LangChain</strong></td><td>LangChain Inc</td><td>最流行的 Agent 框架，生态最丰富</td></tr>
+<tr><td><strong>LangGraph</strong></td><td>LangChain Inc</td><td>LangChain 的 Agent 编排引擎，用"状态图"控制 Agent 流程</td></tr>
+<tr><td><strong>Dify</strong></td><td>LangGenius</td><td>可视化界面，不用写代码也能做 Agent</td></tr>
+<tr><td><strong>AutoGPT</strong></td><td>个人项目</td><td>2023 年引爆 Agent 概念的项目，183k stars（社区估算），自主任务分解</td></tr>
+<tr><td><strong>AutoGen</strong></td><td>微软</td><td>多 Agent 对话框架</td></tr>
+<tr><td><strong>CrewAI</strong></td><td>CrewAI Inc</td><td>角色扮演式多 Agent 协作</td></tr>
+<tr><td><strong>OpenAI Agents SDK</strong></td><td>OpenAI</td><td>OpenAI 官方 Agent 开发包，核心机制是 Handoff（Agent 间移交控制权）</td></tr>
+<tr><td><strong>Coze / 扣子</strong></td><td>字节跳动</td><td>国内最流行的低代码 Agent 平台，月活领先</td></tr>
+</table>
+<h3>Agent 产品（终端用户工具）</h3>
+<p>给普通人用的成品：</p>
+<table>
+<tr><th>产品</th><th>公司</th><th>能做什么</th></tr>
+<tr><td><strong>Manus</strong></td><td>Monica</td><td>通用自主 Agent，帮你完成复杂任务</td></tr>
+<tr><td><strong>OpenAI Operator</strong></td><td>OpenAI</td><td>操作浏览器完成网购、订票等</td></tr>
+<tr><td><strong>Claude Computer Use</strong></td><td>Anthropic</td><td>操控电脑桌面</td></tr>
+<tr><td><strong>Cursor</strong></td><td>Anysphere</td><td>AI 编程 IDE，帮你写代码</td></tr>
+<tr><td><strong>Devin</strong></td><td>Cognition AI</td><td>AI 软件工程师，端到端修复 bug</td></tr>
+</table>
+<hr>
+<h2>十二、Token（词元）——理解 Agent 成本的关键</h2>
+<h3>Token 是什么？</h3>
+<p>Token 是大模型处理文本的最小单位。简单理解：<strong>模型不读"字"，它读"词元"。</strong></p>
+<ul>
+<li>"你好世界" = 4 个 token（你/好/世/界）</li>
+<li>"Hello world" = 2 个 token（Hello/ world）</li>
+<li>一篇 1000 字的中文文章大约 = 800-1500 个 token</li>
+</ul>
+<h3>为什么 Token 对 Agent 很重要？</h3>
+<p>Agent 跑一次任务的 token 消耗是普通聊天的几十倍。原因：</p>
+<ol>
+<li><strong>多轮推理</strong>：Agent 每一步推理都要消耗 token（"想了什么→查到了什么→下一步该做什么"）</li>
+<li><strong>工具返回结果</strong>：调用 API 返回的数据要拼回 prompt 给模型看</li>
+<li><strong>长上下文</strong>：记忆和历史记录让上下文越来越长</li>
+</ol>
+<p>按目前主流 API 价格（每百万 token 约 $3-15，社区估算），一个复杂 Agent 任务可能消耗 50 万-200 万 token，单次成本 $1.5-$30（社区估算）。这就是 Agent 商业化最大的瓶颈——<strong>用得起 vs 用得值</strong>之间的平衡。</p>
+<h2>十三、Agent-as-a-Service——Agent 怎么赚钱</h2>
+<p>目前 Agent 的商业模式还在探索中，主要有几种：</p>
+<ol>
+<li><strong>订阅制</strong>：按月收费（Manus $39/月，Cursor $20/月）</li>
+<li><strong>按用量计费</strong>：根据 Agent 的工作量收费（GitHub Copilot 新模式）</li>
+<li><strong>平台抽成</strong>：提供 Agent 搭建平台，抽成插件/API 收入</li>
+<li><strong>企业定制</strong>：为大客户做私有化部署</li>
+</ol>
+<p><strong>核心矛盾</strong>：Agent 跑一次任务消耗的 token 是普通聊天的几十倍，成本太高是商业化最大的瓶颈。</p>
+<hr>
+<h2>十四、一张图总结</h2>
+<pre><code>用户说："帮我计划一次东京旅行"<br>                    ↓<br>┌─────────────────────────────────────┐<br>│            Agent（智能体）             │<br>│                                     │<br>│  1. 推理（ReAct）：需要查天气、机票、酒店   │<br>│  2. 规划：先查日期 → 再查价格 → 再下单    │<br>│  3. 调用工具（Tool Calling）：           │<br>│     - search_flights("东京", 日期)      │<br>│     - search_hotels("东京", 日期)       │<br>│  4. 记忆：记住用户偏好（靠窗座位、禁烟房）  │<br>│  5. 输出：完整的行程方案                  │<br>└─────────────────────────────────────┘<br>                    ↓<br>用户收到："已为您订好 5月10日 国航CA925...<br>           酒店在新宿华盛顿，禁烟双床房..."</code></pre>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li><strong>ReAct: Synergizing Reasoning and Acting in Language Models</strong> (Yao et al., 2022) — 提出 Reasoning + Acting 交错循环，奠定了 Agent 思考-行动范式的基础 — <a href="https://arxiv.org/abs/2210.03629">arXiv:2210.03629</a></li>
+<li><strong>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</strong> (Wei et al., 2022) — 发现"逐步思考"能大幅提升大模型的复杂推理能力 — <a href="https://arxiv.org/abs/2201.11903">arXiv:2201.11903</a></li>
+<li><strong>Tree of Thoughts: Deliberate Problem Solving with Large Language Models</strong> (Yao et al., 2023) — 将 CoT 从线性扩展到树形搜索，支持多路径探索与回溯 — <a href="https://arxiv.org/abs/2305.10601">arXiv:2305.10601</a></li>
+<li><strong>Generative Agents: Interactive Simulacra of Human Behavior</strong> (Park et al., 2023) — Stanford 将 25 个 Agent 放入模拟小镇，展示了多 Agent 涌现行为 — <a href="https://arxiv.org/abs/2304.03442">arXiv:2304.03442</a></li>
+<li><strong>Model Context Protocol (MCP)</strong> (Anthropic, 2024) — Agent 与外部工具的开放标准协议，统一工具连接方式 — <a href="https://modelcontextprotocol.io">https://modelcontextprotocol.io</a></li>
+<li><strong>Agent-to-Agent Protocol (A2A)</strong> (Google, 2025) — Agent 间互相通信的开放协议，解决水平方向的互操作性问题 — <a href="https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/">Google Developers Blog</a></li>
+<li><strong>Function Calling and Other API Updates</strong> (OpenAI, 2023) — GPT-4 首次引入原生 Function Calling 能力，是 Agent 工具调用的关键节点 — https://openai.com/index/function-calling-and-other-api-updates/</li>
+<li><strong>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</strong> (Jimenez et al., Princeton, 2024) — AI 编程事实标准评测，用 2294 个真实 GitHub Issue 衡量模型修 Bug 能力 — https://arxiv.org/abs/2310.06770</li>
+</ul>
+</div>
+</body>
+</html>
