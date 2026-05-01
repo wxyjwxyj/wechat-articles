@@ -23,7 +23,12 @@
       "Bash(python *)",
       "Bash(python3 *)",
       "Bash(ls *)",
-      "Bash(cd *)"
+      "Bash(cd *)",
+      "Bash(sqlite3 content.db *)",
+      "Bash(sqlite3 ~/.cc-switch/cc-switch.db *)",
+      "Bash(curl -s *)",
+      "Bash(for *)",
+      "Bash(while *)"
     ]
   }
 }
