@@ -41,6 +41,8 @@
 
 它不是某种特定的模型，而是 Transformer 架构中 FFN（前馈网络）层的一种替代方案。MoE 替换了传统 Transformer 中"所有 token 走同一个 FFN"的做法，改为"Router 先看 token 是什么，再决定发给哪几个专家 FFN 处理"。
 
+> 🎯 **读完这篇你能**：看懂 DeepSeek 为什么能用 1/10 的价格对标 GPT-4o，理解 Router 路由机制、专家负载均衡和 Auxiliary Loss 三者之间的核心 trade-off。
+
 ---
 
 ## 二、技术背景

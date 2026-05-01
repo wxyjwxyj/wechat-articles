@@ -10,6 +10,8 @@ Agent Runtime / Harness 是让 AI Agent **安全、可靠、可观测地运行**
 
 2026 年 4 月，OpenAI 把 Harness 从 Codex 的内部组件上升为 Agents SDK 的一等公民，Martin Fowler 发表《Harness Engineering for Coding Agent Users》将它定义为正式工程领域。一个共识正在形成：**GPT-4.5 在一个优秀的 Harness 里，比 GPT-5.5 在一个简陋的 Harness 里表现更好。**
 
+> 🎯 **读完这篇你能**：理解沙箱隔离、编排引擎、护栏监控四层 Harness 架构，能判断一个 Agent 应用在上线前还缺哪些安全与可靠性基础设施。
+
 ---
 
 ## 二、技术背景
