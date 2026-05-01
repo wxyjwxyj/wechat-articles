@@ -1,6 +1,6 @@
 # Post-training / RL 训练基础设施 前置知识
 
-> 这份文档为零基础读者准备。如果你已经熟悉 RLHF、DPO、GRPO 等概念，可以直接翻阅主报告。
+> 这份文档为零基础读者准备。如果你已经熟悉 RLHF（Reinforcement Learning from Human Feedback）、DPO（Direct Preference Optimization）、GRPO（Group Relative Policy Optimization） 等概念，可以直接翻阅主报告。
 
 ---
 

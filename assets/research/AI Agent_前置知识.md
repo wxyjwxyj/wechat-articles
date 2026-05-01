@@ -193,10 +193,10 @@ MCP 是 Anthropic 在 2024 年底推出的**开放标准协议**，用来统一 
 
 MCP 定义了**一套通用的协议**：工具提供方（MCP Server）按标准格式暴露功能，Agent（MCP Client）按标准格式调用。从此新工具只需实现一个 MCP Server，所有兼容 MCP 的 Agent 都能直接用。
 
-### MCP vs A2A
+### MCP vs A2A（Agent-to-Agent Protocol，智能体间通信协议）
 
 - **MCP**（Model Context Protocol）：Agent 连接工具的协议（垂直方向）
-- **A2A**（Agent-to-Agent，Google 2025 年推出）：Agent 之间互相通信的协议（水平方向）
+- **A2A**（Agent-to-Agent Protocol，Google 2025 年推出）：Agent 之间互相通信的协议（水平方向）
 
 ### OpenClaw：个人 Agent 操作系统
 

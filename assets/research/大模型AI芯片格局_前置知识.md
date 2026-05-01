@@ -27,7 +27,7 @@ TFLOPS（Tera FLOPs，万亿次浮点运算/秒）是衡量芯片算力的单位
 但注意：**数字大不一定代表更好。** 因为不同精度下测出来的 TFLOPS 完全不同：
 
 - FP32（32位浮点）：精度最高，但算力最低
-- FP16/BF16（16位）：精度适中，算力提高约 2 倍
+- FP16/BF16（Float Point 16-bit/Brain Float 16，16位浮点）：精度适中，算力提高约 2 倍
 - FP8（8位）：精度较低，算力再高约 2 倍
 - FP4（4位）：精度最低，算力再高约 2 倍
 
@@ -37,13 +37,13 @@ TFLOPS（Tera FLOPs，万亿次浮点运算/秒）是衡量芯片算力的单位
 
 Tensor Core 是 NVIDIA 2017 年在 GPU 里加入的专门硬件单元，用来加速深度学习中最频繁的计算——**矩阵乘法**。
 
-普通 CUDA Core 一次算 1 个乘加运算，Tensor Core 一次算 16 个（4x4 矩阵乘法）。效率差了 16 倍。
+普通 CUDA（Compute Unified Device Architecture） Core 一次算 1 个乘加运算，Tensor Core 一次算 16 个（4x4 矩阵乘法）。效率差了 16 倍。
 
 这个区别可以用一个比喻理解：
 - **CUDA Core** = 一个人用手算加减乘除
 - **Tensor Core** = 一台小计算器，按一下就算出一整张表
 
-## 5. HBM 是什么？
+## 5. HBM（High Bandwidth Memory，高带宽内存）是什么？
 
 HBM（High Bandwidth Memory，高带宽内存）是 AI 芯片使用的一种特殊内存，堆叠在芯片旁边，通过微小通道高速传输数据。
 

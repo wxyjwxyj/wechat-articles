@@ -1,4 +1,4 @@
-# RAG 前置知识
+# RAG（Retrieval-Augmented Generation，检索增强生成）前置知识
 
 > 这份文档为零基础读者准备。如果你已经熟悉向量检索、Embedding、分块策略等概念，可以直接翻阅主报告。
 
