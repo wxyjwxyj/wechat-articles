@@ -432,6 +432,10 @@ td:last-child { text-align: center; }
 <p>"说话"式的 prompt 直觉自然但不可靠——人类语言天然模糊，模型对措辞的敏感性不可预测。</p>
 <p>"编程"式的 prompt 可靠但反直觉——DSPy、Guidance、结构化输出都在把 prompt 往编程方向推，但它牺牲了 NLP 最宝贵的优势：低门槛。</p>
 <p>2026 年的答案可能是：<strong>两者都需要，但适用于不同层面。</strong> 对终端用户而言，自然语言是界面——他们用"说话"的方式使用 AI。对工程师而言，prompt 是代码——他们用"编程"的方式设计 AI 行为。两层之间的桥，就是 Prompt Engineering 真正在做的事。</p>
+<h3>5.8 2026 年 4-5 月：自动化与"Prompt 已死"的再争论</h3>
+<p><strong>GEPA（ICLR 2026）</strong>——Reflective Prompt Evolution——是 2026 年自动 prompt 优化方向最受关注的工作。GEPA 不依赖梯度信息，而是用自然语言反思来迭代优化 prompt：用当前 prompt 测试 → LLM 反思输出质量 → 生成改进版的 prompt → 重复。在多个基准上，GEPA 的优化效果超越了基于 RL 的方法，且不需要训练数据标注。这证明了<strong>"用反思代替梯度"在 prompt 优化中是可行的</strong>。</p>
+<p>但同期发表的<strong>"Prompt Optimization Is a Coin Flip"（2026.04）</strong> 给出了清醒的警告：在组合 AI 系统（Compound AI Systems）中，自动 prompt 优化的效果高度不稳定——有时优化后性能反而下降，有时优化对某一指标改善但对另一指标恶化。结论是：自动 prompt 优化不是万能药，需要针对具体任务做诊断判断。</p>
+<p><strong>"Prompt → Context → Harness"三层演进的行业共识</strong>在 2026 年 4-5 月进一步巩固。Prompt Engineering 不会消失——它被 Context Engineering 包含，又在 Harness Engineering 框架下找到了新的位置：prompt 是 Harness 中最底层、最灵活的控制点。</p>
 <hr>
 <h2>六、信息来源</h2>
 <h3>核心论文与文章</h3>

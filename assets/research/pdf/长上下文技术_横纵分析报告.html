@@ -475,6 +475,10 @@ td:last-child { text-align: center; }
 <p>从产品使用数据看，绝大多数实际场景在 32K-128K 范围内。代码理解、论文分析、法律合同——这些"长文本场景"通常也在 100K 以内（《三体》三部曲约 200 万字 ≈ 2M token，但谁会一次性读三本？）。</p>
 <p>长上下文的核心用户是 <strong>Agent 和复杂推理系统</strong>——它们需要在一次调用中看完整个代码库、整个对话历史、多份交叉引用的文档。这是真正的"刚需场景"，但也是极低频场景。</p>
 <p>所以我的判断是：<strong>百万级上下文是"保险"而非"日常"。</strong> 它决定了一个模型的上限能力，但普通用户的日常体验更多被 "32K-128K 范围内的准确率"决定。厂商在展示 1M 上下文的同时，更应该关注 100K 内的稳定性——这才是 80% 用户的核心体验。</p>
+<h3>5.6 2026 年 4-5 月加速：FlashAttention-4 与 NSA</h3>
+<p><strong>FlashAttention-4（Tri Dao, 2026.03）</strong> 是 2026 年长上下文推理基础设施最重要的事件。FA4 专门针对 Blackwell GPU 的不对称硬件架构做了算法-内核联合设计——H100 上用 FA3 足够，B200 上必须用 FA4 才能释放有效算力。核心创新是将 attention 计算流水线化，矩阵乘法级的速度，实测将 B200 上原本浪费的 60% 算力利用率提升到 71%。</p>
+<p><strong>DeepSeek NSA（Native Sparse Attention, 2025 年末 → 2026 年全面落地在 V4）</strong> 是另一个影响深远的方向。NSA 不等同于传统的"事后稀疏"——而是在训练阶段就内建稀疏性。V4 的 CSA（Compressed Sparse Attention）+ HCA（Hierarchical Context Attention）混合方案，让 1M 上下文的实际可用性远超 Llama 4 Scout（后者 10M 宣称但有效仅 ~1K）。V4 的输出长度达到 384K，是行业平均的 3-6 倍——"能读"和"能写"是两个不同的长上下文能力维度。</p>
+<p><strong>LongRoPE2（Microsoft, 2026）</strong> 实现了近无损的上下文窗口扩展——在已有 RoPE 模型上做 post-training 即可显著延长上下文，不需要从头训练。这降低了长上下文能力获取的门槛。</p>
 <hr>
 <h2>六、信息来源</h2>
 <h3>核心论文与文章</h3>
