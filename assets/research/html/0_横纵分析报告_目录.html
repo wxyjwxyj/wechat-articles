@@ -204,31 +204,43 @@ td:last-child { text-align: center; }
 <blockquote>每篇报告均配有独立的前置知识文档，零基础读者可先读前置知识再读主报告。</blockquote>
 <hr>
 <h2>阅读指南</h2>
-<p><strong>如果你完全不懂 AI</strong>，从这里开始：</p>
-<pre><code>LLM 大模型 → Prompt Engineering → AI Agent → 感兴趣就继续</code></pre>
-<p>3 篇读完，你有了"大模型是什么、怎么用它、它能自己做任务"的完整框架。</p>
-<p>接下来按你的角色选一条路线：</p>
-<p><strong>🎓 学术/研究路线</strong>（理解原理，能读论文）：</p>
-<pre><code>LLM大模型 → Transformer → 大模型训练 → Post-training RL → 大模型强化学习 → MoE → 长上下文技术</code></pre>
-<p>8 篇读完，你对大模型从架构到训练到推理的技术栈有了系统性理解。</p>
-<p><strong>🔧 工程/开发路线</strong>（能建产品，能部署）：</p>
-<pre><code>LLM大模型 → Prompt Engineering → RAG → LLM应用框架 → AI Agent<br>进阶：Context Engineering → Agent Runtime/Harness → 大模型推理部署 → 端侧AI</code></pre>
-<p>8 篇读完，你能从零搭建一个生产级 AI 应用，包括云端和端侧部署。</p>
-<p><strong>📱 移动/端侧路线</strong>（做手机/PC 上的 AI）：</p>
-<pre><code>小语言模型 SLM → 端侧AI → 大模型蒸馏 → 模型压缩 → 大模型推理部署</code></pre>
-<p>5 篇读完，你理解了怎么把 AI 塞进手机并让它跑得快。</p>
-<p><strong>📊 全面系统学习</strong>，按七大类顺序：</p>
-<pre><code>一、基础模型 → 二、基础架构 → 三、训练与数据 → 四、推理与部署 → 五、应用范式 → 六、垂直赛道 → 七、安全与治理</code></pre>
-<p>30 篇全读完，你对 2026 年 AI 技术的全景就有了覆盖从芯片到应用、从训练到安全的全维度理解。</p>
-<p><strong>如果只想快速定位</strong>：</p>
-<ul>
-<li>我想了解 AI 能做什么 → <strong>六、垂直产品赛道</strong></li>
-<li>我想知道模型怎么训练出来的 → <strong>三、训练与数据</strong>（含强化学习、蒸馏）</li>
-<li>我想在手机/PC 上跑 AI → <strong>小语言模型 SLM + 端侧AI</strong></li>
-<li>我想理解技术原理 → <strong>二、基础架构</strong></li>
-<li>我想让 AI 自己干活（Agent）→ <strong>AI Agent + Agent Runtime/Harness + 大模型强化学习</strong></li>
-<li>我关心安全问题 → <strong>七、安全与治理</strong></li>
-</ul>
+<p>以下路线参考了 2026 年业界主流 AI 学习路径（CSDN/知乎/DeepLearning.AI），与 30 篇报告一一对应。<strong>每篇报告都配了前置知识文档</strong>，零基础读者可以先读前置知识再读主报告。</p>
+<hr>
+<h3>🟢 层级一：入门（0→1 个月）—— 先理解"大模型是什么、怎么用"</h3>
+<p><strong>前置要求</strong>：Python 基础、PyTorch 会用即可。不需要 ML 背景。</p>
+<pre><code>LLM大模型 → Prompt Engineering → AI Agent</code></pre>
+<p>3 篇读完，你有了一幅完整的 AI 世界地图。知道模型能干嘛、怎么跟它说话、它怎么自己做任务。这个阶段的目标是<strong>会用</strong>。</p>
+<p><strong>对应前置知识</strong>：<a href="LLM大模型_前置知识.md">LLM大模型前置知识</a> → <a href="Prompt_Engineering_前置知识.md">Prompt Engineering前置知识</a> → <a href="AI Agent_前置知识.md">AI Agent前置知识</a></p>
+<hr>
+<h3>🟡 层级二：基础（1→3 个月）—— 理解"模型怎么工作的"</h3>
+<pre><code>Transformer → 长上下文技术 → MoE → 多模态大模型</code></pre>
+<p>4 篇读完，你理解了 AI 模型的骨架（Transformer）、记忆系统（长上下文）、架构设计（MoE）和"眼睛"（多模态）。这个阶段的目标是<strong>能读懂论文</strong>。</p>
+<p><strong>对应前置知识</strong>：<a href="Transformer_前置知识.md">Transformer前置知识</a> → <a href="长上下文技术_前置知识.md">长上下文前置知识</a> → <a href="MoE_前置知识.md">MoE前置知识</a> → <a href="多模态大模型_前置知识.md">多模态前置知识</a></p>
+<hr>
+<h3>🟠 层级三：进阶（3→6 个月）—— 会"微调、部署、做应用"</h3>
+<pre><code>PEFT → RAG → LLM应用框架 → 大模型推理部署 → 端侧AI</code></pre>
+<p>5 篇读完，你能微调模型（LoRA/QLoRA）、搭建 RAG 知识库、用 LangChain/Dify 做应用、部署推理服务、把模型塞进手机。这个阶段的目标是<strong>能独立做项目</strong>。</p>
+<p><strong>对应前置知识</strong>：<a href="PEFT_参数高效微调_前置知识.md">PEFT前置知识</a> → <a href="RAG_前置知识.md">RAG前置知识</a> → <a href="LLM应用框架_前置知识.md">LLM应用框架前置知识</a> → <a href="Transformer_前置知识.md">推理部署前置知识</a> → <a href="端侧AI_设备端部署_前置知识.md">端侧AI前置知识</a></p>
+<hr>
+<h3>🔴 层级四：高级（6 个月+）—— 搞"训练、RL、架构决策"</h3>
+<pre><code>大模型数据工程 → 大模型训练 → Post-training RL → 大模型强化学习 → 大模型蒸馏</code></pre>
+<p>5 篇读完，你理解了数据怎么配比、模型怎么从头训练、RL 怎么让模型"学会思考"、怎么把大模型的能力蒸馏到小模型。这个阶段的目标是<strong>独立研发</strong>。</p>
+<p><strong>对应前置知识</strong>：<a href="大模型数据工程_前置知识.md">数据工程前置知识</a> → <a href="大模型训练_前置知识.md">大模型训练前置知识</a> → <a href="Post-training_RL训练基础设施_前置知识.md">Post-training RL前置知识</a> → <a href="大模型强化学习_前置知识.md">大模型强化学习前置知识</a> → <a href="大模型蒸馏_前置知识.md">大模型蒸馏前置知识</a></p>
+<hr>
+<h3>⚫ 层级五：专家—— 补齐"安全、Harness、芯片、垂直赛道认知"</h3>
+<pre><code>AI Safety → 大模型评估与对齐 → Agent Runtime/Harness → Context Engineering<br>→ 大模型AI芯片格局 → 模型压缩 → 小语言模型 SLM<br>→ AI编程 → AI搜索 → AI语音 → AI视频生成 → AI图像生成 → 具身智能</code></pre>
+<p>14 篇读完，你有了从芯片到应用、从安全到产品、从云端到端侧的全维度专家级理解。</p>
+<hr>
+<h3>🚀 如果想按角色快速切入</h3>
+<table>
+<tr><th>角色</th><th>跳到哪里</th></tr>
+<tr><td>完全新手</td><td>从 🟢 层级一开始</td></tr>
+<tr><td>Java/Python 程序员转 AI</td><td>跳过 🟢 的前两篇，从 AI Agent 开始 → 🟡</td></tr>
+<tr><td>要做产品/创业</td><td>🟢 → 直接跳到 ⚫ 的垂直赛道部分</td></tr>
+<tr><td>专注移动端/端侧</td><td>🟢 → 🟠 的「端侧AI」→ ⚫ 的「小语言模型 SLM」「模型压缩」</td></tr>
+<tr><td>想搞研究/读博</td><td>🟢 → 🟡 → 🟠 → 🔴 全走</td></tr>
+<tr><td>关注 AI 安全/对齐</td><td>🟢 → ⚫ 的「AI Safety」「评估与对齐」</td></tr>
+</table>
 <hr>
 <h2>一、基础模型</h2>
 <blockquote><strong>起点</strong>。LLM 本身——GPT、Claude、Gemini、Llama、DeepSeek、Qwen 等八大家族的竞争史。这是理解其他所有报告的前提。</blockquote>
