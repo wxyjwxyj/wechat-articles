@@ -2,6 +2,8 @@
 
 **零基础入门指南** · 从神经网络到线性注意力，22 个概念，一步一步讲清楚
 
+> 🎯 **读完这篇你能**：解释 MoE"稀疏激活"的核心原理，并根据推理/训练场景评估专家数量、路由策略、负载均衡和共享专家等关键设计取舍。
+
 ---
 
 ## 目录
@@ -49,7 +51,7 @@
 
 ### 为什么叫"神经"网络
 
-因为它的设计灵感来自人脑的神经元。人脑里有约 860 亿个神经元，每个神经元接收来自其他神经元的信号，处理后再传给下一个。神经网络模仿了这个结构——每个"节点"接收输入、做计算、传给下一层。
+因为它的设计灵感来自人脑的神经元。人脑里有约 860 亿个神经元（Herculano-Houzel, 2009），每个神经元接收来自其他神经元的信号，处理后再传给下一个。神经网络模仿了这个结构——每个"节点"接收输入、做计算、传给下一层。
 
 ### 没有神经网络会怎样
 
@@ -238,11 +240,11 @@ Attention 消耗了大量 KV Cache 显存。MoE 虽然减少了 FFN 计算量，
 
 ## 第 9 章　FFN（全连接网络）是什么
 
+> 💡 **类比：** 想象一个会议：Attention 是每个人翻阅会议纪要、查相关资料，把相关信息收集起来。FFN 是每个人自己的专业判断——听完大家的发言、收集完信息之后，用自己的专业知识和经验做出判断。
+
 ### 它是什么
 
-FFN（Feed-Forward Network）就是最简单的神经网络：输入 → 放大 → 激活函数 → 缩回 → 输出。一个 Transformer 层里，Attention 先干活，然后 FFN 接着处理。
-
-> 💡 **类比：** Attention 是"查阅上下文"，把相关信息收集起来。FFN 是"专家大脑"，基于收集到的信息做判断、存储知识。
+FFN（Feed-Forward Network）就是最简单的神经网络：输入 → 放大 → 激活函数 → 缩回 → 输出。一个 Transformer 层里，Attention 先干活，然后 FFN 接着处理。简单说：Attention 是"查阅上下文"，FFN 是"专家大脑"，基于收集到的信息做判断、存储知识。
 
 ### 为什么 FFN 存知识
 
@@ -266,6 +268,8 @@ MoE 的 FFN = Router + [FFN_1, FFN_2, FFN_3, ..., FFN_N]
 
 ## 第 10 章　参数量是什么
 
+> 💡 **先看例子：** 你让一个 7B 模型和 70B 模型回答同一个问题——70B 模型更准、更稳。为什么？因为它脑子里存了更多的知识和模式。但代价也直接：70B 模型需要更多显存、跑得更慢。
+
 ### 它是什么
 
 参数量 = 模型所有权重的总数，单位是 B（十亿）。7B = 70 亿个数字。
@@ -273,16 +277,16 @@ MoE 的 FFN = Router + [FFN_1, FFN_2, FFN_3, ..., FFN_N]
 | 参数量的意义 | 说明 |
 |-------------|------|
 | 决定了模型的"脑容量" | 参数越多，能记住的知识越多 |
-| 决定了显存需求 | 1B 参数 ≈ 2GB 显存（FP16） |
+| 决定了显存需求 | 1B 参数 ≈ 2GB 显存（FP16，社区估算） |
 | 决定了推理速度 | 参数越多，算得越慢 |
 
 ### 稠密模型 vs MoE 的参数量
 
 | | 稠密模型（如 LLaMA-7B） | MoE 模型（如 Mixtral 8x7B） |
 |---|---|---|
-| 总参数 | 7B | 47B（8 × 6B + router） |
-| 每次激活 | 7B | 13B（2 个 expert + shared） |
-| 显存需求 | ~14 GB | ~94 GB |
+| 总参数 | 7B | 47B（8 × 6B + router）（Jiang et al., Mistral AI, 2024） |
+| 每次激活 | 7B | 13B（2 个 expert + shared）（Jiang et al., Mistral AI, 2024） |
+| 显存需求 | ~14 GB | ~94 GB（社区估算） |
 | 推理速度 | 参考基准 | 近似于 13B 稠密模型 |
 
 **核心矛盾：** MoE 用更大的总参数获得了更强的能力，但推理时必须把所有 expert 加载到显存。参数大了 6 倍，显存也大了 6 倍。
@@ -339,9 +343,9 @@ Step 5: 加权合并 K 个 Expert 的输出
 
 | 参数 | 含义 | 常见取值 |
 |------|------|---------|
-| N | Expert 总数 | 8 (Mixtral) ~ 256 (DeepSeek-V3) |
-| K | 每个 token 激活的 expert 数 | 2 (Mixtral), 6-8 (DeepSeek) |
-| 稀疏度 | 1 - K/N | Mixtral: 75%, DeepSeek-V3: 97% |
+| N | Expert 总数 | 8 (Mixtral)（Jiang et al., Mistral AI, 2024） ~ 256 (DeepSeek-V3)（DeepSeek-AI, 2024） |
+| K | 每个 token 激活的 expert 数 | 2 (Mixtral)（Jiang et al., Mistral AI, 2024）, 6-8 (DeepSeek)（DeepSeek-AI, 2024） |
+| 稀疏度 | 1 - K/N | Mixtral: 75%（Jiang et al., Mistral AI, 2024）, DeepSeek-V3: 97%（DeepSeek-AI, 2024） |
 
 ### Router 怎么训练
 
@@ -442,7 +446,7 @@ MoE 的 trade-off 很清晰：**用显存放能力，用稀疏换速度。**
 | Capacity Factor | 含义 | 
 |----------------|------|
 | 1.0 | 恰好均分，不允许任何专家多接 |
-| 1.25 | 允许 25% 溢出缓冲，常用值 |
+| 1.25 | 允许 25% 溢出缓冲，常用值（Fedus et al., Google, 2021） |
 | 1.5 | 宽松，但显存浪费更多 |
 
 ### 容量溢出了怎么办
@@ -584,7 +588,7 @@ MLA：
 
 ### 压缩效果
 
-DeepSeek-V2 的 MLA 将每个 token 的 KV Cache 从标准 MHA 的约 1.2MB 压缩到仅约 **70KB**——只有原来的 ~6%，对比主流模型用的 GQA 也降到了约 1/3~1/7（等效 GQA-2.25 组）。推理吞吐直接提升 5.76 倍。这个工程贡献（DeepSeek-V2, 2024）让 DeepSeek 的 MoE 模型在推理时省下的 KV Cache 显存，部分抵消了 MoE 需要加载所有 expert 的显存压力。
+DeepSeek-V2 的 MLA 将每个 token 的 KV Cache 从标准 MHA 的约 1.2MB 压缩到仅约 **70KB**——只有原来的 ~6%，对比主流模型用的 GQA 也降到了约 1/3~1/7（等效 GQA-2.25 组）。推理吞吐直接提升 5.76 倍（DeepSeek-V2, 2024）。这个工程贡献让 DeepSeek 的 MoE 模型在推理时省下的 KV Cache 显存，部分抵消了 MoE 需要加载所有 expert 的显存压力。
 
 ### 为什么和 MoE 放一起讲
 
@@ -704,3 +708,5 @@ DeepSeek V4 的 Hybrid Attention（CSA+HCA）、Qwen3-Next 的 GatedDeltaNet、M
 - **Mixtral of Experts** (Jiang et al., Mistral AI, 2024) — Mixtral 8x7B 技术报告，当前最广泛使用的开源 MoE 模型 — https://arxiv.org/abs/2401.04088
 - **DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model** (DeepSeek-AI, 2024) — 提出细粒度专家切分、共享专家和 MLA 压缩 KV Cache，DeepSeek MoE 架构基石 — https://arxiv.org/abs/2405.04434
 - **DeepSeek-V3 Technical Report** (DeepSeek-AI, 2024) — 256 个细粒度专家 + 无辅助损失负载均衡 + FP8 训练，开源 MoE 的标杆 — https://arxiv.org/abs/2412.19437
+- **The Human Brain in Numbers: A Linearly Scaled-up Primate Brain** (Herculano-Houzel, 2009) — 确定人脑约含 860 亿神经元的经典定量研究 — https://doi.org/10.3389/neuro.09.031.2009
+- **GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding** (Lepikhin et al., Google, 2021) — 提出 GShard 架构和 capacity factor 机制，将 MoE 扩展到数千专家 — https://arxiv.org/abs/2006.16668

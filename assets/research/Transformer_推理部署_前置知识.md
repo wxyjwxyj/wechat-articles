@@ -3,6 +3,8 @@
 > 零基础友好的 Transformer 推理与部署入门指南。读完你就能理解推理系统的核心指标、主流框架、并行策略，以及如何把训练好的模型送上线服务。
 >
 > **撰写时间**：2026-04-30
+>
+> 🎯 **读完这篇你能**：解读推理系统的三个核心指标（TTFT、TPOT、吞吐），说出量化（INT8/INT4）、KV Cache、Continuous Batching、Speculative Decoding 各自解决什么问题，并判断一个业务场景该用哪种推理优化组合。
 
 ---
 
@@ -47,7 +49,7 @@
 
 每生成一个 token 需要的时间。这是自回归解码阶段的延迟——模型一个字一个字往外吐。
 
-**为什么重要**：TPOT 决定了用户的"感知速度"。人眼的阅读速度大约 250-300 字/分钟（约 4-5 tokens/秒）。如果 TPOT 低于这个速度，用户觉得"比人写的还快"；如果远高于这个速度，用户会感觉卡顿。
+**为什么重要**：TPOT 决定了用户的"感知速度"。人眼的阅读速度大约 250-300 字/分钟（约 4-5 tokens/秒，社区估算）。如果 TPOT 低于这个速度，用户觉得"比人写的还快"；如果远高于这个速度，用户会感觉卡顿。
 
 **TPOT 受什么影响**：KV cache 读取速度、显存带宽、批大小。
 
@@ -65,7 +67,7 @@ TTFT、TPOT、吞吐量，三者不能同时优化到极致：
 - **押注吞吐**：大 batch 塞满显存，吞吐量极高，但每个请求要排队等更久，TTFT 急剧上升
 - **押注平衡**：找到延迟和吞吐的交点，大多数生产系统这么做
 
-**实际做法**：在线聊天服务优先保证 TTFT < 500ms，TPOT < 100ms/token，在这个约束下最大化吞吐。离线批量处理（如数据标注、翻译大批量文档）优先吞吐量，延迟无所谓。
+**实际做法**：在线聊天服务优先保证 TTFT < 500ms，TPOT < 100ms/token（社区估算），在这个约束下最大化吞吐。离线批量处理（如数据标注、翻译大批量文档）优先吞吐量，延迟无所谓。
 
 ---
 
@@ -186,7 +188,7 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 **特点**：
 - 每张 GPU 只做一部分计算，内存压力降低
 - 每两步之间需要通信（All-reduce），对 GPU 间连接速度要求极高
-- 通常用 NVLink/NVSwitch（>600 GB/s），不能用普通以太网
+- 通常用 NVLink/NVSwitch（>600 GB/s，NVIDIA, 2022），不能用普通以太网
 
 **适用**：需要降低单卡显存压力，同时保留极低延迟。
 
@@ -214,7 +216,7 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 
 | 并行策略 | 切什么 | 通信量 | 通信带宽要求 | 典型场景 |
 |---------|--------|-------|------------|---------|
-| **TP** | 切层内计算 | 高（频繁 all-reduce） | NVLink（600+ GB/s） | 单节点内多卡 |
+| **TP** | 切层内计算 | 高（频繁 all-reduce） | NVLink（600+ GB/s，NVIDIA, 2022） | 单节点内多卡 |
 | **PP** | 切层 | 低（每层传一次激活） | 以太网足够 | 跨节点 |
 | **EP** | 切 Expert | 中（all-to-all） | 中等 | MoE 模型 |
 
@@ -242,7 +244,7 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 
 **llama.cpp**（Gerganov, 2023）主打"让大模型在普通电脑上跑"。使用 GGUF 格式，支持 CPU 推理、CPU+GPU 混合推理，甚至 ARM 芯片。量化支持最丰富（从 Q2 到 Q8 各种精度）。适合个人电脑、笔记本、树莓派等低配置环境。不支持多卡并行，不适合生产级高并发服务。
 
-**MLX** 是 Apple 的机器学习框架，专门针对 M 系列芯片优化。利用 Apple Silicon 统一的显存架构（M2 Ultra 192GB 统一内存，CPU 和 GPU 共享）和 Metal GPU 加速，Mac 上的推理体验非常好。适合 Mac 本地开发和调试大模型，也适合需要端侧推理的 Apple 应用。
+**MLX** 是 Apple 的机器学习框架，专门针对 M 系列芯片优化。利用 Apple Silicon 统一的显存架构（M2 Ultra 192GB 统一内存，CPU 和 GPU 共享，社区估算）和 Metal GPU 加速，Mac 上的推理体验非常好。适合 Mac 本地开发和调试大模型，也适合需要端侧推理的 Apple 应用。
 
 ---
 
@@ -255,7 +257,7 @@ LLaMA 70B 在 FP16 下 140GB，一张 H100 80GB 塞不下。DeepSeek V3 671B 更
 模型运行在数据中心的大规模 GPU 集群上。
 
 - **优势**：性能最强，H100/B200 集群提供极致算力；最灵活，模型大小几乎不受限（可以跨多卡部署 700B+ 模型）；运维简单，GPU 坏了换一台就行
-- **劣势**：成本高，H100 一小时几十美元；有网络延迟，用户可能在地球的另一端；数据离开设备，隐私敏感场景受限
+- **劣势**：成本高，H100 一小时几十美元（社区估算）；有网络延迟，用户可能在地球的另一端；数据离开设备，隐私敏感场景受限
 - **代表产品**：ChatGPT、Claude、Gemini
 
 ### 边缘推理
@@ -373,3 +375,4 @@ Continuous Batching
 - **GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers** (Frantar et al., 2023) — 基于 Hessian 的权重量化方法，单 GPU 4-bit 推理大模型 — https://arxiv.org/abs/2210.17323
 - **LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale** (Dettmers et al., 2022) — 混合精度分解量化，将异常值分离处理保证 8-bit 推理精度 — https://arxiv.org/abs/2208.07339
 - **llama.cpp** (Gerganov, 2023) — GGUF 格式 + CPU/GPU 混合推理，消费级硬件运行大模型的开源方案 — https://github.com/ggerganov/llama.cpp
+- **NVIDIA H100 Tensor Core GPU Architecture Whitepaper** (NVIDIA, 2022) — Hopper 架构官方白皮书，NVLink 4 带宽 900 GB/s，单卡 80GB HBM3 — https://resources.nvidia.com/en-us-tensor-core/gtc22-whitepaper-hopper

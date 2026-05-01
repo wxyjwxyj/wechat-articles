@@ -2,6 +2,8 @@
 
 > 这份文档为零基础读者准备。如果你已经熟悉 RLHF（Reinforcement Learning from Human Feedback）、DPO（Direct Preference Optimization）、GRPO（Group Relative Policy Optimization） 等概念，可以直接翻阅主报告。
 
+> 🎯 **读完这篇你能**：说清 RLHF / DPO / GRPO 三条对齐路线各自解决了什么问题、付出了什么代价（显存、训练复杂度），并根据团队 GPU 资源评估合适的 post-training 方案。
+
 ---
 
 ## 一、Post-training 是什么？
@@ -102,8 +104,8 @@ OpenAI o3（2026.04）更进一步，通过多次采样+验证器筛选来提升
 | **TRL** | Hugging Face | 最流行 | 生态集成最好（Hugging Face 全家桶），适合中小规模 |
 | **NeMo-Aligner** | NVIDIA | 企业级 | GPU 优化最好，但已归档 |
 | **OpenRLHF** | 开源社区 | 算法支持最全 | 支持 RLHF/DPO/GRPO 多种算法 |
-| **VeRL** | 火山引擎/字节 | 大规模训练 | GPT-5/R1 等训练的底层框架 |
-| **LLaMA Factory** | 开源社区 | 微调+对齐 | 最受欢迎（71k stars），低门槛 |
+| **VeRL** | 火山引擎/字节 | 大规模训练 | DeepSeek-R1 等模型训练的底层框架（社区估算） |
+| **LLaMA Factory** | 开源社区 | 微调+对齐 | 最受欢迎（71k stars，社区估算），低门槛 |
 
 ---
 

@@ -93,7 +93,7 @@ while True:
 
 **LangGraph Platform GA（2025.05）** 是开源阵营的回应——StateGraph 持久化、Human-in-the-loop、多 Agent 拓扑管理，让 LangGraph 从一个代码库变成了一个可部署的平台。
 
-**AWS Bedrock AgentCore（2025.07）** 是第一个云厂商级 Agent 专用运行时。底层基于 Firecracker microVM（AWS Lambda 同款隔离技术），为每个 Agent 会话提供独立的执行环境。1 亿美元 Agent 生态投资。这意味着 Agent 的"执行环境"和"安全隔离"第一次被当作云平台的一等公民来设计。
+**AWS Bedrock AgentCore（2025.07）** 是第一个云厂商级 Agent 专用运行时。底层基于 Firecracker microVM（AWS Lambda 同款隔离技术），为每个 Agent 会话提供独立的执行环境。1 亿美元 Agent 生态投资。由此，Agent 的"执行环境"和"安全隔离"第一次被当作云平台的一等公民来设计。
 
 **Google Vertex AI Agent Engine（2025）** 和 **Azure AI Foundry Agent Service（2025.05 GA）** 同步跟进。三家云厂商在同一年推出了自己的 Agent 运行时方案——标准打架是后话，但"Agent 需要专用运行时"这个事实已经被行业承认。
 

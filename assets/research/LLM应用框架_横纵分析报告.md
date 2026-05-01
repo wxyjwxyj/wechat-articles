@@ -64,7 +64,7 @@ LLM 应用框架的历史起点非常精确——2022 年 10 月，Harrison Chas
 
 2023 年 10 月，LangChain 发布 LangServe（部署工具）和 LangGraph（Agent 编排模块）——前者把 LCEL 代码部署为 REST API，后者引入了循环图（Cyclic Graph）来处理 Agent 的"推理→行动→推理"循环。
 
-**LangGraph 是 2024-2026 年间 LangChain 最重要的产品决定。** 它意识到 DAG（有向无环图）链无法处理 Agent 逻辑——Agent 本质上是一个 LLM for-loop，需要循环能力。StateGraph 模块让开发者定义状态对象，节点返回更新，支持 override 和 append 两种模式。
+**LangGraph 是 2024-2026 年间 LangChain 最重要的产品决定。** 它意识到 DAG（有向无环图）链无法处理 Agent 逻辑——Agent 核心是一个 LLM for-loop，需要循环能力。StateGraph 模块让开发者定义状态对象，节点返回更新，支持 override 和 append 两种模式。
 
 **2024 年 1 月**，LangChain v0.1 稳定版发布，标志着 API 从快速迭代期进入稳定期。同月，LlamaIndex 也正式从 GPT Index 更名为 LlamaIndex（去 OpenAI 绑定），发布完整 RAG 管线支持。
 
