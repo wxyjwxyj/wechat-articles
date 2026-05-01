@@ -103,3 +103,14 @@ ASR 市场更成熟（准确率已经超过人类水平），TTS 市场差异化
 - 有情感地对话 → 还需要进步
 - 多语言混合 / 方言 → 很多产品做不到
 ```
+
+---
+
+## 参考来源
+
+- **WaveNet: A Generative Model for Raw Audio** (van den Oord et al., 2016) — 用神经网络直接生成原始音频波形，语音合成自然度的里程碑 — https://arxiv.org/abs/1609.03499
+- **Tacotron: Towards End-to-End Speech Synthesis** (Wang et al., 2017) — 端到端 TTS 的开创性工作，从字符序列直接生成梅尔频谱 — https://arxiv.org/abs/1703.10135
+- **Whisper: Robust Speech Recognition via Large-Scale Weak Supervision** (Radford et al., 2022) — 68 万小时多语言弱监督数据训练的通用的 ASR 模型 — https://arxiv.org/abs/2212.04356
+- **Neural Codec Language Models are Zero-Shot Text to Speech Synthesizers (VALL-E)** (Wang et al., 2023) — 神经编解码语言模型实现 3 秒音频零样本语音克隆 — https://arxiv.org/abs/2301.02111
+- **ElevenLabs** — 语音克隆与合成的商业标杆，2025 年估值 $3B+，Flash 模型 TTFB 75ms — https://elevenlabs.io/
+- **CosyVoice** (FunAudioLLM / Alibaba, 2024) — SOTA 开源语音合成，0.5B 参数，支持流式合成与零样本克隆 — https://github.com/FunAudioLLM/CosyVoice

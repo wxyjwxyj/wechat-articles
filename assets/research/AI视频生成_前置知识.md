@@ -121,3 +121,14 @@ AI 视频生成比文本生成贵几个数量级：
 ```
 
 AI 视频生成在 2026 年遇到的根本问题是：**你看到的并不等于真实的。** 模型可以生成看起来完美的画面，但物理上的因果关系是缺失的。从"视频生成"到"世界模拟"，这条路可能还需要 3-5 年。
+
+---
+
+## 参考来源
+
+- **Scalable Diffusion Models with Transformers** (Peebles & Xie, 2023) — DiT 架构，Sora 及后续视频生成模型的技术底座 — https://arxiv.org/abs/2212.09748
+- **Video generation models as world simulators** (Brooks et al., OpenAI, 2024) — Sora 技术报告，首次展示 DiT 在视频生成领域的扩展能力 — https://openai.com/research/video-generation-models-as-world-simulators
+- **Imagen Video: High Definition Video Generation with Diffusion Models** (Ho et al., 2022) — Google 的高清视频扩散生成，级联扩散架构 — https://arxiv.org/abs/2210.02303
+- **Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets** (Blattmann et al., 2023) — 目前唯一主流开源视频生成方案 — https://arxiv.org/abs/2311.15127
+- **Runway** — 电影级 AI 视频生成工具，Gen-4.5 导演模式 + GWM 通用世界模型 — https://runwayml.com/
+- **可灵 Kling** (快手, 2024) — 物理模拟与人体运动最自然的国产视频生成模型 — https://kling.kuaishou.com/

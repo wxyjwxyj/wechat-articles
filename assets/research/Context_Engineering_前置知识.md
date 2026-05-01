@@ -176,3 +176,14 @@ Anthropic 在 2025 年提出的两个重要概念：
    角色    放多少   省成本  记住历史  找外部  挤空间
    定义    才够？
 ```
+
+---
+
+## 参考来源
+
+- **Lost in the Middle: How Language Models Use Long Contexts** (Liu et al., 2023) — 发现信息放在上下文中间位置时模型提取准确率显著下降的核心论文 — https://arxiv.org/abs/2307.03172
+- **Efficient Streaming Language Models with Attention Sinks** (Xiao et al., 2023) — 提出 Attention Sink 现象，使模型能处理无限长序列的 StreamingLLM 技术 — https://arxiv.org/abs/2309.17453
+- **LLMLingua: Compressing Prompts for Accelerated Inference of Large Language Models** (Jiang et al., Microsoft, 2023) — 用小模型识别并删除 prompt 中不重要 token，实现 2-20x 压缩 — https://arxiv.org/abs/2310.05736
+- **SGLang: Efficient Execution of Structured Language Model Programs** (Zheng et al., 2024) — 提出 RadixAttention，用基数树自动复用 KV Cache 前缀，吞吐量提升最高 5x — https://arxiv.org/abs/2312.07104
+- **Efficient Memory Management for Large Language Model Serving with PagedAttention** (Kwon et al., 2023) — vLLM 核心论文，提出 PagedAttention 实现高效的 KV Cache 内存管理 — https://arxiv.org/abs/2309.06180
+- **Model Context Protocol Specification** (Anthropic, 2024) — 标准化 Agent 与外部工具连接方式的开放协议，统一了上下文注入格式 — https://modelcontextprotocol.io/

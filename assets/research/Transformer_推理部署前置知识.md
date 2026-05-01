@@ -362,3 +362,14 @@ Continuous Batching
 ---
 
 > **接下来**：[Transformer 横纵分析报告](./Transformer_横纵分析报告.md) — 纵向历史 + 横向竞争 + 面试题 + 场景题
+
+---
+
+## 参考来源
+
+- **Efficient Memory Management for Large Language Model Serving with PagedAttention** (Kwon et al., 2023) — vLLM 核心创新，KV Cache 虚拟内存分页管理，显存利用率 40% -> 95% — https://arxiv.org/abs/2309.06180
+- **Fast Inference from Transformers via Speculative Decoding** (Leviathan et al., 2023) — 小模型猜 + 大模型验，推理 2-3x 加速 — https://arxiv.org/abs/2211.17192
+- **FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness** (Dao et al., 2022) — 利用 GPU 显存层级优化注意力计算，减少 HBM 读写 — https://arxiv.org/abs/2205.14135
+- **GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers** (Frantar et al., 2023) — 基于 Hessian 的权重量化方法，单 GPU 4-bit 推理大模型 — https://arxiv.org/abs/2210.17323
+- **LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale** (Dettmers et al., 2022) — 混合精度分解量化，将异常值分离处理保证 8-bit 推理精度 — https://arxiv.org/abs/2208.07339
+- **llama.cpp** (Gerganov, 2023) — GGUF 格式 + CPU/GPU 混合推理，消费级硬件运行大模型的开源方案 — https://github.com/ggerganov/llama.cpp

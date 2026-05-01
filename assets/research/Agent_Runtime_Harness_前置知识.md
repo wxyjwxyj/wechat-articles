@@ -66,3 +66,14 @@ Agent Runtime 的进化 = 从"马路上随便跑"到"有交通规则"
 ```
 
 Agent Runtime 在 2026 年还是一个非常年轻的领域——OpenAI 刚把 Harness 定义出来，Martin Fowler 刚把它列为正式工程实践。未来很可能会像 DevOps 一样，成为一个专门的工种。
+
+---
+
+## 参考来源
+
+- **OpenAI Agents SDK** (OpenAI, 2025) — OpenAI 官方 Agent 运行时框架，定义了 Agent Harness 的范式，含 Guardrails、Handoff、Tracing — https://openai.github.io/openai-agents-python/
+- **Temporal** (Temporal Technologies) — 持久化执行引擎代表，支持工作流在任何步骤中断后恢复到中断前状态 — https://temporal.io/
+- **Firecracker: Lightweight Virtualization for Serverless Applications** (Agache et al., AWS, 2020) — AWS 开源的微型虚拟机，每个 Agent 会话可跑在独立 microVM 中，~125ms 启动 — https://firecracker-microvm.github.io/
+- **gVisor** (Google) — 应用级内核沙箱，在应用和 Linux 内核之间加一层拦截层，为容器提供额外隔离 — https://github.com/google/gvisor
+- **Model Context Protocol Specification** (Anthropic, 2024) — 统一 Agent 与外部工具/数据源连接方式，MCP Gateway 提供认证、限流和审计能力 — https://modelcontextprotocol.io/
+- **NVIDIA NeMo Guardrails** (NVIDIA) — 开源 Guardrails 框架，支持话题护栏、内容护栏和越狱检测，可与任何 LLM 集成 — https://github.com/NVIDIA/NeMo-Guardrails

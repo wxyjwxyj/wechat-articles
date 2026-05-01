@@ -185,3 +185,14 @@ AI Safety 🔐
 2026 年 AI Safety 的关键问题是：
 "在 AGI 到来之前，我们能解决对齐问题吗？"
 ```
+
+---
+
+## 参考来源
+
+- **Constitutional AI: Harmlessness from AI Feedback** (Bai et al., 2022) — Anthropic 提出用 AI 反馈替代人类反馈的对齐方法，引入"宪法"原则约束模型行为 — [arXiv:2212.08073](https://arxiv.org/abs/2212.08073)
+- **Training language models to follow instructions with human feedback (InstructGPT)** (Ouyang et al., 2022) — OpenAI 首次系统化提出 RLHF 三步骤流程，是对齐技术的奠基之作 — [arXiv:2203.02155](https://arxiv.org/abs/2203.02155)
+- **Direct Preference Optimization** (Rafailov et al., 2023) — 跳过奖励模型的简化对齐方法，直接用偏好数据优化模型，已成为开源社区的事实标准 — [arXiv:2305.18290](https://arxiv.org/abs/2305.18290)
+- **GPT-4 Technical Report** (OpenAI, 2023) — 首次大规模引入 System Card 格式，涵盖安全评估、红队测试和风险缓解措施 — [arXiv:2303.08774](https://arxiv.org/abs/2303.08774)
+- **EU AI Act** (European Union, 2024) — 全球首部全面 AI 监管法规，按风险分级（不可接受/高/有限/最低）对不同 AI 系统施加差异化要求 — [https://artificialintelligenceact.eu](https://artificialintelligenceact.eu)
+- **Anthropic's Responsible Scaling Policy (RSP)** (Anthropic, 2023) — 借鉴生物安全等级（BSL）提出 ASL-1 至 ASL-4 的 AI 安全分级框架 — [Anthropic Blog](https://www.anthropic.com/news/anthropics-responsible-scaling-policy)

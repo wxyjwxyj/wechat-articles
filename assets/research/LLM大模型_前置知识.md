@@ -126,3 +126,14 @@ LLM 的进化史 = 从"鹦鹉学舌"到"能推理"
 ```
 
 LLM 大模型在 2026 年是整个 AI 生态的基石——所有 AI Agent、AI 搜索、AI 编程、多模态应用，底层都是 LLM 在驱动。
+
+---
+
+## 参考来源
+
+- **Attention Is All You Need** (Vaswani et al., 2017) — Transformer 架构的奠基论文，提出了自注意力机制和编码器-解码器结构 — https://arxiv.org/abs/1706.03762
+- **Scaling Laws for Neural Language Models** (Kaplan et al., OpenAI, 2020) — 首次系统量化模型参数、数据量和训练算力之间的幂律关系 — https://arxiv.org/abs/2001.08361
+- **Language Models are Few-Shot Learners (GPT-3)** (Brown et al., OpenAI, 2020) — 175B 参数 GPT-3 的技术报告，验证了规模带来的涌现能力 — https://arxiv.org/abs/2005.14165
+- **Training language models to follow instructions with human feedback** (Ouyang et al., OpenAI, 2022) — InstructGPT / RLHF 的原始论文，奠定了基于人类反馈的强化学习对齐方法 — https://arxiv.org/abs/2203.02155
+- **Constitutional AI: Harmlessness from AI Feedback** (Bai et al., Anthropic, 2022) — Anthropic 的宪法 AI 方案，用 AI 自监督替代人类标注进行对齐训练 — https://arxiv.org/abs/2212.08073
+- **GPT-4 Technical Report** (OpenAI, 2023) — GPT-4 技术报告，包含 MMLU/HumanEval 等基准评测结果 — https://arxiv.org/abs/2303.08774

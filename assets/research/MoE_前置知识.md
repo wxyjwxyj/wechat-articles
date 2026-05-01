@@ -693,4 +693,14 @@ DeepSeek V4 的 Hybrid Attention（CSA+HCA）、Qwen3-Next 的 GatedDeltaNet、M
 ---
 
 > 理解了以上 22 个概念，你就有了读懂任何 MoE 论文（包括 DeepSeek-V4 技术报告）的基础。
-> 下一步建议：先读 Mixtral 8x7B 论文（ArXiv: 2401.04088）入门，再读 DeepSeek-V2/V3 技术报告感受架构创新，最后读 DeepSeek-V4 技术报告了解最新进展。
+
+---
+
+## 参考来源
+
+- **Attention Is All You Need** (Vaswani et al., 2017) — Transformer 架构奠基论文，所有现代 LLM 的基础 — https://arxiv.org/abs/1706.03762
+- **Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer** (Shazeer et al., Google, 2017) — MoE 的开山之作，提出稀疏门控专家混合层、层次化路由和负载均衡损失 — https://arxiv.org/abs/1701.06538
+- **Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity** (Fedus et al., Google, 2021) — 简化 MoE 路由为 Top-1（Switch 路由），将 MoE 推向大规模训练 — https://arxiv.org/abs/2101.03961
+- **Mixtral of Experts** (Jiang et al., Mistral AI, 2024) — Mixtral 8x7B 技术报告，当前最广泛使用的开源 MoE 模型 — https://arxiv.org/abs/2401.04088
+- **DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model** (DeepSeek-AI, 2024) — 提出细粒度专家切分、共享专家和 MLA 压缩 KV Cache，DeepSeek MoE 架构基石 — https://arxiv.org/abs/2405.04434
+- **DeepSeek-V3 Technical Report** (DeepSeek-AI, 2024) — 256 个细粒度专家 + 无辅助损失负载均衡 + FP8 训练，开源 MoE 的标杆 — https://arxiv.org/abs/2412.19437

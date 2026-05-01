@@ -327,3 +327,14 @@ Agent 跑一次任务的 token 消耗是普通聊天的几十倍。原因：
 用户收到："已为您订好 5月10日 国航CA925...
            酒店在新宿华盛顿，禁烟双床房..."
 ```
+
+---
+
+## 参考来源
+
+- **ReAct: Synergizing Reasoning and Acting in Language Models** (Yao et al., 2022) — 提出 Reasoning + Acting 交错循环，奠定了 Agent 思考-行动范式的基础 — [arXiv:2210.03629](https://arxiv.org/abs/2210.03629)
+- **Chain-of-Thought Prompting Elicits Reasoning in Large Language Models** (Wei et al., 2022) — 发现"逐步思考"能大幅提升大模型的复杂推理能力 — [arXiv:2201.11903](https://arxiv.org/abs/2201.11903)
+- **Tree of Thoughts: Deliberate Problem Solving with Large Language Models** (Yao et al., 2023) — 将 CoT 从线性扩展到树形搜索，支持多路径探索与回溯 — [arXiv:2305.10601](https://arxiv.org/abs/2305.10601)
+- **Generative Agents: Interactive Simulacra of Human Behavior** (Park et al., 2023) — Stanford 将 25 个 Agent 放入模拟小镇，展示了多 Agent 涌现行为 — [arXiv:2304.03442](https://arxiv.org/abs/2304.03442)
+- **Model Context Protocol (MCP)** (Anthropic, 2024) — Agent 与外部工具的开放标准协议，统一工具连接方式 — [https://modelcontextprotocol.io](https://modelcontextprotocol.io)
+- **Agent-to-Agent Protocol (A2A)** (Google, 2025) — Agent 间互相通信的开放协议，解决水平方向的互操作性问题 — [Google Developers Blog](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/)

@@ -205,3 +205,13 @@ RAG 经历了四个阶段的演进：
   重排序：Cohere Rerank / BGE-reranker
   框架：LangChain / LlamaIndex / Haystack / Dify
 ```
+
+---
+
+## 参考来源
+
+- **Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks** (Lewis et al., 2020) — Meta AI 首次提出 RAG 范式，将检索系统与生成模型结合以解决知识密集型任务 — [arXiv:2005.11401](https://arxiv.org/abs/2005.11401)
+- **Attention Is All You Need** (Vaswani et al., 2017) — 提出 Transformer 架构，是现代 Embedding 模型和语义搜索的技术基础 — [arXiv:1706.03762](https://arxiv.org/abs/1706.03762)
+- **Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks** (Reimers & Gurevych, 2019) — 提出句子级语义嵌入方法，使语义搜索在计算上变得可行 — [arXiv:1908.10084](https://arxiv.org/abs/1908.10084)
+- **Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection** (Asai et al., 2023) — 让模型自主决定何时检索、检索结果是否相关、生成内容是否有依据，是 Agentic RAG 的代表工作 — [arXiv:2310.11511](https://arxiv.org/abs/2310.11511)
+- **From Local to Global: A Graph RAG Approach to Query-Focused Summarization (GraphRAG)** (Edge et al., 2024) — 微软提出将文档构建为知识图谱再生成社区摘要，解决全局性问题 — [arXiv:2404.16130](https://arxiv.org/abs/2404.16130)

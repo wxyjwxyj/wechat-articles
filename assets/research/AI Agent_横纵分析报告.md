@@ -48,6 +48,11 @@ Agent = LLM（推理核心） + Tool Calling（工具调用） + Memory（记忆
 
 ---
 
+> **📚 关联报告**
+> - [Prompt Engineering](./Prompt_Engineering_横纵分析报告.md) — Agent 推理策略（ReAct/CoT/ToT）的源头
+> - [LLM 应用框架](./LLM应用框架_横纵分析报告.md) — LangGraph、Dify、CrewAI 等 Agent 框架是应用层落地
+> - [Agent Runtime / Harness](./Agent_Runtime_Harness_横纵分析报告.md) — Agent 的运行时基础设施：沙箱、护栏、持久化
+
 ## 三、纵向分析：AI Agent 四十年沉浮
 
 > 从 1983 年 SOAR 到 2026 年 Agent 编程范式，一段长达 43 年的技术演进叙事。

@@ -182,3 +182,14 @@ DoRA：先把权重拆成"大小"和"方向"
    单卡内存紧 → QLoRA (NF4 + LoRA)
    需要极致质量 → DoRA 或更高秩 LoRA
 ```
+
+---
+
+## 参考来源
+
+- **Parameter-Efficient Transfer Learning for NLP** (Houlsby et al., Google, 2019) — Adapter 方案的开创性论文，在 Transformer 层间插入小网络模块实现参数高效微调 — https://arxiv.org/abs/1902.00751
+- **The Power of Scale for Parameter-Efficient Prompt Tuning** (Lester et al., Google, 2021) — Prompt Tuning 的原始论文，证明在输入前加可学习虚拟 token 即可完成微调 — https://arxiv.org/abs/2104.08691
+- **P-Tuning v2: Prompt Tuning Can Be Comparable to Fine-tuning Universally Across Scales and Tasks** (Liu et al., 清华, 2021) — 在每一层加入可学习 prompt token，让小模型和序列标注任务也能用 Prompt Tuning — https://arxiv.org/abs/2110.07602
+- **LoRA: Low-Rank Adaptation of Large Language Models** (Hu et al., Microsoft, 2021) — PEFT 的事实标准，利用低秩分解使微调参数量减少万倍且推理时零延迟 — https://arxiv.org/abs/2106.09685
+- **QLoRA: Efficient Finetuning of Quantized LLMs** (Dettmers et al., UW, 2023) — 将 4-bit 量化与 LoRA 结合，配合分页优化器使单卡即可微调 65B 模型 — https://arxiv.org/abs/2305.14314
+- **DoRA: Weight-Decomposed Low-Rank Adaptation** (Liu et al., NVIDIA, 2024) — 将权重分解为大小和方向分别微调，效果接近全量微调 — https://arxiv.org/abs/2402.09353

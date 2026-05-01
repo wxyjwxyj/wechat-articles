@@ -119,3 +119,14 @@ AI 搜索 = 图书馆 + 管理员帮你把书读完了告诉你答案
 ```
 
 AI 搜索的效率更高，但风险也更大——图书管理员可能读错了、可能曲解了原文。而且图书馆的收入模式（靠指路收广告费）被颠覆了。这就是 AI 搜索在 2026 年的真实状态：**技术上更先进，商业模式上还在探索中。**
+
+---
+
+## 参考来源
+
+- **Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks** (Lewis et al., Facebook AI, 2020) — RAG 奠基论文，提出"先检索再生成"范式，是 AI 搜索的核心技术基础 — https://arxiv.org/abs/2005.11401
+- **Survey of Hallucination in Natural Language Generation** (Ji et al., 2023) — 幻觉问题的系统性综述，涵盖成因、分类和缓解方法，AI 搜索可靠性问题的理论基础 — https://arxiv.org/abs/2202.03629
+- **Perplexity AI** (Perplexity) — AI 搜索品类定义者，开创"对话式搜索 + 引用来源"范式，2026 年估值 $210 亿 — https://www.perplexity.ai/
+- **Introducing ChatGPT Search** (OpenAI, 2024) — OpenAI 将搜索能力直接集成到 ChatGPT，标志着基础模型厂商正式进入搜索赛道 — https://openai.com/index/introducing-chatgpt-search/
+- **Generative AI in Search** (Google, 2024) — Google AI Overviews 的官方发布，传统搜索巨头被迫 AI 化的标志性事件 — https://blog.google/products/search/generative-ai-search/
+- **Kimi** (Moonshot AI / 月之暗面) — 国内深度研究引擎代表，支持 200 万字上下文，适合复杂问题的多步调研 — https://kimi.moonshot.cn/

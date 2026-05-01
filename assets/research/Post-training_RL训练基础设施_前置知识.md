@@ -128,3 +128,13 @@ GRPO = 特训班同学互评
 ```
 
 Post-training 的工程核心就是在"怎么让特训班跑得更快更省显存"这件事上做文章。
+
+---
+
+## 参考来源
+
+- **Training language models to follow instructions with human feedback (InstructGPT)** (Ouyang et al., 2022) — OpenAI 首次提出完整的 RLHF 三步骤流程：偏好标注→奖励模型→PPO 优化，是对齐训练的基础 — [arXiv:2203.02155](https://arxiv.org/abs/2203.02155)
+- **Proximal Policy Optimization Algorithms** (Schulman et al., 2017) — 提出 PPO 算法，通过"小步更新"策略实现稳定高效的强化学习训练 — [arXiv:1707.06347](https://arxiv.org/abs/1707.06347)
+- **Direct Preference Optimization** (Rafailov et al., 2023) — 跳过奖励模型的新范式，将 RLHF 从 4 模型简化为 2 模型，大幅降低工程复杂度 — [arXiv:2305.18290](https://arxiv.org/abs/2305.18290)
+- **DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open-Source LLMs** (Shao et al., 2024) — DeepSeek 在此工作中首次提出 GRPO 算法，去掉价值模型进一步降低显存需求 — [arXiv:2402.03300](https://arxiv.org/abs/2402.03300)
+- **DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning** (Guo et al., 2025) — 开源复现 o1 式推理能力，验证了 GRPO 在大规模推理训练中的有效性 — [arXiv:2501.12948](https://arxiv.org/abs/2501.12948)

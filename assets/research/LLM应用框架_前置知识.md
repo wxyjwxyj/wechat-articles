@@ -152,3 +152,14 @@ Dify 在 2026 年达到 140k GitHub Stars（超过了 LangChain），说明**低
     MCP 协议 → 框架都在适配
     组合式堆栈 → LlamaIndex 做检索 + LangChain 做编排
 ```
+
+---
+
+## 参考来源
+
+- **ReAct: Synergizing Reasoning and Acting in Language Models** (Yao et al., 2022) — 提出"边思考边行动"范式，锁定了几乎所有现代 Agent 框架的设计方向 — https://arxiv.org/abs/2210.03629
+- **DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines** (Khattab et al., Stanford, 2023) — 编译器式框架，自动优化 prompt 和 few-shot 示例 — https://arxiv.org/abs/2310.03714
+- **LangChain** (LangChain Inc.) — 通用 LLM 编排框架，700+ 集成，LangGraph 是 Agent 编排领域事实标准 — https://www.langchain.com/
+- **LlamaIndex** (LlamaIndex Inc.) — 以数据索引和检索为核心的框架，擅长文档解析与高级检索策略 — https://www.llamaindex.ai/
+- **Dify** (LangGenius) — 可视化拖拽式 LLM 应用平台，2026 年 140k GitHub Stars，支持自托管和 MCP 协议 — https://github.com/langgenius/dify
+- **Model Context Protocol Specification** (Anthropic, 2024) — 统一 Agent 与外部工具连接方式的开放协议，主流框架均已原生支持 — https://modelcontextprotocol.io/
