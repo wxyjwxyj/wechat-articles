@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>大模型预训练数据工程前置知识</title>
+<title>大模型数据工程前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -252,6 +252,10 @@ td:last-child { text-align: center; }
 <p>Token 是模型处理文本的基本单位。英文大约 0.75 个词 = 1 个 token，中文大约 0.5-1 个汉字 = 1 个 token。"Hello world" = 2 个 token。"你好世界" = 4 个 token。模型的参数量和训练数据量通常以 token 为单位衡量。</p>
 <h2>10. 数据-参数比</h2>
 <p>模型参数量与训练 token 量的比值。Chinchilla 法则认为最优比是 <strong>1:20</strong>（1 个参数对应 20 个训练 token），但后来的实践证明这个比例可以更大。MiniCPM 做到了 1:160——小模型用海量数据训练来弥补参数不足。比值越高，说明数据利用越充分。</p>
+<h3>FineWeb</h3>
+<p>HuggingFace 2024 年 6 月发布的 15T token 高质量预训练数据集。不只是数据集——更重要的是一套完全透明的数据工程方法论和消融实验系统（ablation），让行业第一次能精确量化"数据处理的每一步提升了多少模型性能"。它的子集 FineWeb-Edu（1.3T token）专门筛选教育质量高的内容，在推理基准上显著超越更大规模的数据集。</p>
+<h3>Model Collapse（模型崩溃）</h3>
+<p>合成数据训练过多后模型性能开始回退的现象——表现为输出多样性下降、长尾知识丢失。ICML 2025 多篇论文证实：当合成数据占比超过 30-40% 后，边际收益递减甚至负增长。根本原因是模型生成的数据受限于自身表达能力和偏差。这是合成数据路线的核心风险。</p>
 <hr>
 <p><em>本文是大模型数据工程系列的前置知识篇，读完它再阅读主报告。</em></p>
 </div>

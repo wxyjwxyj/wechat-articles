@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Post-training / RL 训练基础设施前置知识</title>
+<title>Post-training RL 前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -215,13 +215,17 @@ td:last-child { text-align: center; }
 <p><strong>不对齐的例子</strong>：用户问"怎么偷车"，模型回答详细步骤。</p>
 <p><strong>对齐后的例子</strong>：模型回答"偷车是违法行为，我不能帮你"。</p>
 <p>对齐的主流方法有三代：</p>
+<h3>强化学习（Reinforcement Learning，RL）基础</h3>
+<p>强化学习是机器学习的一个分支。核心概念：智能体（Agent）在环境中做动作（Action），环境给它奖励（Reward）或惩罚作为反馈，智能体通过试错学习调整行为策略，目标是最大化累积奖励。</p>
+<p>打一个直觉比方：训练狗。狗做对了（坐下），主人给零食（正奖励）；狗做错了（乱跑），主人说"no"。狗不是被告知"你应该怎么做"——它是通过"什么动作能得到奖励"自己总结经验。RL 训练大模型也是同一个逻辑：模型生成回答 → 打分 → 根据分数更新参数，让模型越来越偏向能得高分的回答。</p>
 <h3>RLHF（Reinforcement Learning from Human Feedback）</h3>
 <p>2022 年 InstructGPT 提出的方法，三步骤：</p>
 <ol>
 <li>人类对模型的不同输出打分（偏好标注）</li>
 <li>训练一个奖励模型（Reward Model），学会预测人类会怎么打分</li>
-<li>用 PPO 算法优化原始模型，让它的输出获得更高奖励</li>
+<li>用 <strong>PPO（Proximal Policy Optimization，近端策略优化）</strong> 算法优化原始模型，让它的输出获得更高奖励</li>
 </ol>
+<p>PPO 是目前最常用的 RL 算法之一。它的核心思想是"小步更新"——每次只允许模型参数做微小的调整，防止模型"步子迈太大"导致崩溃或性能突然下降。打个比方：不是让狗一天学会所有指令，而是一个指令一个指令慢慢教，每次只奖励一点点进步。</p>
 <p><strong>工程挑战</strong>：训练时需要同时部署 4 个模型（策略模型、参考模型、奖励模型、价值模型）——显存需求极大。</p>
 <h3>DPO（Direct Preference Optimization）</h3>
 <p>2023 年提出的简化方案，跳过"训练奖励模型"这一步，直接用偏好数据优化原始模型。</p>

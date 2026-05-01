@@ -41,7 +41,7 @@ Agent 的**安全过滤层**。像一个门卫，检查 Agent 的输入和输出
 - **内容护栏**：不准输出有害内容
 - **越狱护栏**：检测并阻止 Prompt Injection
 
-### MCP Gateway
+### MCP（Model Context Protocol，模型上下文协议）Gateway
 
 **MCP 协议的流量入口**。就像 Web 应用的 API Gateway——所有 Agent 到外部工具的连接都经过 Gateway，在这里做认证、速率限制、审计日志。
 

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>AI 视频生成前置知识</title>
+<title>AI视频生成_前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -215,7 +215,7 @@ td:last-child { text-align: center; }
 <li><strong>生成阶段</strong>：从一个纯噪点出发，模型一步步"去噪"，最后产生一段清晰的视频。</li>
 </ol>
 <p>扩散模型的关键特性是<strong>概率生成</strong>——同一个提示每次生成的视频都不同，因为起点（随机噪点）不同。</p>
-<h3>DiT（Diffusion Transformer）</h3>
+<h3>DiT（Diffusion Transformer，扩散 Transformer）</h3>
 <p>2024 年之前，扩散模型的核心网络结构是 <strong>U-Net</strong>（一种类似沙漏的编码-解码结构）。2024 年 OpenAI 的 Sora 带火了 DiT——用 <strong>Transformer</strong>（GPT 用的那种架构）替代 U-Net 做扩散。</p>
 <p>为什么 Transformer 更好？U-Net 处理的是固定分辨率的像素网格，而 Transformer 可以把视频切成"patch"（小块），处理任意分辨率、时长和宽高比。Sora 凭借 DiT 第一次实现了"在不同分辨率、不同时长下都能生成高质量视频"。</p>
 <h3>潜在空间（Latent Space）与 VAE</h3>
@@ -223,7 +223,7 @@ td:last-child { text-align: center; }
 <p>VAE（变分自编码器）先把视频压缩到一个"潜在空间"——可以理解为给视频提取"骨干信息"，压缩掉细节。在压缩后的空间里做扩散计算，再把结果解压回高清视频。所有主流视频生成模型都用这个技巧，但压缩率各有不同。</p>
 <h3>自回归视频生成</h3>
 <p>Diffusion 以外的新路线——把视频当成一串"token"来预测，跟 GPT 预测下一个词类似。Google 的某些研究和 2025-2026 年的尝试在探索这条路线。优点是可以利用语言模型的成熟技术，缺点是视频 token 数量远大于文本 token，计算量惊人。</p>
-<h3>I2V（Image-to-Video）与 T2V（Text-to-Video）</h3>
+<h3>I2V（Image-to-Video，图生视频）与 T2V（Text-to-Video，文生视频）</h3>
 <ul>
 <li><strong>T2V（文生视频）</strong>：从文字描述生成视频</li>
 <li><strong>I2V（图生视频）</strong>：从一张静态图生成视频，AI 让图片里的东西动起来</li>
@@ -273,7 +273,7 @@ td:last-child { text-align: center; }
 <hr>
 <h2>七、一个简单直觉</h2>
 <p>把 AI 视频生成的路线画一条线：</p>
-<pre><code>2018 ──── GAN 时代 ──── 短视频、低分辨率、不稳定<br>2022 ──── 扩散模型 ──── 画质飞跃，但运动仍然生硬<br>2024.02 ─ Sora ─────── 60 秒、1080p、物理一致的惊艳 demo<br>2024-2025 ─ 国产追赶 ── 可灵、PixVerse、Vidu 集体赶超<br>2026.04 ─ Sora 关停 ── 成本问题杀死明星产品<br>             ↓<br>        PixVerse / Kling / Runway 三强并立<br>        开源方案仍落后 2-3 年<br>        核心矛盾：画面好看 vs 物理正确，还没解决</code></pre>
+<pre><code>2018 ──── GAN（Generative Adversarial Network，生成对抗网络）时代 ──── 短视频、低分辨率、不稳定<br>2022 ──── 扩散模型 ──── 画质飞跃，但运动仍然生硬<br>2024.02 ─ Sora ─────── 60 秒、1080p、物理一致的惊艳 demo<br>2024-2025 ─ 国产追赶 ── 可灵、PixVerse、Vidu 集体赶超<br>2026.04 ─ Sora 关停 ── 成本问题杀死明星产品<br>             ↓<br>        PixVerse / Kling / Runway 三强并立<br>        开源方案仍落后 2-3 年<br>        核心矛盾：画面好看 vs 物理正确，还没解决</code></pre>
 <p>AI 视频生成在 2026 年遇到的根本问题是：<strong>你看到的并不等于真实的。</strong> 模型可以生成看起来完美的画面，但物理上的因果关系是缺失的。从"视频生成"到"世界模拟"，这条路可能还需要 3-5 年。</p>
 </div>
 </body>

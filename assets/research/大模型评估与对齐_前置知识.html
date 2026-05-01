@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>大模型评估与对齐前置知识</title>
+<title>大模型评估与对齐_前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -215,9 +215,9 @@ td:last-child { text-align: center; }
 <p><strong>评估（Evaluation）</strong> 就是给模型"打分"。就像学生考完试要出成绩一样，模型训练完也要知道它到底有多强。</p>
 <p>但评估面临一个致命问题：<strong>如果测试数据出现在训练数据中，评估结果就是作弊的。</strong> 这叫评估污染（contamination）——如果模型已经"背"过答案，再考它当然满分。</p>
 <p>所以对齐和评估的关系是：对齐让模型变好，评估告诉你好了多少。没有评估，对齐就是盲人摸象。</p>
-<h2>3. RLHF 的三阶段流程</h2>
+<h2>3. RLHF（Reinforcement Learning from Human Feedback，基于人类反馈的强化学习）的三阶段流程</h2>
 <p>RLHF（Reinforcement Learning from Human Feedback，基于人类反馈的强化学习）是第一个被大规模验证的对齐方法，有三个阶段：</p>
-<p><strong>第一阶段：SFT（监督微调）</strong></p>
+<p><strong>第一阶段：SFT（Supervised Fine-Tuning，监督微调）</strong></p>
 <ul>
 <li>收集人类写的"好回答"示例，让模型照着学</li>
 <li>好比给学生看满分作文，让他模仿</li>
@@ -254,7 +254,7 @@ td:last-child { text-align: center; }
 <tr><td><strong>奖励模型</strong></td><td>判断回答好坏的"打分器"</td><td>阅卷老师</td></tr>
 </table>
 <p>RLHF 的流程就是：让考生写答案 → 阅卷老师打分 → 根据分数改进考生。循环很多次后，考生就学会了写出高分答案。</p>
-<h2>6. DPO 是怎么简化 RLHF 的？</h2>
+<h2>6. DPO（Direct Preference Optimization，直接偏好优化）是怎么简化 RLHF 的？</h2>
 <p>DPO（Direct Preference Optimization，直接偏好优化）的洞察来自一个数学发现。</p>
 <p>RLHF 中那套复杂的流程（训练奖励模型→PPO优化）其实是多余的。DPO 的论文证明：<strong>最优策略和奖励函数之间存在一个直接的数学关系。</strong> 也就是说，你可以直接从策略模型自身的输出概率来推导出"什么是好的回答"，不需要单独训练一个奖励模型。</p>
 <p>这个推导的直观理解：如果一个回答很"好"，策略模型应该倾向于以更高的概率生成它。反之亦然。<strong>策略模型对回答的偏好程度，本身就是最好的奖励信号。</strong></p>
@@ -264,7 +264,7 @@ td:last-child { text-align: center; }
 <li>DPO：只需要策略模型 + 参考模型 = 2个模型</li>
 </ul>
 <p><strong>DPO 最大的贡献不是"更好"，而是"更简单"。</strong> 它把对齐从"只有大公司玩得起"变成了"任何有 GPU 的人都能跑"。</p>
-<h2>7. GRPO 又简化了什么？</h2>
+<h2>7. GRPO（Group Relative Policy Optimization，分组相对策略优化）又简化了什么？</h2>
 <p>GRPO（Group Relative Policy Optimization，组相对策略优化）进一步简化了 RLHF。</p>
 <p>RLHF 中的 PPO 需要价值函数网络（Critic）来估计"这个回答有多好"，这个网络和策略模型几乎一样大——训练两个大模型的内存消耗极高。</p>
 <p>GRPO 的思路：<strong>用组内采样替代价值函数。</strong> 对同一个问题，让策略模型生成 G 个回答组成一个"组"。每个回答的好坏 =（该回答的得分 - 组内平均分）/ 组内标准差。</p>
@@ -295,7 +295,7 @@ td:last-child { text-align: center; }
 <p>评估基准（Benchmark）就是模型要考的"试卷"。不同基准考不同能力：</p>
 <table>
 <tr><th>基准</th><th>考什么</th><th>难度</th></tr>
-<tr><td>MMLU</td><td>57个学科的知识</td><td>大学水平</td></tr>
+<tr><td>MMLU（Massive Multitask Language Understanding，大规模多任务语言理解）</td><td>57个学科的知识</td><td>大学水平</td></tr>
 <tr><td>GSM8K</td><td>小学数学应用题</td><td>小学</td></tr>
 <tr><td>MATH</td><td>高中数学竞赛题</td><td>高中</td></tr>
 <tr><td>HumanEval</td><td>写代码</td><td>编程题</td></tr>

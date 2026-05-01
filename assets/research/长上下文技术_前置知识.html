@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>长上下文技术 前置知识</title>
+<title>长上下文技术_前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -220,7 +220,7 @@ td:last-child { text-align: center; }
 <h3>最初的方案：绝对位置编码</h3>
 <p>2017 年 Transformer 诞生时，给每个位置分配一个"座位号"：第 1 个词加编码 1，第 2 个词加编码 2……</p>
 <p><strong>痛点</strong>：模型训练时只见过 1-1024 号的座位。你让它处理 2000 个词，第 1500 号座位的编码它从没见过，表现自然一塌糊涂。</p>
-<h3>RoPE：旋转位置编码（2021）</h3>
+<h3>RoPE（Rotary Position Embedding，旋转位置编码，2021）</h3>
 <p>现在最主流的位置编码方案（被 Llama、Mistral、Qwen、GPT-4o、Claude 等几乎所有主流模型采用）。</p>
 <p><strong>直觉</strong>：想象你在一个旋转餐厅里——你坐的位置（语义信息）不变，但餐桌在转（位置信息用旋转角度表示）。你跟你旁边的人说话（短距离），跟 50 米外的人喊话（长距离），难度自然不同。</p>
 <p>RoPE 把 query 和 key 向量做"旋转"，旋转量取决于它们的位置。<strong>两个词越近，它们的旋转量之差越小</strong>，注意力分数越高。这个设计天然支持相对位置感知。</p>
@@ -254,8 +254,8 @@ td:last-child { text-align: center; }
 <h3>解决方案</h3>
 <table>
 <tr><th>方案</th><th>思路</th><th>类比</th></tr>
-<tr><td>MQA</td><td>所有注意力头共享同一组 K/V</td><td>多个厨师共用一个备菜台</td></tr>
-<tr><td>GQA</td><td>分组共享 K/V</td><td>每 4 个厨师共用一个备菜台</td></tr>
+<tr><td>MQA（Multi-Query Attention，多查询注意力）</td><td>所有注意力头共享同一组 K/V</td><td>多个厨师共用一个备菜台</td></tr>
+<tr><td>GQA（Grouped Query Attention，分组查询注意力）</td><td>分组共享 K/V</td><td>每 4 个厨师共用一个备菜台</td></tr>
 <tr><td>MLA</td><td>把 K/V 压缩成"浓缩液"，用时再还原</td><td>把蔬菜打成浓缩汁，做菜时再还原</td></tr>
 </table>
 <p>MLA（DeepSeek 的核心创新）是目前最强的方案——把 KV Cache 压缩了 93%-98%。</p>

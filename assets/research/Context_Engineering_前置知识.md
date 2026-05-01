@@ -1,6 +1,6 @@
 # Context Engineering 前置知识
 
-> 这份文档为零基础读者准备。如果你已经熟悉 System Prompt、Prompt Caching、上下文窗口、KV Cache 等概念，可以直接翻阅主报告。
+> 这份文档为零基础读者准备。如果你已经熟悉 System Prompt、Prompt Caching、上下文窗口、KV Cache（Key-Value Cache，键值缓存）等概念，可以直接翻阅主报告。
 
 ---
 

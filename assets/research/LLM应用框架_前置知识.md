@@ -1,6 +1,6 @@
 # LLM 应用框架 前置知识
 
-> 这份文档为零基础读者准备。如果你已经熟悉 LangChain、LlamaIndex、Agent、RAG Pipeline 等概念，可以直接翻阅主报告。
+> 这份文档为零基础读者准备。如果你已经熟悉 LangChain、LlamaIndex、Agent、RAG（Retrieval-Augmented Generation，检索增强生成）Pipeline 等概念，可以直接翻阅主报告。
 
 ---
 
@@ -31,7 +31,7 @@
 
 框架让你用声明式的方式定义这个流程，不需要手写每一步的代码。
 
-### DAG（有向无环图）
+### DAG（Directed Acyclic Graph，有向无环图）
 
 当流程不是简单的一条线，而是有分支、有并行的复杂结构时，就用到 DAG。比如一个知识库机器人可以"同时搜索文档库和数据库 → 把两个结果合并 → 发给 LLM"，这就是一个 DAG。现代 LLM 框架的内部编排引擎大多基于 DAG 设计。
 

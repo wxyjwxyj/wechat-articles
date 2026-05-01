@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>大模型 AI 芯片格局前置知识</title>
+<title>AI 芯片格局前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -296,6 +296,19 @@ td:last-child { text-align: center; }
 <tr><td>TDP</td><td>芯片最大功耗（瓦特），决定散热需求</td></tr>
 <tr><td>Die</td><td>芯片的最小物理单元（从晶圆上切下来的一小块）</td></tr>
 </table>
+<h2>NVIDIA 芯片进化简史</h2>
+<p>NVIDIA 保持每年一代的迭代节奏：</p>
+<table>
+<tr><th>架构</th><th>年份</th><th>代表 GPU</th><th>关键突破</th></tr>
+<tr><td>Volta</td><td>2017</td><td>V100</td><td>首个 Tensor Core</td></tr>
+<tr><td>Ampere</td><td>2020</td><td>A100</td><td>MIG 多实例、FP16</td></tr>
+<tr><td>Hopper</td><td>2022</td><td>H100</td><td>Transformer Engine、FP8</td></tr>
+<tr><td><strong>Blackwell</strong></td><td>2024</td><td>B200</td><td>双 die 封装、FP4、NVLink 5（1.8 TB/s）</td></tr>
+<tr><td><strong>Rubin</strong></td><td>2026</td><td>VR200</td><td>首款 HBM4 GPU（288GB）、50 PFLOPs 算力</td></tr>
+<tr><td>Feynman</td><td>2028</td><td>—</td><td>HBM5、首次堆叠逻辑晶圆</td></tr>
+</table>
+<h3>Triton</h3>
+<p>OpenAI 开源的 GPU 编程语言（Python-level）。写一次 Triton kernel 就能在 NVIDIA/AMD/Intel 上跑——不需要学 CUDA。Triton + MLIR + JAX 正在逐步降低 CUDA 的锁定效应，被视作"打破 NVIDIA 垄断"的三驾马车之一。</p>
 <hr>
 <p><em>本文是 AI 芯片格局系列的前置知识篇，读完它再阅读主报告。</em></p>
 </div>

@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Prompt Engineering 前置知识</title>
+<title>Prompt_Engineering_前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -199,7 +199,7 @@ td:last-child { text-align: center; }
 <body>
 <div class="page">
 <h1>Prompt Engineering 前置知识</h1>
-<blockquote>这份文档为零基础读者准备。如果你已经熟悉 Zero-shot、Few-shot、CoT、System Prompt 等概念，可以直接翻阅主报告。</blockquote>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉 Zero-shot、Few-shot、CoT（Chain-of-Thought，思维链）、System Prompt 等概念，可以直接翻阅主报告。</blockquote>
 <hr>
 <h2>一、Prompt Engineering 到底是什么？用一句话说清楚</h2>
 <p><strong>Prompt Engineering = 设计指令，让 AI 模型给出你想要的结果。</strong></p>
@@ -233,7 +233,7 @@ td:last-child { text-align: center; }
 <p>不需要给包含推理步骤的示例，直接加一句"Let's think step by step"就行。效果提升同样显著。</p>
 <h3>Self-Consistency（自一致性）</h3>
 <p>同一个问题问模型多次（温度 >0，每次回答略有不同），然后选出现次数最多的答案。就像让 10 个人独立解题，然后投票选最常见的答案——比任何一个人的答案都更可靠。</p>
-<h3>ReAct（Reason + Act）</h3>
+<h3>ReAct（Reasoning + Acting，推理-行动协同）</h3>
 <p>推理和行动交错进行。模型不仅可以"想"，还可以"做"——比如搜索资料、查询数据库——然后把得到的信息继续用于推理。</p>
 <pre><code>用户：今天北京的天气适合跑步吗？<br>模型推理：我需要知道北京的天气。<br>模型行动：search("北京 今天 天气")<br>搜索结果：北京今天 25°C，晴，空气质量好<br>模型推理：温度适宜、天气晴朗、空气质量好，适合跑步。<br>最终回答：北京今天天气很好，非常适合跑步！</code></pre>
 <p>ReAct 是后来所有 AI Agent 的基础范式——让模型不再只是"聊天"，而是能自主规划和执行任务。</p>

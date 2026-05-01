@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Agent Runtime 前置知识</title>
+<title>Agent_Runtime_Harness_前置知识</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -230,7 +230,7 @@ td:last-child { text-align: center; }
 <li><strong>内容护栏</strong>：不准输出有害内容</li>
 <li><strong>越狱护栏</strong>：检测并阻止 Prompt Injection</li>
 </ul>
-<h3>MCP Gateway</h3>
+<h3>MCP（Model Context Protocol，模型上下文协议）Gateway</h3>
 <p><strong>MCP 协议的流量入口</strong>。就像 Web 应用的 API Gateway——所有 Agent 到外部工具的连接都经过 Gateway，在这里做认证、速率限制、审计日志。</p>
 <h3>可观测性（Observability）</h3>
 <p>Agent 的<strong>运行监控系统</strong>。传统应用监控的是"这个 API 返回了 200 还是 500"，Agent 监控的是"LLM 在这一步想了什么、调了什么工具、状态怎么变的"。OpenTelemetry 正在为 Agent 定义标准追踪格式。</p>

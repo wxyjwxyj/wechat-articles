@@ -234,13 +234,13 @@ td:last-child { text-align: center; }
 <h2>三、主流量化方法</h2>
 <h3>困惑度（Perplexity）</h3>
 <p>量化方法优劣用什么衡量？主报告中反复出现一个指标——<strong>困惑度（Perplexity）</strong>。它衡量模型对下一个词的"不确定程度"：困惑度越低，模型越确定，质量越高。量化前后的困惑度变化，就是量化质量的标尺。一个优秀的量化方法，困惑度上升应不超过 0.5。</p>
-<h3>GPTQ（2022）</h3>
+<h3>GPTQ（GPT-Post-training Quantization，GPT 后训练量化，2022）</h3>
 <p>基于二阶优化的方法。先用一小批校准数据（128 个样本就够了）分析模型参数，然后逐层将 FP16 转换为 INT4。Hugging Face 上最多的量化模型就是 GPTQ 格式。</p>
-<h3>AWQ（2023）</h3>
+<h3>AWQ（Activation-aware Weight Quantization，激活感知权重量化，2023）</h3>
 <p>观察激活值的分布来识别"重要"的权重通道——只保护重要的 1% 通道不量化，其余大胆量化。AWQ 的推理速度通常比 GPTQ 快 10-20%。</p>
 <h3>SmoothQuant（2022）</h3>
 <p>LLM 的激活值中偶尔出现极端异常值（比正常值大 100 倍以上），导致直接量化会把精度搞崩溃。SmoothQuant 把这些异常值"平滑"转移到权重上——激活值和权重量化都不再困难。它目前是 FP8/INT8 推理加速的标配方案。</p>
-<h3>GGUF（2023）</h3>
+<h3>GGUF（GPT-Generated Unified Format，GPT 通用量化格式，2023）</h3>
 <p>llama.cpp 的原生格式。不需要校准数据，直接按块量化。配合 llama.cpp 可以在 CPU 或普通显卡上跑大模型。</p>
 <h3>NF4（bitsandbytes）</h3>
 <p>Normal Float 4-bit——专门为神经网络权重分布设计的 4-bit 格式。QLoRA（让模型微调时显存大幅降低的技术）的核心就是 NF4。</p>
