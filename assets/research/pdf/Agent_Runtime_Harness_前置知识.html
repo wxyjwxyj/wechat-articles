@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Agent Runtime / Harness 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Agent Runtime / Harness 前置知识</h1>
+<blockquote>这份文档为零基础读者准备。如果你已经熟悉沙箱、编排引擎、Guardrails 等概念，可以直接翻主报告。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：评估一个 Agent 项目的安全需求，选择合适级别的沙箱方案（API 级 / Firecracker / gVisor）和编排引擎（图编排 / 可视化编排），并设计基本的 Guardrails 和可观测性策略。</blockquote>
+<hr>
+<h2>一、Agent Runtime 是什么？</h2>
+<p>让 AI Agent <strong>跑起来的底层设施</strong>。Agent 不只是"调一次 LLM 得到一个回答"——它是持续运行的进程，需要执行代码、访问文件、调用 API、记住状态、在出错时恢复。这些"让 Agent 稳定运行"的能力就是 Runtime 提供的。</p>
+<p>打一个直觉比方：如果 Agent 是一辆车，Model（LLM）是发动机，Framework 是车身，<strong>Runtime/Harness 就是刹车、方向盘、安全带和仪表盘</strong>——没有它，发动机再强也上不了路。</p>
+<hr>
+<h2>二、核心概念</h2>
+<h3>沙箱（Sandbox）</h3>
+<p>一个<strong>隔离的执行环境</strong>，Agent 在其中运行代码但无法影响外部系统。就像把 Agent 关在一个"沙盒"里——它可以在里面随便玩，但破坏不了外面的东西。</p>
+<p>四种方案：</p>
+<ul>
+<li><strong>API 级沙箱</strong>（OpenAI）：限制 Agent 只能调用白名单 API，不准碰文件系统</li>
+<li><strong>Firecracker</strong>（AWS）：每个 Agent 会话跑在一个微型虚拟机里（~125ms 启动）（Agache et al., AWS, 2020）</li>
+<li><strong>gVisor</strong>（Google）：在应用和内核之间加一层"拦网"</li>
+<li><strong>Tank OS</strong>（Red Hat）：把整个 Agent 环境打包成不可变的 Linux 镜像</li>
+</ul>
+<h3>编排引擎（Orchestration Engine）</h3>
+<p>管理多个 Agent 的协作流程。一个复杂任务通常需要多个 Agent 分工——一个查资料、一个写代码、一个做测试。编排引擎负责"谁先做、谁后做、做错了怎么恢复"。</p>
+<p>两种主流方式：</p>
+<ul>
+<li><strong>图编排</strong>（LangGraph）：用有向图定义步骤和分支。<strong>类比</strong>：像画流程图——你先画好 A→B→C 的路线图，代码自动按图执行。</li>
+<li><strong>可视化编排</strong>（Dify）：拖拽节点，用箭头连线。<strong>类比</strong>：像用 PPT 画架构图——拖框框、画箭头，不写代码也能定义流程。</li>
+</ul>
+<p>选择哪一种取决于团队——开发团队偏爱图编排（灵活可控），业务团队偏爱可视化编排（无需编程）。</p>
+<h3>Guardrails（护栏）</h3>
+<p>Agent 的<strong>安全过滤层</strong>。像一个门卫，检查 Agent 的输入和输出有没有问题（NVIDIA）。</p>
+<p>三种护栏：</p>
+<ul>
+<li><strong>话题护栏</strong>：不准 Agent 讨论某些话题</li>
+<li><strong>内容护栏</strong>：不准输出有害内容</li>
+<li><strong>越狱护栏</strong>：检测并阻止 Prompt Injection</li>
+</ul>
+<h3>MCP（Model Context Protocol，模型上下文协议）Gateway</h3>
+<p><strong>MCP 协议的流量入口</strong>（Anthropic, 2024）。就像 Web 应用的 API Gateway——所有 Agent 到外部工具的连接都经过 Gateway，在这里做认证、速率限制、审计日志。</p>
+<h3>可观测性（Observability）</h3>
+<p>Agent 的<strong>运行监控系统</strong>。传统应用监控的是"这个 API 返回了 200 还是 500"，Agent 监控的是"LLM 在这一步想了什么、调了什么工具、状态怎么变的"。OpenTelemetry 正在为 Agent 定义标准追踪格式。</p>
+<p><strong>类比</strong>：就像飞机的黑匣子——不仅记录"飞机在飞"（传统监控），还记录"飞行员在想什么、按了什么按钮、仪表盘读数怎么变的"（Agent 的行为轨迹）。没有可观测性的 Agent 像个黑箱——出了问题你完全不知道它做了什么决策。</p>
+<h3>Durable Execution（持久化执行）</h3>
+<p>Agent 在任何步骤中断后都能恢复到中断前的状态。想象你让 Agent 做一个三天的研究任务，它在第 2.8 天崩溃了——没有 Durable Execution 就得重来。Temporal 是这个领域的代表方案（Temporal Technologies）。</p>
+<p><strong>类比</strong>：就像玩一个不能存档的 RPG 游戏——你打了 28 个小时，电脑突然死机了，得从头开始。Durable Execution 就是游戏的自动存档功能——每次关键节点自动保存，任何时候崩溃都能从最近存档恢复。</p>
+<hr>
+<h2>三、一个简单直觉</h2>
+<pre><code>Agent Runtime 的进化 = 从"马路上随便跑"到"有交通规则"<br>2023（萌芽期）：没有规则，谁都能跑，出了事没人管<br>2024（框架期）：有了车道线（编排），但还没有交警和红绿灯<br>2025（基建期）：沙箱、护栏、监控全上——像修好了高速公路<br>2026（Harness 范式）：不是"更好的路"，而是"操作系统"——统一管理所有车的运行</code></pre>
+<p>Agent Runtime 在 2026 年还是一个非常年轻的领域——OpenAI 刚把 Harness 定义出来（OpenAI, 2025），Martin Fowler 刚把它列为正式工程实践。未来很可能会像 DevOps 一样，成为一个专门的工种。</p>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li><strong>OpenAI Agents SDK</strong> (OpenAI, 2025) — OpenAI 官方 Agent 运行时框架，定义了 Agent Harness 的范式，含 Guardrails、Handoff、Tracing — https://openai.github.io/openai-agents-python/</li>
+<li><strong>Temporal</strong> (Temporal Technologies) — 持久化执行引擎代表，支持工作流在任何步骤中断后恢复到中断前状态 — https://temporal.io/</li>
+<li><strong>Firecracker: Lightweight Virtualization for Serverless Applications</strong> (Agache et al., AWS, 2020) — AWS 开源的微型虚拟机，每个 Agent 会话可跑在独立 microVM 中，~125ms 启动 — https://firecracker-microvm.github.io/</li>
+<li><strong>gVisor</strong> (Google) — 应用级内核沙箱，在应用和 Linux 内核之间加一层拦截层，为容器提供额外隔离 — https://github.com/google/gvisor</li>
+<li><strong>Model Context Protocol Specification</strong> (Anthropic, 2024) — 统一 Agent 与外部工具/数据源连接方式，MCP Gateway 提供认证、限流和审计能力 — https://modelcontextprotocol.io/</li>
+<li><strong>NVIDIA NeMo Guardrails</strong> (NVIDIA) — 开源 Guardrails 框架，支持话题护栏、内容护栏和越狱检测，可与任何 LLM 集成 — https://github.com/NVIDIA/NeMo-Guardrails</li>
+</ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>端侧 AI / 设备端部署横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>端侧 AI / 设备端部署横纵分析报告</h1>
+<blockquote>从"云端 API 是唯一答案"到"3B 模型在手机上实时跑"——端侧 AI 如何在两年内从"技术可能"变成了"产业必然"，又如何让隐私保护从"政策口号"变成了"硬件承诺"。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>端侧 AI（On-Device AI）是在智能手机、PC、IoT 设备等用户终端上直接运行 AI 模型的技术体系。它的核心主张是一个与云端 AI 完全相反的逻辑：<strong>AI 不应该把用户数据送到云端——AI 应该跑到用户设备上来。</strong></p>
+<p>2026 年被业界称为"端侧 AI 元年"——Qualcomm Snapdragon X2 Elite 的 NPU 算力突破 80 TOPS、Apple Intelligence 深度整合进 iOS 27/macOS 26、Gemini Nano 成为 Android 16 标配、Copilot+ PC 生态成熟——端侧 AI 从芯片到 OS 到应用的全栈能力首次形成了闭环。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解端侧 AI 和云端 AI 的分工边界，能评估一个 AI 应用是否适合端侧部署，能根据芯片平台（Apple Silicon / Snapdragon / Intel Core Ultra / Ryzen AI）做出正确的模型选型和性能预期。</blockquote>
+<hr>
+<h2>二、技术背景</h2>
+<h3>2.1 端侧 AI 的四大驱动力</h3>
+<p><strong>隐私需求</strong>：用户越来越不愿意把聊天记录、照片、文档上传到云端 AI 服务器。Apple 的"隐私是第一优先级"战略在消费者端侧 AI 市场建立了强大的品牌叙事。</p>
+<p><strong>延迟不可容忍</strong>：云端 API 的网络延迟（200-1000ms）对实时场景（语音助手、AR 翻译、自动驾驶辅助）来说太慢了。端侧推理延迟可以降到 10-50ms。</p>
+<p><strong>离线可用</strong>：飞机上、地铁里、地下室——不是所有地方都有稳定的网络连接。端侧 AI 必须能独立工作。</p>
+<p><strong>成本规模化</strong>：每一百万次 API 调用都要付费。端侧 AI 的推理成本是零——电费和芯片折旧分摊到每次推理可以忽略不计。</p>
+<h3>2.2 端侧 AI 的技术栈</h3>
+<pre><code>应用层：Siri, Gemini Nano, Copilot+ PC 应用<br>   ↕<br>模型层：SLM (3B-7B), Gemma 4, Phi-4, Qwen 3B, Gemini Nano<br>   ↕<br>运行时层：Apple Core ML, Qualcomm AI Engine, ONNX Runtime, llama.cpp<br>   ↕<br>芯片层：NPU (Neural Processing Unit) + GPU + CPU 协同<br>   ↕<br>OS 层：iOS 27, Android 16, Windows 11 Copilot+</code></pre>
+<hr>
+<h2>三、纵向分析：从"不可能"到"标配"</h2>
+<h3>3.1 前 NPU 时代：所有推理都在云端（2018-2022）</h3>
+<p>2018 年 BERT 发布时，在手机上跑 BERT 是"一件很慢但能做"的事——CPU 推理一个 110M 参数的模型需要几百毫秒到几秒。LLaMA 的出现让端侧推理从"慢"变成了"不可能"——没有专用 AI 芯片的手机，连 7B 模型的 FP16 权重都加载不了（需要 14GB 显存）。</p>
+<p>这个阶段的端侧 AI 本质上是"把云端 API 封装成 App"。Siri、Google Assistant、Alexa——所有的智能都在云端完成，端侧只负责录音和播放。</p>
+<h3>3.2 NPU 的崛起：芯片层革命（2023-2024）</h3>
+<p><strong>Apple Silicon</strong> 率先在 M 系列芯片中集成了专用 Neural Engine。M1（2020）的 Neural Engine 算力 11 TOPS，M4（2024）达到 38 TOPS。Apple 的 Foundation Models 框架让开发者可以用标准 API 调用端侧 AI 能力。</p>
+<p><strong>Qualcomm Snapdragon X 系列</strong>（2024）是 Windows on ARM 的转折点。Snapdragon X Elite 的 Hexagon NPU 达到 45 TOPS，让 AI PC 的概念从 hype 变成了可量产的现实。</p>
+<p><strong>Intel Core Ultra</strong>（Meteor Lake, 2024）首次在 x86 平台集成了 NPU（11.5 TOPS），2025 年的 Lunar Lake 和 2026 年的 Panther Lake 分别提升到 48 TOPS 和 100+ TOPS。</p>
+<p><strong>AMD Ryzen AI</strong> 系列在 2024-2026 年将 NPU 算力从 16 TOPS 提升到 80+ TOPS。</p>
+<h3>3.3 端侧 AI 生态成熟（2025-2026）</h3>
+<p><strong>Apple Intelligence（2025.06 WWDC）</strong> 是迄今为止最大规模的端侧 AI 消费级部署。每次 iOS 更新都在扩展端侧模型的覆盖范围——从通知摘要到邮件生成到图像编辑。2026 年的 WWDC 预计将发布 Siri 的端侧大模型升级。</p>
+<p><strong>Gemini Nano（2025-2026）</strong> 是 Google 端侧 AI 的核心载体。Nano 在 Android 16 中从 Pixel 独占扩展到所有搭载支持 NPU 的 Android 旗舰。Gemini 4 Nano（2026.04）与 Gemma 4 同步发布——Google 的端侧策略是"Gemma 开源 + Nano 系统预装"双线推进。</p>
+<p><strong>AI PC / Copilot+ PC</strong>：2025-2026 年，Microsoft 的 Copilot+ PC 认证（要求 NPU ≥ 40 TOPS）催生了一波硬件升级潮。Qualcomm Snapdragon X2 Elite（80 TOPS）、Intel Panther Lake（100+ TOPS）、AMD Ryzen AI 300（80 TOPS）三家在 AI PC 赛道激烈竞争。</p>
+<p><strong>NPU-first 运行时</strong>：llama.cpp 在 2026 年添加了对 Hexagon NPU / Apple Neural Engine 的原生支持。npurun 等项目让开发者可以在 NPU 上直接跑 LLM 推理——NPU 推理比 GPU 推理省电 3-5 倍。</p>
+<p><strong>Apple Foundation Models</strong>：Apple 在 2025 年底开放了 Foundation Models 框架的开发者 API，允许第三方 App 直接调用 iOS 内置的端侧 AI 模型（文本生成、图像生成、语音识别）。</p>
+<h3>3.4 2026 Q1-Q2：端侧 AI 的关键里程碑</h3>
+<ul>
+<li><strong>Snapdragon X2 Elite 量产</strong>（2026.02）：80 TOPS NPU，支持在笔记本上本地运行 14B-27B 模型。第一批搭载 X2 Elite 的设备（ASUS Zenbook A16、Samsung Galaxy Book 6 Edge）已上市。</li>
+<li><strong>Gemini 4 Nano 发布</strong>（2026.04）：支持 140+ 种语言的离线翻译和语音交互。</li>
+<li><strong>Copilot+ PC 生态突破</strong>：2026 年 Q1 全球 AI PC 出货量首次超过传统 PC。</li>
+<li><strong>LLM Inference at the Edge 基准</strong>（2026.03）：首篇系统性对比移动端 NPU/GPU/CPU 在持续负载下的性能效率论文。</li>
+<li><strong>端侧 Agent</strong>：CES 2026 上多家厂商展示了在本地运行的 Agent——端侧 AI 从"被动问答"走向"主动执行"。</li>
+</ul>
+<hr>
+<h2>四、横向分析：2026 年端侧 AI 芯片对比</h2>
+<h3>4.1 旗舰芯片 NPU 算力</h3>
+<table>
+<tr><th>芯片</th><th>厂商</th><th>NPU 算力</th><th>GPU</th><th>内存带宽</th><th>代表设备</th><th>发布时间</th></tr>
+<tr><td>Apple A18 Pro</td><td>Apple</td><td>38 TOPS</td><td>6-core</td><td>78 GB/s</td><td>iPhone 18 Pro</td><td>2025.09</td></tr>
+<tr><td>Apple M4 Ultra</td><td>Apple</td><td>38 TOPS</td><td>80-core</td><td>800 GB/s</td><td>Mac Studio</td><td>2025</td></tr>
+<tr><td>Snapdragon X2 Elite</td><td>Qualcomm</td><td>80 TOPS</td><td>Adreno</td><td>136 GB/s</td><td>ASUS Zenbook A16</td><td>2026.02</td></tr>
+<tr><td>Snapdragon 8 Gen 4</td><td>Qualcomm</td><td>45 TOPS</td><td>Adreno</td><td>68 GB/s</td><td>Samsung S26 Ultra</td><td>2025.10</td></tr>
+<tr><td>Intel Panther Lake</td><td>Intel</td><td>100+ TOPS</td><td>Arc (Xe3)</td><td>128 GB/s</td><td>Dell XPS 2026</td><td>2026</td></tr>
+<tr><td>AMD Ryzen AI 300</td><td>AMD</td><td>80 TOPS</td><td>RDNA 3.5</td><td>128 GB/s</td><td>Lenovo Yoga 2026</td><td>2026</td></tr>
+</table>
+<h3>4.2 不同硬件可运行的模型大小</h3>
+<table>
+<tr><th>设备类型</th><th>可用内存</th><th>可跑模型</th><th>量化方式</th><th>典型速度</th></tr>
+<tr><td>旗舰手机 (12GB+)</td><td>6-8GB 可用</td><td>3B-7B</td><td>Q4_K_M</td><td>10-30 tok/s</td></tr>
+<tr><td>旗舰手机 (16GB+)</td><td>10-12GB 可用</td><td>7B-14B</td><td>Q4_K_M</td><td>8-20 tok/s</td></tr>
+<tr><td>AI PC (32GB)</td><td>24GB 可用</td><td>14B-27B</td><td>Q4_K_M</td><td>15-40 tok/s</td></tr>
+<tr><td>AI PC (48GB+)</td><td>40GB 可用</td><td>27B-70B</td><td>Q4/Q5</td><td>10-30 tok/s</td></tr>
+<tr><td>Mac Studio (128GB+)</td><td>100GB+</td><td>70B-100B+</td><td>Q4/Q5/Q8</td><td>20-50 tok/s</td></tr>
+</table>
+<h3>4.3 OS 层端侧 AI 支持对比</h3>
+<table>
+<tr><th>OS</th><th>内置 AI</th><th>开发者 API</th><th>SLM 支持</th><th>开放度</th></tr>
+<tr><td>iOS 27</td><td>Apple Intelligence</td><td>Foundation Models API</td><td>✅</td><td>Apple 生态内</td></tr>
+<tr><td>Android 16</td><td>Gemini Nano</td><td>AI Core API</td><td>✅</td><td>OEM 可自定义</td></tr>
+<tr><td>Windows 11 Copilot+</td><td>Copilot</td><td>Windows Copilot Runtime</td><td>✅</td><td>最开放</td></tr>
+<tr><td>macOS 26</td><td>Apple Intelligence</td><td>Foundation Models API</td><td>✅</td><td>同 iOS</td></tr>
+</table>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 "AI PC"是 PC 市场 10 年来最大的创新催化剂</h3>
+<p>2026 年 Q1，全球 AI PC 出货量首次超过非 AI PC。这不是因为消费者特别爱 AI——而是因为所有新发布的 PC 都自带 NPU。AI 能力正在从"卖点"变成"标配"。</p>
+<h3>5.2 端侧 + 云端 = 混合 AI 才是终局</h3>
+<p>单一依赖云端或端侧都不是最优解：</p>
+<ul>
+<li><strong>简单问题（翻译、摘要、聊天）→ 端侧</strong>：低延迟、零成本、隐私保护</li>
+<li><strong>中等难度（代码生成、文档分析）→ 端侧优先，云端 fallback</strong></li>
+<li><strong>高难度（复杂推理、长 Agent 任务）→ 云端</strong>：需要最强的模型</li>
+</ul>
+<p>Apple Intelligence 和 Gemini Nano 的架构都采用了这种混合模式——用户通常感知不到"切换"的发生。</p>
+<h3>5.3 端侧 AI 的最大瓶颈不是计算，是内存</h3>
+<p>2026 年，NPU 算力（80 TOPS）已经不是 7B 模型推理的瓶颈。真正的瓶颈是<strong>内存带宽</strong>——移动端的 LPDDR5 内存带宽（68-136 GB/s）比桌面端 GDDR6（可达 1TB/s+）差了一个数量级。手机跑 AI 的显存带宽瓶颈短期内无法突破。</p>
+<hr>
+<h2>六、信息来源</h2>
+<table>
+<tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
+<tr><td>LLM Inference at the Edge: NPU, GPU, CPU Trade-offs</td><td>arxiv.org/abs/2603.23640</td><td>2026-05-01</td></tr>
+<tr><td>Snapdragon X2 Elite 发布</td><td>qualcomm.com (2026.02)</td><td>2026-05-01</td></tr>
+<tr><td>Gemini 4 Nano / Gemma 4 发布</td><td>google.com (2026.04)</td><td>2026-05-01</td></tr>
+<tr><td>Apple Foundation Models 开发者文档</td><td>developer.apple.com</td><td>2026-05-01</td></tr>
+<tr><td>The On-Device LLM Revolution</td><td>semiengineering.com (2026)</td><td>2026-05-01</td></tr>
+<tr><td>The Small Model Revolution 2026: 3B on Raspberry Pi</td><td>dev.to (2026)</td><td>2026-05-01</td></tr>
+<tr><td>AI PC 出货量 2026 Q1 数据</td><td>various</td><td>2026-05-01</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 29 篇报告。与<a href="./小语言模型_SLM_横纵分析报告.md">小语言模型</a>、<a href="./模型压缩_横纵分析报告.md">模型压缩</a>互为补充：SLM 讲"什么模型能跑"，模型压缩讲"怎么让模型变小"，端侧 AI 讲"跑在哪、为什么要在那跑"。</em></p>
+</div>
+</body>
+</html>
