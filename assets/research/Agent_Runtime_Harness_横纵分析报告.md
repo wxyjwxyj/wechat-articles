@@ -230,31 +230,40 @@ Agent Runtime 从云厂商的"附加功能"升级为独立的云服务产品线�
 
 ## 六、信息来源
 
-- AutoGPT Architecture: github.com/Significant-Gravitas/AutoGPT
-- LangChain AgentExecutor: docs.langchain.com (2023)
-- LangGraph Platform GA: changelog.langchain.com (2025.05)
-- Dify Workflow: github.com/langgenius/dify
-- CrewAI Flows: learn.deeplearning.ai
-- Temporal + AI Agents: temporal.io/blog (2024.10)
-- AWS Bedrock AgentCore: venturebeat.com (2025.07)
-- Vertex AI Agent Engine: cloud.google.com (2025)
-- Azure AI Foundry Agent Service: infoq.com (2025.05)
-- OpenAI: "Unrolling the Codex Agent Loop" (2026.01)
-- OpenAI: "Unlocking the Codex Harness" (2026.02)
-- OpenAI Agents SDK v0.14.0: openai.com (2026.04.15)
-- OpenAI Symphony: openai.com (2026.04.28)
-- Martin Fowler: "Harness Engineering for Coding Agent Users" (2026)
-- LangChain: "Agent Frameworks, Runtimes, and Harnesses" (2026)
-- Red Hat Tank OS: techcrunch.com (2026.04)
-- NVIDIA NeMo Guardrails: blogs.nvidia.com (2025)
-- Meta LlamaFirewall: infoq.com (2025.05)
-- MCP → Linux Foundation: anthropic.com (2025.12)
-- "The Model Doesn't Matter, The Harness Does": dev.to (2026)
-- "Big Model vs Big Harness": 海通国际研报 (2026.04)
-- LangSmith + OpenTelemetry: langchain.com (2025)
-- Cisco AGNTCY: outshift.cisco.com (2025)
-- Google Agent Sandbox (gVisor): cloud.google.com (2025.11)
-- 沙箱技术对比: segmentfault.com/a/1190000047288554
+### 核心论文与文章
+
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
+| "The Model Doesn't Matter, The Harness Does" | dev.to (2026) | 2026-04-30 |
+| "Big Model vs Big Harness" | 海通国际研报 (2026.04) | 2026-04-30 |
+| Martin Fowler: "Harness Engineering for Coding Agent Users" | martinfowler.com (2026) | 2026-04-30 |
+| LangChain: "Agent Frameworks, Runtimes, and Harnesses" | langchain.com (2026) | 2026-04-30 |
+| 沙箱技术对比 | segmentfault.com/a/1190000047288554 | 2026-04-30 |
+
+### 产品与技术来源
+
+| 来源 | URL | 访问时间 |
+|------|-----|---------|
+| AutoGPT Architecture | github.com/Significant-Gravitas/AutoGPT | 2026-04-30 |
+| LangChain AgentExecutor | docs.langchain.com (2023) | 2026-04-30 |
+| LangGraph Platform GA | changelog.langchain.com (2025.05) | 2026-04-30 |
+| Dify Workflow | github.com/langgenius/dify | 2026-04-30 |
+| CrewAI Flows | learn.deeplearning.ai | 2026-04-30 |
+| Temporal + AI Agents | temporal.io/blog (2024.10) | 2026-04-30 |
+| AWS Bedrock AgentCore | venturebeat.com (2025.07) | 2026-04-30 |
+| Vertex AI Agent Engine | cloud.google.com (2025) | 2026-04-30 |
+| Azure AI Foundry Agent Service | infoq.com (2025.05) | 2026-04-30 |
+| OpenAI: "Unrolling the Codex Agent Loop" | openai.com (2026.01) | 2026-04-30 |
+| OpenAI: "Unlocking the Codex Harness" | openai.com (2026.02) | 2026-04-30 |
+| OpenAI Agents SDK v0.14.0 | openai.com (2026.04.15) | 2026-04-30 |
+| OpenAI Symphony | openai.com (2026.04.28) | 2026-04-30 |
+| Red Hat Tank OS | techcrunch.com (2026.04) | 2026-04-30 |
+| NVIDIA NeMo Guardrails | blogs.nvidia.com (2025) | 2026-04-30 |
+| Meta LlamaFirewall | infoq.com (2025.05) | 2026-04-30 |
+| MCP → Linux Foundation | anthropic.com (2025.12) | 2026-04-30 |
+| LangSmith + OpenTelemetry | langchain.com (2025) | 2026-04-30 |
+| Cisco AGNTCY | outshift.cisco.com (2025) | 2026-04-30 |
+| Google Agent Sandbox (gVisor) | cloud.google.com (2025.11) | 2026-04-30 |
 
 ---
 

@@ -638,49 +638,44 @@ KV Cache = 把之前 token 的 Key 和 Value 矩阵存下来，新 token 进来�
 
 ## 七、信息来源
 
-### 核心论文
+### 核心论文与文章
 
-- Vaswani et al., "Attention Is All You Need" (2017) — https://arxiv.org/abs/1706.03762
-- Bahdanau et al., "Neural Machine Translation by Jointly Learning to Align and Translate" (2014) — https://arxiv.org/abs/1409.0473
-- Devlin et al., "BERT: Pre-training of Deep Bidirectional Transformers" (2018) — https://arxiv.org/abs/1810.04805
-- Radford et al., "Language Models are Unsupervised Multitask Learners" (GPT-2, 2019)
-- Brown et al., "Language Models are Few-Shot Learners" (GPT-3, 2020) — https://arxiv.org/abs/2005.14165
-- Kaplan et al., "Scaling Laws for Neural Language Models" (2020) — https://arxiv.org/abs/2001.08361
-- Hoffmann et al., "Training Compute-Optimal Large Language Models" (Chinchilla, 2022) — https://arxiv.org/abs/2203.15556
-- Chowdhery et al., "PaLM: Scaling Language Modeling with Pathways" (2022) — https://arxiv.org/abs/2204.02311
-- Touvron et al., "LLaMA: Open and Efficient Foundation Language Models" (2023) — https://arxiv.org/abs/2302.13971
-- Dao et al., "FlashAttention: Fast and Memory-Efficient Exact Attention" (2022) — https://arxiv.org/abs/2205.14135
-- Dao et al., "FlashAttention-2: Faster Attention with Better Parallelism" (2023) — https://arxiv.org/abs/2307.08691
-- Shah et al., "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-Precision" (2024) — https://arxiv.org/abs/2407.08614
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
+| Vaswani et al., "Attention Is All You Need" (2017) | https://arxiv.org/abs/1706.03762 | 2026-04-30 |
+| Bahdanau et al., "Neural Machine Translation by Jointly Learning to Align and Translate" (2014) | https://arxiv.org/abs/1409.0473 | 2026-04-30 |
+| Devlin et al., "BERT: Pre-training of Deep Bidirectional Transformers" (2018) | https://arxiv.org/abs/1810.04805 | 2026-04-30 |
+| Radford et al., "Language Models are Unsupervised Multitask Learners" (GPT-2, 2019) | OpenAI | 2026-04-30 |
+| Brown et al., "Language Models are Few-Shot Learners" (GPT-3, 2020) | https://arxiv.org/abs/2005.14165 | 2026-04-30 |
+| Kaplan et al., "Scaling Laws for Neural Language Models" (2020) | https://arxiv.org/abs/2001.08361 | 2026-04-30 |
+| Hoffmann et al., "Training Compute-Optimal Large Language Models" (Chinchilla, 2022) | https://arxiv.org/abs/2203.15556 | 2026-04-30 |
+| Chowdhery et al., "PaLM: Scaling Language Modeling with Pathways" (2022) | https://arxiv.org/abs/2204.02311 | 2026-04-30 |
+| Touvron et al., "LLaMA: Open and Efficient Foundation Language Models" (2023) | https://arxiv.org/abs/2302.13971 | 2026-04-30 |
+| Dao et al., "FlashAttention: Fast and Memory-Efficient Exact Attention" (2022) | https://arxiv.org/abs/2205.14135 | 2026-04-30 |
+| Dao et al., "FlashAttention-2: Faster Attention with Better Parallelism" (2023) | https://arxiv.org/abs/2307.08691 | 2026-04-30 |
+| Shah et al., "FlashAttention-3: Fast and Accurate Attention with Asynchrony and Low-Precision" (2024) | https://arxiv.org/abs/2407.08614 | 2026-04-30 |
+| Shazeer et al., "Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer" (2017) | https://arxiv.org/abs/1701.06538 | 2026-04-30 |
+| Lepikhin et al., "GShard: Scaling Giant Models with Conditional Computation" (2020) | https://arxiv.org/abs/2006.16668 | 2026-04-30 |
+| Fedus et al., "Switch Transformers: Scaling to Trillion Parameter Models" (2021) | https://arxiv.org/abs/2101.03961 | 2026-04-30 |
+| DeepSeek, "DeepSeekMoE: Towards Ultimate Expert Specialization" (2024.01) | https://arxiv.org/abs/2401.06066 | 2026-04-30 |
+| DeepSeek, "DeepSeek-V2: A Strong, Economical, and Efficient MoE Language Model" (2024.05) | https://arxiv.org/abs/2405.04434 | 2026-04-30 |
+| DeepSeek, "DeepSeek-V3 Technical Report" (2024.12) | https://arxiv.org/abs/2412.19437 | 2026-04-30 |
+| Su et al., "RoFormer: Enhanced Transformer with Rotary Position Embedding" (2021) | https://arxiv.org/abs/2104.09864 | 2026-04-30 |
+| Press et al., "Train Short, Test Long: Attention with Linear Biases (ALiBi)" (2021) | https://arxiv.org/abs/2108.12409 | 2026-04-30 |
+| Shazeer, "Fast Transformer Decoding: One Write-Head Is All You Need" (MQA, 2019) | https://arxiv.org/abs/1911.02150 | 2026-04-30 |
+| Ainslie et al., "GQA: Training Generalized Multi-Query Transformer Models" (2023) | https://arxiv.org/abs/2305.13245 | 2026-04-30 |
+| Gu & Dao, "Mamba: Linear-Time Sequence Modeling with Selective State Spaces" (2023) | https://arxiv.org/abs/2312.00752 | 2026-04-30 |
+| Gu & Dao, "Transformers are SSMs" (Mamba-2, 2024) | https://arxiv.org/abs/2405.21060 | 2026-04-30 |
+| Geva et al., "Transformer Feed-Forward Layers Are Key-Value Memories" (2021) | https://arxiv.org/abs/2012.14913 | 2026-04-30 |
 
-### MoE 相关
+### 产品与技术来源
 
-- Shazeer et al., "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer" (2017) — https://arxiv.org/abs/1701.06538
-- Lepikhin et al., "GShard: Scaling Giant Models with Conditional Computation" (2020) — https://arxiv.org/abs/2006.16668
-- Fedus et al., "Switch Transformers: Scaling to Trillion Parameter Models" (2021) — https://arxiv.org/abs/2101.03961
-- DeepSeek, "DeepSeekMoE: Towards Ultimate Expert Specialization" (2024.01) — https://arxiv.org/abs/2401.06066
-- DeepSeek, "DeepSeek-V2: A Strong, Economical, and Efficient MoE Language Model" (2024.05) — https://arxiv.org/abs/2405.04434
-- DeepSeek, "DeepSeek-V3 Technical Report" (2024.12) — https://arxiv.org/abs/2412.19437
-
-### 位置编码 / 注意力变体
-
-- Su et al., "RoFormer: Enhanced Transformer with Rotary Position Embedding" (2021) — https://arxiv.org/abs/2104.09864
-- Press et al., "Train Short, Test Long: Attention with Linear Biases (ALiBi)" (2021) — https://arxiv.org/abs/2108.12409
-- Shazeer, "Fast Transformer Decoding: One Write-Head Is All You Need" (MQA, 2019) — https://arxiv.org/abs/1911.02150
-- Ainslie et al., "GQA: Training Generalized Multi-Query Transformer Models" (2023) — https://arxiv.org/abs/2305.13245
-
-### 替代架构
-
-- Gu & Dao, "Mamba: Linear-Time Sequence Modeling with Selective State Spaces" (2023) — https://arxiv.org/abs/2312.00752
-- Gu & Dao, "Transformers are SSMs" (Mamba-2, 2024) — https://arxiv.org/abs/2405.21060
-
-### 分析报道
-
-- "The Evolution of FlashAttention" — ICLR Blog (2026) — https://iclr-blogposts.github.io/2026/blog/2026/the-evolution-of-flashattention/
-- "The Big LLM Architecture Comparison" — https://www.notion.so/hismayfly/The-Big-LLM-Architecture-Comparison
-- "The DeepSeek Series: A Technical Overview" — Martin Fowler — https://martinfowler.com/articles/deepseek-papers.html
-- "8种LLM架构设计大比拼" — 51CTO (2026)
-- Geva et al., "Transformer Feed-Forward Layers Are Key-Value Memories" (2021) — https://arxiv.org/abs/2012.14913
+| 来源 | URL | 访问时间 |
+|------|-----|---------|
+| "The Evolution of FlashAttention" — ICLR Blog (2026) | https://iclr-blogposts.github.io/2026/blog/2026/the-evolution-of-flashattention/ | 2026-04-30 |
+| "The Big LLM Architecture Comparison" | https://www.notion.so/hismayfly/The-Big-LLM-Architecture-Comparison | 2026-04-30 |
+| "The DeepSeek Series: A Technical Overview" — Martin Fowler | https://martinfowler.com/articles/deepseek-papers.html | 2026-04-30 |
+| "8种LLM架构设计大比拼" — 51CTO (2026) | 51CTO.com | 2026-04-30 |
 
 ---
 

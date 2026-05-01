@@ -323,10 +323,10 @@ AI Safety 的终极问题是：**能不能在 AGI 到来之前解决对齐问题
 
 ## 六、信息来源
 
-### 核心论文与学术来源
+### 核心论文与文章
 
-| 来源 | URL / 标识 | 访问时间 |
-|------|-----------|---------|
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
 | RLHF / InstructGPT 论文 | arxiv.org/abs/2203.02155 | 2026-04-30 |
 | Constitutional AI 论文 | arxiv.org/abs/2212.08073 | 2026-04-30 |
 | DPO 论文 | arxiv.org/abs/2305.18290 | 2026-04-30 |
@@ -336,7 +336,7 @@ AI Safety 的终极问题是：**能不能在 AGI 到来之前解决对齐问题
 | Unsolved Problems in ML Safety | arxiv.org/abs/2109.13916 | 2026-04-30 |
 | Constitutional Classifiers 博客 | anthropic.com/news/constitutional-classifiers | 2026-04-30 |
 
-### 组织与机构来源
+### 产品与技术来源
 
 | 来源 | URL | 访问时间 |
 |------|-----|---------|
@@ -357,11 +357,6 @@ AI Safety 的终极问题是：**能不能在 AGI 到来之前解决对齐问题
 | METR 官网 | metr.org | 2026-04-30 |
 | CAISI/NIST 官网 | nist.gov/artificial-intelligence | 2026-04-30 |
 | OpenAI Preparedness Framework | openai.com/index/preparedness（**已 404**） | 2026-04-30 |
-
-### 社区与其他来源
-
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
 | Future of Life Institute 公开信 | futureoflife.org/open-letter | 2026-04-30 |
 | Asilomar AI Principles | futureoflife.org/ai-principles | 2026-04-30 |
 | FLI 公开信（暂停巨型 AI） | futureoflife.org/pause-giant-ai-experiments | 2026-04-30 |

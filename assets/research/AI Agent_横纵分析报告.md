@@ -565,67 +565,60 @@ PR 创建
 
 ## 六、信息来源
 
-### 核心论文（通过 arXiv API 获取）
+### 核心论文与文章
+| 论文/文章 | 来源 | 访问时间 |
+|-----------|------|---------|
+| ReAct: Synergizing Reasoning and Acting in Language Models | arXiv:2210.03629 (ICLR 2023) | 2026-04-30 |
+| Chain-of-Thought Prompting Elicits Reasoning in LLMs | arXiv:2201.11903 (2022) | 2026-04-30 |
+| Toolformer: LMs Can Teach Themselves to Use Tools | arXiv:2302.04761 (Meta, 2023) | 2026-04-30 |
+| Reflexion: Language Agents with Verbal Reinforcement Learning | arXiv:2303.11366 (2023) | 2026-04-30 |
+| Generative Agents: Interactive Simulacra of Human Behavior | arXiv:2304.03442 (Stanford, 2023) | 2026-04-30 |
+| Tree of Thoughts: Deliberate Problem Solving with LLMs | arXiv:2305.10601 (NeurIPS 2023) | 2026-04-30 |
+| Voyager: Open-Ended Embodied Agent with LLMs | arXiv:2305.16291 (NVIDIA, 2023) | 2026-04-30 |
+| Graph of Thoughts: Solving Elaborate Problems with LLMs | arXiv:2308.09687 (AAAI 2024) | 2026-04-30 |
+| SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering | arXiv:2405.15793 (2024) | 2026-04-30 |
+| SWE-Edit (Microsoft) | arXiv:2604.26102 (2026) | 2026-04-30 |
+| Recursive Multi-Agent Systems | arXiv:2604.25917 (2026) | 2026-04-30 |
+| OxyGent: Observable Multi-Agent Systems | arXiv:2604.25602 (2026) | 2026-04-30 |
+| Pythia: Agent-Native LLM Serving | arXiv:2604.25899 (2026) | 2026-04-30 |
+| Conditional Misalignment | arXiv:2604.25891 (2026) | 2026-04-30 |
+| SOAR 架构 | 卡内基梅隆大学，1983 | 2026-04-30 |
+| 《Society of Mind》 | Marvin Minsky，1986 | 2026-04-30 |
+| BDI 模型 | Bratman, Rao & Georgeff，1987-1995 | 2026-04-30 |
+| "AI: A Modern Approach" | Russell & Norvig，1995 | 2026-04-30 |
 
-1. ReAct: Synergizing Reasoning and Acting in Language Models — arXiv:2210.03629 (ICLR 2023)
-2. Chain-of-Thought Prompting Elicits Reasoning in LLMs — arXiv:2201.11903 (2022)
-3. Toolformer: LMs Can Teach Themselves to Use Tools — arXiv:2302.04761 (Meta, 2023)
-4. Reflexion: Language Agents with Verbal Reinforcement Learning — arXiv:2303.11366 (2023)
-5. Generative Agents: Interactive Simulacra of Human Behavior — arXiv:2304.03442 (Stanford, 2023)
-6. Tree of Thoughts: Deliberate Problem Solving with LLMs — arXiv:2305.10601 (NeurIPS 2023)
-7. Voyager: Open-Ended Embodied Agent with LLMs — arXiv:2305.16291 (NVIDIA, 2023)
-8. Graph of Thoughts: Solving Elaborate Problems with LLMs — arXiv:2308.09687 (AAAI 2024)
-9. SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering — arXiv:2405.15793 (2024)
-10. SWE-Edit (Microsoft) — arXiv:2604.26102 (2026)
-11. Recursive Multi-Agent Systems — arXiv:2604.25917 (2026)
-12. OxyGent: Observable Multi-Agent Systems — arXiv:2604.25602 (2026)
-13. Pythia: Agent-Native LLM Serving — arXiv:2604.25899 (2026)
-14. Conditional Misalignment — arXiv:2604.25891 (2026)
-
-### 产品发布与公告（一手来源）
-
-15. OpenAI Function Calling 发布 — https://openai.com/blog/function-calling-and-other-api-updates (2023-06-13)
-16. Anthropic Computer Use 发布 — https://www.anthropic.com/news/3-5-models-and-computer-use (2024-10)
-17. MCP (Model Context Protocol) 发布 — https://www.anthropic.com/news/model-context-protocol (2024-11-25)
-18. MCP 捐赠给 Linux 基金会 — https://www.anthropic.com/news/donating-the-model-context-protocol (2025-12)
-19. A2A (Agent-to-Agent Protocol) — https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ (2025-04)
-20. Devin 发布 — https://www.cognition.ai/blog/introducing-devin (2024-03)
-21. OpenAI Operator / Agents SDK (2025-01 / 2025-03)
-22. OpenAI Agents SDK v0.14.0 升级（Sandbox + Harness）— https://openai.com/sl-SI/index/the-next-evolution-of-the-agents-sdk/ (2026-04)
-23. OpenAI Workspace Agents (2026-04)
-24. Anthropic Claude Cowork + Dispatch (2026-03)
-25. Anthropic Claude Managed Agents + Agent Skills (2026-04)
-26. Google Cloud Next '26 Enterprise Agent Platform (2026-04)
-27. Microsoft Agent Framework 1.0 (2026-04)
-28. OpenClaw GitHub (300k+ Stars) — https://github.com/openclaw/openclaw (2025-11)
-
-### 行业新闻（2026 年 4 月）
-
-21. Anthropic 可能融资 $500 亿 — TechCrunch (2026-04-29)
-22. Parallel Web Systems 估值 $20 亿 — TechCrunch (2026-04-29)
-23. 中国否决 Meta 收购 Manus — TechCrunch (2026-04-27)
-24. OpenAI 正开发 Agent 手机 — TechCrunch (2026-04-27)
-25. AWS 推出 OpenAI Agent 服务 — TechCrunch (2026-04-28)
-26. Red Hat OpenClaw 容器化 Agent — TechCrunch (2026-04-28)
-27. AI Agent 删库事件 — Hacker News (2026-04-28)
-28. MIT Tech Review: 炒作与盈利之间缺失的一环 — 2026-04-27
-29. GitHub Copilot 转向用量计费 — Hacker News (2026-04-29)
-30. Cursor Camp — Hacker News (2026-04-29)
-31. Claude Code 代码版权讨论 — Hacker News (2026-04-29)
-
-### 数据来源
-
-32. GitHub Stars 数据 — GitHub API 实时查询 (2026-04-30)
-33. SWE-Bench Leaderboard — swebench.com
-34. GAIA 基准测试 — Meta FAIR 官方报告
-35. GitHub 框架仓库 — LangChain、Dify、AutoGen、CrewAI、MetaGPT 等开源项目
-
-### 其他
-
-36. SOAR 架构 — 卡内基梅隆大学，1983
-37. 《Society of Mind》— Marvin Minsky，1986
-38. BDI 模型 — Michael Bratman, Rao & Georgeff，1987-1995
-39. "AI: A Modern Approach" — Russell & Norvig，1995
+### 产品与技术来源
+| 来源 | URL | 访问时间 |
+|------|-----|---------|
+| OpenAI Function Calling 发布 | https://openai.com/blog/function-calling-and-other-api-updates | 2026-04-30 |
+| Anthropic Computer Use 发布 | https://www.anthropic.com/news/3-5-models-and-computer-use | 2026-04-30 |
+| MCP (Model Context Protocol) 发布 | https://www.anthropic.com/news/model-context-protocol | 2026-04-30 |
+| MCP 捐赠给 Linux 基金会 | https://www.anthropic.com/news/donating-the-model-context-protocol | 2026-04-30 |
+| A2A (Agent-to-Agent Protocol) | https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/ | 2026-04-30 |
+| Devin 发布 | https://www.cognition.ai/blog/introducing-devin | 2026-04-30 |
+| OpenAI Operator / Agents SDK | openai.com (2025-01 / 2025-03) | 2026-04-30 |
+| OpenAI Agents SDK v0.14.0 升级（Sandbox + Harness） | https://openai.com/sl-SI/index/the-next-evolution-of-the-agents-sdk/ | 2026-04-30 |
+| OpenAI Workspace Agents | openai.com (2026-04) | 2026-04-30 |
+| Anthropic Claude Cowork + Dispatch | anthropic.com (2026-03) | 2026-04-30 |
+| Anthropic Claude Managed Agents + Agent Skills | anthropic.com (2026-04) | 2026-04-30 |
+| Google Cloud Next '26 Enterprise Agent Platform | cloud.google.com (2026-04) | 2026-04-30 |
+| Microsoft Agent Framework 1.0 | microsoft.com (2026-04) | 2026-04-30 |
+| OpenClaw GitHub (300k+ Stars) | https://github.com/openclaw/openclaw | 2026-04-30 |
+| Anthropic 可能融资 $500 亿 | TechCrunch (2026-04-29) | 2026-04-30 |
+| Parallel Web Systems 估值 $20 亿 | TechCrunch (2026-04-29) | 2026-04-30 |
+| 中国否决 Meta 收购 Manus | TechCrunch (2026-04-27) | 2026-04-30 |
+| OpenAI 正开发 Agent 手机 | TechCrunch (2026-04-27) | 2026-04-30 |
+| AWS 推出 OpenAI Agent 服务 | TechCrunch (2026-04-28) | 2026-04-30 |
+| Red Hat OpenClaw 容器化 Agent | TechCrunch (2026-04-28) | 2026-04-30 |
+| AI Agent 删库事件 | Hacker News (2026-04-28) | 2026-04-30 |
+| MIT Tech Review: 炒作与盈利之间缺失的一环 | technologyreview.com (2026-04-27) | 2026-04-30 |
+| GitHub Copilot 转向用量计费 | Hacker News (2026-04-29) | 2026-04-30 |
+| Cursor Camp | Hacker News (2026-04-29) | 2026-04-30 |
+| Claude Code 代码版权讨论 | Hacker News (2026-04-29) | 2026-04-30 |
+| GitHub Stars 数据 | GitHub API (2026-04-30) | 2026-04-30 |
+| SWE-Bench Leaderboard | swebench.com | 2026-04-30 |
+| GAIA 基准测试 | Meta FAIR 官方报告 | 2026-04-30 |
+| 框架仓库参考 | LangChain、Dify、AutoGen、CrewAI、MetaGPT 等开源项目 | 2026-04-30 |
 
 ---
 
