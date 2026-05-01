@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>大模型强化学习（RL）前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>大模型强化学习（RL）前置知识</h1>
+<blockquote>面向零基础读者，用比喻和例子讲清楚 RL 在 LLM 中的核心概念。</blockquote>
+<hr>
+<h2>一、什么是强化学习？</h2>
+<p>强化学习（Reinforcement Learning, RL）是机器学习的一种范式：<strong>一个 Agent 在环境中尝试动作，根据得到的奖励来学习"什么动作在什么情况下最好"。</strong></p>
+<p>用训狗来比喻：你教狗坐下——它乱跑（动作），你说"不对"（负奖励）；它坐下了（动作），你给零食（正奖励）。狗不需要你告诉它"怎么坐"，它只需要知道"坐下有零食"。RL 完全一样——你不需要告诉模型"怎么做"，只需要告诉它"做对了没有"。</p>
+<p>这与监督学习（SFT）的根本区别：</p>
+<ul>
+<li><strong>SFT</strong>：给模型看"标准答案"，让它模仿</li>
+<li><strong>RL</strong>：让模型自己探索，根据奖励学习最优策略</li>
+</ul>
+<hr>
+<h2>二、RL 在 LLM 中的角色演变</h2>
+<h3>RLHF（2022）- 让模型"说人话"</h3>
+<p>RLHF = Reinforcement Learning from Human Feedback（基于人类反馈的强化学习）。</p>
+<p>三阶段流程：</p>
+<ol>
+<li><strong>SFT</strong>：人类标注员写示范回答，模型学会"问答"格式</li>
+<li><strong>RM 训练</strong>：人类对不同回答排序，训练一个"奖励模型"来预测人类的偏好</li>
+<li><strong>PPO 优化</strong>：用奖励模型打分，通过 PPO 算法更新模型参数</li>
+</ol>
+<p>关键是第 3 步要同时加载 4 个模型：策略模型（要训练的）、参考模型（防止跑偏）、价值模型（估计当前状态好坏）、奖励模型（打分）。工程代价巨大。</p>
+<h3>DPO（2023）- 不需要奖励模型了</h3>
+<p>Direct Preference Optimization 的核心洞察：偏好数据中蕴含的对比信息可以直接优化策略，不需要先训练一个单独的奖励模型。</p>
+<p>效果：训练中从 4 个模型降到 2 个模型，GPU 需求从 8 张降到 2 张。个人开发者也能做对齐了。</p>
+<p>但 DPO 是<strong>离线</strong>的——只在已有偏好数据上优化，无法发现比数据中更好的回答。</p>
+<h3>GRPO（2024）- 连价值模型也不要了</h3>
+<p>Group Relative Policy Optimization 做了最优雅的减法：去掉价值模型（critic）。</p>
+<p>怎么做到的？对同一个 prompt 生成多个回答（比如 4 个），用这个 group 内的<strong>相对分数</strong>来替代绝对价值估计。"比其他答案更好"= 好，"比其他答案更差"= 差。不需要知道"4.3 分"这个绝对值。</p>
+<p>DeepSeek-R1 的成功证明：去掉 critic、去掉 reward model，只用 GRPO + 可验证奖励（对/错），模型就能自己学会推理。</p>
+<h3>RLVR（2025-2026）- 打破数据瓶颈</h3>
+<p>RLVR = RL with Verifiable Rewards（可验证奖励的强化学习）。</p>
+<p>前面的方法都依赖人类来判断"好不好"——这是瓶颈，因为人工标注贵且慢。RLVR 的突破在于：<strong>用可自动验证的规则替代人类判断。</strong></p>
+<p>哪些是可以自动验证的？</p>
+<ul>
+<li>数学题：答案对还是错 → 自动判断</li>
+<li>代码：测试用例是否通过 → 自动判断</li>
+<li>Agent 任务：任务完成与否 → 自动判断</li>
+</ul>
+<p>RLVR 让 RL 训练可以 24×7 无人值守、无限规模化。</p>
+<hr>
+<h2>三、关键概念速查</h2>
+<table>
+<tr><th>概念</th><th>一句话</th><th>重要性</th></tr>
+<tr><td>Policy（策略）</td><td>模型本身——给定输入，输出什么</td><td>核心</td></tr>
+<tr><td>Reward（奖励）</td><td>对输出的评价信号——好还是坏</td><td>核心</td></tr>
+<tr><td>Rollout（展开）</td><td>训练中让模型生成回答的过程</td><td>高</td></tr>
+<tr><td>Critic（价值网络）</td><td>估计"当前状态有多好"的辅助模型</td><td>中（GRPO 去掉了）</td></tr>
+<tr><td>Reward Model（奖励模型）</td><td>预测人类偏好的辅助模型</td><td>中（DPO 去掉了）</td></tr>
+<tr><td>On-Policy</td><td>用模型自己生成的数据来训练</td><td>高</td></tr>
+<tr><td>Off-Policy</td><td>用预先收集的数据来训练</td><td>高</td></tr>
+<tr><td>KL Penalty</td><td>约束——防止模型"放飞自我"偏离太远</td><td>高</td></tr>
+<tr><td>Reward Hacking</td><td>模型学会了"骗取高分"而非"真正做好"</td><td>警惕</td></tr>
+</table>
+<hr>
+<h2>四、延伸阅读</h2>
+<ul>
+<li><a href="Post-training_RL训练基础设施_前置知识.md">Post-training / RL 训练基础设施</a> — RL 训练框架与工程实现的更多细节</li>
+<li><a href="大模型评估与对齐_前置知识.md">大模型评估与对齐</a> — 奖励 hacking 与对齐 tax 的深入分析</li>
+</ul>
+</div>
+</body>
+</html>
