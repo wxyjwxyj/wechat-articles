@@ -199,15 +199,16 @@ td:last-child { text-align: center; }
 <body>
 <div class="page">
 <h1>大模型技术全景研究 · 横纵分析报告目录</h1>
-<blockquote>共 30 篇 · 约 1100KB（38 万+字）· 截至 2026-05-02</blockquote>
+<blockquote>共 33 篇 · 约 1200KB（42 万+字）· 截至 2026-05-02</blockquote>
 <blockquote></blockquote>
-<blockquote>每篇报告均配有独立的前置知识文档，零基础读者可先读前置知识再读主报告。</blockquote>
+<blockquote>每篇报告均配有独立的前置知识文档（基础篇除外），零基础读者从<strong>零、基础知识</strong>开始即可。</blockquote>
 <hr>
 <h2>阅读指南</h2>
 <p>以下路线参考了 2026 年业界主流 AI 学习路径（CSDN/知乎/DeepLearning.AI），与 30 篇报告一一对应。<strong>每篇报告都配了前置知识文档</strong>，零基础读者可以先读前置知识再读主报告。</p>
 <hr>
 <h3>🟢 层级一：入门（0→1 个月）—— 先理解"大模型是什么、怎么用"</h3>
-<p><strong>前置要求</strong>：Python 基础、PyTorch 会用即可。不需要 ML 背景。</p>
+<p><strong>零基础起步</strong>（没有 ML/DL 背景）：先读「零、基础知识」的三篇 → 机器学习概览 → 深度学习基础 → NLP 基础</p>
+<p><strong>有编程基础的开发者</strong>直接从这里开始：</p>
 <pre><code>LLM大模型 → Prompt Engineering → AI Agent</code></pre>
 <p>3 篇读完，你有了一幅完整的 AI 世界地图。知道模型能干嘛、怎么跟它说话、它怎么自己做任务。这个阶段的目标是<strong>会用</strong>。</p>
 <p><strong>对应前置知识</strong>：<a href="LLM大模型_前置知识.md">LLM大模型前置知识</a> → <a href="Prompt_Engineering_前置知识.md">Prompt Engineering前置知识</a> → <a href="AI Agent_前置知识.md">AI Agent前置知识</a></p>
@@ -242,8 +243,17 @@ td:last-child { text-align: center; }
 <tr><td>关注 AI 安全/对齐</td><td>🟢 → ⚫ 的「AI Safety」「评估与对齐」</td></tr>
 </table>
 <hr>
+<h2>零、基础知识</h2>
+<blockquote><strong>真正的起点</strong>。如果你不懂什么是"监督学习"、不知道"梯度下降"怎么工作、没听过"反向传播"——从这里开始。三篇文章覆盖了 AI 学习路线中最底层的基础概念，读完就能接上任何 AI 技术专题。</blockquote>
+<table>
+<tr><th>报告</th><th>主题</th><th>篇幅</th><th>一句话</th></tr>
+<tr><td><a href="机器学习概览_横纵分析报告.md">机器学习概览</a></td><td>ML 三大范式</td><td>9KB</td><td>监督/无监督/强化学习的核心概念、过拟合与正则化、偏差-方差权衡、经典 ML 与 LLM 的分工。</td></tr>
+<tr><td><a href="深度学习基础_横纵分析报告.md">深度学习基础</a></td><td>神经网络到 Transformer</td><td>11KB</td><td>从感知机到反向传播、CNN 让机器看见、RNN/LSTM 让机器理解序列、Transformer 用注意力取代一切。</td></tr>
+<tr><td><a href="NLP基础_横纵分析报告.md">NLP 基础</a></td><td>自然语言处理演进</td><td>10KB</td><td>规则→统计→词向量→BERT→GPT——NLP 五代演进、BERT 为什么输给 GPT、词向量的"语义代数"。</td></tr>
+</table>
+<hr>
 <h2>一、基础模型</h2>
-<blockquote><strong>起点</strong>。LLM 本身——GPT、Claude、Gemini、Llama、DeepSeek、Qwen 等八大家族的竞争史。这是理解其他所有报告的前提。</blockquote>
+<blockquote>LLM 本身——GPT、Claude、Gemini、Llama、DeepSeek、Qwen 等八大家族的竞争史。读完基础知识后，这里是理解大模型世界的入口。</blockquote>
 <table>
 <tr><th>报告</th><th>主题</th><th>篇幅</th><th>一句话</th></tr>
 <tr><td><a href="LLM大模型_横纵分析报告.md">LLM 大模型</a></td><td>基础语言模型全景</td><td>33KB</td><td>从 GPT-1 到 GPT-5.5 和 Claude Opus 4.7 的"两超"对决——八大家族的崛起与"王座 88 天一换"的混战格局。</td></tr>
@@ -317,10 +327,10 @@ td:last-child { text-align: center; }
 <h2>数据总览</h2>
 <table>
 <tr><th>指标</th><th>数值</th></tr>
-<tr><td>报告总数</td><td>30 篇</td></tr>
-<tr><td>总篇幅</td><td>~1100KB（约 38 万+字）</td></tr>
+<tr><td>报告总数</td><td>33 篇</td></tr>
+<tr><td>总篇幅</td><td>~1200KB（约 42 万+字）</td></tr>
 <tr><td>前置知识</td><td>30 篇（独立文档，零基础友好）</td></tr>
-<tr><td>覆盖类别</td><td>7 类：基础模型 / 基础架构 / 训练与数据 / 推理与部署 / 应用范式 / 垂直赛道 / 安全与治理</td></tr>
+<tr><td>覆盖类别</td><td>8 类：基础知识 / 基础模型 / 基础架构 / 训练与数据 / 推理与部署 / 应用范式 / 垂直赛道 / 安全与治理</td></tr>
 <tr><td>时间跨度</td><td>GPT-1（2018）→ 2026 年 5 月最新动态</td></tr>
 <tr><td>研究方法</td><td>横纵分析法（纵向时间线 + 横向竞品对比）</td></tr>
 </table>

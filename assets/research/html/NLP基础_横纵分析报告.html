@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>NLP 基础横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>NLP 基础横纵分析报告</h1>
+<blockquote>从统计词频到 BERT 再到 GPT——自然语言处理如何在八十年间从"数词数"进化到"理解语义"。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>自然语言处理（NLP）是让计算机理解、生成和操作人类语言的技术体系。它的核心难题是：<strong>同一个词在不同上下文中的含义完全不同</strong>——"苹果很好吃"和"苹果发布了新手机"中的"苹果"不是一个东西。让机器区分这种差异，是 NLP 八十年演进的核心驱动力。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解 NLP 从规则→统计→词向量→预训练 LM→LLM 的五代演进，知道 BERT 和 GPT 的根本区别，能解释为什么 GPT 路线最终胜出。</blockquote>
+<hr>
+<h2>二、技术背景</h2>
+<h3>2.1 NLP 的核心挑战</h3>
+<p>自然语言对机器来说，天然是"非结构化"的。一张图片 = 像素矩阵，天然是数值。一段文本 = 一串字符，需要先变成数值才能送入模型。</p>
+<p><strong>让文本变成数字</strong>——这是 NLP 所有工作的起点。不同的"数字化"方式，定义了不同的 NLP 时代。</p>
+<h3>2.2 NLP 的五代演进</h3>
+<pre><code>规则时代（1950s-1980s）<br>  → 统计时代（1990s-2013）：TF-IDF、n-gram、HMM<br>  → 词向量时代（2013-2018）：Word2Vec、GloVe、FastText<br>  → 预训练 LM 时代（2018-2020）：BERT、GPT-1、ELMo<br>  → LLM 时代（2020-）：GPT-3/4/5、Claude、Gemini</code></pre>
+<hr>
+<h2>三、纵向分析</h2>
+<h3>3.1 规则时代（1950s-1980s）—— 手写语法规则</h3>
+<p>早期的 NLP 基于人工编写的语法规则。比如做翻译：人工写几千条"如果主语是 XXX，动词是 YYY，则翻译为 ZZZ"的规则。</p>
+<p><strong>问题</strong>：人类语言的规则根本写不完——"我打了他"合法，"他打了我"也合法，"打了我他"不合法但人能理解。规则系统脆弱到换个句式就崩。</p>
+<h3>3.2 统计时代（1990s-2013）—— 让数据说话</h3>
+<p>不再手写规则，而是从大量文本中统计规律：</p>
+<p><strong>TF-IDF</strong>：一个词在一篇文章中出现多次 → 重要。但如果在所有文章中都频繁出现（如"的"）→ 不重要。TF-IDF = 词频 × 逆文档频率，至今仍是文本检索的基石。</p>
+<p><strong>n-gram 语言模型</strong>：用前 n-1 个词预测下一个词的概率。P(猫 | 喜欢, 吃, 鱼, 的) 从语料库中统计"喜欢吃鱼的"后面出现"猫"的次数。</p>
+<p><strong>局限</strong>：统计方法看不到"语义"。对于 n-gram 来说，"猫"和"狗"跟"桌子"一样——都只是一个 token ID。它们之间的相似性完全丢失了。</p>
+<h3>3.3 词向量时代（2013-2018）—— 词语有了"语义空间"</h3>
+<p><strong>Word2Vec（Mikolov et al., Google, 2013）</strong> 是 NLP 进入深度学习时代的分水岭。</p>
+<p>核心思想（分布假说）：<strong>一个词的含义由它周围的词决定。</strong> "猫"和"狗"出现在相似的上下文中（"我家养了一只_"，"_在沙发上睡觉"），所以它们的词向量应该接近。</p>
+<p>Word2Vec 有两个经典训练方式：</p>
+<ul>
+<li><strong>CBOW</strong>：用周围词预测中心词</li>
+<li><strong>Skip-gram</strong>：用中心词预测周围词</li>
+</ul>
+<p>训练完的副产品——300-500 维的词向量——带来了 NLP 历史上最著名的语义代数：<code>king − man + woman ≈ queen</code>。不是巧合，而是在向量空间中，"皇室"方向减去"男性"方向加上"女性"方向恰好落在"女王"附近。</p>
+<p><strong>GloVe（Pennington et al., Stanford, 2014）</strong> 结合了全局统计信息（共现矩阵）和局部上下文（滑动窗口）。</p>
+<p><strong>FastText（Bojanowski et al., Facebook, 2016）</strong> 把词拆成子词（subword），解决了"没见过这个词"的问题——"unhappiness"可以拆成 un + happy + ness，即使模型没见过这个词也能猜到它的意思。</p>
+<p>但词向量的根本局限在于：<strong>一个词只有一个固定的向量</strong>。"苹果"在"好吃"和"发布新手机"两个上下文中——向量完全一样。静态词向量无法捕捉这种歧义。</p>
+<h3>3.4 预训练 LM 时代（2018-2020）—— 上下文嵌入的革命</h3>
+<p><strong>ELMo（Peters et al., 2018）</strong> 第一次做到了"同一个词，不同上下文，不同向量"。它用的是双向 LSTM——从左到右和从右到左分别处理，然后拼接。但 LSTM 的速度和效果都受限。</p>
+<p><strong>BERT（Devlin et al., Google, 2018.10）</strong> 用 Transformer 替换了 LSTM，引爆了 NLP 的范式革命。</p>
+<p>BERT 的训练方式极其巧妙——<strong>掩码语言模型（MLM）</strong>：随机遮住 15% 的 token，让模型根据上下文"填空"。"我 [MASK] 吃苹果" → 模型猜"喜欢"。</p>
+<p>关键区别：LSTM 只能从左到右逐字读（单向），BERT 同时看左右两边（双向）——"填空"这个任务天然要求模型理解全局语境。</p>
+<p>BERT 发布后横扫了 11 项 NLP 基准。2018-2020 年间，"拿 BERT 微调一下"成为 NLP 所有任务的标准公式。</p>
+<p><strong>GPT-1（Radford et al., OpenAI, 2018.06）</strong> 选了另一条路——不是填空，而是<strong>自回归</strong>：已知前文，预测下一个词。"我喜欢吃 ___" → 预测"苹果"。</p>
+<p>GPT 比 BERT 更接近"真正的语言生成"——因为它生成的 token 又可以作为下一轮的输入，形成完整的文本。</p>
+<h3>3.5 为什么 GPT 路线最终胜出？</h3>
+<p>2020 年 GPT-3 的发布宣告了竞争的结果。</p>
+<ul>
+<li>BERT 的优势是双向理解强，但生成能力弱（只能填一个 mask，不能生成完整文本）</li>
+<li>GPT 的优势是生成能力强，随着模型变大，理解能力也追上来了</li>
+<li>GPT-3 的 175B 参数展现了 BERT 类模型无法企及的涌现能力——few-shot learning、代码生成、推理</li>
+</ul>
+<p>BERT 没有被废弃——它的双向编码能力被 BGE、E5 等嵌入模型继承，在搜索和 RAG 中作为"文本 → 向量"的编码器继续活跃。但"AI 语言交互"的主流已经锁定在了 GPT 类自回归路线上。</p>
+<hr>
+<h2>四、核心概念速查</h2>
+<table>
+<tr><th>概念</th><th>一句话</th></tr>
+<tr><td>Tokenization</td><td>把文本切成最小单元（词/子词/字符）</td></tr>
+<tr><td>词向量</td><td>把 token 映射到连续向量空间</td></tr>
+<tr><td>静态词向量</td><td>一个词只有一种向量表示（Word2Vec/GloVe）</td></tr>
+<tr><td>上下文嵌入</td><td>同一个词在不同上下文中向量不同（BERT/GPT）</td></tr>
+<tr><td>自回归 LM</td><td>从左到右逐 token 生成（GPT 系列）</td></tr>
+<tr><td>掩码 LM</td><td>遮住部分 token 让模型猜（BERT 系列）</td></tr>
+<tr><td>编码器-解码器</td><td>Encoder 理解输入，Decoder 生成输出（T5/BART）</td></tr>
+<tr><td>Few-shot Learning</td><td>给几个示例就能做新任务（GPT-3 的核心涌现能力）</td></tr>
+</table>
+<hr>
+<h2>五、延伸阅读</h2>
+<ul>
+<li><a href="深度学习基础_横纵分析报告.md">深度学习基础</a> — 神经网络、反向传播、CNN/RNN 的前置知识</li>
+<li><a href="LLM大模型_横纵分析报告.md">LLM 大模型</a> — GPT/BERT 之后的大模型时代全景</li>
+<li><a href="RAG_横纵分析报告.md">RAG</a> — 检索增强生成的演进与检索技术的关系</li>
+</ul>
+<hr>
+<p><em>本文是横纵分析系列的第 32 篇报告。定位为基础知识，覆盖 NLP 从规则到 LLM 的五代演进，为后续的大模型技术专题提供入门铺垫。</em></p>
+</div>
+</body>
+</html>

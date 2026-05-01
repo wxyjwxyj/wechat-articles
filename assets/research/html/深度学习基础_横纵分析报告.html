@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>深度学习基础横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: avoid;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: avoid;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: avoid; }
+  pre { page-break-inside: avoid; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>深度学习基础横纵分析报告</h1>
+<blockquote>从感知机到 Transformer——神经网络如何在七十年间从"实验室玩具"变成驱动全球 AI 的核心引擎。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>深度学习是用多层神经网络从数据中自动学习特征表示的机器学习方法。它的核心洞察是：<strong>让数据自己说话</strong>——传统机器学习需要人类手工设计特征（feature engineering），深度学习让网络自己从原始数据中逐层抽象出越来越高级的表示。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解从感知机到 Transformer 的技术演进逻辑，能解释反向传播为什么是深度学习的"发动机"，知道 CNN/RNN/LSTM/Transformer 分别解决了什么问题。</blockquote>
+<hr>
+<h2>二、技术背景</h2>
+<h3>2.1 为什么需要"深度"学习？</h3>
+<p>一个图像分类的例子：区分猫和狗。</p>
+<ul>
+<li><strong>传统方法</strong>：人工设计特征——边缘检测 → 纹理描述 → 颜色直方图 → 送入 SVM/决策树分类。每一步需要领域专家，换个任务就得重新设计。</li>
+<li><strong>深度学习</strong>：原始像素 → 第 1 层学边缘 → 第 3 层学纹理 → 第 5 层学耳朵形状 → 第 10 层学"猫"的完整概念。所有层一起学，不需要人工设计。</li>
+</ul>
+<p>深度 = 层次化的特征学习。"深"的意义不在于层数多，而在于每层自动学到了更抽象的表示。</p>
+<hr>
+<h2>三、纵向分析：从感知机到 Transformer</h2>
+<h3>3.1 感知机（1958）—— 一个神经元的梦想</h3>
+<p>Frank Rosenblatt 在 1958 年建造了 Mark I 感知机——一个能学习区分三角形和正方形的物理机器。从 400 个光传感器输入，经过一层可调权重的"神经元"，输出分类结果。</p>
+<p><strong>局限</strong>：Minsky & Papert 在 1969 年证明单层感知机连 XOR 都学不会——这个"判决"让神经网络进入了第一个冬天。</p>
+<h3>3.2 反向传播（1986）—— 深度学习终于有了"发动机"</h3>
+<p>Rumelhart、Hinton 和 Williams 在 1986 年发表了反向传播算法（backpropagation）。核心思想极其优雅：</p>
+<ol>
+<li><strong>前向传播</strong>：输入经过网络，算出预测</li>
+<li><strong>计算误差</strong>：预测 vs 真实标签的差值</li>
+<li><strong>反向传播</strong>：误差从输出层逐层往回传，用链式求导算出每个参数对误差的贡献</li>
+<li><strong>更新参数</strong>：梯度下降——沿着"误差减小最快"的方向微调每个参数</li>
+</ol>
+<p>反向传播的本质是"责任的追溯"——一个错误发生时，网络中的每个参数承担多大责任？</p>
+<h3>3.3 CNN（卷积神经网络）—— 让机器"看见"（2012）</h3>
+<p>CNN 的核心是三个操作：</p>
+<ul>
+<li><strong>卷积（Convolution）</strong>：一个小窗口（如 3×3）扫过整张图，检测局部特征（边缘、纹理）。同一个小窗口的参数在所有位置共享——这是 CNN 参数效率的核心</li>
+<li><strong>池化（Pooling）</strong>：把特征图缩小（如 2×2 取最大值），降低计算量，增加平移不变性</li>
+<li><strong>全连接层</strong>：最后几层把学到的特征组合起来做分类</li>
+</ul>
+<p><strong>AlexNet（2012）</strong> 在 ImageNet 上的表现比第二名好了一倍，标志着深度学习时代的真正开端。</p>
+<h3>3.4 RNN / LSTM —— 让机器理解"序列"（1997-2014）</h3>
+<p>CNN 处理的是固定大小的输入（一张 224×224 的图片），但自然语言的句子长短不一。</p>
+<p><strong>RNN（循环神经网络）</strong> 的核心：每个时间步的输出不仅取决于当前输入，还取决于上一步的"隐藏状态"——一个随时间传递的"记忆"。</p>
+<p><strong>LSTM（长短期记忆，Hochreiter & Schmidhuber, 1997）</strong> 解决了 RNN 的根本问题——长序列带来的梯度消失。引入了三个门：</p>
+<ul>
+<li><strong>遗忘门</strong>：决定记住什么、忘掉什么</li>
+<li><strong>输入门</strong>：决定当前输入中哪些值得存储</li>
+<li><strong>输出门</strong>：决定当前状态中哪些要输出</li>
+</ul>
+<p>LSTM 统治了 NLP 近 20 年——机器翻译、语音识别、语言模型都依赖它。但它的致命弱点是<strong>无法并行化</strong>——逐时间步串行计算，速度瓶颈始终无法突破。</p>
+<h3>3.5 Transformer（2017）—— "Attention Is All You Need"</h3>
+<p>Transformer 解决了 LSTM 的根本矛盾——如何在保留"关注上下文"能力的同时，实现完全并行的计算。</p>
+<p>核心机制是<strong>自注意力（Self-Attention）</strong>：</p>
+<ol>
+<li>每个 token 生成三个向量：Query（我想查什么）、Key（我有什么标签）、Value（我的内容）</li>
+<li>Query 与所有 Key 做点积 → 相似度分数 → softmax → 注意力权重</li>
+<li>加权求和 Value → 每个 token 的出向量融合了全序列的信息</li>
+</ol>
+<p><strong>为什么是革命</strong>：RNN 需要逐时间步串行，"我"要知道"你"的内容得等前面的步骤算完。Transformer 里所有 token 同时互相关注——完全并行，训练速度从"数周"降到"数天"。</p>
+<p>详见 <a href="Transformer_横纵分析报告.md">Transformer 横纵分析报告</a> 获取完整架构分析。</p>
+<hr>
+<h2>四、横向分析：三大核心架构对比</h2>
+<table>
+<tr><th>架构</th><th>擅长</th><th>核心机制</th><th>并行度</th><th>衰落原因</th></tr>
+<tr><td>CNN</td><td>图像/空间数据</td><td>局部卷积+共享权重</td><td>高</td><td>Vision Transformer 挑战</td></tr>
+<tr><td>RNN/LSTM</td><td>序列（文本/语音）</td><td>循环隐藏状态</td><td>低</td><td>Transformer 替代</td></tr>
+<tr><td>Transformer</td><td>序列+图像+多模态</td><td>自注意力</td><td>极高</td><td>仍在迭代（Titans 等）</td></tr>
+</table>
+<hr>
+<h2>五、关键概念速览</h2>
+<table>
+<tr><th>概念</th><th>一句话</th></tr>
+<tr><td>梯度下降</td><td>沿着"误差减小最快"方向更新参数</td></tr>
+<tr><td>反向传播</td><td>链式法则把误差分配回每个参数</td></tr>
+<tr><td>激活函数</td><td>给网络加非线性（ReLU/GELU），否则多层=一层</td></tr>
+<tr><td>Batch Normalization</td><td>每层输入标准化，训练更快更稳定</td></tr>
+<tr><td>过拟合</td><td>模型背住了训练数据，泛化能力差</td></tr>
+<tr><td>Dropout</td><td>训练时随机"关掉"部分神经元，防过拟合</td></tr>
+<tr><td>学习率</td><td>每次更新的步长——太大不收敛，太小太慢</td></tr>
+<tr><td>Embedding</td><td>把离散 token 映射到连续向量空间</td></tr>
+</table>
+<hr>
+<h2>六、延伸阅读</h2>
+<ul>
+<li><a href="Transformer_横纵分析报告.md">Transformer 横纵分析报告</a> — Transformer 架构的完整纵横向分析</li>
+<li><a href="NLP基础_横纵分析报告.md">NLP 基础</a> — 从词向量到预训练模型的 NLP 演进</li>
+<li><a href="机器学习概览_横纵分析报告.md">机器学习概览</a> — 监督/无监督/强化学习的全景框架</li>
+</ul>
+<hr>
+<p><em>本文是横纵分析系列的第 31 篇报告。定位为基础知识，为后续的技术专题（Transformer、MoE、长上下文等）提供入门铺垫。</em></p>
+</div>
+</body>
+</html>
