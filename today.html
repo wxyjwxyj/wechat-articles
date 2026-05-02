@@ -149,6 +149,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      table-layout: fixed;
     }
     th {
       background: #f8f9fb;
@@ -161,6 +162,10 @@
       letter-spacing: 0.5px;
       border-bottom: 2px solid #eaecf0;
     }
+    th:nth-child(1) { width: 48%; }
+    th:nth-child(2) { width: 32%; }
+    th:nth-child(3) { width: 13%; }
+    th:nth-child(4) { width: 7%; }
     td {
       padding: 14px 12px;
       border-bottom: 1px solid #f0f2f5;
@@ -171,12 +176,14 @@
     tr.merged:hover td { background: #f8f2ff; }
 
     /* 标题列 */
-    .col-title { width: 44%; }
+    .col-title { width: 30%; }
     .title-text {
       font-size: 14px;
       font-weight: 500;
       color: #1a1a2e;
       line-height: 1.5;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }
     .merged-badge {
       display: inline-block;
@@ -389,7 +396,7 @@
   <div class="container">
     <div class="header">
       <h1>📱 微信公众号文章汇总</h1>
-      <div class="meta">获取时间：2026-05-02 11:45:36 &nbsp;|&nbsp; 共采集 36 篇，聚合为 36 条资讯 &nbsp;|&nbsp; 2026-05-02</div>
+      <div class="meta">获取时间：2026-05-02 12:26:23 &nbsp;|&nbsp; 共采集 36 篇，聚合为 36 条资讯 &nbsp;|&nbsp; 2026-05-02</div>
     </div>
 
     <div class="topics-bar" id="topicsBar">
@@ -762,7 +769,7 @@
       </table>
     </div>
 
-    <div class="footer">由 Claude 自动生成 · 2026-05-02 11:45:36</div>
+    <div class="footer">由 Claude 自动生成 · 2026-05-02 12:26:23</div>
   </div>
 
   <script>
