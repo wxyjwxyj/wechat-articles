@@ -45,3 +45,8 @@ insights_today.md
 .ran/
 content.db
 content.db.bak
+
+# 每日流水线产物
+cover_today.png
+mp_template_preview.html
+output.pdf
