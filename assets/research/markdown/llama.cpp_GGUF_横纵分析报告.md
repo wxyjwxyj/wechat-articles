@@ -192,30 +192,30 @@ Ollama 的巅峰和低谷只隔了两年。它用 llama.cpp 的技术降低了�
 
 ### 核心论文与文章
 
-| 论文/文章 | 来源 | 访问时间 |
-|-----------|------|---------|
-| llama.cpp GitHub | github.com/ggml-org/llama.cpp | 2026-05-03 |
-| GGUF 格式规范 | github.com/ggml-org/ggml/blob/master/docs/gguf.md | 2026-05-03 |
-| k-quants PR #1684 | github.com/ggml-org/llama.cpp/pull/1684 | 2026-05-03 |
-| ggml.ai joins Hugging Face Blog | huggingface.co/blog/ggml-joins-hf | 2026-05-03 |
-| Production-Grade Local LLM Inference on Apple Silicon | arxiv.org/abs/2511.05502 | 2026-05-03 |
-| Ollama GitHub | github.com/ollama/ollama | 2026-05-03 |
-| ExLlamaV2 GitHub | github.com/turboderp-org/exllamav2 | 2026-05-03 |
-| MLC-LLM GitHub | github.com/mlc-ai/mlc-llm | 2026-05-03 |
+| 论文/文章 | 来源 | 发表时间 |
+|-----------|------|:---:|
+| llama.cpp GitHub | github.com/ggml-org/llama.cpp | 2023.03 |
+| GGUF 格式规范 | github.com/ggml-org/ggml/blob/master/docs/gguf.md | 2023.08 |
+| k-quants PR #1684 | github.com/ggml-org/llama.cpp/pull/1684 | 2023.06 |
+| ggml.ai joins Hugging Face Blog | huggingface.co/blog/ggml-joins-hf | 2026.02 |
+| Production-Grade Local LLM Inference on Apple Silicon | arxiv.org/abs/2511.05502 | 2025.11 |
+| Ollama GitHub | github.com/ollama/ollama | 2023.07 |
+| ExLlamaV2 GitHub | github.com/turboderp-org/exllamav2 | 2023.09 |
+| MLC-LLM GitHub | github.com/mlc-ai/mlc-llm | 2023.04 |
 
 ### 产品与技术来源
 
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
-| Ollama 官网 | ollama.com | 2026-05-03 |
-| LM Studio 官网 | lmstudio.ai | 2026-05-03 |
-| Jan 官网 | jan.ai | 2026-05-03 |
-| GPT4All 官网 | nomic.ai/gpt4all | 2026-05-03 |
-| FOSDEM 2025: History of quantization in llama.cpp | archive.fosdem.org | 2026-05-03 |
-| Simon Willison blog on llama.cpp | simonwillison.net | 2026-05-03 |
-| NVIDIA Blog: Accelerating LLMs with llama.cpp | developer.nvidia.com | 2026-05-03 |
-| HuggingFace TheBloke repository | huggingface.co/TheBloke | 2026-05-03 |
-| Changelog Podcast #532 with Georgi Gerganov | changelog.com | 2026-05-03 |
+| 来源 | URL | 发布/活跃时间 |
+|------|-----|:---:|
+| Ollama 官网 | ollama.com | 2023.07 |
+| LM Studio 官网 | lmstudio.ai | 2023.08 |
+| Jan 官网 | jan.ai | 2023.08 |
+| GPT4All 官网 | nomic.ai/gpt4all | 2023.03 |
+| FOSDEM 2025: History of quantization in llama.cpp | archive.fosdem.org | 2025.02 |
+| Simon Willison blog on llama.cpp | simonwillison.net | 持续更新 |
+| NVIDIA Blog: Accelerating LLMs with llama.cpp | developer.nvidia.com | 2024 |
+| HuggingFace TheBloke repository | huggingface.co/TheBloke | 2023 |
+| Changelog Podcast #532 with Georgi Gerganov | changelog.com | 2024 |
 
 ---
 

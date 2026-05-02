@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>KV Cache 横纵分析报告</title>
+<title>KV_Cache 横纵分析报告</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -332,35 +332,35 @@ td:last-child { text-align: center; }
 <h2>六、信息来源</h2>
 <h3>核心论文与文章</h3>
 <table>
-<tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
-<tr><td>Transformer-XL (Dai et al.)</td><td>arxiv.org/abs/1901.02860</td><td>2026-05-03</td></tr>
-<tr><td>Fast Transformer Decoding: One Write-Head is All You Need (MQA, Shazeer)</td><td>arxiv.org/abs/1911.02150</td><td>2026-05-03</td></tr>
-<tr><td>GQA: Training Generalized Multi-Query Transformer Models (Ainslie et al.)</td><td>arxiv.org/abs/2305.13245</td><td>2026-05-03</td></tr>
-<tr><td>FlashAttention (Dao et al.)</td><td>arxiv.org/abs/2205.14135</td><td>2026-05-03</td></tr>
-<tr><td>PagedAttention / vLLM (Kwon et al.)</td><td>arxiv.org/abs/2309.06180</td><td>2026-05-03</td></tr>
-<tr><td>SGLang / RadixAttention (Zheng et al.)</td><td>arxiv.org/abs/2312.07104</td><td>2026-05-03</td></tr>
-<tr><td>H2O (Zhang et al.)</td><td>arxiv.org/abs/2306.14048</td><td>2026-05-03</td></tr>
-<tr><td>StreamingLLM (Xiao et al.)</td><td>arxiv.org/abs/2309.17453</td><td>2026-05-03</td></tr>
-<tr><td>SnapKV (Li et al.)</td><td>arxiv.org/abs/2404.14469</td><td>2026-05-03</td></tr>
-<tr><td>DeepSeek-V2 / MLA</td><td>arxiv.org/abs/2405.04434</td><td>2026-05-03</td></tr>
-<tr><td>KVQuant (Hooper et al.)</td><td>arxiv.org/abs/2401.18079</td><td>2026-05-03</td></tr>
-<tr><td>KIVI (Liu et al.)</td><td>arxiv.org/abs/2402.02750</td><td>2026-05-03</td></tr>
-<tr><td>Layer-Condensed KV Cache</td><td>arxiv.org/abs/2405.10637</td><td>2026-05-03</td></tr>
-<tr><td>Cross-Layer Attention</td><td>arxiv.org/abs/2405.12981</td><td>2026-05-03</td></tr>
-<tr><td>MiniCache</td><td>arxiv.org/abs/2405.14366</td><td>2026-05-03</td></tr>
-<tr><td>KV Cache Compression Survey</td><td>arxiv.org/abs/2412.19442</td><td>2026-05-03</td></tr>
-<tr><td>Comparative Characterization of KV Cache (2026)</td><td>arxiv.org/abs/2604.05012</td><td>2026-05-03</td></tr>
-<tr><td>Hold Onto That Thought (NeurIPS 2025)</td><td>nips.cc</td><td>2026-05-03</td></tr>
+<tr><th>论文/文章</th><th>来源</th><th>发表时间</th></tr>
+<tr><td>Transformer-XL (Dai et al.)</td><td>arxiv.org/abs/1901.02860</td><td>2019.01</td></tr>
+<tr><td>Fast Transformer Decoding: One Write-Head is All You Need (MQA, Shazeer)</td><td>arxiv.org/abs/1911.02150</td><td>2019.11</td></tr>
+<tr><td>GQA: Training Generalized Multi-Query Transformer Models (Ainslie et al.)</td><td>arxiv.org/abs/2305.13245</td><td>2023.05</td></tr>
+<tr><td>FlashAttention (Dao et al.)</td><td>arxiv.org/abs/2205.14135</td><td>2022.05</td></tr>
+<tr><td>PagedAttention / vLLM (Kwon et al.)</td><td>arxiv.org/abs/2309.06180</td><td>2023.09</td></tr>
+<tr><td>SGLang / RadixAttention (Zheng et al.)</td><td>arxiv.org/abs/2312.07104</td><td>2023.12</td></tr>
+<tr><td>H2O (Zhang et al.)</td><td>arxiv.org/abs/2306.14048</td><td>2023.06</td></tr>
+<tr><td>StreamingLLM (Xiao et al.)</td><td>arxiv.org/abs/2309.17453</td><td>2023.09</td></tr>
+<tr><td>SnapKV (Li et al.)</td><td>arxiv.org/abs/2404.14469</td><td>2024.04</td></tr>
+<tr><td>DeepSeek-V2 / MLA</td><td>arxiv.org/abs/2405.04434</td><td>2024.05</td></tr>
+<tr><td>KVQuant (Hooper et al.)</td><td>arxiv.org/abs/2401.18079</td><td>2024.01</td></tr>
+<tr><td>KIVI (Liu et al.)</td><td>arxiv.org/abs/2402.02750</td><td>2024.02</td></tr>
+<tr><td>Layer-Condensed KV Cache</td><td>arxiv.org/abs/2405.10637</td><td>2024.05</td></tr>
+<tr><td>Cross-Layer Attention</td><td>arxiv.org/abs/2405.12981</td><td>2024.05</td></tr>
+<tr><td>MiniCache</td><td>arxiv.org/abs/2405.14366</td><td>2024.05</td></tr>
+<tr><td>KV Cache Compression Survey</td><td>arxiv.org/abs/2412.19442</td><td>2024.12</td></tr>
+<tr><td>Comparative Characterization of KV Cache</td><td>arxiv.org/abs/2604.05012</td><td>2026.04</td></tr>
+<tr><td>Hold Onto That Thought (NeurIPS 2025)</td><td>nips.cc</td><td>2025.12</td></tr>
 </table>
 <h3>产品与技术来源</h3>
 <table>
-<tr><th>来源</th><th>URL</th><th>访问时间</th></tr>
-<tr><td>HuggingFace Transformers Issues (#2368, #9391, PR #9596)</td><td>github.com/huggingface/transformers</td><td>2026-05-03</td></tr>
-<tr><td>vLLM GitHub</td><td>github.com/vllm-project/vllm</td><td>2026-05-03</td></tr>
-<tr><td>SGLang GitHub</td><td>github.com/sgl-project/sglang</td><td>2026-05-03</td></tr>
-<tr><td>NVIDIA FasterTransformer</td><td>github.com/NVIDIA/FasterTransformer</td><td>2026-05-03</td></tr>
-<tr><td>FlashMLA GitHub (DeepSeek)</td><td>github.com/deepseek-ai/FlashMLA</td><td>2026-05-03</td></tr>
-<tr><td>Awesome-KV-Cache-Optimization</td><td>github.com/jjiantong/Awesome-KV-Cache-Optimization</td><td>2026-05-03</td></tr>
+<tr><th>来源</th><th>URL</th><th>发布/活跃时间</th></tr>
+<tr><td>HuggingFace Transformers Issues (#2368, #9391, PR #9596)</td><td>github.com/huggingface/transformers</td><td>2019-2020</td></tr>
+<tr><td>vLLM GitHub</td><td>github.com/vllm-project/vllm</td><td>2023.09</td></tr>
+<tr><td>SGLang GitHub</td><td>github.com/sgl-project/sglang</td><td>2023.12</td></tr>
+<tr><td>NVIDIA FasterTransformer</td><td>github.com/NVIDIA/FasterTransformer</td><td>2020</td></tr>
+<tr><td>FlashMLA GitHub (DeepSeek)</td><td>github.com/deepseek-ai/FlashMLA</td><td>2025.02</td></tr>
+<tr><td>Awesome-KV-Cache-Optimization</td><td>github.com/jjiantong/Awesome-KV-Cache-Optimization</td><td>持续更新</td></tr>
 </table>
 <hr>
 <p><em>本文是横纵分析系列的第 36 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法。</em></p>

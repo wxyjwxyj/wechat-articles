@@ -240,37 +240,37 @@ KVShare、DroidSpeak 等系统级共享方案成熟。system prompt 的 KV Cache
 
 ### 核心论文与文章
 
-| 论文/文章 | 来源 | 访问时间 |
-|-----------|------|---------|
-| Transformer-XL (Dai et al.) | arxiv.org/abs/1901.02860 | 2026-05-03 |
-| Fast Transformer Decoding: One Write-Head is All You Need (MQA, Shazeer) | arxiv.org/abs/1911.02150 | 2026-05-03 |
-| GQA: Training Generalized Multi-Query Transformer Models (Ainslie et al.) | arxiv.org/abs/2305.13245 | 2026-05-03 |
-| FlashAttention (Dao et al.) | arxiv.org/abs/2205.14135 | 2026-05-03 |
-| PagedAttention / vLLM (Kwon et al.) | arxiv.org/abs/2309.06180 | 2026-05-03 |
-| SGLang / RadixAttention (Zheng et al.) | arxiv.org/abs/2312.07104 | 2026-05-03 |
-| H2O (Zhang et al.) | arxiv.org/abs/2306.14048 | 2026-05-03 |
-| StreamingLLM (Xiao et al.) | arxiv.org/abs/2309.17453 | 2026-05-03 |
-| SnapKV (Li et al.) | arxiv.org/abs/2404.14469 | 2026-05-03 |
-| DeepSeek-V2 / MLA | arxiv.org/abs/2405.04434 | 2026-05-03 |
-| KVQuant (Hooper et al.) | arxiv.org/abs/2401.18079 | 2026-05-03 |
-| KIVI (Liu et al.) | arxiv.org/abs/2402.02750 | 2026-05-03 |
-| Layer-Condensed KV Cache | arxiv.org/abs/2405.10637 | 2026-05-03 |
-| Cross-Layer Attention | arxiv.org/abs/2405.12981 | 2026-05-03 |
-| MiniCache | arxiv.org/abs/2405.14366 | 2026-05-03 |
-| KV Cache Compression Survey | arxiv.org/abs/2412.19442 | 2026-05-03 |
-| Comparative Characterization of KV Cache (2026) | arxiv.org/abs/2604.05012 | 2026-05-03 |
-| Hold Onto That Thought (NeurIPS 2025) | nips.cc | 2026-05-03 |
+| 论文/文章 | 来源 | 发表时间 |
+|-----------|------|:---:|
+| Transformer-XL (Dai et al.) | arxiv.org/abs/1901.02860 | 2019.01 |
+| Fast Transformer Decoding: One Write-Head is All You Need (MQA, Shazeer) | arxiv.org/abs/1911.02150 | 2019.11 |
+| GQA: Training Generalized Multi-Query Transformer Models (Ainslie et al.) | arxiv.org/abs/2305.13245 | 2023.05 |
+| FlashAttention (Dao et al.) | arxiv.org/abs/2205.14135 | 2022.05 |
+| PagedAttention / vLLM (Kwon et al.) | arxiv.org/abs/2309.06180 | 2023.09 |
+| SGLang / RadixAttention (Zheng et al.) | arxiv.org/abs/2312.07104 | 2023.12 |
+| H2O (Zhang et al.) | arxiv.org/abs/2306.14048 | 2023.06 |
+| StreamingLLM (Xiao et al.) | arxiv.org/abs/2309.17453 | 2023.09 |
+| SnapKV (Li et al.) | arxiv.org/abs/2404.14469 | 2024.04 |
+| DeepSeek-V2 / MLA | arxiv.org/abs/2405.04434 | 2024.05 |
+| KVQuant (Hooper et al.) | arxiv.org/abs/2401.18079 | 2024.01 |
+| KIVI (Liu et al.) | arxiv.org/abs/2402.02750 | 2024.02 |
+| Layer-Condensed KV Cache | arxiv.org/abs/2405.10637 | 2024.05 |
+| Cross-Layer Attention | arxiv.org/abs/2405.12981 | 2024.05 |
+| MiniCache | arxiv.org/abs/2405.14366 | 2024.05 |
+| KV Cache Compression Survey | arxiv.org/abs/2412.19442 | 2024.12 |
+| Comparative Characterization of KV Cache | arxiv.org/abs/2604.05012 | 2026.04 |
+| Hold Onto That Thought (NeurIPS 2025) | nips.cc | 2025.12 |
 
 ### 产品与技术来源
 
-| 来源 | URL | 访问时间 |
-|------|-----|---------|
-| HuggingFace Transformers Issues (#2368, #9391, PR #9596) | github.com/huggingface/transformers | 2026-05-03 |
-| vLLM GitHub | github.com/vllm-project/vllm | 2026-05-03 |
-| SGLang GitHub | github.com/sgl-project/sglang | 2026-05-03 |
-| NVIDIA FasterTransformer | github.com/NVIDIA/FasterTransformer | 2026-05-03 |
-| FlashMLA GitHub (DeepSeek) | github.com/deepseek-ai/FlashMLA | 2026-05-03 |
-| Awesome-KV-Cache-Optimization | github.com/jjiantong/Awesome-KV-Cache-Optimization | 2026-05-03 |
+| 来源 | URL | 发布/活跃时间 |
+|------|-----|:---:|
+| HuggingFace Transformers Issues (#2368, #9391, PR #9596) | github.com/huggingface/transformers | 2019-2020 |
+| vLLM GitHub | github.com/vllm-project/vllm | 2023.09 |
+| SGLang GitHub | github.com/sgl-project/sglang | 2023.12 |
+| NVIDIA FasterTransformer | github.com/NVIDIA/FasterTransformer | 2020 |
+| FlashMLA GitHub (DeepSeek) | github.com/deepseek-ai/FlashMLA | 2025.02 |
+| Awesome-KV-Cache-Optimization | github.com/jjiantong/Awesome-KV-Cache-Optimization | 持续更新 |
 
 ---
 
