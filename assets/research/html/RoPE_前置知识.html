@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>RoPE 旋转位置编码 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>RoPE 旋转位置编码 前置知识</h1>
+<blockquote>面向了解 Transformer 基本结构（知道 Q、K、V、Self-Attention）的读者。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解为什么需要位置编码、RoPE 为什么比之前的方法好、能说出 RoPE 变体（PI/NTK/YaRN）各自做了什么。</blockquote>
+<hr>
+<h2>一、为什么需要位置编码？</h2>
+<p>Transformer 的 Self-Attention 有一个天生缺陷：<strong>它不知道 token 的顺序。</strong></p>
+<p>"我打你"和"你打我"，每个 token 两两之间的注意力分数是完全一样的——Attention 只看内容，不看位置。但顺序显然很重要。</p>
+<p>位置编码就是给每个 token 打上"我在第几个位置"的标签。</p>
+<hr>
+<h2>二、RoPE 之前：三种老方案</h2>
+<p><strong>1. Sinusoidal（Transformer 2017）</strong>：用正弦/余弦函数生成固定模式的位置向量，直接加到 token embedding 上。不占参数但不能学习。</p>
+<p><strong>2. Learned（BERT/GPT 2018）</strong>：给每个位置一个可学习的向量，训练时自动调。问题是长度固定——GPT-2 训了 1024 个位置，给第 1025 个 token 就报错。</p>
+<p><strong>3. ALiBi（2021）</strong>：在 attention score 上加一个简单的线性惩罚——两个 token 距离越远扣分越多。极简，但表达能力有限。</p>
+<hr>
+<h2>三、RoPE 的核心想法：用旋转代替位移</h2>
+<p>苏剑林的洞察来自一个数学观察：<strong>把两个向量分别旋转后做内积，结果只依赖于它们旋转角的差，而不是各自的绝对角度。</strong></p>
+<p>所以他把 Q 和 K 的每两个维度看成一个"2D 向量对"，按位置给它旋转一个角度：</p>
+<ul>
+<li>位置 3 的 token，Q 旋转 3θ</li>
+<li>位置 7 的 token，K 旋转 7θ</li>
+<li>Q 和 K 做内积时，结果只依赖于 (7-3)θ = 相对距离 4</li>
+</ul>
+<p><strong>这样既保持了绝对位置编码的便利性（直接作用在向量上），又获得了相对位置编码的自然外推能力。</strong></p>
+<p>直觉类比：你站在转盘上，你和你朋友分别转不同的角度——你们俩说话（做内积），内容只取决于你们之间的"相对角度差"，而不是各自面向的具体方向。</p>
+<hr>
+<h2>四、RoPE 为什么赢了？</h2>
+<p>2023 年 2 月，Meta 在设计 LLaMA 时对比方案后选了 RoPE。LLaMA 一成功，所有基于 LLaMA 微调和衍生的模型自动继承 RoPE。网络效应一旦形成就不可逆——FlashAttention、vLLM、llama.cpp 都对 RoPE 做了极致优化。</p>
+<p>到 2026 年，RoPE 是 LLM 位置编码的事实标准。不用 RoPE 才是例外。</p>
+<hr>
+<h2>五、RoPE 的扩展：如何突破训练长度？</h2>
+<p>原版 RoPE 在训练长度（如 2048）外推理时效果急剧下降。几个关键扩展方案：</p>
+<table>
+<tr><th>方案</th><th>提出</th><th>思路</th><th>一句话</th></tr>
+<tr><td><strong>PI</strong></td><td>Meta 2023.06</td><td>把所有旋转角等比例缩小</td><td>"把位置也压缩进去"</td></tr>
+<tr><td><strong>NTK-aware</strong></td><td>社区 2023.07</td><td>高频少缩、低频多缩</td><td>"近处别动、远处多看"</td></tr>
+<tr><td><strong>Dynamic NTK</strong></td><td>社区 2023.07</td><td>根据实际长度动态调整</td><td>"多长就按多长的缩"</td></tr>
+<tr><td><strong>YaRN</strong></td><td>2023.09</td><td>PI + NTK + 温度调优</td><td>"三合一，当前最强"</td></tr>
+<tr><td><strong>LongRoPE2</strong></td><td>微软 2025</td><td>进化搜索最优频率</td><td>"近乎无损到 128K+"</td></tr>
+</table>
+<hr>
+<h2>六、关键人物</h2>
+<p><strong>苏剑林</strong>（Jianlin Su），独立研究者，个人博客"科学空间"（kexue.fm）。2021 年在博客上发表了 RoPE 的推导思路，同时上传 arxiv。这是他一个业余项目的成果——没有大厂资源、没有 GPU 集群。但他的数学直觉打动了 Meta 的 LLaMA 团队。此后所有主流 LLM 都用 RoPE。</p>
+<p>这是"一个人的一篇论文，穿透了整个行业"的故事。</p>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li>苏剑林 "Transformer升级之路：旋转式位置编码" — spaces.ac.cn/archives/8265</li>
+<li>RoFormer 论文 (Su et al., 2021) — arxiv.org/abs/2104.09864</li>
+<li>ALiBi (Press et al., 2021) — arxiv.org/abs/2108.12409</li>
+<li>LLaMA (Touvron et al., 2023) — arxiv.org/abs/2302.13971</li>
+<li>YaRN (Peng et al., 2023) — arxiv.org/abs/2309.00071</li>
+<li>EleutherAI "Rotary Embeddings: A Relative Revolution" — blog.eleuther.ai</li>
+</ul>
+</div>
+</body>
+</html>
