@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Warmup 与学习率衰减 横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Warmup + 学习率衰减 横纵分析报告</h1>
+<blockquote>它没有提出论文、没有首位作者、没有任何学术加冕——却在 2017 年 6 月被两个团队"独立发明"后，用三年长成了训所有大模型都离不开的基础设施。DeepSeek 用它省显存、GPT-3 用它稳住 175B 的训练、ICLR 2025 说"线性衰减比余弦好"——学习率调度可能是深度学习史上"实践跑在理论前面"最经典的故事。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>Warmup（学习率预热）+ 学习率衰减是训练深度学习模型时控制学习率变化曲线的技巧：训练初期从很小线性增到最大值（热车），训练后期从最大值逐步衰减至零或接近零（刹车）。它不是一篇论文的产物，而是 2017 年两个团队几乎同时从不同场景中"踩出"的工程共识。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解 warmup 为什么需要、三篇理论解释各自从什么角度出发、Cosine Decay 和 WSD 各自的适用场景、能判断一个训练任务该选什么 LR schedule。</blockquote>
+<hr>
+<h3>阅读指南</h3>
+<p><strong>5 分钟</strong>：读<a href="#一一句话定义">一句话定义</a> + <a href="#五横纵交汇洞察">横纵交汇洞察</a>的最后一部分（三个剧本）</p>
+<p><strong>25 分钟</strong>：加<a href="#二技术背景">技术背景</a> + <a href="#三纵向分析">纵向分析</a>的阶段开头 + <a href="#四横向分析">横向分析</a>的对比表</p>
+<p><strong>专业</strong>：全文</p>
+<hr>
+<h2>二、技术背景</h2>
+<blockquote>前置知识请参考 <a href="./Warmup_学习率衰减_前置知识.md">《Warmup + 学习率衰减 前置知识》</a></blockquote>
+<p>训练神经网络本质上是"调旋钮让错误变小"。学习率（LR）控制每次调多大幅度——太大直接跳过最优解甚至爆炸，太小永远到不了。Warmup 和衰减分别控制训练首尾两端的调节幅度。</p>
+<p>需要 warmup 的根本原因在三个层面：</p>
+<ol>
+<li><strong>Adam 的二阶矩冷启动问题</strong>（RAdam 论文）：前几百步梯度统计不稳定</li>
+<li><strong>Transformer 的梯度层间不平衡</strong>（Xiong et al. 2020）：Post-LN 下浅层梯度远大于深层</li>
+<li><strong>参数初始化的无方向状态</strong>：随机初始化的参数需要少量小步探索再加速</li>
+</ol>
+<hr>
+<blockquote><strong>📚 关联报告</strong></blockquote>
+<blockquote>- <a href="./大模型训练_横纵分析报告.md">大模型训练</a> — LR 调度是训练超参中最重要的一个</blockquote>
+<blockquote>- <a href="./Post-training_RL训练基础设施_横纵分析报告.md">Post-training RL</a> — RL 训练中 warmup 同样重要</blockquote>
+<hr>
+<h2>三、纵向分析：从踩坑到标配</h2>
+<h3>3.1 前史（2012-2015）：只有刹车，没有热车</h3>
+<p>AlexNet (2012)、VGG、ResNet (2015) 用的都是 <strong>Step Decay</strong>——学习率只能降不能升。ResNet 初始 lr=0.1，第 30 和 60 epoch 各自除以 10。</p>
+<p>这个阶段的共识简单粗暴：<strong>训练前期的模型最"可塑"，要用最大 lr 快速探索，越靠近收敛越要小步精调。</strong> Warmup 的思想——训练刚开始用小 lr——和当时的直觉完全相反。</p>
+<h3>3.2 2017 年 6 月：两次独立的"发明"</h3>
+<p><strong>2017 年 6 月可能是深度学习训练史上最巧合的一个月。</strong></p>
+<p>Goyal et al. (Facebook) 要干一件没人干过的事——用 8192 的 batch size 训练 ImageNet（常规是 256）。他们发现了 Linear Scaling Rule（batch size 大 K 倍，lr 也应大 K 倍），但这规则只在有 warmup 时才成立。论文里第一次出现 "gradual warmup" 这个说法——前 5 个 epoch，lr 从 0 线性增长到目标值。</p>
+<p>同一月，Vaswani et al. (Google) 发布了 Transformer 论文。论文里的 Noam Scheduler 前 4000 步做了一模一样的事——lr 从小线性增长。论文没有解释为什么，只作为训练公式出现："We varied the learning rate over the course of training, according to the formula..."</p>
+<p>两篇论文背后是完全不同的动机——Facebook 团队解决的是"大 batch size 不稳定"，Google 团队解决的是"新架构训不收敛"——但结论惊人一致。</p>
+<h3>3.3 BERT 与 GPT-3：Warmup 成为标配（2018-2020）</h3>
+<p>BERT (2018) 用了前 10000 步线性 warmup + 之后线性衰减到 0，让 "warmup + 衰减" 成为 NLP 训练的默认范式。</p>
+<p>GPT-3 (2020) 在 175B 参数上验证了 <strong>Warmup + Cosine Decay</strong> 的组合方案，并成为此后四年所有大模型训练的"黄金标准"。参数量越大，warmup 占总训练步数的比例越关键。</p>
+<h3>3.4 理论的追赶：为什么需要 Warmup？（2019-2020）</h3>
+<p>实践已经用了三年，理论才终于在三条线上给出解释：</p>
+<ul>
+<li><strong>RAdam (Liu et al., ICLR 2020)</strong>：Adam 的二阶矩 <code>v_t</code> 在样本不足时方差极大，warmup 在它稳定之前压低 lr。RAdam 甚至宣称——把 warmup 内建到优化器里，就可以去掉显式的 warmup 阶段。</li>
+<li><strong>Post-Norm vs Pre-Norm (Xiong et al., ICML 2020)</strong>：原始 Transformer 的 LayerNorm 位置导致梯度在层间剧烈不平衡，前几层梯度可能达到后几层的几十倍。Warmup 用极小 lr 抑制这种不平衡。后来的 Pre-LN Transformer 降低了对 warmup 的依赖，但未完全消除。</li>
+<li><strong>训练不稳定的多因素分析 (Liu et al., EMNLP 2020)</strong>：注意力层和 FFN 层的梯度贡献量级不同，warmup 让模型在早期建立合理的参数尺度。</li>
+</ul>
+<p>这三篇论文加在一起，warmup 从"黑魔法"变成了"可解释的必要"。但也有人质疑——Ma & Yarats (2019) 证明把 Adam 的 β2 设大到 0.999，warmup 可以省掉。</p>
+<h3>3.5 WSD 与"直降到零"：范式转移（2024-2025）</h3>
+<p>2024 年，DeepSeek 和 MiniCPM 不约而同地在训练中用了 <strong>WSD（Warmup-Stable-Decay）</strong> 方案——warmup 后不急着衰减，保持恒定 lr 跑完大部分训练，只在尾段快速衰减。</p>
+<p>WSD 解决了一个 Cosine Decay 的刚性缺陷：余弦衰减把"总共训多少步"锁死了。如果中途想加训，衰减已经到底。WSD 的中间稳定段随时可截断、评估、续训——对于"训训停停、中途评估、做 ablation 再继续"的大模型研发流程来说，这是质变。</p>
+<p>2025 年 ICLR 一篇论文（Bergsma et al.）更激进——通过 scaling law 代理模型实验，证明<strong>线性衰减到零系统性地优于余弦衰减</strong>。如果这个结论被大规模验证，未来 LLM 训练的默认方案可能从 "warmup + cosine decay" 变成 "warmup + stable + linear decay to zero"。</p>
+<h3>3.6 阶段总结</h3>
+<table>
+<tr><th>阶段</th><th>时间</th><th>核心矛盾</th><th>关键事件</th></tr>
+<tr><td><strong>前史</strong></td><td>2012-2015</td><td>只知道降、不知道升</td><td>AlexNet/VGG/ResNet step decay</td></tr>
+<tr><td><strong>双源"发明"</strong></td><td>2017.06</td><td>大 batch + 新架构都不稳</td><td>Goyal (FB) + Vaswani (Transformer)</td></tr>
+<tr><td><strong>标配化</strong></td><td>2018-2020</td><td>大模型必须 warmup</td><td>BERT → GPT-3 (warmup+cosine)</td></tr>
+<tr><td><strong>理论解释</strong></td><td>2019-2020</td><td>为什么 warmup 有效？</td><td>RAdam, LN Position, Training Instability</td></tr>
+<tr><td><strong>范式转移</strong></td><td>2024-2025</td><td>余弦衰减太刚性</td><td>WSD (DeepSeek), Linear to Zero (ICLR)</td></tr>
+</table>
+<hr>
+<h2>四、横向分析：LR 调度策略对比</h2>
+<h3>4.1 总览表</h3>
+<table>
+<tr><th>策略</th><th>提出</th><th>核心理念</th><th>LLM适用性</th><th>采用度</th></tr>
+<tr><td><strong>Step Decay</strong></td><td>~2012</td><td>每隔 N 步除以 10</td><td>低</td><td>仅历史</td></tr>
+<tr><td><strong>Noam</strong></td><td>2017.06</td><td>warmup + 1/√step 衰减</td><td>中</td><td>中</td></tr>
+<tr><td><strong>Cosine Decay</strong></td><td>2016</td><td>余弦曲线平滑退火</td><td>高（曾是标配）</td><td>极高</td></tr>
+<tr><td><strong>Warmup + Cosine</strong></td><td>2019-20</td><td>warmup + cosine，GPT-3 方案</td><td>极高</td><td><strong>极高</strong></td></tr>
+<tr><td><strong>Linear Decay to Zero</strong></td><td>2025</td><td>warmup + 线性衰减到零</td><td><strong>极高</strong></td><td>上升中</td></tr>
+<tr><td><strong>WSD</strong></td><td>2024</td><td>warmup→stable→decay，可续训</td><td><strong>极高</strong></td><td>上升中</td></tr>
+<tr><td><strong>Constant + Cooldown</strong></td><td>2024</td><td>全程恒定 + 尾段急刹</td><td><strong>极高</strong></td><td>上升中</td></tr>
+<tr><td><strong>ReduceLROnPlateau</strong></td><td>~2017</td><td>验证 loss 不动就降 lr</td><td>低（无验证集）</td><td>微调</td></tr>
+<tr><td><strong>Cyclic LR / 1cycle</strong></td><td>2015/2018</td><td>lr 周期振荡 / 一周期超收敛</td><td>低</td><td>CV</td></tr>
+</table>
+<h3>4.2 关键发现</h3>
+<p><strong>Cosine Decay 在过去五年是"默认最优"——但它正在被取代。</strong> 不是因为 cosine 不好，而是因为 WSD 和 Linear to Zero 在保持同等性能的同时提供了更多灵活性。</p>
+<p><strong>LLM 训练中，没有人在用 Cyclic LR 或 ReduceLROnPlateau。</strong> LLM 预训练的特点——一次过、无验证集、巨大 batch size——决定了只有预设固定步数的调度方案才适用。</p>
+<p><strong>三段式结构已经成为新共识。</strong> Warmup（稳定梯度）+ Stable（全速探索）+ Decay（精细收敛）这个框架是各方案的通式。差异只在 decay 阶段用什么函数（余弦/线性/多项式）、占多大比例。</p>
+<h3>4.3 主要 LLM 采用的方案</h3>
+<table>
+<tr><th>模型</th><th>年份</th><th>方案</th><th>备注</th></tr>
+<tr><td>GPT-3</td><td>2020</td><td>Warmup + Cosine</td><td>定义标准</td></tr>
+<tr><td>Chinchilla</td><td>2022</td><td>Warmup + Cosine</td><td>算力最优</td></tr>
+<tr><td>LLaMA 1/2</td><td>2023</td><td>Warmup + Cosine</td><td></td></tr>
+<tr><td>Llama 3</td><td>2024</td><td>Warmup + Cosine</td><td>仍保守</td></tr>
+<tr><td>DeepSeek V2/V3</td><td>2024</td><td><strong>WSD</strong></td><td>方案切换</td></tr>
+<tr><td>MiniCPM</td><td>2024</td><td><strong>WSD</strong></td><td>小模型验证</td></tr>
+</table>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 Warmup 为什么没有提出者？</h3>
+<p>回看整个纵向线，warmup 最独特的性质是——<strong>它不是被"想出来"的，而是被"撞到"的。</strong></p>
+<p>2017 年 6 月两个团队在完全不同的场景下（一个加大 batch，一个换架构），遇到了完全相同的现象（训练初期 loss 爆炸），找到了完全相同的解决办法（前几步用小 lr）。这不是巧合——而是当时深度学习训练已经发展到"传统 step decay 不够用了"的临界点，多个场景同时触发了同一个工程需求。</p>
+<p>Warmup 没有提出者，因为它本质上是一个<strong>物理约束</strong>——就像汽车不能零帧起步，神经网络也不能从随机初始化直接全速训练。</p>
+<h3>5.2 调度方案正在从"一条曲线"变成"三段式组装"</h3>
+<p>Cosine Decay 把 warmup、衰减速率、最终 lr 全部绑在一条曲线上。WSD 把它们拆成三个独立的、可单独配置的阶段。这个拆解的意义在于——不同的训练目标可以对不同阶段独立优化。数据量增加？延长 stable 段。需要更好的收敛？延长 decay 段。Continuous pre-training？直接从 stable 段开始。</p>
+<h3>5.3 三个剧本</h3>
+<p><strong>剧本一（60%）：Warmup + Stable + Linear Decay to Zero 成为新默认。</strong> WSD 的灵活 + Linear Decay 的简洁 = 取代 cosine。</p>
+<p><strong>剧本二（25%）：Warmup 在优化器层面彻底消除。</strong> RAdam 方向的研究持续深入，未来的 Adam 变体内建 warmup 效果，训练代码里不再需要显式的 warmup 阶段。</p>
+<p><strong>剧本三（15%）：新训练范式（如 Muon 优化器、分布式训练新方案）让 LR 调度的讨论完全更新。</strong></p>
+<hr>
+<h2>六、信息来源</h2>
+<h3>核心论文</h3>
+<table>
+<tr><th>论文</th><th>来源</th><th>访问时间</th></tr>
+<tr><td>Accurate, Large Minibatch SGD (Goyal et al., 2017)</td><td>arxiv.org/abs/1706.02677</td><td>2026-05-03</td></tr>
+<tr><td>Attention Is All You Need (Vaswani et al., 2017)</td><td>arxiv.org/abs/1706.03762</td><td>2026-05-03</td></tr>
+<tr><td>SGDR: Warm Restarts (Loshchilov & Hutter, 2016)</td><td>arxiv.org/abs/1608.03983</td><td>2026-05-03</td></tr>
+<tr><td>RAdam (Liu et al., ICLR 2020)</td><td>arxiv.org/abs/1908.03265</td><td>2026-05-03</td></tr>
+<tr><td>On Layer Normalization (Xiong et al., ICML 2020)</td><td>arxiv.org/abs/2002.04745</td><td>2026-05-03</td></tr>
+<tr><td>Understanding Difficulty of Training Transformers (Liu et al., EMNLP 2020)</td><td>arxiv.org/abs/2004.08249</td><td>2026-05-03</td></tr>
+<tr><td>GPT-3 (Brown et al., 2020)</td><td>arxiv.org/abs/2005.14165</td><td>2026-05-03</td></tr>
+<tr><td>DeepSeek-V3</td><td>arxiv.org/abs/2412.19437</td><td>2026-05-03</td></tr>
+<tr><td>MiniCPM</td><td>arxiv.org/abs/2404.06395</td><td>2026-05-03</td></tr>
+<tr><td>Straight to Zero (Bergsma et al., ICLR 2025)</td><td>arxiv.org/abs/2502.15938</td><td>2026-05-03</td></tr>
+<tr><td>Scaling Laws Beyond Fixed Durations (Hägele et al., NeurIPS 2024)</td><td>arxiv.org/abs/2405.18392</td><td>2026-05-03</td></tr>
+<tr><td>Why Warmup? (NeurIPS 2024)</td><td>arxiv.org/abs/2406.09405</td><td>2026-05-03</td></tr>
+<tr><td>Reducing Need for Warmup in GPT (Kosson et al., NeurIPS 2024)</td><td>arxiv.org/abs/2410.23922</td><td>2026-05-03</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 38 篇报告。研究方法论参考了由数字生命卡兹克（Khazix）提出的横纵分析法。</em></p>
+</div>
+</body>
+</html>

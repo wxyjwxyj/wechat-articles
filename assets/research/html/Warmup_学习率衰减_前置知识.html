@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Warmup 与学习率衰减 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>学习率 Warmup 与衰减 前置知识</h1>
+<blockquote>这份文档面向对深度学习训练有好奇但没有技术背景的读者。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解为什么训大模型要先"慢慢热车"（warmup）再"慢慢刹车"（decay），能说出不同衰减策略的形状和适用场景，能解释为什么 warmup 没有提出者却无处不在。</blockquote>
+<hr>
+<h2>一、Warmup 是什么？一句话</h2>
+<p><strong>训练刚开始时，学习率不要拉满——先用几百到几千步从 0 慢慢增长到最大值。</strong></p>
+<p>就像冬天开车先热车。刚启动时润滑油还没铺开，踩满油门容易拉缸。神经网络刚初始化时参数是随机的，优化器的一阶/二阶矩估计还是空的——直接上大学习率，梯度容易爆炸。</p>
+<hr>
+<h2>二、为什么需要它？</h2>
+<p>三个层面的原因（后来才被论文解释清楚，实践中大家发现对就先用了）：</p>
+<p><strong>1. Adam 优化器的"冷启动"问题</strong>：Adam 需要积累一定步数的梯度统计才能做出合理的自适应学习率。前几百步的二阶矩估计方差极大，自适应 lr 剧烈波动。Warmup 就是在等它稳定。</p>
+<p><strong>2. Transformer 的梯度不平衡</strong>：原始 Transformer（Post-LN）中，前几层收到的梯度可能是后几层的几十倍。Warmup 通过小 lr 防止这种不平衡在早期引爆。</p>
+<p><strong>3. 参数初始化的随机性</strong>：刚随机初始化的参数没有任何"方向感"，需要少量步数的小 lr 探索，找到大致方向后再加速。</p>
+<hr>
+<h2>三、Warmup 的历史：两条独立的"发明"</h2>
+<p>2017 年 6 月，两篇论文几乎同时描述了 warmup——但都不是它"正式提出"的地方：</p>
+<ul>
+<li><strong>Goyal et al.（Facebook）</strong>：用 8K batch size 训练 ImageNet，发现直接放大 lr 会爆炸。解决方法：前 5 个 epoch 线性 warmup。</li>
+<li><strong>Vaswani et al.（Google）</strong>：Transformer 论文的 Noam Scheduler，前 4000 步 lr 从 0 线性增长。</li>
+</ul>
+<p>两篇论文的动机不同——一个是"batch size 太大"，一个是"这模型训起来不稳定"。但结论一样：开始用小 lr。</p>
+<p>此后没人能说清"谁发明的"——因为它本质上是个实践共识，两个团队几乎同时踩了同一个坑。</p>
+<hr>
+<h2>四、衰减策略：训练后期的"刹车"</h2>
+<p>Warmup 是热车，衰减是快到终点的刹车。不同衰减策略的区别在于刹车方式：</p>
+<table>
+<tr><th>策略</th><th>形状</th><th>一句话</th></tr>
+<tr><td><strong>Step Decay</strong></td><td>阶梯式</td><td>每 N 步除以 10，AlexNet 时代的做法</td></tr>
+<tr><td><strong>Cosine Decay</strong></td><td>余弦曲线</td><td>平滑退火，GPT-3 起成为 LLM 标准</td></tr>
+<tr><td><strong>Linear Decay</strong></td><td>直线</td><td>BERT 用的，2025 年发现可能比余弦更好</td></tr>
+<tr><td><strong>WSD</strong></td><td>三段式</td><td>Warmup→Stable→Decay，DeepSeek 新范式</td></tr>
+<tr><td><strong>Constant+Cooldown</strong></td><td>平稳+急刹</td><td>全程恒定，最后猛降</td></tr>
+</table>
+<hr>
+<h2>五、为什么 Cosine Decay 曾经是"标配"？为什么现在在变？</h2>
+<p>Cosine decay 从 GPT-3 (2020) 开始成为 LLM 训练标配——它在 ImageNet 时代就被验证优于 step decay，平滑曲线利于精细收敛。</p>
+<p>但问题是：<strong>余弦衰减把"训多久"锁死了。</strong> 总步数 T 一开始就得定好——中途想加训，衰减已经到底，lr 太小没法学新东西。DeepSeek 2024 年提出 WSD（Warmup-Stable-Decay）：中间一大段恒定 lr，最后才衰减。这样随时可以续训。</p>
+<p>2025 年 ICLR 一篇论文更激进——<strong>线性衰减到零比余弦衰减更好。</strong> 不仅简单，而且验证 loss 系统性地更低。</p>
+<hr>
+<h2>六、一张图理解</h2>
+<pre><code>  lr<br>  ^<br>  |     ___<br>  |    /   \___<br>  |   /         \___<br>  |  /               \________<br>  | /                         \<br>  +--------------------------------&gt; steps<br>  warmup  stable       decay<br><br>WSD 三阶段：慢慢加速 → 全速巡航 → 慢慢减速到站</code></pre>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li>Goyal et al. "Accurate, Large Minibatch SGD" (2017) — https://arxiv.org/abs/1706.02677</li>
+<li>Vaswani et al. "Attention Is All You Need" (2017) — https://arxiv.org/abs/1706.03762</li>
+<li>RAdam (Liu et al. 2019) — warmup 的首个理论解释 — https://arxiv.org/abs/1908.03265</li>
+<li>Xiong et al. "On Layer Normalization in the Transformer Architecture" (2020) — https://arxiv.org/abs/2002.04745</li>
+<li>GPT-3 (Brown et al. 2020) — Warmup + Cosine Decay 大模型标配化 — https://arxiv.org/abs/2005.14165</li>
+<li>DeepSeek-V3 — WSD 调度大规模验证 — https://arxiv.org/abs/2412.19437</li>
+<li>"Straight to Zero" (Bergsma et al. 2025) — 线性衰减优于余弦 — https://arxiv.org/abs/2502.15938</li>
+</ul>
+</div>
+</body>
+</html>
