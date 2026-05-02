@@ -114,7 +114,7 @@ pre {
   overflow-x: auto;
   font-size: 11px;
   line-height: 1.6;
-  page-break-inside: avoid;
+  page-break-inside: auto;
 }
 
 pre code { background: none; padding: 0; color: #2d2d2d; }
@@ -161,7 +161,7 @@ table {
   border-collapse: collapse;
   margin: 16px 0;
   font-size: 11.5px;
-  page-break-inside: avoid;
+  page-break-inside: auto;
 }
 
 tr:first-child th, thead th {
@@ -190,8 +190,8 @@ td:last-child { text-align: center; }
   body { background: white; }
   .page { padding: 20px 30px; max-width: 100%; }
   h2 { page-break-before: auto; }
-  table { page-break-inside: avoid; }
-  pre { page-break-inside: avoid; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
   .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
 }
 </style>
@@ -495,7 +495,7 @@ td:last-child { text-align: center; }
 <p>到了 2026 年，控制权的博弈进入了一个新阶段：<strong>从"谁控制"变成了"如何可信地控制"。</strong> Agent 可以自主行动，但必须有可审计的推理链、可回滚的操作日志、可拦截的安全护栏。</p>
 <p>这场关于控制权的博弈，最终的决定因素可能不是技术能力，而是<strong>信任</strong>——人类多大程度上信任 Agent 替自己做决策。而信任，说到底是个经验问题，不是技术问题。就像自动驾驶需要累积足够多的安全行驶里程，Agent 也需要积累足够多的"无事故任务次数"，才能真正融入我们的日常生活。</p>
 <hr>
-<h2>七、实战：面试题、场景题、应用题</h2>
+<h2>六、实战：面试题、场景题、应用题</h2>
 <h3>面试题</h3>
 <h4>Q1: Tool Calling 和 Agent 的本质区别是什么？</h4>
 <p>考察对 Agent 概念的理解深度，而非复述定义。</p>
@@ -564,7 +564,7 @@ td:last-child { text-align: center; }
 <li><strong>最关键的决策</strong>：AI Agent 做第一轮审查但永远不做最终决定。最终 approve 权力在人类手里。这不是因为 AI 不够好——而是 Agent 漏掉严重 bug（假阴性）的代价极高，且人类审查者需要至少看过 PR 才能对代码有 ownership。</li>
 </ul>
 <hr>
-<h2>八、信息来源</h2>
+<h2>七、信息来源</h2>
 <h3>核心论文与文章</h3>
 <table>
 <tr><th>论文/文章</th><th>来源</th><th>访问时间</th></tr>
