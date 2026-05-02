@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>模型合并 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>模型合并（Model Merging）前置知识</h1>
+<blockquote>这份文档面向对 LLM 微调和开源模型生态有基本了解的读者。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解什么是模型合并、为什么不需要重新训练就能组合模型能力、能说出 TIES/DARE/SLERP 各自做了什么、能判断一个合并模型是怎么做出来的。</blockquote>
+<hr>
+<h2>一、模型合并是什么？</h2>
+<p><strong>把两个或多个微调过的 LLM 的权重"加在一起"，生成一个新的模型，同时拥有源模型的各项能力——不需要任何重新训练，不需要任何数据。</strong></p>
+<p>直觉类比：你有两个人的技能——一个擅长写代码，一个擅长写小说。模型合并相当于把他们的"大脑"直接融合，造出一个既会写代码又会写小说的人。而且这个融合只花几秒钟，不需要重新训练。</p>
+<p>这听起来像魔法。2023 年底社区发现它确实能工作时，整个开源 LLM 社区炸了。</p>
+<hr>
+<h2>二、为什么能合并？</h2>
+<p>因为所有微调模型都是从同一个预训练基座（如 Llama 2、Mistral 7B）出发，只走了不同的微调路径。它们在权重空间里都还停留在基座附近，相互之间的"距离"不大。</p>
+<p>定义 <strong>Task Vector（任务向量）</strong> = 微调后权重 - 基座权重。合并就是对多个任务向量做某种运算，再把结果加回基座权重。</p>
+<p>你可以理解为：基座模型是一个"通用大脑"，微调在上面叠加了"专项技能"。技能之间大部分参数不冲突，可以共存。</p>
+<hr>
+<h2>三、主要合并方法</h2>
+<h3>3.1 SLERP（球面线性插值）—— 最简单的两个模型合并</h3>
+<p>在归一化的权重球面上，沿大圆弧插值。比简单线性平均更优雅——保持权重范数不变。</p>
+<p>两个模型，一个参数 t 控制比例。t=0.5 表示各取一半。</p>
+<h3>3.2 TIES-Merging —— 解决"符号冲突"</h3>
+<p>三个模型以上简单平均时，A 模型的某个参数是 +0.5，B 模型的同一参数是 -0.4——一加就抵消了。TIES 三步解决：</p>
+<ol>
+<li><strong>Trim</strong>：扔掉微不足道的参数变化（只留变化大的）</li>
+<li><strong>Elect Sign</strong>：多数投票决定每个参数的方向（正 or 负）</li>
+<li><strong>Disjoint Merge</strong>：只合并方向一致的参数</li>
+</ol>
+<h3>3.3 DARE —— 随机丢掉 90% 还是好的</h3>
+<p>核心发现：微调带来的参数变化极度冗余。随机丢弃 90-99% 的 delta 参数，剩下的 rescale 一下，性能几乎不降。</p>
+<p>DARE + TIES 组合（先 DARE 稀疏化，再 TIES 合并）是社区最常用的合并配方。</p>
+<h3>3.4 Model Stock —— 用 2 个模型逼近 N 个模型的效果</h3>
+<p>几何方法：用基座模型为原点，两个微调模型定义方向，通过几何投影找到"如果我有 N 个微调模型，它们应该在的位置"。</p>
+<h3>3.5 进化式合并 —— AI 自己找最优配方</h3>
+<p>Sakana AI 2024 年提出。把"怎么合并"当作一个优化问题，用进化算法自动搜索——哪层用哪个方法、参数多少、drop rate 多少。在多个 benchmark 上超越了人类手工调参的结果。</p>
+<h3>3.6 Frankenstein 合并 —— 按层拼装</h3>
+<p>最野的路子：模型 A 的前几层 + 模型 B 的中间几层 + 模型 C 的后几层，拼成一个新模型。完全不讲道理，但有时候效果惊人。2026 年 4 月社区爆火的 "Qwopus-GLM-18B" 就是这样拼出来的。</p>
+<hr>
+<h2>四、合并工具</h2>
+<ul>
+<li><strong>MergeKit</strong>（Arcee AI，7k+ stars）：Python 包，YAML 配置，支持所有主流方法，事实标准</li>
+<li><strong>evolutionary-model-merge</strong>（Sakana AI）：进化搜索最优配方</li>
+<li><strong>LM-Mixer / Enhanced-LM-Mixer</strong>：社区最早的合并脚本（历史文物）</li>
+</ul>
+<hr>
+<h2>五、核心矛盾</h2>
+<pre><code>合并很容易（几秒、无需训练）<br>  vs<br>合并结果不可预测（同样的配方，换两个模型可能完全不一样）</code></pre>
+<p>到目前为止，没有理论能精确预测"合并这两个模型会不会好"。所有好用的合并配方都是靠 leaderboard 的即时反馈试出来的。这就是为什么模型合并有时被称为"新型炼丹术"。</p>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li>TIES-Merging (Yadav et al., NeurIPS 2023) — https://arxiv.org/abs/2306.01708</li>
+<li>DARE / Language Models are Super Mario (Yu et al., ICML 2024) — https://arxiv.org/abs/2311.03099</li>
+<li>Task Arithmetic (Ilharco et al., ICLR 2023) — https://arxiv.org/abs/2212.04089</li>
+<li>MergeKit — https://github.com/arcee-ai/mergekit</li>
+<li>Evolutionary Model Merging (Akiba et al., 2024) — https://arxiv.org/abs/2403.13187</li>
+<li>Maxime Labonne "Merge LLMs with mergekit" — https://mlabonne.github.io/blog/</li>
+</ul>
+</div>
+</body>
+</html>

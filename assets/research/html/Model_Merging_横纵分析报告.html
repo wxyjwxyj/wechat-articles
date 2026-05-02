@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>模型合并 横纵分析报告</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>模型合并 横纵分析报告</h1>
+<blockquote>两三个微调模型的权重加在一起，得到一个同时会写代码和写小说的新模型——不需要数据、不需要 GPU、几秒钟完成。开源社区 2023 年底偶然发现了这件事，然后论文在半年后才追上来解释"为什么它不应该能工作却偏偏能"。模型合并可能是 AI 社区史上"实践倒逼理论"最极致的案例。</blockquote>
+<hr>
+<h2>一、一句话定义</h2>
+<p>模型合并（Model Merging）是在不重新训练的情况下，将多个从同一基座微调而来的 LLM 权重通过算法组合成一个新模型的技术。核心操作单元是<strong>任务向量</strong>（Task Vector）= 微调后权重 - 基座权重——所有的合并方法本质上都是在做"如何安全地把多个任务向量加回基座权重"。</p>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解模型合并为什么能工作、TIES/DARE/SLERP/Evolutionary 各自解决什么问题、能判断一个合并模型用了什么配方、理解从"社区炼丹"到"学术化"的全过程。</blockquote>
+<hr>
+<h3>阅读指南</h3>
+<p><strong>5 分钟</strong>：一句话定义 + 阶段 3.4（转折点）+ 横纵交汇（三个剧本）</p>
+<p><strong>25 分钟</strong>：加技术背景 + 纵向分析各阶段开头 + 横向对比表 + 著名合并模型表</p>
+<p><strong>专业</strong>：全文</p>
+<hr>
+<h2>二、技术背景</h2>
+<blockquote>前置知识请参考 <a href="./Model_Merging_前置知识.md">《模型合并前置知识》</a></blockquote>
+<p>所有微调模型共享同一个预训练基座。从权重角度看，它们都在基座附近的参数空间里——距离基座通常在数百到数千的 L2 范数，而基座权重本身的范数在百万级别。这意味着微调只改变了参数空间中极小的一块，且不同微调的改变之间大部分不重叠。</p>
+<p>这解释了为什么合并能工作：<strong>多个任务向量叠加时，它们之间的冲突（同一参数被不同方向拉扯）远少于直觉预期。</strong> 但冲突确实存在。所有"高级"合并方法——TIES、DARE、Model Stock——本质上都在解决同一个问题：怎么处理那些被多个任务向量"往不同方向拉"的参数。</p>
+<hr>
+<blockquote><strong>📚 关联报告</strong></blockquote>
+<blockquote>- <a href="./PEFT_参数高效微调_横纵分析报告.md">PEFT 参数高效微调</a> — LoRA 微调是模型合并的主要源模型生产方式</blockquote>
+<blockquote>- <a href="./LLM应用框架_横纵分析报告.md">LLM 应用框架</a> — MergeKit 是模型合并的事实标准工具</blockquote>
+<hr>
+<h2>三、纵向分析：从偶然发现到学术显学</h2>
+<h3>3.1 学术前史（2021-2023.06）</h3>
+<p>社区发现模型合并之前，学术界已经有零星探索，但都在视觉模型上，LLM 社区完全没注意到。Model Soups (Wortsman et al., ICML 2022) 证明了同一基座的不同微调模型简单平均能提升 CLIP/ViT 精度。Task Arithmetic (Ilharco et al., ICLR 2023) 提出了"任务向量"的代数框架。TIES-Merging (Yadav et al., NeurIPS 2023) 从数学上解释和解决了合并中的参数冲突问题。</p>
+<p>这些论文后来成为模型合并的理论基石——但它们在发表时，对 LLM 社区的影响力几乎为零。</p>
+<h3>3.2 社区"偶然发现"（2023.09 - 2023.12）</h3>
+<p>2023 年 7 月 Llama 2 开源，社区开始大量微调。到 9-10 月，HuggingFace 上有了几十个针对不同用途微调的 Llama 2 变体。</p>
+<p><strong>LostRuins</strong>（koboldcpp 作者）写了第一个通用 LLM 权重合并脚本 LM-Mixer。<strong>Digitous</strong> 在此基础上加了 SLERP。<strong>Undi95</strong> 写了 SLERP-MergeTest 专门测试。Reddit r/LocalLLaMA 是核心传播阵地，HuggingFace Open LLM Leaderboard 提供了即时验证——合并完立刻跑 benchmark 看分数。</p>
+<p>2023 年 11 月，<strong>Goliath-120B</strong>——两个 Llama 2 70B 拼成的 frankenmerge——轰动社区。它没有什么理论基础，就是"把模型拼起来"，但结果让人震惊。</p>
+<p>同月，阿里巴巴达摩院发表了 DARE / "Language Models are Super Mario"——第一个专门针对 LLM 合并的论文。论文发现随机丢弃 90%+ 的 delta 参数，合并后性能不降反升。这说明微调产生的参数变化极度冗余。</p>
+<h3>3.3 工具化爆发（2024.01 - 2024.03）</h3>
+<p><strong>Charles Goddard</strong> 创建了 mergekit，统一了所有社区合并方法到一个 Python 包。</p>
+<p><strong>2024 年 1 月 8 日</strong>，Maxime Labonne（mlabonne）发表了博客 "Merge Large Language Models with mergekit"。这篇博客用清晰可复现的代码教会了整个社区怎么合并模型。Labonne 同时发布了 Marcoro14-7B-slerp，成为最早在 Leaderboard 上引发关注的合并模型。</p>
+<p><strong>2024 年 3 月是转折月。</strong> 3 月 19 日，Arcee AI 收购 mergekit，Charles Goddard 加入 Arcee。同日，MergeKit 论文和 Sakana AI 的 Evolutionary Model Merging 论文同时上线 arxiv。这标志着模型合并从"社区炼丹"正式进入"有论文支撑的学术范式"。</p>
+<p>Evolutionary Merging 的发现尤其惊人：用进化算法自动搜索最优合并配方，在多个 benchmark 上超越了人类手工调参的最好结果。这意味着——<strong>连"怎么合最好"这件事，AI 也能比人做得好。</strong></p>
+<h3>3.4 学术化与主流化（2024.08 - 2026）</h3>
+<p>2024 年 8 月首个全面综述论文出现，整理了近 100 种合并方法。NeurIPS 2024 正式设立 LLM Merging Competition。2025 年安全合并、多模态合并、遗忘合并等新方向爆发。Sakana AI 的 M2N2（2025.08）引入"竞争与吸引"机制。2026 年 ICLR 收录多个合并论文。</p>
+<h3>3.5 阶段总结</h3>
+<table>
+<tr><th>阶段</th><th>时间</th><th>核心特征</th><th>标志事件</th></tr>
+<tr><td><strong>学术前史</strong></td><td>2021-2023.06</td><td>视觉模型探索，LLM社区不知</td><td>Model Soups, TIES-Merging</td></tr>
+<tr><td><strong>社区爆发</strong></td><td>2023.09-12</td><td>偶然发现，全民炼丹</td><td>Goliath-120B, DARE论文</td></tr>
+<tr><td><strong>工具化</strong></td><td>2024.01-03</td><td>mergekit统一，学术化转折</td><td>Labonne博客, Arcee收购, 进化合并</td></tr>
+<tr><td><strong>主流化</strong></td><td>2024.08-2026</td><td>综述、竞赛、多模态</td><td>NeurIPS竞赛, M2N2, 安全合并</td></tr>
+</table>
+<hr>
+<h2>四、横向分析：合并方法对比</h2>
+<h3>4.1 总览表</h3>
+<table>
+<tr><th>方法</th><th>提出</th><th>核心思路</th><th>需要数据？</th><th>计算开销</th><th>合并质量</th><th>工具</th></tr>
+<tr><td><strong>Linear Soup</strong></td><td>2023.Q3</td><td>权重直接平均</td><td>否</td><td>极低</td><td>中</td><td>MergeKit</td></tr>
+<tr><td><strong>SLERP</strong></td><td>2023.Q4</td><td>球面大圆弧插值</td><td>否</td><td>低</td><td>中-高</td><td>MergeKit</td></tr>
+<tr><td><strong>Task Arithmetic</strong></td><td>2022.12</td><td>任务向量加减</td><td>否</td><td>低</td><td>中</td><td>MergeKit</td></tr>
+<tr><td><strong>TIES</strong></td><td>2023.06</td><td>Trim→Elect→Disjoint</td><td>否</td><td>中</td><td>高</td><td>MergeKit</td></tr>
+<tr><td><strong>DARE</strong></td><td>2023.11</td><td>随机丢弃90%+delta, rescale</td><td>否</td><td>低-中</td><td>高</td><td>MergeKit</td></tr>
+<tr><td><strong>DARE-TIES</strong></td><td>2024.Q1</td><td>DARE稀疏化后再TIES</td><td>否</td><td>中</td><td><strong>极高</strong></td><td>MergeKit</td></tr>
+<tr><td><strong>Model Stock</strong></td><td>2024.03</td><td>几何投影法,2模型逼N模型</td><td>否</td><td>中</td><td>高</td><td>MergeKit</td></tr>
+<tr><td><strong>Evolutionary</strong></td><td>2024.03</td><td>进化算法自动搜索配方</td><td>是(评估数据)</td><td>极高</td><td><strong>最高</strong></td><td>Sakana</td></tr>
+<tr><td><strong>Frankenstein</strong></td><td>2023.11</td><td>按层拼装不同模型</td><td>否</td><td>极低</td><td>极不稳定</td><td>MergeKit</td></tr>
+</table>
+<h3>4.2 关键发现</h3>
+<p><strong>DARE-TIES 是社区最常用的生产级配方。</strong> DARE 先稀疏化消除 delta 冗余，TIES 再消解符号冲突。HuggingFace Leaderboard 上绝大多数高分合并模型都采用这一组合。</p>
+<p><strong>Evolutionary Merging 是质量上限最高的方法，但计算开销让大多数人望而却步。</strong> 需要多轮进化评估。</p>
+<p><strong>合并的质量高度依赖"选对源模型"。</strong> 方法差异的影响远小于源模型质量差异。社区经验的共识："garbage in, garbage out."</p>
+<h3>4.3 著名合并模型</h3>
+<table>
+<tr><th>模型</th><th>时间</th><th>方法</th><th>意义</th></tr>
+<tr><td><strong>Goliath-120B</strong></td><td>2023.11</td><td>Frankenstein</td><td>第一个轰动社区，120B</td></tr>
+<tr><td><strong>Marcoro14-7B-slerp</strong></td><td>2024.01</td><td>SLERP</td><td>第一个 Leaderboard 热门</td></tr>
+<tr><td><strong>Beyonder-4x7B-v2</strong></td><td>2024.Q1</td><td>frankenMoE</td><td>4个7B拼成MoE</td></tr>
+<tr><td><strong>Daredevil-8B</strong></td><td>2024</td><td>DARE-TIES</td><td>Llama 3 多微调版合并</td></tr>
+<tr><td><strong>Qwopus-GLM-18B</strong></td><td>2026.04</td><td>Frankenstein</td><td>跨家族三合一，能力惊人</td></tr>
+</table>
+<hr>
+<h2>五、横纵交汇洞察</h2>
+<h3>5.1 "为什么它不应该能工作，却偏偏能？"</h3>
+<p>回看整个纵向线，最诡异的地方在于：2023 年底社区狂热地合并模型时，没有一篇论文能解释为什么这能工作。学术界的 TIES-Merging 已经提出了参数冲突理论，但社区根本不知道这篇论文——他们纯粹是自己试出来"这样能行"的。</p>
+<p>DARE 论文 2023 年 11 月才上线。社区在那之前几个月已经在大规模合并了。换句话说：<strong>社区用"先干了再说"的方式，验证了后来论文才会解释的现象。</strong></p>
+<h3>5.2 合并正在从"技术"变成"产品"</h3>
+<p>Arcee AI 收购 mergekit，把模型合并嵌入企业产品线。Sakana AI 把进化合并发在 Nature Machine Intelligence。HuggingFace 上每天都有新的合并模型产生。模型合并正在从一种"开源社区的奇怪行为"变成"AI 工具链的标准一环"。</p>
+<h3>5.3 三个剧本</h3>
+<p><strong>剧本一（55%）</strong>：合并成为微调后的标准后处理。微调完自动做 DARE-TIES 合并来组合能力，工具链全自动化。</p>
+<p><strong>剧本二（30%）</strong>：跨家族合并突破。目前所有方法都要求同基座。如果有方法能可靠地跨家族合并（Llama + Mistral + DeepSeek），格局会彻底改变。</p>
+<p><strong>剧本三（15%）</strong>：合并被下一代微调方法取代。如果 LoRA 的进化版天生支持多任务动态组合，就不需要合并了。</p>
+<hr>
+<h2>六、信息来源</h2>
+<table>
+<tr><th>论文/来源</th><th>URL</th><th>访问时间</th></tr>
+<tr><td>TIES-Merging (NeurIPS 2023)</td><td>arxiv.org/abs/2306.01708</td><td>2026-05-03</td></tr>
+<tr><td>DARE / Super Mario (ICML 2024)</td><td>arxiv.org/abs/2311.03099</td><td>2026-05-03</td></tr>
+<tr><td>Model Soups (ICML 2022)</td><td>arxiv.org/abs/2203.05482</td><td>2026-05-03</td></tr>
+<tr><td>Task Arithmetic (ICLR 2023)</td><td>arxiv.org/abs/2212.04089</td><td>2026-05-03</td></tr>
+<tr><td>Model Stock (ECCV 2024)</td><td>arxiv.org/abs/2403.19522</td><td>2026-05-03</td></tr>
+<tr><td>Evolutionary Model Merging</td><td>arxiv.org/abs/2403.13187</td><td>2026-05-03</td></tr>
+<tr><td>MergeKit paper</td><td>arxiv.org/abs/2403.13257</td><td>2026-05-03</td></tr>
+<tr><td>Model Merging Survey</td><td>arxiv.org/abs/2408.07666</td><td>2026-05-03</td></tr>
+<tr><td>MergeKit GitHub</td><td>github.com/arcee-ai/mergekit</td><td>2026-05-03</td></tr>
+<tr><td>Maxime Labonne blog</td><td>mlabonne.github.io</td><td>2026-05-03</td></tr>
+<tr><td>Sakana AI evolutionary-model-merge</td><td>github.com/SakanaAI/evolutionary-model-merge</td><td>2026-05-03</td></tr>
+</table>
+<hr>
+<p><em>本文是横纵分析系列的第 39 篇报告。</em></p>
+</div>
+</body>
+</html>
