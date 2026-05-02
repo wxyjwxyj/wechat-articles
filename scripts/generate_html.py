@@ -13,8 +13,9 @@ from utils.log import get_logger
 
 logger = get_logger(__name__)
 
-DEFAULT_BUNDLE = Path(__file__).parent / "bundle_today.json"
-DEFAULT_OUTPUT = Path(__file__).parent / "today.html"
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_BUNDLE = _PROJECT_ROOT / "bundle_today.json"
+DEFAULT_OUTPUT = _PROJECT_ROOT / "today.html"
 
 
 def main() -> None:
