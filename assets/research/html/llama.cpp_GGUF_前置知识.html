@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>llama.cpp / GGUF 前置知识</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+               "Noto Sans CJK SC", "Source Han Sans CN", sans-serif;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #1a1a2e;
+  background: #fff;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 56px;
+}
+
+/* 封面 */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  page-break-after: always;
+  border-bottom: 3px solid #1a2744;
+  padding: 60px 40px;
+}
+.cover-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0d1b2a;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+.cover-subtitle {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+}
+.cover-meta {
+  font-size: 12px;
+  color: #888;
+  line-height: 2;
+}
+.cover-line {
+  width: 80px;
+  height: 3px;
+  background: #1a2744;
+  margin: 24px auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0d1b2a;
+  border-bottom: 3px solid #0d1b2a;
+  padding-bottom: 10px;
+  margin: 36px 0 14px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #16213e;
+  border-bottom: 1.5px solid #b0bec5;
+  padding-bottom: 6px;
+  margin: 28px 0 10px;
+}
+
+h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f3460;
+  margin: 20px 0 7px;
+}
+
+h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #444;
+  margin: 14px 0 5px;
+}
+
+p { margin: 7px 0; color: #2d2d2d; }
+
+strong { color: #0d1b2a; font-weight: 700; }
+
+em { font-style: italic; color: #444; }
+
+code {
+  font-family: "SF Mono", "Fira Code", Menlo, "Courier New", monospace;
+  font-size: 11.5px;
+  background: #f0f4f8;
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: #c0392b;
+}
+
+pre {
+  background: #f7f9fc;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-size: 11px;
+  line-height: 1.6;
+  page-break-inside: auto;
+}
+
+pre code { background: none; padding: 0; color: #2d2d2d; }
+
+blockquote {
+  border-left: 4px solid #3498db;
+  background: #eaf4fb;
+  padding: 10px 16px;
+  margin: 12px 0;
+  color: #555;
+  border-radius: 0 4px 4px 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #dde3ea;
+  margin: 28px 0;
+}
+
+ul, ol { padding-left: 22px; margin: 8px 0; }
+li { margin: 4px 0; color: #2d2d2d; }
+
+a { color: #2980b9; text-decoration: none; }
+
+img.report-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 16px auto;
+  border-radius: 4px;
+  border: 1px solid #e0e6ed;
+}
+
+.img-caption {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  margin-top: -10px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 11.5px;
+  page-break-inside: auto;
+}
+
+tr:first-child th, thead th {
+  background: #1a2744;
+  color: #fff;
+  padding: 9px 11px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  border: 1px solid #2c3e6e;
+}
+
+td {
+  padding: 7px 11px;
+  border: 1px solid #dde3ea;
+  vertical-align: top;
+  color: #2d2d2d;
+}
+
+tr:nth-child(even) td { background: #f5f7fa; }
+
+/* emoji 列居中 */
+td:last-child { text-align: center; }
+
+@media print {
+  body { background: white; }
+  .page { padding: 20px 30px; max-width: 100%; }
+  h2 { page-break-before: auto; }
+  table { page-break-inside: auto; }
+  pre { page-break-inside: auto; }
+  .cover { page-break-after: always; min-height: auto; padding: 80px 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>llama.cpp / GGUF 前置知识</h1>
+<blockquote>这份文档面向对"本地跑大模型"有好奇但没有技术背景的普通读者。</blockquote>
+<blockquote>🎯 <strong>读完这篇你能</strong>：理解为什么要在自己电脑上跑大模型、llama.cpp 和 Ollama 是什么关系、GGUF 量化格式解决什么问题、k-quant 后缀（Q4_K_M）代表什么含义。</blockquote>
+<hr>
+<h2>一、为什么要在自己的电脑上跑大模型？</h2>
+<p>用 ChatGPT 或 Claude，你的每一句话都要发到云端服务器。好处是省事，代价是：要联网、要付费、数据不在自己手里。</p>
+<p>本地推理就是反过来的——模型文件下载到你的电脑上，所有计算都在本地完成。代价是你的电脑得有足够的算力和内存。好处：断网也能用、不花钱、数据不出门。</p>
+<p>直到 2023 年初，这还只是极客的玩具。一个保加利亚程序员用纯 C++ 写了 llama.cpp，从此改变了这一切。</p>
+<hr>
+<h2>二、GGUF 量化：灵魂是"压缩"</h2>
+<p>大模型很大。LLaMA-7B 的原始权重文件约 13GB。这对消费级电脑已经是极限了——普通人没有 A100。</p>
+<p><strong>量化</strong>就是"存少几个比特"。原始模型每个权重存成 16 位浮点数（FP16），量化后每个权重只用 4 位、6 位、或者 8 位。类似把照片从 BMP 存成 JPEG——肉眼看不出差别，文件小了好几倍。</p>
+<p><strong>GGUF</strong>（GGML Unified Format）是 llama.cpp 生态使用的模型文件格式。一个 GGUF 文件包含：</p>
+<ol>
+<li><strong>模型权重</strong>——经过量化的神经网络参数</li>
+<li><strong>元数据</strong>——tokenizer 类型、模型架构、上下文长度等，全部存在文件头部</li>
+</ol>
+<p>GGUF 取代了早期的 GGML 格式（老格式没有元数据，全靠文件名猜，经常出兼容性问题）。到 2026 年，GGUF 已成为本地 LLM 分发的行业标准。</p>
+<hr>
+<h2>三、k-quant：普通程序员"烹饪"出来的量化方案</h2>
+<p><strong>Iwan Kawrakow</strong>，一个医学物理背景的程序员，在 2023 年 6 月向 llama.cpp 提交了一套新的量化方案，叫 <strong>k-quants</strong>（以他的名字 <strong>K</strong> 命名）。</p>
+<p>他本人在 GitHub 上形容自己做量化是"cooked up"（随手鼓捣）。没有任何学术论文——纯靠数学直觉和反复调参。</p>
+<p>k-quant 系列的含义：</p>
+<table>
+<tr><th>后缀</th><th>每权重比特数</th><th>大约文件大小（7B 模型）</th><th>质量</th></tr>
+<tr><td>Q2_K</td><td>~2.6 bit</td><td>2.5 GB</td><td>极限压缩，能跑就行</td></tr>
+<tr><td>Q3_K</td><td>~3.4 bit</td><td>3.2 GB</td><td>勉强可用</td></tr>
+<tr><td>Q4_K_M</td><td>~4.5 bit</td><td>4.4 GB</td><td><strong>最推荐的性价比之选</strong></td></tr>
+<tr><td>Q5_K_M</td><td>~5.5 bit</td><td>5.2 GB</td><td>质量很好</td></tr>
+<tr><td>Q6_K</td><td>~6.6 bit</td><td>6.3 GB</td><td>接近无损</td></tr>
+<tr><td>Q8_0</td><td>8 bit</td><td>7.7 GB</td><td>近乎原始</td></tr>
+</table>
+<p><code>_M</code> 和 <code>_S</code> 后缀代表 Medium 和 Small——同样比特数下，M 版本给关键层分配更多精度，体积稍大但质量更好。</p>
+<hr>
+<h2>四、llama.cpp 是什么、不是什么</h2>
+<p><strong>是</strong>：</p>
+<ul>
+<li>一个用纯 C/C++ 写的 LLM 推理引擎，没有 Python 依赖，没有 PyTorch</li>
+<li>一个命令行程序，你给它 GGUF 文件，它输出文本</li>
+<li>整个本地推理生态的"地基"——Ollama、LM Studio、Jan、GPT4All 的底层引擎全是它</li>
+</ul>
+<p><strong>不是</strong>：</p>
+<ul>
+<li>不是一个模型——它不训模型，只跑模型</li>
+<li>不是一个 GUI 应用——它只有命令行，没有窗口</li>
+<li>不是一个服务——它的 server 模式是后来加的</li>
+</ul>
+<hr>
+<h2>五、一人生态，三层架构</h2>
+<p>llama.cpp 的生态像一棵树：</p>
+<pre><code>Georgi Gerganov（创始人）<br>  │<br>  ├── llama.cpp（核心引擎，纯 C++）<br>  │     │<br>  │     ├── GGUF 格式（模型打包标准）<br>  │     ├── k-quant 量化方案<br>  │     └── 多硬件支持（CPU/CUDA/Metal/Vulkan/ROCm）<br>  │<br>  ├── 上层产品（基于 llama.cpp）<br>  │     ├── Ollama（命令行 + API，最流行）<br>  │     ├── LM Studio（GUI，体验最好）<br>  │     ├── Jan（开源 GUI）<br>  │     ├── GPT4All（消费级优化）<br>  │     └── text-generation-webui（功能最全的 Web UI）<br>  │<br>  └── 生态工具<br>        ├── TheBloke（模型分发，HuggingFace 上量最多的 GGUF 模型）<br>        ├── llama-cpp-python（Python 绑定）<br>        └── candle（Rust 实现，也能加载 GGUF）</code></pre>
+<hr>
+<h2>六、关键时间线</h2>
+<ul>
+<li><strong>2022.09</strong> — whisper.cpp 出现，GGML 张量库诞生</li>
+<li><strong>2023.03</strong> — LLaMA 模型泄露，llama.cpp 第一版发布（"在 MacBook 上跑 LLaMA"）</li>
+<li><strong>2023.06</strong> — k-quant 方案出现</li>
+<li><strong>2023.08</strong> — GGUF 替代 GGML，成为标准格式</li>
+<li><strong>2024</strong> — FlashAttention、投机解码、全 GPU 后端矩阵完善</li>
+<li><strong>2025</strong> — 多模态支持（图片理解）、DeepSeek MLA 支持</li>
+<li><strong>2026.02</strong> — ggml.ai 被 Hugging Face 收购，llama.cpp 保持 MIT 开源</li>
+</ul>
+<hr>
+<h2>七、我应该用哪个？</h2>
+<table>
+<tr><th>如果你是……</th><th>用……</th><th>为什么</th></tr>
+<tr><td>开发者，想精确控制参数</td><td>llama.cpp 原版</td><td>最快、最多控制</td></tr>
+<tr><td>想一行命令跑模型</td><td>Ollama</td><td>最省事</td></tr>
+<tr><td>不想碰命令行</td><td>LM Studio</td><td>GUI 最好</td></tr>
+<tr><td>注重隐私，全开源</td><td>Jan</td><td>离线优先</td></tr>
+<tr><td>有 NVIDIA 显卡，追求极致速度</td><td>ExLlamaV3</td><td>CUDA 专属优化</td></tr>
+<tr><td>只想写 Python</td><td>llama-cpp-python</td><td>API 最简</td></tr>
+</table>
+<hr>
+<h2>参考来源</h2>
+<ul>
+<li>llama.cpp GitHub — https://github.com/ggml-org/llama.cpp</li>
+<li>GGUF 格式规范 — https://github.com/ggml-org/ggml/blob/master/docs/gguf.md</li>
+<li>k-quants PR #1684 — https://github.com/ggml-org/llama.cpp/pull/1684</li>
+<li>ggml.ai joins Hugging Face — https://huggingface.co/blog/ggml-joins-hf</li>
+<li>Simon Willison on llama.cpp — https://simonwillison.net/tags/llama-cpp/</li>
+</ul>
+</div>
+</body>
+</html>
