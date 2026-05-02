@@ -349,6 +349,7 @@ def render_bundle_html(bundle: dict) -> str:
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      table-layout: fixed;
     }}
     th {{
       background: #f8f9fb;
@@ -361,6 +362,10 @@ def render_bundle_html(bundle: dict) -> str:
       letter-spacing: 0.5px;
       border-bottom: 2px solid #eaecf0;
     }}
+    th:nth-child(1) {{ width: 48%; }}
+    th:nth-child(2) {{ width: 32%; }}
+    th:nth-child(3) {{ width: 13%; }}
+    th:nth-child(4) {{ width: 7%; }}
     td {{
       padding: 14px 12px;
       border-bottom: 1px solid #f0f2f5;
@@ -371,12 +376,14 @@ def render_bundle_html(bundle: dict) -> str:
     tr.merged:hover td {{ background: #f8f2ff; }}
 
     /* 标题列 */
-    .col-title {{ width: 44%; }}
+    .col-title {{ width: 30%; }}
     .title-text {{
       font-size: 14px;
       font-weight: 500;
       color: #1a1a2e;
       line-height: 1.5;
+      word-break: break-word;
+      overflow-wrap: anywhere;
     }}
     .merged-badge {{
       display: inline-block;
