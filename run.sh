@@ -68,7 +68,7 @@ echo ""
 # 6. 生成 HTML
 echo "🌐 生成 HTML 预览..."
 if [ -f "bundle_today.json" ]; then
-    python generate_html.py bundle_today.json || echo "⚠ HTML 生成失败，继续"
+    python scripts/generate_html.py bundle_today.json || echo "⚠ HTML 生成失败，继续"
 else
     echo "⚠ 今日无内容，跳过 HTML 生成"
 fi

@@ -209,7 +209,7 @@ if [ -z "$SKIP_GENERATE" ]; then
 if should_run generate; then
 # 8. 在 dev 分支生成 HTML
 log "生成 HTML..."
-python generate_html.py bundle_today.json >> "$LOG_FILE" 2>&1
+python scripts/generate_html.py bundle_today.json >> "$LOG_FILE" 2>&1
 
 # 9. 生成公众号发布稿
 log "生成公众号发布稿..."
