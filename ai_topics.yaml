@@ -1,0 +1,16 @@
+# AI 话题搜索配置
+# 每天定时搜索这些话题，从 TikHub 搜一搜拿排名靠前的公众号文章
+# keyword: 搜索关键词（用空格分隔同话题的多个关键词，一次搜索覆盖）
+# pages: 翻页数（每页 20 条）
+
+topics:
+  - keyword: "大模型 推理优化 多模态 视频生成"
+    pages: 1
+  - keyword: "AI Agent 智能体 具身智能 机器人"
+    pages: 1
+  - keyword: "Claude OpenAI GPT DeepSeek 开源"
+    pages: 1
+  - keyword: "AI 代码生成 编程工具 开源模型"
+    pages: 1
+  - keyword: "AI 芯片 GPU 算力"
+    pages: 1
