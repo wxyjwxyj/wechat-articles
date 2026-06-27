@@ -133,7 +133,7 @@
     /* ── 三栏导航 ── */
     .editions {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       border-top: 2px solid var(--ink);
       opacity: 0;
       animation: fadeUp 0.6s ease 0.3s forwards;
@@ -141,7 +141,7 @@
 
     .edition {
       display: block;
-      padding: 44px 36px 40px;
+      padding: 32px 24px 36px;
       border-right: 1px solid var(--rule);
       text-decoration: none;
       color: inherit;
@@ -245,6 +245,12 @@
     }
 
     /* ── 响应式 ── */
+    @media (max-width: 900px) {
+      .editions { grid-template-columns: 1fr 1fr; }
+      .edition { border-right: 1px solid var(--rule); }
+      .edition:nth-child(even) { border-right: none; }
+      .edition:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+    }
     @media (max-width: 680px) {
       .page { padding: 0 22px 48px; }
       .editions { grid-template-columns: 1fr; }
@@ -301,9 +307,17 @@
         <div class="ed-arrow">→ <small>Full View</small></div>
       </a>
 
+      <a href="ai_news.html" class="edition">
+        <div class="ed-label">Hot Search &middot; 热点搜索</div>
+        <div class="ed-roman">III</div>
+        <h2 class="ed-title">热点搜索</h2>
+        <p class="ed-desc">微信搜一搜，跨号聚合。15 个 AI 话题搜索，Claude 评分甄选高分文章。</p>
+        <div class="ed-arrow">→ <small>热点搜索</small></div>
+      </a>
+
       <a href="archive/index.html" class="edition">
         <div class="ed-label">Archive &middot; 历史归档</div>
-        <div class="ed-roman">III</div>
+        <div class="ed-roman">IV</div>
         <h2 class="ed-title">历史归档</h2>
         <p class="ed-desc">按日期检索往期简报，追踪技术演进脉络，查阅任意一天的 AI 动态。</p>
         <div class="ed-arrow">→ <small>Browse Archive</small></div>

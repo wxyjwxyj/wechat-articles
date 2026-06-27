@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 热点新闻 — 微信搜一搜高评文章</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f2ece0;
+  --ink: #1a1714;
+  --muted: #8a7f6a;
+  --accent: #c8860a;
+  --gold: #e8a020;
+  --green: #2d8a56;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', serif;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+.masthead {
+  padding-top: 48px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.masthead h1 em { font-style: italic; color: var(--accent); }
+.masthead .rule { border: none; border-top: 3px solid var(--ink); margin: 16px auto; width: 60px; }
+.masthead .meta {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.topic-section { margin-bottom: 36px; }
+.topic-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.topic-title .count {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--accent); }
+.card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.card h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.card h3 a:hover { color: var(--accent); }
+.card .desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.card .source {
+  font-size: 12px;
+  color: var(--muted);
+}
+.score-badge {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-mid .score-badge { background: var(--muted); }
+.footer {
+  text-align: center;
+  padding: 32px 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .page { padding: 0 16px 40px; }
+  .article-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="masthead">
+  <h1>AI <em>热点</em> 新闻</h1>
+  <hr class="rule">
+  <p class="meta">微信搜一搜 · 高评分文章聚合 · 2026-06-27 19:52 更新 · 共 213 篇</p>
+  <a class="back-link" href="index.html">← 返回首页</a>
+</header>
+<section class="topic-section"><h2 class="topic-title">Agent <span class="count">(23篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NjIyNjQwMg==&mid=2247535637&idx=1&sn=ae43b1bf015154360886626d2123bae0&chksm=ce85cc3d91a5e3cddf90cf3676d256dd04877ff6afd4b311b522bd81ff597edfe369d719a828#rd" target="_blank" rel="noopener">AI 数仓提效与 Agent 智能体 — 技术方案设计文档</a></h3>
+                <p class="desc">AI 数仓提效与 Agent 智能体 — 技术方案设计文档版本 v2.0 | 2026 年 5 月 | 技术方案评审级文档53页 | 内部资料丨授权公开版本 v2.0  2026 年 5 月  技术方案评审级文档</p>
+                <span class="source">数据仓库与Python大数据</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjYyMzcwNA==&mid=2247493194&idx=1&sn=c433e7d305dddda3d71c0ac3869df371&chksm=9ac04e5f3cc2ebc5785832a24780af73cf60a516609ee7c625d9984625d4f5ec2b186ba8db85#rd" target="_blank" rel="noopener">多智能体（Multi-Agent）协同：从Workflow失控到Orchestration编排</a></h3>
+                <p class="desc">这也是为什么过去一年，越来越多关于多智能体的研究重点开始从如何设计更多 Agent，逐渐转向如何编排这些 Agent。换句话说，下一代 AI 系统真正需要解决的问题，不再是让模型变得更聪明，而是让越来越庞大的 Agent 团队能够</p>
+                <span class="source">模智空间</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1Nzc2ODI0MA==&mid=2247509344&idx=1&sn=b6f6b3a4ca32cf966ca36c81a31f04f2&chksm=fdc1a3e6efd0cbbaaa3d46a2c5d719d0d49eb099f525cacc062ef90e89522c2c4281a71de3f9#rd" target="_blank" rel="noopener">Hermes Agent v0.17.0重磅发布：AI智能体的触达时代来了</a></h3>
+                <p class="desc">Hermes 现在可以作为 Raft 网络 中的外部智能体节点，通过唤醒通道桥接被远程唤醒执行任务。采用隐私优先设计：唤醒载荷只携带元数据（事件 ID、时间戳），绝不携带消息内容。</p>
+                <span class="source">路过银河AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5Mjc3NTg1Mw==&mid=2247491282&idx=1&sn=eb62a4e8ea2b9cac04123951e21dd720&chksm=c11e6675df8aec66474df93b9171e1e29a4b7e99aded891242fcd524300a4872a4e1abb04c2e#rd" target="_blank" rel="noopener">AI Agent 架构拆解：记忆、规划、行动与反思如何协同工作？</a></h3>
+                <p class="desc">然后你把同一个需求交给一个 AI Agent，它先问清楚你的目标和行业范围，接着去搜集数据、交叉验证来源、整理成表格，发现某个数字有出入，自己重新查了一遍，最后交给你一份有据可查的成品。</p>
+                <span class="source">智能体AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzOTEwODY2Mw==&mid=2247484219&idx=1&sn=634292dc5e89258735c5b54b51573993&chksm=f1e0905b32251537ebe82bee49408655d95a10c43d0a5e71c00741f478a074e7fc6f70fcee21#rd" target="_blank" rel="noopener">企业级AI智能体开发平台架构</a></h3>
+                <p class="desc">以流程图的形式，从构建和优化企业级AI智能体的六个核心步骤或模块：1.Knowledge Lake （知识湖） ：用于存储企业知识，供AI模型检索。2.Refiner （精炼器） ：利用大语言模型（LLM）学习企业特定领域的知识。</p>
+                <span class="source">观感关怀</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwNzE5NDM5Nw==&mid=2247540879&idx=1&sn=7267cd89f4d723f2a0d362058fc7f200&chksm=c18cbfe8fb718c409239805f80ae41f62adcaa24eaac29b77bbe8c959cef0677a6f3305d916b#rd" target="_blank" rel="noopener">AI智能体Agent落地实战——从取数到数据治理全链路自动化指南（推荐收藏）</a></h3>
+                <p class="desc">AI智能体Agent落地实战从取数到数据治理全链路自动化指南·深度干货—— 文/Tech花荣 | BAT大数据架构 ——导语：每天疲于奔命，效率却提不上来。直到去年开始深入接触AI Agent，我才意识到：很多数据工作，其实可以交给智能体</p>
+                <span class="source">BAT大数据架构</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3MzQwNzI3OA==&mid=2651396377&idx=1&sn=b57c3cbae4ca3b9ab3f6e394ca12f0e3&chksm=8564341c3bfe3ce524899f33970d940f4b716ad0ebbec8d8d737aec9fa9c9c8bf29669b04653#rd" target="_blank" rel="noopener">arXiv：哥德尔智能体-具有递归自进化能力的agent框架</a></h3>
+                <p class="desc">图1：哥德尔智能体的模块化演示。与传统多智能体相比，该框架的传感器和执行器能够读取和写入其自身的代码。图2：手动设计的智能体，元学习智能体和哥德尔智能体的对比</p>
+                <span class="source">混沌巡洋舰</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU3MDc3OTI1NA==&mid=2247526998&idx=1&sn=dbf7ae540544df22b8d91b3f53c8c3b1&chksm=fd14d640c43ef8e7e8ea16da87ad0ce5fc1a3b9a8b67ec588cbaee7aa6db47790d7fa807dfb1#rd" target="_blank" rel="noopener">AI Agent 到底是什么？5 分钟搞懂核心概念</a></h3>
+                <p class="desc">AI Agent（智能体）是一个以大语言模型为"大脑"，能感知环境、自主决策、调用外部工具、并根据反馈持续调整行动的智能系统。拆开来看，一个 Agent 必须具备四个能力：</p>
+                <span class="source">程序员江湖</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MDY0ODQ0OQ==&mid=2247483965&idx=1&sn=8318deb4e25d8493c426f3ce7a5abd22&chksm=cf1d1b4cf7a36dfc8077beb30195f0b34330e6def068eee038372a0c823723f322f6ce2a1f32#rd" target="_blank" rel="noopener">一文带你搞懂 AI Agent：Agent、Skill、插件、MCP……这些词到底有啥区别？</a></h3>
+                <p class="desc">子智能体（Sub-Agent），是他遇到大活时临时雇的外包小队，干完就散下面一个一个拆。一、Agent：你的那名「AI 员工」先搞清楚最核心的，什么是 Agent？</p>
+                <span class="source">爱拍照的小杨同学</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3NjIyNjQwMg==&mid=2247535635&idx=1&sn=e1247ebd183ed8564a02fe1d897dcce8&chksm=ce1e4b4c9e6570d19ae33842fa2cc4837756730be875e91638539c44e1cdbfba696b3411836d#rd" target="_blank" rel="noopener">Agent + 数仓：从概念到落地的实战指南</a></h3>
+                <p class="desc">2025年以来，AI Agent（即智能体）技术在数据领域的落地速度明显加快。从阿里云百炼深度集成Hologres实时数仓，到亿信华辰推出睿治Agent数据治理平台，再到各家大厂将Agent引入运维监控体系，一个趋势已经非常清晰：Agent</p>
+                <span class="source">数据仓库与Python大数据</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0ODE5MDg5Mg==&mid=2247484079&idx=1&sn=4e79cea02d00618cfe73b787a193891b&chksm=c2ebb8dcb17451f6bb3558678893a1c050f9b53bb59072799826a2a35ea488521f9d9732511e#rd" target="_blank" rel="noopener">搭Agent选框架：6款实测我只留2个</a></h3>
+                <p class="desc">这让我重新审视了 2026 年主流的 6 个 Agent 框架——LangGraph、CrewAI、OpenAI Agents SDK、Claude Agent SDK、AG2、Strands Agents，到底谁适合你第一次搭智能体？</p>
+                <span class="source">HClaw</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3NzQ3OTE1MA==&mid=2649965535&idx=1&sn=5c10e6c4e09177a6a1e1c17c2278bce2&chksm=86c88bfa377440f321daefefa6275c186d3146db9b22a721007d223afd68760b26fb34cdd722#rd" target="_blank" rel="noopener">Hermes（爱马仕） Agent 完全上手指南—会自我进化的AI员工，越用越懂你</a></h3>
+                <p class="desc">这就是今天的主角——Hermes Agent，由 Nous Research 开发的开源智能体框架。它是目前唯一内置学习循环（Learning Loop）的 Agent：用越久，它越懂你。这篇文章就是一篇完整的 Hermes Agent 科</p>
+                <span class="source">智渊研习社</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI2NTUyNzIzOQ==&mid=2247484172&idx=1&sn=22263f91810b0abb525b1da58aad8e66&chksm=eb745ccfaf26187a9cafeaad33f084a50af1e4e0b96f2ca2000b0103205665f878b8a3e46869#rd" target="_blank" rel="noopener">AI Agent 8大主流架构，一篇搞懂</a></h3>
+                <p class="desc">03 Multi-Agent — 多智能体协作 -> 搜索专家 -> 写作专家 -> 编程专家 -> 质检专家 -> 质检通过？ -> 是 -> 最终输出 -> 否 -> 协调器 Coordinator一个人干不过一个团队，一个 Agent</p>
+                <span class="source">烈焰之雨空间</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1NTMyOTI4Mw==&mid=2247778259&idx=3&sn=c6e5dff47046be357cbe82f49cc82f87&chksm=fa6b846f63bf4ff5227db818130e9593d003f6c10c4457dd3fdef462c16143973fb70085dcec#rd" target="_blank" rel="noopener">Agent Harness 解析：智能体架构深度拆解</a></h3>
+                <p class="desc">适合正在把 AI 引入真实工程的开发者/技术负责人。[识别二维码，免费获取白皮书] 02三个工程层级围绕模型有三个同心圆层级：提示词工程，负责设计模型接收的指令。</p>
+                <span class="source">DataFunTalk</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI2OTQ0NTMzMw==&mid=2247484013&idx=1&sn=b5d82c9d60537b641ad1620652e9ee5e&chksm=eb8e7fee68cc945897c6727d6dcb3749a856510aa054ea15ae6f28286bdc017d2e7fea24172b#rd" target="_blank" rel="noopener">AI Agent 入门：从核心概念到动手构建</a></h3>
+                <p class="desc">告诉 Claude “找出当前人工智能领域最热门的三个话题，挑出参与度潜力最高的一个，用我的风格起草一篇帖子，并保存到文件中”，然后让它在你无需触碰任何东西的情况下完成所有这些，这才是 agent。</p>
+                <span class="source">登链造物</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyMzg0NTM3Mg==&mid=2247484623&idx=1&sn=b3b2ecdb2203047021db60871abbdb28&chksm=e9c815a6c692da8029e7cbea04b4f9670f54756e44c8794a6854dc03ca74d56a46145cf36d35#rd" target="_blank" rel="noopener">AI Agent 工程师入门指南</a></h3>
+                <p class="desc">甚至自主分解任务并逐步完成的“智能体”——也就是业界所说的 AI Agent。随之而来的，是越来越多的公司开始将 AI Agent 融入产品和工作流，AI Agent 工程师的岗位需求也快速增长。</p>
+                <span class="source">前端编程技术分享</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUwOTQ0MTM4OQ==&mid=2247497842&idx=1&sn=d2e2ecd7a5c806952a87c7a42eb6782e&chksm=f89da6af996c8ae5b6795ef666656839699279115f0f93850f2fa730d0414c9264052901a022#rd" target="_blank" rel="noopener">AI Agent 深度解析：从概念到主流架构全指南</a></h3>
+                <p class="desc">二、AI Agent 是什么：四个要素定义本质「Agent」这个词来自拉丁语 agere，意思是「行动者」。在 AI 领域，Agent 特指能够自主感知环境、做出决策并采取行动的系统。</p>
+                <span class="source">开发者Club</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNjQzMTU0OQ==&mid=2247484046&idx=1&sn=d4eeb35b7447be1b4b5ab7ea261f7670&chksm=f160fed2b404924f6d10e8da284b2c6a8c1f71f6cdbf4977927bec5be2807c2104b6d44b350e#rd" target="_blank" rel="noopener">Hermes Agent（爱马仕智能体）小白入门指南</a></h3>
+                <p class="desc">今年可以说是 AI Agent 真正进入普通人视野的一年。从年初爆火的 OpenClaw，也就是很多人说的“小龙虾”，到后来讨论度越来越高的 Hermes Agent，也就是“爱马仕”；</p>
+                <span class="source">乔乔 AI 充电站</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIxNjE1Njg4OA==&mid=2247497249&idx=1&sn=174b5a2ff529e55b54fc5ca031c41e2a&chksm=96858b459f9411219d9b5962ab2f61056101e3c06e90391c1926cb4bee246ef7860883dd1c1d#rd" target="_blank" rel="noopener">Agent井喷！500个开源AI Agent智能体应用</a></h3>
+                <p class="desc">该框架基于改进蒙特卡洛树搜索搭建协同规划模块，让智能体分工完成方案生成、互评打分，采用无需环境仿真的LLM奖励函数评估任务分配与移动开销，通过选择、扩展、评估、反向传播多分支推演筛选最优长期协作策略，同时</p>
+                <span class="source">算法数据侠</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwOTIwOTY2Mg==&mid=2247484084&idx=1&sn=c3855b5b25ff2ee0f68129799380dea4&chksm=f4a7f5b2b899178044201d4fa2af7c1a538628d7a632c075d5d0f904c8f29217a27e2621e77b#rd" target="_blank" rel="noopener">AI 智能体到底是什么？一篇讲透</a></h3>
+                <p class="desc">2026 年，这个“人”真的来了。它叫 AI 智能体（AI Agent）。它不是陪你聊天的机器人，而是能主动替你干活的数字员工。从写文案到做报表，从管日程到盯竞品，它都能干。</p>
+                <span class="source">ClawTroop</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU5MDY5OTc0Mg==&mid=2247483970&idx=1&sn=122b274888539b0ce5a80e5be5a4b0f1&chksm=ff466df9b5ea5b75aeba958a7f8cc1d58264255f56cc15bf8158c3a5628b679604277d82314b#rd" target="_blank" rel="noopener">AI Agent-天枢系统技术白皮书 v1.0</a></h3>
+                <p class="desc">## 2.1 AI Agent行业趋势：从"模型竞赛"到"智能体落地"2025-2026年，AI行业正在经历一场深刻的范式转移：**从"谁的大模型更强"转向"谁的Agent能真正干活"。</p>
+                <span class="source">掌柜说Ai</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4OTExNzM3Ng==&mid=2247484810&idx=1&sn=36623bf36e79dddfa4ba79b544465b1f&chksm=f291b0282dbad659ae5f4aff95f679671d96f00db4e35324d33d966711fc693987bccb6897bd#rd" target="_blank" rel="noopener">别再只堆 Skill 了：Agent 真正缺的，是把失败经验转化为行为偏好</a></h3>
+                <p class="desc">SFT（Supervised Fine-Tuning，监督微调）像刷题：给模型一批“输入 - 标准输出”，让它模仿。客服话术、文本分类、信息抽取、固定格式输出，SFT 很有效。</p>
+                <span class="source">GeekZ的知行录</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI4MjQ4MzY4NA==&mid=2247483937&idx=1&sn=57eb5f58a045b1f8968a533c03a4212f&chksm=ea6764309019eb031f9be1cf4f341dccb17176dceb7f881d5beed7b6b29dc7c4ffcb203ec4af#rd" target="_blank" rel="noopener">训练 Agent 模型的数据配方：从 SFT 到 RL 的避坑指南</a></h3>
+                <p class="desc">它没有搞花哨的新算法，而是通过超过 100 次控制变量实验，把 SFT（Supervised Fine-Tuning， 监督微调）和 RL（Reinforcement Learning， 强化学习）的数据来源、筛选策略扒了个底朝天。</p>
+                <span class="source">小团的AI实验室</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">RAG <span class="count">(19篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU0MzQ5MDA0Mw==&mid=2247506188&idx=1&sn=ad31b79767ebc67490eb23205ee5289b&chksm=fabc5b450c614137a5a7d090ebe3e9371d32c6f2e107c773cb3a61baaf2bfa628bd204615d81#rd" target="_blank" rel="noopener">RAG 还是 LLM Wiki？一次讲透怎么把知识喂给 AI</a></h3>
+                <p class="desc">不要因为“知识库 + AI”就默认上 RAG。资料量中小、需要长期综合：优先 LLM Wiki，用 index.md 和 Wiki 页面回答。资料量巨大、动态记录很多、无法放进上下文：引入搜索/RAG 作为扩展。</p>
+                <span class="source">朱小厮的博客</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIwNjA1NjMyNQ==&mid=2649114275&idx=1&sn=a14075690bf33d3a9b58b28a0baab062&chksm=8e61eccaf7cb9c8660d13e4242a9a32f4b261274505fa326a6d021b5c205f2f8317e04f1511c#rd" target="_blank" rel="noopener">LLM Wiki：给老项目建个会自己维护的知识库</a></h3>
+                <p class="desc">RAG（检索增强生成）的工作方式，拆开看就三步：拿你的问题去原始文档里检索相关片段，把片段拼到 prompt 里，让模型生成回答。这能跑，但有个根本问题：每次都是一次性的。</p>
+                <span class="source">AI智闻说</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTIyMjg0NQ==&mid=2247496200&idx=1&sn=64c613471ff9978d05dc26f8385dbdd6&chksm=c08ecdfd37397bccca052fcdc7049e92f46f412d3a565310d8349b418477e82d443caf06174f#rd" target="_blank" rel="noopener">企业知识库 RAG 实战指南：为什么你的 RAG 不准，以及怎么修</a></h3>
+                <p class="desc">企业知识库 90% 的情况，主体是 RAG，微调只用来“调风格”，长上下文用来“兜底大段原文”。三者常常一起用，不是二选一。为什么你的 RAG 不准：80% 的问题在检索，不在模型</p>
+                <span class="source">CKCsec安全研究院</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NDkzNTU1Ng==&mid=2247487082&idx=1&sn=c869a3ddfda7a9fe64c9a06a411f10ed&chksm=ce8699675728e37b487e7798e40826dcf4aa5577f6d5f5a192b05699f88f8c030f2bb59a9784#rd" target="_blank" rel="noopener">图解计算机原理：一文看懂 RAG，为什么大模型需要外接知识库？</a></h3>
+                <p class="desc">图解计算机原理：一文看懂 RAG，为什么大模型需要外接知识库？你在公司里接了一个需求：做一个智能问答助手，让它能回答这些问题：差旅报销标准是多少？</p>
+                <span class="source">IT技术小密圈</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0NDc1NDU4OQ==&mid=2247486248&idx=1&sn=4dfe3da558117777e9bc92b3c2d45b0e&chksm=c2b64e2a849c1752f2ca20a45f1fbe811fa3dd81f1b2e5a7ed0c9234527bfc13711af27bf8e3#rd" target="_blank" rel="noopener">Karpathy发了一条推文2000万人看了，我照着他的方法搭了个知识库</a></h3>
+                <p class="desc">现在市面上大多数"AI知识库"都是基于RAG（检索增强生成）的。你问一个问题，它在知识库里搜相关片段，拼在一起喂给大模型，生成回答。Karpathy觉得RAG有四个结构性问题：</p>
+                <span class="source">hu晓帆</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzIxNTIwNw==&mid=2247488293&idx=1&sn=c2ea5ef0902f8d373cae4b9e41dad18e&chksm=c078b388df19de80e7feaf15d17638e8d5ecaf8ee437e1475fca5be61124cd29867743a3cab5#rd" target="_blank" rel="noopener">RAG = 就是让AI去查资料然后再回答 ?</a></h3>
+                <p class="desc">模型要查什么？查的是你提前准备好的一个"知识库"。这个知识库可以是你们公司的产品文档、FAQ、操作手册、技术规范，也可以是法律条文、医学指南、论文集，whatever，反正就是你希望AI能够基于这些内容来回答问题。</p>
+                <span class="source">二进制的耳语</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5NzczMDQzMg==&mid=2247483655&idx=1&sn=95a6db01904ab5217c08b4bf92cd772c&chksm=c17f707c8af16841bb5e8ceaeb68d43e5c60363b66cef8251ee817be64ae47df8b386120ec88#rd" target="_blank" rel="noopener">从零搭建企业级 RAG 知识库系统：架构设计、技术选型与踩坑实录</a></h3>
+                <p class="desc">RAG（Retrieval-Augmented Generation，检索增强生成）正是为解决这个问题而生的技术方案：先从知识库中精准检索相关文档片段，再让大模型基于这些片段生成有据可查的回答。</p>
+                <span class="source">webdream</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI5NDQ2NDA3MA==&mid=2247484218&idx=1&sn=020e97841366c8c899def70c90ca1d7e&chksm=edaed5320bbcd1b5579a7db234e8c234a123b1dbb3bb4e48cd92cebbc03873b82dc601bc23e7#rd" target="_blank" rel="noopener">一个例子说明 RAG 8项优化策略</a></h3>
+                <p class="desc">RAG，即检索增强生成，是知识库问答中常见的技术方案。它的基本流程是：用户提出问题后，系统先从知识库中检索相关资料，再把资料交给大模型生成答案。</p>
+                <span class="source">AI算力网络</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwNjYxMzk2OQ==&mid=2247485325&idx=1&sn=bf8b228dfee816179b027e075c44e1a2&chksm=c12ad24f1a7691eb3cf5032ef3a3ac05e7ea596c7d750eae925b0874c29c0cf47b9bd4fce099#rd" target="_blank" rel="noopener">数智前沿 | RAG油气知识库：低成本存储与向量化实战</a></h3>
+                <p class="desc">油气企业正借助RAG技术打造智能知识库，通过自然语言问答快速调取钻完井方案、油藏开发经验及制度标准，实现知识高效复用与决策提效。然而，在建设企业级RAG系统过程中，瓶颈常在海量文档存储与管理，而非模型能力。</p>
+                <span class="source">安迅数智Anvision</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2Mjc4NDI3NA==&mid=2247483759&idx=1&sn=1c5fa53c882ace0ee778ce615577aa95&chksm=cffdf1d78b98c7d9757636510753f6fc21c937de3abceee49b6a2a812da160953c3e161e4608#rd" target="_blank" rel="noopener">RAG知识梳理：定义、架构与应用全解析</a></h3>
+                <p class="desc">文本检索旨在找到知识库中与用户相关的文档，而检索的质量和效率则是评估RAG性能的两大核心思路。常见的文本检索器可以分为三类，一是判别式检索器，这种方式把问题和文档进行特征向量提取，以得到问题和文档的相关性</p>
+                <span class="source">素风&奔跑</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU0ODA2Nzc1Nw==&mid=2247488748&idx=1&sn=50252a4416b7180f8b11ae27a5722e3e&chksm=fa10a06e846422baaf3373fdcd284f3d195c13012a44f4e979fb0ac1b7c291b4a8cc93ac4318#rd" target="_blank" rel="noopener">基于DeepSeek+RAG的知识库问答系统～文本向量处理+rag知识库+Web网页界面</a></h3>
+                <p class="desc">本项目是一个基于检索增强生成（Retrieval-Augmented Generation，RAG）技术构建的智能知识库问答系统，主要面向汽车销售咨询场景，同时也可扩展至企业客服、校园咨询、产品手册查询等领域。</p>
+                <span class="source">子午Python</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNTk2ODk3OQ==&mid=2247483704&idx=1&sn=8a1d15b9ffa048fb2f07ee730e5f3628&chksm=f12870ac22a17ddddc0aec5441cd9686a5ff21ba50b2bdb56d4c66ea98b2010f486339f88e36#rd" target="_blank" rel="noopener">面试高频题：什么是 RAG？5 分钟讲清它的原理与工作流</a></h3>
+                <p class="desc">RAG方法使得开发者不必为每一个特定的任务重新训练整个大模型，只需要外挂上知识库，即可为模型提供额外的信息输入，提高其回答的准确性。</p>
+                <span class="source">数字生命普朗克</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMTMwNjA5NQ==&mid=2247483677&idx=1&sn=1723430295646c07be179678fc96a6b4&chksm=f5ebb3ead21edb401856008f9acb2908ad04d0f581b8d22b9a91cdd3ca4bd419ae14e0054d2f#rd" target="_blank" rel="noopener">搭建个人向量知识库</a></h3>
+                <p class="desc">本地 RAG 知识库系统：从“心智模型”到“工程量化”全通关指南 核心定位与设计哲学本系统是一套隐私优先、纯本地运行的检索增强生成（RAG， Retrieval-Augmented Generation）知识库落地方案。</p>
+                <span class="source">一个偷懒的手记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzMzQwNDE3MQ==&mid=2247483794&idx=1&sn=e06ef7a7db179a7b6de33eb3df22e3f6&chksm=e96972b3b9149c9c9b3961e2301c6871ba101f6b81daf0d672ef9fc64139d1819f70968b9870#rd" target="_blank" rel="noopener">Claude 为什么放弃了RAG</a></h3>
+                <p class="desc">RAG 今天依然是知识库、企业问答、文档助手、客服系统里的核心能力。例如：企业内部知识问答，需要从十万份文档里找答案。法律助手，需要从法规库中召回条款。</p>
+                <span class="source">硅基思辩</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5MTIxMzU5Nw==&mid=2247483678&idx=1&sn=0a6e98bbf361465db8e07ad4b19f8277&chksm=f52949f86f9361c72f5f827f1d4d00d9ac8ee281be6edd5bcd1008c7ec1632b55e47b6e0153b#rd" target="_blank" rel="noopener">别再把 PDF 扔进向量库了，你搭的可能只是一个会聊天的文件夹</a></h3>
+                <p class="desc">我现在越来越觉得，RAG 知识库这件事，最危险的误解不是技术门槛太高。而是大家把它想得太简单。不是说向量库不重要。Milvus、Qdrant、Weaviate、Pinecone、PostgreSQL 加 pgvector，这些都很重要。</p>
+                <span class="source">路灯Light</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNDgzMzQyMQ==&mid=2247483776&idx=1&sn=b6f06ffe70b83df659b9105a51deda02&chksm=f1a0c44113d6788441dfba63b17313568965bd9fcb2c8adcd155f211888a3e1dee8f4971fcd1#rd" target="_blank" rel="noopener">知识库 RAG 架构设计思路</a></h3>
+                <p class="desc">2.1 知识库（文档/数据库）知识库是 RAG 系统的“知识源泉”，可以是：企业内部文档（PDF、Word、Markdown）产品手册、技术文档数据库记录（SQL、NoSQL）</p>
+                <span class="source">昌昌的AI开发手记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNjk1NjkyNg==&mid=2247483789&idx=1&sn=e524cc9c2afef8806f68daadbc852043&chksm=f1c9b1576abeb4f116e6615b0fd4d51670733e134293f276ed0edb78e53342187f7aef17fc39#rd" target="_blank" rel="noopener">RAG + LLM wiki：一只桌宠，开始长出第二大脑</a></h3>
+                <p class="desc">01 企业知识库：资料仓库？企业知识库过去给我的感觉，经常像一个资料仓库。文件放进去了，制度放进去了，PPT、Word、PDF、excel、会议纪要也放进去了。</p>
+                <span class="source">Amii的第二大脑施工中</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI0MzI1NDg4MA==&mid=2247484245&idx=1&sn=ac1ca4297a1ad0aff1ecedd4f49ebb6e&chksm=e8bcd28f9ae659b14cbb6816d73983399987ee8fa821d227131be81a3372d8e7919909770caf#rd" target="_blank" rel="noopener">LLM Wiki vs RAG终极指南：5分钟搞懂两大技术核心差异，选对方案不踩坑</a></h3>
+                <p class="desc">去年有个做知识库的朋友跟我吐槽，说他被客户一句话问住了。“RAG搞了半年，文档越堆越多。客户问‘A创始人和B创始人是校友吗’，它直接傻眼。</p>
+                <span class="source">AI产品方舟</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMjE5MDkwOA==&mid=2247489161&idx=1&sn=afa9dc63ed249fe296de176516f76210&chksm=f1b6f1dac856c62f8e1aaf99686323275966eee85acfb15c8c5833913770a6ae2fbc79558bf0#rd" target="_blank" rel="noopener">RAG重排天花板！RRPO：LLM反馈驱动强化学习，终结检索-生成错位难题</a></h3>
+                <p class="desc">RAG重排天花板！RRPO：LLM反馈驱动强化学习，终结检索-生成错位难题在检索增强生成（RAG）的工业落地中，重排器（Reranker） 是决定回答质量的核心关卡：它从初筛文档中精选最优上下文，直接决定大模型能否生成精准、无幻觉</p>
+                <span class="source">深耕智能体</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">DeepSeek <span class="count">(18篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MDExNTE4Mw==&mid=2247486324&idx=1&sn=6e3ffe199d78d767e0e97965734069e6&chksm=eb244d03e41a39b0867b7b5405f0c61e921bb8e8197cc4bc83c347e96947fb99c2b0ad3c59bf#rd" target="_blank" rel="noopener">DeepSeek完成74亿美元首轮融资，估值破500亿美元——中国AI的"DeepBlue时刻"来了</a></h3>
+                <p class="desc">2026年4月24日，DeepSeek发布V4系列大模型并全量开源。这款模型采用1.6万亿参数混合专家架构，原生支持百万级超长上下文输入，评测数据多项指标对标海外头部闭源大模型。</p>
+                <span class="source">巨量洞察</span>
+            </article><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMjczMDUxNA==&mid=2247484225&idx=2&sn=bc525c6664d35882084ca38c1a0dea90&chksm=f1aafe83d8672566520aff01bf9223d2797c03dac98849f22860cec7311fd8903f9876972551#rd" target="_blank" rel="noopener">AI融资周报 | DeepSeek刷新国内AI单笔融资纪录，林俊旸AI实验室20亿美元估值出道</a></h3>
+                <p class="desc">· 明星创始人背景项目融资效率显著领先：林俊旸（前阿里通义千问负责人）新设AI实验室数亿美元天使轮融资、演语科技（前字节剪映负责人创业项目）估值破20亿美金、逆矩阵科技（北大团队）融资超1亿美元，顶尖大厂或学</p>
+                <span class="source">霞光AI实验室</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk5MDcwNDQ5NA==&mid=2247490890&idx=1&sn=c6a20ca449a62d5a33cca8e40761be92&chksm=c4f1436bad8f3e5b5e56ed440100395d3016723eb8161c8f459af823243263730496b21fbe1d#rd" target="_blank" rel="noopener">不知不觉，DeepSeek已成为AI大模型斩杀线！</a></h3>
+                <p class="desc">因为DeepSeek V4大模型名气够大、能力够强、价格够低，而且MIT开源，已经不知不觉中在事实上成为AI大模型的斩杀线。AI大模型发展太快了，一旦被落下，再想追赶就很难了，综合能力在DeepSeek V4以下的大模型，不客气地说，其实</p>
+                <span class="source">大有博士</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzE5MTQ4MTc5MQ==&mid=2247484242&idx=1&sn=77746ee54ff905a62e85d32b1f8aa760&chksm=970e471ffdb61e59c9db75f98955a639e6f601f4a369fb2b98a8a6ea7ff026d3fb782c46bfa2#rd" target="_blank" rel="noopener">梁文锋510亿融资背后：DeepSeek的控制权博弈与AGI远征</a></h3>
+                <p class="desc">在模型能力上，DeepSeek已稳居全球开源模型第一梯队。2025年发布的R1推理模型，在数学、代码等复杂任务上对标OpenAI o1，凭借开源可商用的特性迅速占领开发者市场；</p>
+                <span class="source">AI+资本巿场</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMjI3MzE2OA==&mid=2247484488&idx=1&sn=9c1242f80f11bea9aea1679f0ca12064&chksm=f56079b874422666a03b4795fe1f1f8fe2e7635ee575854436c34c55beaedfd35259973f3e32#rd" target="_blank" rel="noopener">DeepSeek融资510亿，4000亿估值背后的理想与现实</a></h3>
+                <p class="desc">DeepSeek开源模型已经聚集了大量开发者生态，这批互联网巨头看中的，是生态里的应用层变现机会。第三，国家队定调。国家人工智能产业投资基金的进入，意味着DeepSeek从一家"民营黑科技公司"正式升级为"国家战略级AI项目"。</p>
+                <span class="source">数投圈</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTU4MTAyNw==&mid=2247485099&idx=1&sn=467846cfea07e7890e6abd3ab66415d9&chksm=e8504b90984e9b59459af4d6acdc57df06b112f106bdb6b33c4d5f90239817d6777bf95936e2#rd" target="_blank" rel="noopener">DeepSeek 完成 74 亿美元首轮融资</a></h3>
+                <p class="desc">融资规模：首轮外部融资总额74 亿美元，国内 AI 史上单笔最大融资，超过此前所有中国 AI 创业公司融资总和；投后估值 520–590 亿美元，对标海外头部 Anthropic。</p>
+                <span class="source">DevOps点滴</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxMjUxNzYzOA==&mid=2247494506&idx=1&sn=83b646f377b83a029ba200db50c57cbe&chksm=9a10524da688362f94745eff4bfeddd50b92a8cbf1a79669d71326ec5515e459d044b1dd7237#rd" target="_blank" rel="noopener">90后李广密：耐住五年寂寞，一把砸下15亿押注国产AI，一个投资人的逆势创业路</a></h3>
+                <p class="desc">而这一轮DeepSeek融资，门槛极高：资金需要长期锁定，拒绝短期套利资本，不接受资本过度干预研发，只寻找志同道合、愿意长期陪伴AI成长的投资方。</p>
+                <span class="source">31号日记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMjMzODE4NA==&mid=2247493328&idx=1&sn=4d96d991f6d7c17c0868d58c14777ed2&chksm=f1de694fe2d90f0e93678642f20c0b2ac1476664eb33f4677adcea270e27cacc62d0cf2e8f0c#rd" target="_blank" rel="noopener">全新 DeepSeek-V4-Flash 现已免费！</a></h3>
+                <p class="desc">DeepSeek官方说它在开源模型里的agentic编程能力是顶尖的；在通用世界知识上，它领先所有其他开源模型，只在最顶端落后于某一个闭源模型。我没法逐项复现这些榜单，但从我自己一天的使用感受来说，它"知道得多"且"敢自己跑</p>
+                <span class="source">老刘的笔记本</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA4MTQ4NjQzMw==&mid=2652805925&idx=2&sn=e048c4765882147d7455c77e487ebc9d&chksm=8579f8fb8d808ec1e10981430ab99140c9662623539af2cd46b668be888f78d4992e51afb8a5#rd" target="_blank" rel="noopener">梁文锋署名论文！DeepSeek首轮融资后大动作：生成速度大涨85%</a></h3>
+                <p class="desc">智东西6月27日报道，继完成500亿元融资后，今日，DeepSeek首次放出开源新成果！刚刚，DeepSeek开源了一套让现有模型跑得更快的工程方案：推出DeepSeek-V4-Pro-DSpark、DeepSeek-V4-Flash-DS</p>
+                <span class="source">智东西</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUzNzgxMjE1Ng==&mid=2247487068&idx=1&sn=5fd2d9ecfc71f03ce48d2178da53afb5&chksm=fbd5635b8b086fd51ffb3690510269cbde16d7ae61a4341d66c5336fa478bb5ab6a94382b2cb#rd" target="_blank" rel="noopener">DeepSeek 的 AGI 前夜</a></h3>
+                <p class="desc">以前的DeepSeek只负责生产模型，然后把模型开源给别人用。现在的DeepSeek不仅造大脑，还要造“手脚”Agent产品。Harness团队就是让AI不仅能聊天，还能真正动手干活，比如写代码、操作软件、完成任务的代码智能工程团队。</p>
+                <span class="source">阑珊Lighthouse</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5ODMxOTk0Mw==&mid=2247484489&idx=1&sn=2cbef6c8e55df0a40d0aea74a83d849d&chksm=f5a3a057a7f905522d8a153d617d57eafd87ede5ecd4721a5a9dc2c7404bdcc20c845300a919#rd" target="_blank" rel="noopener">刚刚DeepSeek联合北大开源DSpark，V4生成速度提升85%</a></h3>
+                <p class="desc">开源了什么DeepSeek 同步开源了配套的 DeepSpec 训练仓库，MIT 协议。里面包含三套推测解码算法：DSpark、DFlash、Eagle3，从数据准备、draft 模型训练到效果评估，全流程代码都有。</p>
+                <span class="source">Prompt 工程队</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMTc4OTI1NA==&mid=2247484883&idx=1&sn=b66e9a2956cb02c4b75c2acc1ae11018&chksm=f13814b12e0cc8ed3eee10ea15bca34cf6aa7b52e575759398ed32d6b0bb6baa616fa4fb6b45#rd" target="_blank" rel="noopener">DeepSeek完成约510亿融资，国产AI独角兽迎来新里程碑</a></h3>
+                <p class="desc">DeepSeek的技术路线以"开源+低成本"著称：2024年5月：发布DeepSeek-V2，推理成本降至每百万token仅1元2024年12月：发布DeepSeek-V3，训练成本约600万美元（对比GPT-4约1亿美元）</p>
+                <span class="source">硅纪要</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4MjI5NTMwNQ==&mid=2247484013&idx=1&sn=051f5a3991a16556c3deda11c76b75c9&chksm=f24a7eea1c0535169b78502d77396c538351faa504860036d54cd2f6bb7a27b20af3f3efe5eb#rd" target="_blank" rel="noopener">老周的AI极客工坊 [第二期] | 终端神器 deepseek-tui (CodeWhale) 打造本地 AI 编程助理</a></h3>
+                <p class="desc">在终端（命令行）中配置专为国产良心大模型 deepseek 打造的开源终端神器 —— deepseek-tui（现官方更名为 codewhale），用它来替代 codex / claude，实现终端内的一键 debug 和代码生成！</p>
+                <span class="source">老周的AI实验室</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY0MDc2NTc0MA==&mid=2247483746&idx=1&sn=e19b2f4dba95f7eb0ec484fd3ebd7b71&chksm=f023826fb99d912030c8892d71c10b027e0347b1570ad5a8390faa5f8a8f0a9e6c447708568e#rd" target="_blank" rel="noopener">【DeepSeek V4 全解析·1/4】Day 0 首发实测：四大推理栈，谁能开箱即用？</a></h3>
+                <p class="desc">DeepSeek v4 的发布是开源模型社区向前迈出的又一步——毫不意外，它同样出自一家中国实验室。其性能随时间的演进，对整个 AI 生态而言至关重要。</p>
+                <span class="source">cc 的信号与噪声</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4NzAwNTU1OA==&mid=2247483815&idx=2&sn=948659b6aca8082bcb569d87a6445abd&chksm=f257d4a7ca251b1d35e779665af25219e8f6e07712775a8c2d4fb6633a411d24e4d169b9089b#rd" target="_blank" rel="noopener">国家超级计算互联网平台正式宣布推出DeepSeek-V4大模型的限时免费</a></h3>
+                <p class="desc">开源友好：深度求索一直秉承开源精神，DeepSeek-V4的部分版本将保持开源，促进AI技术的普惠发展。 国家超算互联网的战略意义此次推出DeepSeek-V4免费服务，体现了国家在AI领域的战略布局：</p>
+                <span class="source">真的很AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMTMwNzg4Mw==&mid=2247484741&idx=1&sn=30338e5934c31f661a76cfa2c7630e87&chksm=f598b36b2d22aa6fcfb111ff478fee240020015689fd5179d477669325de071b30caa8f6d833#rd" target="_blank" rel="noopener">微软都烧不起Token了！DeepSeek悄悄上位</a></h3>
+                <p class="desc">今年四月，DeepSeek一口气放出两个开源模型：V4-Pro和V4-Flash，都支持一百万token的超长上下文。Pro版本有一万六千亿参数，是目前公开权重里最大的模型之一，性能逼近OpenAI和Anthropic的顶级闭源模型。</p>
+                <span class="source">巴顿AGI雷达站</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwMjY5MDMyNA==&mid=2247484026&idx=1&sn=55a12b3bdfd42f679258bf5d1d64fb61&chksm=c157580f8cb76a7e6a343f5f795b632d48f40910265fec57f94788c7b849946b3aaff8bc51a3#rd" target="_blank" rel="noopener">DSpark开源：DeepSeek推理提速85%</a></h3>
+                <p class="desc">6月27日，DeepSeek联合北京大学正式开源DSpark推理加速框架。在DeepSeek-V4的生产环境中，DSpark相比原有基线将单用户生成速度提升了60%至85%，在严格SLA下吞吐量最高提升6.6倍。</p>
+                <span class="source">ZacharyAI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUxNzczNTgwNg==&mid=2247485227&idx=1&sn=fa58e844b10b0e78ab443e0ae3564252&chksm=f80b2d19c0bde66ea54c720b0e6827a0d04848f633bb58038b62fd995d1339c56d971e46b825#rd" target="_blank" rel="noopener">DeepSeek融资510亿元，大规模招聘布局AI人才</a></h3>
+                <p class="desc">与大多数AI创业公司不同，DeepSeek并没有一开始就依赖VC融资，而是依靠幻方量化多年积累的利润持续投入研发。有媒体指出，正是这部分稳定的现金流，支撑了DeepSeek创业初期“不融资、不商业化、不路演”的运营模式。</p>
+                <span class="source">出海很忙的胡姐</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">具身智能 <span class="count">(16篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk1NzUzMTcwMQ==&mid=2247488271&idx=1&sn=2bef7357f8fd8866dc7fdde0ee3dfd89&chksm=c2ee927bcc1fb639498d9f9af7682268dae03b54ed15020925363c4470a7c8b9a7d9b9f8a848#rd" target="_blank" rel="noopener">从智元 6 天工厂作业，看具身智能的「部署态」拐点</a></h3>
+                <p class="desc">很显然，智元机器人向行业提供了一个确定性的实证：具身智能已经开始跨越技术泡沫的鸿沟，正式从摸索、试错的「开发态」，迈入了可批量、可稳定、可复用的「部署态」。</p>
+                <span class="source">42号电波</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzMzY3NDYzMg==&mid=2247506193&idx=1&sn=8ef9466e41faef1376106494741ad46a&chksm=c3d771c98cd9527d809b14584c052fb64e8462b5112e7c747b4f219dc690958974b3a525cd2c#rd" target="_blank" rel="noopener">2.36亿！银河通用中标具身智能机器人大单</a></h3>
+                <p class="desc">北京银河通用机器人有限公司以2.3592亿元报价位列第一中标候选人，项目金额创下今年国内具身智能机器人领域公开披露采购项目中的新纪录，甚至有望成为目前已披露金额最高的具身智能中标项目。</p>
+                <span class="source">人形机器人场景应用联盟</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MTY5MjIyNg==&mid=2247483840&idx=1&sn=f114ec353f041c4526b65a984c1b0ea5&chksm=cf5bcfa531d55aab0d52818653337cff23156d1866d178c51283719fb3cd60561eb61e43e745#rd" target="_blank" rel="noopener">国内具身智能又一大单诞生，5000台机器人进矿山、进水电站！</a></h3>
+                <p class="desc">它不是单纯做一台机器人，也不是只做某个零部件，而是围绕具身智能工程机器人，搭建从技术研发、场景验证到订单转化的完整体系。这也决定了它的发展路径是面对真实工程场景。</p>
+                <span class="source">机器人焦点</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MTkzOTEwMA==&mid=2652213628&idx=2&sn=261f3f101a088e7a4138366facb7be10&chksm=bcb26c909b567ebbcaaf5709611043d7fba3e53f162b1660864e03f117bdcfda495087b897a1#rd" target="_blank" rel="noopener">获人民日报头版聚焦，具身智能新标杆「本末科技」做对了什么？</a></h3>
+                <p class="desc">可以说，本末科技D1机器人带来的“模块化拼接”和“开放式上装”的全新理念，打破了传统机器人单一形态的桎梏，实现了从“专用”到“通用”的范式转移，让具身智能的软硬件结合更加高效。</p>
+                <span class="source">中国机器人网</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4ODAwNDczMw==&mid=2247506108&idx=1&sn=0f2b44a16b3cafbb127a3d29a25f8bd0&chksm=ce89d34d1f509777da821a545e7cc1f98504abd70708a4643c06e1656e5a115673d318e70572#rd" target="_blank" rel="noopener">GLV号外｜昆仑行机器人完成多轮融资，加速具身智能商业化落地</a></h3>
+                <p class="desc">昆仑行机器人的判断是，具身智能的产业化需要同时补齐“大脑”和“身体”两端能力：AI决定智能上限，硬件决定能力下限，而真正的落地则取决于软硬件之间的协同，以及从商机、交付到服务的全链路体系建设。</p>
+                <span class="source">高瓴创投</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI5MzIwNDI1MQ==&mid=2650324482&idx=2&sn=46390373d79a38d6ab5adcc4c812c545&chksm=f51280186a0ac1951001f926d5b08d22b6a5d79433e26dfc137013886ec4f562fb371d554406#rd" target="_blank" rel="noopener">中国工程院郑南宁院士团队重磅发文：具身智能发展趋势与展望</a></h3>
+                <p class="desc">在AI和机器人领域，具身学习这一理念进一步延伸为具身智能，即机器能够自主感知环境、学习、理解并采取适应性行动的能力，如图1所示。通过与环境的持续交互，智能体能够动态调整自身策略，提升决策能力和适应性，从而</p>
+                <span class="source">书圈</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MTM3NTMwNA==&mid=2661757888&idx=2&sn=e8262fbdbcc10596999a3df7476af952&chksm=bce0f9716a5397e6287b19df2736ef874f5bf7bf5b85b1b1af98cfb3b7769d63332323cb6ad1#rd" target="_blank" rel="noopener">机器人为什么还不够聪明？具身智能不缺融资、缺数据</a></h3>
+                <p class="desc">具身智能无疑是科技行业最火热的赛道之一，资本持续涌入，创业公司不断刷新估值，机器人也在从演示视频走向真实场景。但热闹之下，一个核心问题始终没有被真正解决：机器人为什么还是不够“通用”？</p>
+                <span class="source">第一财经</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0OTUzMjA2MQ==&mid=2247602186&idx=2&sn=c57793f7a1f1db891f8cce9ac5991995&chksm=c29d6d50f299967ff21d7161346866bdf151eebfdcf9b50a79b3063c7158908b0a27f1a2bc6f#rd" target="_blank" rel="noopener">“十五五”六大未来产业报告之：具身智能</a></h3>
+                <p class="desc">如果将AI当作人类， 那么大语言模型便属于拥有“超级大脑”的军师， 传统工业机器人具备“能干”特性的熟练工， 具身智能则是那种既能够思考、又能够实干的“实干家”。</p>
+                <span class="source">TOP行业报告</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA5MjU5ODIwNQ==&mid=2649969637&idx=1&sn=5fe33fcb495cdd98d2b49e8064b4834b&chksm=8965d01614f5680dd0d6ec2c1dee738bbd3f26a079e7ed60ab24172edec407b1e233ec0d985e#rd" target="_blank" rel="noopener">政策红利释放！谱尼测试赋能具身智能机器人产业</a></h3>
+                <p class="desc">2026 年，工信部、国资委联合启动人形机器人与具身智能实景实训专项行动，《人形机器人与具身智能标准体系（2026 版）》正式发布，从顶层设计到落地扶持，政策红利持续释放，为产业划定规范化发展轨道。</p>
+                <span class="source">质量与认证</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk3NTU0Mzk2NA==&mid=2247533678&idx=1&sn=55c3d432072a02713a07e8cb43a85a8f&chksm=c57374688c2a3f9cb6d51e0bf34693b438fca6e28f81b4ebbad07677143760b915faa882ed57#rd" target="_blank" rel="noopener">《未来产业研究》| 总第17期 具身智能技术与产业发展报告</a></h3>
+                <p class="desc">（二）工业机器人底座仍是具身智能产业化的第一承载体 工业机器人产业仍然是理解具身智能商业化节奏的最好先行指标。据国际机器人联合会 2025 年 9 月 25日《World Robotics 2025》，2024年全球工业机器人新增装机 54</p>
+                <span class="source">赛迪智库</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDUxNjI1NQ==&mid=2650375350&idx=1&sn=776a741e1e4a4655d2efd518119a979f&chksm=bfef82ba6ad43602210ec6785a0be63e61c3ccda6565ef4fb3c5b9c2231707d33562c3643306#rd" target="_blank" rel="noopener">王田苗教授研判具身智能下半场：高热度、高投入、高试错、强不确定性</a></h3>
+                <p class="desc">在日前举办的2026张江具身智能供应链大会上，北航机器人研究所名誉所长、智友·雅瑞科创平台发起人、中关村智友研究院院长王田苗发表题为《2026具身智能发展趋势思考》的演讲。</p>
+                <span class="source">机器人技术与应用</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MDg3NDExOQ==&mid=2247492031&idx=1&sn=4263467c41d65602f9d7ddadf7466299&chksm=eb17f6e6a459497c80549b54858aa9ae7c81cca4de1575bf6b70d89ec73d7beca4400961dcf3#rd" target="_blank" rel="noopener">5000台，国内具身智能史上最大单一采购订单正式落地！</a></h3>
+                <p class="desc">近日，成都人形机器人创新中心携手中国电建成都院、智成睿锦机器人达成深度合作，成功签下5000台具身机器人战略采购协议。这批规模化设备将全面投入水利水电、交通工程、绿色矿山等高危运维场景，标志着国产人形机器</p>
+                <span class="source">RIO机器人</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAwMDM4NTUyNw==&mid=2652277626&idx=1&sn=b6b2bcc794ff91b6af1a16961ddc5cbb&chksm=80cfa58b33a2bd1ef1f17cc12c6eda0307ddbf4c2860c8425ba17862ff14c9c62b394fd2aaf9#rd" target="_blank" rel="noopener">具身AI：看这一篇就够了!</a></h3>
+                <p class="desc">2026年标志着具身AI从概念验证向大规模工业部署的关键转折点。机器人基础模型从根本上改变了机器人开发的范式——从为每个任务编写定制控制逻辑，转变为使用单一通用模型解决多个任务。</p>
+                <span class="source">SSDFans</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkxNDQ0MjIzOA==&mid=2247494264&idx=1&sn=262b939ce429137cfd4449fe9217975d&chksm=c0164032dd7a80a7d12e64ee6229dce2245ac6b942133ed52e2b359b6d8601dd9f6b9d986755#rd" target="_blank" rel="noopener">曾龙、冯平法团队在具身智能工业机器人领域取得新进展</a></h3>
+                <p class="desc">针对当前具身智能机器人技术在工业场景落地中普遍面临的部署难、适应性弱等挑战，近日，深圳国际研究生院曾龙副教授和冯平法教授团队系统定义了“具身智能工业机器人”（Embodied Intelligent Industrial Robotics，</p>
+                <span class="source">清华SIGS数据与信息研究院</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNzc0NTQyMw==&mid=2247486220&idx=1&sn=971d0f9c1c4b672bbeb4329eb8a52d01&chksm=c3b8899d7c2df8cbd9db9d9f5cc185d9f57aed3316952e2618243ebefacb1172f70086c1ea09#rd" target="_blank" rel="noopener">清华系具身智能"创业天团"全图谱：7家公司、250亿融资、一个时代开局</a></h3>
+                <p class="desc">3.星海图（AI Ocean）—— 200亿估值的"融资机器"创始人： 高继扬，1992年出生，清华保送生，南加州大学计算机视觉博士。星海图是清华系具身智能公司中估值最高、融资最猛的一个。</p>
+                <span class="source">创业AI洞察</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUwOTU4ODY1Mw==&mid=2247484072&idx=1&sn=4aa59d681d8e0dd8df95c2867100aad2&chksm=f84a3e381bf7d2d89c7289ef9962df5af838a424aad880302a900def95fc09da0a7f31b90f04#rd" target="_blank" rel="noopener">SafeVLA：让机器人更安全地从『看懂』到『动手』</a></h3>
+                <p class="desc">关键词：#具身智能 #机器人安全 #VLA模型 #SafeVLA #北京大学 #AI安全参考资料：SafeVLA项目主页：https：//safevla.github.io/[1]张柏荣团队介绍：网易新闻《Talk预告 北京大学张柏荣：Sa</p>
+                <span class="source">是小林吖</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">多模态 <span class="count">(15篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwOTI0NDkxNQ==&mid=2247486512&idx=1&sn=fca05f74498f16fbaf4888ea7cdb3581&chksm=f4d2a002e97bc0b87ef7e5b5378c5deca4556c5a36bf19c2785ea2f8007dd8551132f0a423fd#rd" target="_blank" rel="noopener">Qwen3.7「多模态智能体模型」连干 11 小时！1 万行代码从零交付完整 App，GUI 跑分甩开 GPT-5.4 和 Gemini</a></h3>
+                <p class="desc">▲ 千问大模型知乎官方发布：明确写出 11+ 小时、10，000+ 行代码、1，000+ 次 Agent 调用整个过程覆盖软件工程的全生命周期：需求 → 编码 → 部署 → 测试 → 文档 → 迭代。</p>
+                <span class="source">无限推理AGI</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3NDIxODgwOQ==&mid=2647998584&idx=1&sn=eab76cf54ca8040f398909c98f9fd8e0&chksm=86b18221ee7734757b9076ebb4da23fb436368d287f89bed7978f01f68f9fdd55aa2d732e136#rd" target="_blank" rel="noopener">唯一纯国产算力的多模态模型，讯飞星火X2-VL捅破了哪层天花板</a></h3>
+                <p class="desc">6月14日，科大讯飞掏出一款叫星火X2-VL的多模态大模型，把"纯国产算力"和"多模态"绑在了一起——这是全球首款完全在国产算力平台上训练出的视觉-语言（VL）大模型。</p>
+                <span class="source">天宫的猴子</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzE5MTA0NzYxMQ==&mid=2247515647&idx=1&sn=bafde25a915a4af0c40c56f67dfcb46c&chksm=972f46e33cf3ad0a0a1cae9478b0a4aee35b06143252c51a178487815a3ce2c396a59704db81#rd" target="_blank" rel="noopener">北大袁粒：没有多模态原生统一，就没有世界模型 | GenAICon 2026</a></h3>
+                <p class="desc">当我们把视角从语言扩展到多模态之后，一个更本质的事实是——多模态原生模型的大规模预训练阶段，甚至可以说“尚未真正开始”。这意味着，我们今天所处的位置，可能并不是某个技术周期的尾声，而是一个新范式的起点</p>
+                <span class="source">智猩猩Pro</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYyMjQ5NTIyNQ==&mid=2247485779&idx=1&sn=576bd158757f0aa8423ae45e04ee8fe0&chksm=feacc0912c890095e30f73844d16c5fa0d00089d78bff6b1035fb78f8497a686809d9d7bbe3c#rd" target="_blank" rel="noopener">CVPR 2026 新作：工业异常检测，终于轮到多模态大模型上场了</a></h3>
+                <p class="desc">多模态大模型看起来是新解法。它能看图、读提示、做推理，理论上可以跨品类泛化。但工业质检不是普通图文理解。划痕、毛刺、脏污、缺料、错装，很多都是小区域、低对比、强工艺语义的缺陷。</p>
+                <span class="source">机工智能AI科研</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3Nzk1MTAxNg==&mid=2247487439&idx=1&sn=d2a025a089a03c64afe9f4ae5bf7e535&chksm=cebb106548cae0dfb6eb54b7ee07396f8d72d3a57f9301e358dc3bf4b5fe880381ddb3a34c8a#rd" target="_blank" rel="noopener">ICLR 2026 医学图像特辑 | 多模态大模型</a></h3>
+                <p class="desc">问题：医学多模态大模型经常能给出看起来合理的答案，但这些答案是否真的建立在正确的影像证据上并不清楚。换句话说，模型可能“说对了”，却没有“看对”。</p>
+                <span class="source">微光医影</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5NzgyNTU2Mg==&mid=2247542885&idx=1&sn=8f559527b6d3c68ed7ede09660b96b44&chksm=c166740e2f35ced9a2a0c9a7aa69f3eda117c539df67a96c3f29405e79cd323dd64f487764d3#rd" target="_blank" rel="noopener">从ViT到多模态Qwen，一文读懂2020-2026多模态大模型进化史！</a></h3>
+                <p class="desc">本文将为你系统梳理近几年多模态大模型的关键里程碑，讲清楚每一步"为什么"和"怎么做"。ViT：让 Transformer 学会"看"（2020）在ViT之前，计算机视觉是CNN（卷积神经网络）的天下，ResNet、EfficientNet统</p>
+                <span class="source">江大白</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk4ODQ1NzYyNQ==&mid=2247486984&idx=1&sn=a25fad400ad5ebe88ceb7371e469bafe&chksm=c415f478dda61ebce74081092d52765fb2ac74a9a9a4e06a31d12f10aa6dc4ed73d54d225b90#rd" target="_blank" rel="noopener">CVPR 2026 | 多模态大模型 | CoE：基于MLLM的免训练多模态摘要生成方法！</a></h3>
+                <p class="desc">多模态大型语言模型[5， 9， 21]最近显著提升了视频理解能力，这一成果推动了将“思维链”推理范式[22， 47， 52， 53]应用于视频处理领域的研究。相关研究包括构建由人类标注的视频思维链数据集[8， 17， 25， 49]，以及开</p>
+                <span class="source">多模态论文每日速递</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk4ODQ1NzYyNQ==&mid=2247486955&idx=1&sn=55a5fe2c20b41eebdb5f69e24c14d97b&chksm=c46ef9bed119467030b223058e55dabd0e64ccef11aaa83aee6d6e49cfc7426181f0ab198fd6#rd" target="_blank" rel="noopener">CVPR 2026 | 多模态大模型 |  UE-DPO：认识不确定性量化认知视觉盲区！</a></h3>
+                <p class="desc">直接偏好优化方法（DPO）已被证明是减轻多模态大语言模型中幻觉现象的有效手段，该方案通过学习不同的偏好组合来实现这一目标。其面临的挑战之一在于如何将序列层面的偏好信息转化为对视觉细节的精确控制。</p>
+                <span class="source">多模态论文每日速递</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk4ODQ1NzYyNQ==&mid=2247486994&idx=1&sn=dd8758ffb78cdab5d878a2a3b67cb517&chksm=c48b7105f1d2868c1adcbccf33d625dc37cabbb68633407350d15554d927e5e98081e80fa4c6#rd" target="_blank" rel="noopener">CVPR 2026 | 多模态大模型 | HUMORCHAIN:   基于MLLM的多模态幽默生成！</a></h3>
+                <p class="desc">NeurIPS 2024 | 多模态大模型可解释性 | 字典学习解释多模态大模型内部表征！CVPR 2025 | 多模态大模型可解释性 | 入选Highlight！理论分析提高多模态大模型在视觉检测可解释性能力！</p>
+                <span class="source">多模态论文每日速递</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI0Mjg5ODI1Ng==&mid=2247545823&idx=1&sn=65fb9b970cbc7bd4f5f4a4d850339ee2&chksm=e8112a2baba18505a747bd389616030665cc25197ea0a6bda6637bc3788401a656b3b606c194#rd" target="_blank" rel="noopener">从无人机影像到农艺推理：面向植物表型解析的多模态大语言模型评测基准</a></h3>
+                <p class="desc">本研究期望PlantXpert可作为标准化评测基准用于评估多模态模型的农艺推理能力，同时为植物科学领域的多模态模型迭代优化提供重要支撑。 Source Retrieval and Figure Decoding  Crop + Keywor</p>
+                <span class="source">植物表型资讯</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NzU4MDgzMA==&mid=2247560385&idx=1&sn=b2ba7356a56034bfb444439ff119da9a&chksm=cf3f0fc5f0f6a75625b1b0e5fc3b51a28262d87ddceaf63cc6047058f0f2217a69be4fd91150#rd" target="_blank" rel="noopener">ICML2026｜多模态大模型具身能力诊断：NEU等机构提出技能级评估基准，揭示感知瓶颈与改进路径</a></h3>
+                <p class="desc">为了解决这一问题，来自美国东北大学等的研究团队提出了BEAR，这是首个专门为诊断多模态大语言模型具身能力而设计的系统性基准，并在最近中稿 ICML 2026。</p>
+                <span class="source">机智流</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5NDgzNjEyOA==&mid=2247493318&idx=1&sn=8d1c585ce3df27b00f689cfaa5cc4a87&chksm=c17c9eaf28b233707eccbf7a4a840a465265518b929acbfd064eeb622a74929a1761c7853d59#rd" target="_blank" rel="noopener">生数Vidu多模态大模型上线华为云</a></h3>
+                <p class="desc">近日，生数科技新一代多模态视频生成大模型Vidu Q3上线华为云MaaS模型即服务。基于Vidu Q3，华为云MaaS可面向企业营销、内容制作、数字营销、文创等行业提供视频生成类服务，把创意直接转化为可发布完整视频，降低视频拍摄</p>
+                <span class="source">华为云生态</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYyMzE0NTA1MA==&mid=2247486919&idx=1&sn=ffd0c69b39bd54a9a361be440fe57447&chksm=fefaeb5e0e0a66f008a4461458072d006ef73546577e248a8181ea7b9fe7e722d1ef03aaff68#rd" target="_blank" rel="noopener">CVPR 2026 | 多模态大模型别直接喂像素</a></h3>
+                <p class="desc">让多模态大模型做精细的视觉感知。比如判断两个物体谁离镜头更近、两张图里哪块区域是相互对应的。常见做法是直接把图丢给模型，或者外挂一个专门的视觉工具（深度估计、光流、关键点匹配那一类）把结果再喂回去。</p>
+                <span class="source">arXivSub论文解读</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU0MTE4ODU0Mw==&mid=2247485256&idx=1&sn=a9d0019b6b9c5c1e20251e85e35e61b6&chksm=fad99dbd2f0e4d938d4bda6a9904f8552e3b931c504d7dd7dd77935e3772adeb8914739efa9f#rd" target="_blank" rel="noopener">1.3B 参数，能在你手机上跑的多模态大模型来了！MiniCPM-V 4.6 安装与使用全攻略</a></h3>
+                <p class="desc">今年 5 月，面壁智能联合清华大学 OpenBMB 开源社区发布了 MiniCPM-V 4.6——一个仅有 1.3B 参数的多模态大模型，却在多项基准上吊打同尺寸甚至更大的模型。</p>
+                <span class="source">昕科技团队</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyODE0NzE4OA==&mid=2247483654&idx=1&sn=319170c1908b0db33c27ec70491289eb&chksm=e9923d0acb99cacc387f6cb24ffa0cbfabc9b41e47c4bfff67a2d827ad92e6ff2c9341942a02#rd" target="_blank" rel="noopener">基于 Stable Diffusion 架构的视觉大模型代表性工作与原理深度解析</a></h3>
+                <p class="desc">1.1 SFT（监督微调）：基础路径Qwen 2.5 的微调起点是监督微调（Supervised Fine-Tuning），通过高质量指令-回答对训练模型遵循特定任务指令。数据格式要求：Qwen 2.5 使用 ChatML 模板作为标准对话</p>
+                <span class="source">风控张小哥</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">模型训练 <span class="count">(15篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxMzQyMzU5Nw==&mid=2454198073&idx=1&sn=1209f03a0173499cbbbb4aec93f83d88&chksm=8dc2375bec0e704b731f43f4e5efd410296210ea249c18f95e719b280c185720d5f820184a78#rd" target="_blank" rel="noopener">系统诊断SFT不完全学习的归因框架与修复策略：ACL 2026腾讯混元研究对模型训练的十项实操启示</a></h3>
+                <p class="desc">指的是sft（supervised fine-tuning，监督微调）训练收敛后，模型仍无法正确复现自身训练数据中的部分样本。这在10个标准SFT数据集上平均高达 15.3% ± 2.1%。</p>
+                <span class="source">AI-PaperDaily</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5MTk0MDQ3MA==&mid=2247483988&idx=1&sn=b86043599b4fa1d6a08e702c755b77ed&chksm=ce12ec707fa7e98292fc58de37285ea67a66713cab2e6cb46729753431734cad918fc5fbf73c#rd" target="_blank" rel="noopener">SFT 的底层，究竟在优化什么？UCLA 提出 Q-target 统一框架：从“目标分布设计”重建监督微调</a></h3>
+                <p class="desc">在大模型后训练（Post-training）管线中，**监督微调（SFT）**通常是建立模型指令遵循和推理能力的第一步。然而，近期的 SFT 研究正陷入一种“局部优化”的繁杂状态。</p>
+                <span class="source">TowerFlow</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzE5ODYxOTkxMg==&mid=2247486265&idx=1&sn=a56dc41cd90ff5d682c304e473cf25aa&chksm=97cc7afdf01dedf7ecac2db355d4709abf5fdd062d5f0e63393010293156584d179d4179a9d2#rd" target="_blank" rel="noopener">从目标分布重新理解 SFT</a></h3>
+                <p class="desc">当研究者希望一个预训练模型适应新任务，例如数学推理或医学问答时，通常会使用一批示范答案进行训练，这一过程称为监督微调（Supervised Fine-Tuning，简称 SFT）。</p>
+                <span class="source">ReadingFun</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk3NTY1MTU3NA==&mid=2247484560&idx=1&sn=08da8eeaeb424ef71ff0bb11663b31b3&chksm=c5c3bd93d75a472058db1a14b247a47caafde4e2d3d7839d3bee0193393555dfe104876634bb#rd" target="_blank" rel="noopener">大模型是怎么训练出来的？</a></h3>
+                <p class="desc">第三步：指令微调（人工教学）这时就需要指令微调，也常叫 SFT，监督微调。这一步不是再给模型灌一遍全互联网，而是给它看很多高质量的“问题-答案”样例。</p>
+                <span class="source">智人尘世间</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNDgzMTUyNQ==&mid=2247483837&idx=1&sn=3f06fdb938ee10c82349cf404bf03eb5&chksm=f12e186e3638832bbc3b7820c7e471e5eaafd1be5fb48921f863455f092d51baaf4cbb638033#rd" target="_blank" rel="noopener">大模型微调实操</a></h3>
+                <p class="desc">微调涉及三类数据，刚才我们的Excel数据属于第一类SFT数据：   SFT数据（你的Excel）  领域适应数据  格式  结构化：{instruction， output}  纯文本，无结构</p>
+                <span class="source">材料人AI手记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4MjgxNDYwMA==&mid=2247496177&idx=1&sn=008344f73897ba309ad3a9082dbce850&chksm=ce417b37cbe29ba6b5cc0a0cdc51385bc565b93f5b4e164517e51b565f232f6c7f2793c55f0a#rd" target="_blank" rel="noopener">Prompt调优和SFT后训练 为什么没声音了？ —— AI工程范式的三次跃迁与冷思考</a></h3>
+                <p class="desc">你花大价钱SFT微调的模型，三周后就被新模型超越了——然后你得重新微调。这是一个无法持续的循环。4.5 SFT没有死，它搬家了必须强调：SFT并没有真正消失。</p>
+                <span class="source">架构师修仙之路</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1MTA4NzM4OQ==&mid=2247485442&idx=1&sn=21e0eda02098081353101a1e88ba2ee1&chksm=fa021fb94c3e86d31e682265e384dee0c18e86ca5f31bed4cf01979da903dc3d399f546fcffd#rd" target="_blank" rel="noopener">AI产品经理必懂的LLM原理1️⃣：Transformer、GPT、BERT、注意力机制、预训练、微调</a></h3>
+                <p class="desc">可以先用一句话记：Pretrain = 让模型有知识。SFT = 让模型学会干活。-预训练（Pretraining） 阶段，模型会在海量文本上学习语言规律和世界知识。这个阶段得到的是 Base Model，也就是基础模型。</p>
+                <span class="source">跳进兔子洞ddd</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyODMyNTAwMA==&mid=2247499235&idx=2&sn=cade2533e469d8ee33f99085a63308b1&chksm=c32eff2b965d28ed3ece85b83e6d8db435c09c2d830ada6107d48a29bace2127f3d1ce8e07b4#rd" target="_blank" rel="noopener">大模型后训练底层全解：从 SFT 到 GRPO 的 Loss 演化</a></h3>
+                <p class="desc">一、指令微调（SFT）：Loss Mask 向量点乘SFT 的核心逻辑是：模型必须学会优雅地回答，但不需要学会如何提问。数据流打包： 算法同学会把 Prompt（提示词） 和 Answer（回答） 拼接成一条样本。</p>
+                <span class="source">AI大模型智能体前沿</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4ODM1MjA5OA==&mid=2247483674&idx=1&sn=f88a3c378acde6b6e1ddb5a5e36914fb&chksm=f2525d31bee0f0aa9abff7120f5ab85d26ce6f2d34a6dad00a15249e0d6c2945400b2ac1f277#rd" target="_blank" rel="noopener">MiniMind 大语言模型 LoRA 微调全流程深度解析：从数学原理到代码实现</a></h3>
+                <p class="desc">在 SFT（监督微调）阶段，模型的所有参数都参与梯度更新：其中  与原权重矩阵规模相同。对于 MiniMind 的 64M 参数模型，这意味着每次微调都需要更新全部 64M 参数。</p>
+                <span class="source">AIinfra成长日记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5MjM1NzM1OA==&mid=2247483710&idx=1&sn=6adff3fcad20025c714a07362449e360&chksm=f55d1b81ae96bb794084cd0608f1be08701e3c549ce2dd78c87b3481684ec0932cec66f57093#rd" target="_blank" rel="noopener">别再死磕Prompt了！搞懂大模型微调，AI才真正属于你</a></h3>
+                <p class="desc">SFT 监督微调：用「指令-答案」数据让模型学会"按指令回答"——所有微调项目的起点DPO 直接偏好优化：用「prompt-好答案-坏答案」数据让模型偏好更好的回答——比 RLHF 简单稳定，当前主流</p>
+                <span class="source">比特奇遇日记</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2ODA5Mzc3MA==&mid=2247483675&idx=1&sn=630c3c7a004f1c62dfd491782bf0ce4f&chksm=c57209540f0ae14c421a213d0b0bf9c22490ed61c04cc5901bcb49af03f67bf8521bfb2f92d8#rd" target="_blank" rel="noopener">让AI输出更温暖时降低了准确性增加了谄媚</a></h3>
+                <p class="desc">通过监督微调（SFT） 对模型进行干预，将其输出风格向“温暖、友好”方向调整。核心对比条件是“原始模型”（Epoch 0）与“温暖模型”（Epoch 2）。</p>
+                <span class="source">竹心书理</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNjkzNTQ2Mg==&mid=2247483848&idx=1&sn=c9dde2da65c559a6bab708e8cbcdb142&chksm=f125aa5873c81ea307d70944ff552d74defca007c04ecf2b23b4d95fdbff3c16c42cabebce83#rd" target="_blank" rel="noopener">生物AI不是越训越强</a></h3>
+                <p class="desc">监督微调（SFT）：用带答案的任务样本，教模型按照目标格式完成生物推理。强化学习（RL）：根据任务奖励进一步优化模型，让输出更接近真正的任务目标。</p>
+                <span class="source">现智研</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY0MDkxMzY5OQ==&mid=2247484140&idx=1&sn=30c431e99bcc25ddf79caa2de7d8d4a8&chksm=f0e520b58c87f1bcf63e8ff3dbe42460ed3fcb553919ee811deb7711eddfa794a269a1cd8a59#rd" target="_blank" rel="noopener">大模型微调：英文缩写速查手册</a></h3>
+                <p class="desc">■■■ 大模型微调：英文缩写速查手册 ■■■学 Agent 系列、学大模型微调，有一道隐形门槛：英文缩写。SFT、LoRA、PEFT、GRPO、QLoRA、RLHF——光是这些缩写，就能让初学者在第一天陷入困惑。</p>
+                <span class="source">微晨阳</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYyMTI1MzMxNA==&mid=2247484373&idx=1&sn=fcbb3689c68ef446ebde1222d0b75ad7&chksm=fe1814582d7eca6846ce949d3ce39e96d32984592687201388ef7facf3a42d0af01a95c41563#rd" target="_blank" rel="noopener">2026 年 LLM 微调完全指南</a></h3>
+                <p class="desc">问题在哪？SFT 教模型的是"说什么"，而不是"怎么做成"。对于需要搜索、调用 API、跨多步推理的智能体来说，单纯模仿远远不够。你要的是通过试错来持续改进。</p>
+                <span class="source">AI领先趋势</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyOTYxMTI5Ng==&mid=2247484025&idx=1&sn=0f3fb496bc825bd82b1f3175b4d35a20&chksm=c39678b9286fc9af5391c6a76ec35bdaf56e200ea53bf8d1dcf954219f2c885f63e2f87c3c7c#rd" target="_blank" rel="noopener">SFT→RM→RLHF 对齐全流程详解</a></h3>
+                <p class="desc">二、第一阶段：SFT 监督微调（Supervised Fine-Tuning）1. 核心目标核心目标：修复预训练基座模型的能力缺陷，让模型掌握指令理解、标准对话格式、基础回答逻辑与安全底线，搭建完整对齐底座。</p>
+                <span class="source">大白的编程笔记</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">AI安全 <span class="count">(12篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI2NjEwOTAwMw==&mid=2648105671&idx=1&sn=60869c8896a42dee7c52aca2be07e559&chksm=f360510638215e484a356541735f5d03966d0c9161f9f66fd275363bac8a947ee040c09a0ff7#rd" target="_blank" rel="noopener">AI研究简报 2026-06-23</a></h3>
+                <p class="desc">作者：OpenAI对齐研究团队领域：AI安全、大模型对齐推荐理由：对齐领域的里程碑式突破，为ASI级模型的安全可控提供了可行路径，彻底改变了对齐领域的研究方向，对通用人工智能的安全发展具有奠基意义。</p>
+                <span class="source">hackcv</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDE5ODM2OQ==&mid=2247490648&idx=1&sn=bb6cdbc8df738ceb26d2032153585b93&chksm=c5320ed85bc16fef1ac6b08d444591c42edd757eb215b87f73e9c87ef0ff4c3e712bb8495a2e#rd" target="_blank" rel="noopener">96页AI大模型安全报告深度解读：六大风险、四大阶段、百亿市场</a></h3>
+                <p class="desc">报告开篇给出一个明确判断：AI安全已从实验室风险演变为现实业务风险。大模型、Agent、多模态交互和自动化工作流在企业生产环境中规模化落地后，攻击面快速扩大。</p>
+                <span class="source">知白守黑1024</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5Njc3NjM4MA==&mid=2651141787&idx=1&sn=048ce95d8f78c38f3a476347473e362e&chksm=bc36821f6f097aee565838654e6cef0565247ac20e534907794c91b220e9613b844ed26b159e#rd" target="_blank" rel="noopener">永无止境的守护：NIST数学证明揭示AI安全的"西西弗斯（Sisyphus）困境"</a></h3>
+                <p class="desc">AI系统的"护栏"，本质上是一套有限规则体系：关键词过滤、语义分类器、安全对齐训练……这些机制都在试图用有限的规则集，覆盖人类语言无限的表达可能。</p>
+                <span class="source">安全牛</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzMTI0OTMyNQ==&mid=2247496358&idx=3&sn=9011f7aa2b7387bc536494def2e871ab&chksm=c30eb01f156b5477c74d9f7164be58a61cbeb980e9e4d007b7be5af572121ab61f8a297e2660#rd" target="_blank" rel="noopener">新加坡科技设计大学：越安全越危险？AI 惊现致命「安全悖论」！顶尖大模型集体中招，单轮提问就能突破防护</a></h3>
+                <p class="desc">简单总结：当下主流的安全对齐方案，核心是不断强化AI识别有害内容的能力，而这个能力越强，就越清楚“什么样的内容是违规的”，一旦被反向诱导，就会精准输出违规内容。</p>
+                <span class="source">为机器立心</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIwODA1NDczMg==&mid=2652231083&idx=1&sn=4bdaa7d2717d6c9ee5628c67adc55707&chksm=8d98f7459d56ce189918cd885ca84df87fd348fbdfb1274d85d422dbfcb571c224424b972811#rd" target="_blank" rel="noopener">AI大模型安全评估及防护技术应用指南（2026）</a></h3>
+                <p class="desc">监管重点逐步覆盖模型安全能力、对齐与内容安全、AI供应链与开源模型治理、模型自主性失控等领域。国际治理趋势欧盟《AI法案》：风险分级监管（不可接受/高/有限/低风险四类）</p>
+                <span class="source">安全进化论</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5NDM0MTY3OA==&mid=2247483753&idx=1&sn=3e1bb131026ad4ab04ba047cdf73d9c9&chksm=f5fbe5b29c4325129697cb9c91bddbc24206aa233aa0d0938c7c62c87a5cd95eced6e2f14cea#rd" target="_blank" rel="noopener">AI Control：看懂 Agent 从“会执行”到“可管控”的安全升级</a></h3>
+                <p class="desc">Google DeepMind 在 2026 年 6 月 18 日发布了 AI Control Roadmap，主题非常直接：如何保护内部系统，应对越来越强、但不一定完美对齐的 AI Agent。这件事看起来像安全研究，其实和每个准备使用 </p>
+                <span class="source">一览清风</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4NjM0MTU4MA==&mid=2247483671&idx=1&sn=8c0cc88cc07d06f04b444aaf5cbeaaf9&chksm=f29093e7a7414633e58120273c09626bd197107ee831ac2265529559485cbb4558b5a1c16629#rd" target="_blank" rel="noopener">给 AI 当安全护栏，最难的不是"拦住坏的"，而是"别误伤好的"</a></h3>
+                <p class="desc">`defensive-refusal-bench-zh` —— 测一个安全对齐的模型，会不会把**正当的防御/安全教育问题**也一并拒答。它有两组样本：should_answer：看着"危险"、其实是教育性的问题（"缓冲区溢出的成因是什么"</p>
+                <span class="source">浅聊agent</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzMTI0OTMyNQ==&mid=2247496447&idx=2&sn=70555de8469756c8ddea36a36ada10b5&chksm=c354a0762dc6660596d19e3ecd4bce4ee2294c027d0f86f2ae6dbaf2af8da193cfff6b760895#rd" target="_blank" rel="noopener">AAAI:突破视觉大模型安全困局！清华&北航&北大联合提出DAVSP，双重创新筑牢多模态AI防线</a></h3>
+                <p class="desc">如今，清华、北航、北大三校团队联合推出全新安全对齐方案DAVSP，凭借视觉安全提示词（VSP） 与深度对齐（DA） 两大核心创新，一举解决了传统防护方案“防不住恶意攻击、误伤正常使用”的两大痛点，为多模态AI搭建起一道</p>
+                <span class="source">为机器立心</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA4MTMyMDUzOQ==&mid=2447866195&idx=1&sn=288717e369dc74909cbc32b1528325f6&chksm=8ae6669438595cd9a5123092f578c42f3103a1f7bc3027c1bc4c0458eef9437e711faee3a424#rd" target="_blank" rel="noopener">Agent安全新发现：为什么大模型总爱用牛刀杀鸡</a></h3>
+                <p class="desc">发现三：安全对齐不能自动转移到最小权限选择 研究者测试了 AgentAlign 安全对齐方法：- AgentHarm 有害评分：从 67.4% 降到 10.5%（显著改善）- 但 OPUR：仅从 68.8% 降到 62.5%（几乎没变！）</p>
+                <span class="source">Q马Q马</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU5OTQ4ODA5NA==&mid=2247484502&idx=1&sn=0b69f25f88ac9830e328e023e02ea80d&chksm=ff124334b8ffd2433536242c6e186d25735d54aedb8b5cca65cad626b577453dc7d07019fb34#rd" target="_blank" rel="noopener">告别无效测评｜一文吃透ExploitGym：专门测试AI漏洞利用能力的权威攻防靶场</a></h3>
+                <p class="desc">过往模型安全对齐大多防范钓鱼、恶意代码，后续必须重点封堵AI自主生成可用EXP、编排攻击链的高危能力。写在最后ExploitGym从来不止是一个测评工具，它更像一个行业预警器。</p>
+                <span class="source">AI攻防</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzMTI0OTMyNQ==&mid=2247496381&idx=4&sn=8a30f704416a7c9480fe589596d015b4&chksm=c37f0d3f995a3c80e5a226be645351d1d746bf9920c657a68179b8864cffac79a41abad7c07e#rd" target="_blank" rel="noopener">MATS:只监控AI最终输出根本没用！训练会让AI偷偷把“坏心思”藏进思维链</a></h3>
+                <p class="desc">在这项研究出现前，AI安全圈有一套公认的低成本对齐方案： 不用解析冗长、海量的思维推理文本，只搭建输出监视器——只读取AI最终给到用户的回答，一旦出现违规、作弊、敏感内容就施加惩罚、降低奖励。</p>
+                <span class="source">为机器立心</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4NDI1NTYwMA==&mid=2247485234&idx=1&sn=cce03f0a396598211d3808959e1c4b43&chksm=f2483c48821efb7ae984c4bfd860d3106d39068a1e3a4eaaafd85c0fcc27164af9fef180201e#rd" target="_blank" rel="noopener">一张图、一段音频就能让AI失控？跨模态对齐漏洞背后的四类致命攻击</a></h3>
+                <p class="desc">这种攻击之所以有效，是因为视觉输入绕过了文本层面的安全对齐，而融合后的联合表示已经被污染。通用越狱触发器（Universal Jailbreak Triggers）则追求"一次构造，到处生效"。</p>
+                <span class="source">赛博雷达</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">OpenAI <span class="count">(11篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4MTMyMzcyOQ==&mid=2247484597&idx=1&sn=8da6fb9ff2f9386d911e23f85c293367&chksm=f297023f0d6507c51f7e847d704a5e70530b52eec9fa33b1860553623e81c5c1c162a5d4de68#rd" target="_blank" rel="noopener">OpenAI 终于上新：GPT-5.6 Sol，能否力压 Claude Fable 5？</a></h3>
+                <p class="desc">所以这篇文章不只看 GPT-5.6 Sol 强不强，也要看它和 Claude Fable 5 竞争时，真正比的是什么。一、这次到底发布了什么？OpenAI 这次不是发了一个模型，而是一整套 GPT-5.6 系列。</p>
+                <span class="source">TechLoading</span>
+            </article><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk3NTM5NjU1Mw==&mid=2247495612&idx=1&sn=ba10abef517667135d586a7739fdc8ec&chksm=c5568a04d237eb9c1fcd2ed7945cb9be6fd5fb5c2217b58ace4a430003f04e006969b995fe97#rd" target="_blank" rel="noopener">OpenAI GPT-5.6 Sol 发布：强到美国政府要求先审后发， 超越Claude Mythos5</a></h3>
+                <p class="desc">OpenAI 这次重点展示了三个能力方向。编程 方面，Terminal-Bench 2.1 SOTA 已经说了。不提刷 LeetCode 那种纸上谈兵，测的是真实开发场景的 CLI 工作流。 Model  Score</p>
+                <span class="source">程叙架构与AI.</span>
+            </article><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5NTE0ODc2Nw==&mid=2650958279&idx=1&sn=f8393cbb41c0c96a7495098c993b8633&chksm=bc8480bcfc6998e55936b01d057c5fe4182333e2fab366baf899fee501d0b99b7b27b675cf21#rd" target="_blank" rel="noopener">OpenAI发布首款AI芯片</a></h3>
+                <p class="desc">与 GPU 作为通用加速器不同，Jalapeo芯片并非在早期 AI 加速器基础上改造而来，而是围绕大语言模型的推理需求，从零开始进行推理芯片的原生设计。</p>
+                <span class="source">界面新闻</span>
+            </article><article class="card score-high">
+                <span class="score-badge">9</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0NjY1ODk0MQ==&mid=2247489838&idx=1&sn=12624279fa1cf1522841df15496e29e8&chksm=c2ad0c81b662f49d4fcbc5d7a510b4cdecfb7cf9c7b50a2056d420cb9a21af4467833b77442b#rd" target="_blank" rel="noopener">OpenAI首款自研芯片Jalapeño炸场！9个月碾过GPU十年江山，Nvidia的算力税终于收到头了？</a></h3>
+                <p class="desc">2026年6月24日，OpenAI扔出了一枚重磅消息。没有新模型发布，也没有新功能上线。OpenAI掏出来的，是一块芯片。这块芯片叫Jalapeo——辣椒。OpenAI在X上官宣："我们设计并制造了第一款AI芯片。"配图是一张芯片视觉图，帖</p>
+                <span class="source">图灵沿界</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk1NzgwNDYzNQ==&mid=2247484876&idx=1&sn=647389a491f06865383187883df24dac&chksm=c20cbe4b124f0e83607619fa6a8946974bfd8088d928de9db6fb12d60f20068604d365d864d3#rd" target="_blank" rel="noopener">OpenAI发布Daybreak计划与GPT-5.5-Cyber：AI安全从“被动对齐”走向“主动修补”时代</a></h3>
+                <p class="desc">这意味着 AI 安全的核心战场，正在从模型自身对齐，延伸到真实软件供应链的主动防御。30秒导读网络安全长期以来是一场不对称的消耗战：防守方需要堵住每一个漏洞，而攻击者只需要找到一个突破口。</p>
+                <span class="source">完蛋大王</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5OTQ1OTc3OQ==&mid=2247488089&idx=3&sn=29d023b1a8d3cce25b467557af7eb129&chksm=c1936e97458a2417c81e4aee69e538c55ddda42b425a523299e20fdef967fe61e772a22357ac#rd" target="_blank" rel="noopener">Claude vs GPT 收费体系深度调研</a></h3>
+                <p class="desc">处理模式： OpenAI 多一个 Priority 加价档（花钱买确定性低延迟），Claude 对应的是 Fast Mode；OpenAI 的档位组合更细。2. 消费端订阅体系2.1 七档 vs 多档洞察：入门价完全趋同： 都是 $20。</p>
+                <span class="source">深度记事</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwOTY0OTA4NQ==&mid=2247483801&idx=1&sn=70b8636203be96159dd37a7486507e49&chksm=c0356ea7a473f7a1b7404d2421aa16357b4e0dca605d9fd4a49b55c9e8c3dff4c89dae635837#rd" target="_blank" rel="noopener">GPT-5.6深夜突袭！"太阳系"三模型齐发，性能反超Claude却被政府"上锁"？</a></h3>
+                <p class="desc">北京时间6月27日凌晨，OpenAI正式官宣新一代旗舰大模型GPT-5.6系列，一口气推出三款定位清晰的模型，以"太阳-地球-月亮"的太阳系命名体系重新划分产品线。</p>
+                <span class="source">心外医学渣</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5MjIzODQzOA==&mid=2247483873&idx=1&sn=8984cb998e76ea1f66de29b8acb7241b&chksm=f5fc0b0b85bd5689026efe9680b5d9770970016e589f7946acb3061c6d174130a190397b3dcc#rd" target="_blank" rel="noopener">刚刚，OpenAI 放出满血版 GPT-5.5-Cyber！剑指 Claude Mythos 5</a></h3>
+                <p class="desc">根据公开报道与截图信息，OpenAI 推出了更完整、更强版本的GPT-5.5-Cyber，并在网络安全评测CyberGym上拿到85.6%的成绩，超过了 Anthropic 旗下的Mythos 5。</p>
+                <span class="source">萌萌玩AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MjEyMzM4MA==&mid=2247486178&idx=1&sn=4cc7be5e2a446c056b01216755e805f5&chksm=cfe672ec1601473a020ba8469291c3072a0d9d6b05ff7021577ca447eadd68617fe69578d53d#rd" target="_blank" rel="noopener">OpenAI 重磅！只在一个领域教 AI 学好，对齐就能全面泛化</a></h3>
+                <p class="desc">因此，需要探究强化学习（RL）能否反向促进正向对齐，即在真实领域上强化“有益特质”（Beneficial Traits）是否能产生广泛且持久的对齐泛化与抵御恶意攻击的持久性。</p>
+                <span class="source">沈公子今天读什么</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMzA3NTU2MA==&mid=2247483717&idx=1&sn=1e23880beed27f2fb4f7f6f34c62557f&chksm=f54bf5080c9033d46a91e751d310a2d94efc858c9eceb83ad50a5d9b9511fc80f89dee47176f#rd" target="_blank" rel="noopener">RLHF 对齐：大模型不会说「不知道」的根源，和 OpenAI 花了几千万才买到的教训</a></h3>
+                <p class="desc">Step 1：SFT（监督微调）先找一群人，写一些高质量的问答对：Prompt： 「解释一下什么是机器学习」Response： 「机器学习是人工智能的一个分支，它使计算机能够从数据中学习模式…」</p>
+                <span class="source">ai乘号科技</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMTI0MDAyOQ==&mid=2247484647&idx=1&sn=54a0980db01263361778f2dbe2222dc7&chksm=c0f6eabfc3f171d3c9cbca2469cd189a9cb3aab56f45263ef4e67497ffc838333090822ee78a#rd" target="_blank" rel="noopener">OpenAI与Anthropic的十年战争——起底成长史 · 估值历史 · 人才战争 · 技术格局 · 长期胜负</a></h3>
+                <p class="desc">他随即无缝加入了 Anthropic，掌管后者的超级对齐与 AI 安全研究部。John Schulman（OpenAI 联合创始人、强化学习泰斗）： 2024 年 8 月离开 OpenAI 加盟 Anthropic。</p>
+                <span class="source">硅谷科技观察</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">芯片 <span class="count">(10篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MTYzNzg0NQ==&mid=2247486427&idx=1&sn=a1364d1c215679d72774dc06366c9db3&chksm=cfc8498f2cb990e99087fefdb29cca406a5169beeed1fe7a60e5d713230b42a9afc258ed9546#rd" target="_blank" rel="noopener">700亿晶体管、3000美元起步：Nvidia RTX Spark造了台「AI小钢炮」，但大部分人用不上</a></h3>
+                <p class="desc">说人话就是：这是一颗为AI推理深度定制的芯片，能在本地跑1200亿参数的大模型，支持100万token上下文。你平时用的GPT-4o大概也是这个规模，只不过GPT跑在云端，RTX Spark跑在你桌子上。</p>
+                <span class="source">模型茶馆</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk4ODQ1MzAxOQ==&mid=2247494620&idx=1&sn=474d7d538e4858ea6438580be4726c00&chksm=c462a516aaa47c9d4eb303354531199bf4cc17790aa21de013fccd04cd9261bab00ef156411a#rd" target="_blank" rel="noopener">JP摩根看好定制AI芯片行业，出货量预计反超GPU重塑全球算力产业链新格局</a></h3>
+                <p class="desc">定制AI芯片正在从云厂商的成本优化选项升级为算力供给的主流路径，看好掌握高端ASIC设计能力的博通和Marvell，回避把ASIC简单当作GPU平价替代品的认知。</p>
+                <span class="source">华尔街播客</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5NDMwNzMzMg==&mid=2247483915&idx=1&sn=51f5666875ba49f0eb289212e6248abb&chksm=f53a6faac534bc9955b529bb3495ac96a6bc8432beacc91dfcff6dfa22ed1e89becf081e074c#rd" target="_blank" rel="noopener">2026全球AI芯片格局重构：这是“道”在动，而不是“牌”在换</a></h3>
+                <p class="desc">2026 年 5 月，The Information 曝光SpaceXAI 内部备忘录：其部署约 55 万块英伟达 H100/H200 GPU，模型浮点运算利用率（MFU）仅 11%。大量硬件因调度、通信、软件栈不成熟而闲置。</p>
+                <span class="source">妮可算力漫谈</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMTg3NzYyMA==&mid=2247484162&idx=1&sn=b5aed1f1243d82176f1b52aeb93446ff&chksm=f111997543b0af77535894e5148f6d369b3577d93f60a488bd1af5e3c38efdf65f214e4ffc88#rd" target="_blank" rel="noopener">AMD（AMD）：AI算力的"二号选手"——MI300X放量节奏与数据中心GPU市占天花板的再审视</a></h3>
+                <p class="desc">核心增长驱动因素：AI芯片需求爆发带动收入高速增长：分析师预计2026-2027年GPU收入分别达165亿美元和330亿美元，CAGR达100%，核心驱动因素为头部云服务商与AI厂商的大规模订单放量，2026年AI相关收入占比将超30%，成</p>
+                <span class="source">矿工不淘金</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5NDA5MjQ2MA==&mid=2649696373&idx=2&sn=f397d63cf1f3998e3376aa12927d6a39&chksm=bf57fb77c80bddb86a53261e58fbc086b46124c2eb09bb3a6f1f46ef3892fc0bd24b4d85a9d5#rd" target="_blank" rel="noopener">全球唯一高端AI算力芯片全能选手，AMD未来天花板有多高？</a></h3>
+                <p class="desc">CDNA 架构专为 AI 计算优化，搭配 MI300A CPU-GPU 一体化 APU 芯片，覆盖边缘轻量化 AI 服务器赛道，英伟达无同类对标产品，形成细分赛道独家壁垒。2. 头部客户锁定多年千亿级长单，增长确定性极强</p>
+                <span class="source">中文投资网</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxNTU4OTE2NQ==&mid=2247485848&idx=1&sn=85d0402df95fbb87150db5cccd728382&chksm=9a4c6d8abb1fd06fd647b08fff69bf5fd4e3e0de5f0e79a7da5939ca613c589684e1835e116b#rd" target="_blank" rel="noopener">系列第1篇｜算力战争：AI芯片为何是半导体皇冠上的明珠</a></h3>
+                <p class="desc">注意这里的"AI芯片"口径比较宽，包含了GPU、ASIC、FPGA等所有AI加速硬件。这组数字有三个值得注意的地方。第一，AI芯片正在吃掉半导体行业的增量。</p>
+                <span class="source">芯链团</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4OTM1Njk0NQ==&mid=2247483673&idx=1&sn=3f6abdb0847ae79d3c233af3980633c4&chksm=f23e743cb12537afa09a46a5af1494d51c61741ccadf8da9039d6697a81058b8cff90e515573#rd" target="_blank" rel="noopener">看懂AI芯片：从训练到推理，国产替代黄金十年开启</a></h3>
+                <p class="desc">先看一张全球（不含中国）AI芯片的格局图，帮你一眼看懂训练和推理的玩家分布： 年份  2024  2025  2026  2027  2028+  NVIDIA  Blackwell B200  Blackwell Ultra B300  </p>
+                <span class="source">楷曜观势</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg3MDU1OTMwNA==&mid=2247486933&idx=1&sn=c07a50146df0114f462b6ffcc2ae2638&chksm=cfad9b0b587c4bd401e3fcadaad50698f20761a8d75d3531771c393bb3d65799594425a4403c#rd" target="_blank" rel="noopener">摩根大通ASIC市场最新解读：AI推动ASIC复苏，定制化芯片正在重构全球半导体算力格局</a></h3>
+                <p class="desc">1. GPU（通用标准芯片/ASSP）：万能多用途越野车英伟达Blackwell、AMD AI GPU、高通骁龙都属于这类。适配所有AI任务，训练、推理、图形渲染全能打，但为了通用性预留大量冗余电路，单价高、单位算力成本偏高。</p>
+                <span class="source">投研纪要精选</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzNzUyNzIwMg==&mid=2247496259&idx=3&sn=a5c2b459a8c43a652e984dba6cd19551&chksm=e967b894deaaa7e2f9c1b527bece3c822c3a4a4dcf89079167055d9f67c74dcd53b5f6cd25a4#rd" target="_blank" rel="noopener">英伟达AI霸权松动？小摩：ASIC将于2027年超越GPU！</a></h3>
+                <p class="desc">该行预计，今年ASIC出货量预计年增109%，远高于GPU约39%的增速，显示客制化芯片很可能成为未来几年AI产业成长最快的领域。具体到各家业者的部署规模，Google TPU出货量预估将由2026年的450万颗，跳升至2027年的800万</p>
+                <span class="source">半导体前线</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3ODE0NjQzNA==&mid=2247483705&idx=1&sn=87a4edcbfddf8ee75745543b456d3916&chksm=ea7bd7f8c68ac2a42c820197cafb186067625acc1c354ed273f7321fc43aaad685537ae73807#rd" target="_blank" rel="noopener">全球 AI 上游产业链深度研报：算力军备竞赛下，8 大赛道的增长逻辑与胜负手</a></h3>
+                <p class="desc">AI 算力芯片的格局，正在从 “GPU 一统天下” 向 “GPU+ASIC 双轨并行” 快速演进。当前英伟达凭借 CUDA 生态与完整的产品矩阵，在 AI 训练芯片市场仍占据 80% 以上的绝对垄断地位。</p>
+                <span class="source">制裁与产业投研</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">字节 <span class="count">(9篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODExNDA2MA==&mid=2450008061&idx=1&sn=69fecde8aa88d250b85a615220c6901b&chksm=b0483bc362532f3408f6b1e041fc29e6b60529a15bffa778e8b57ff690a8625a334f7684a70e#rd" target="_blank" rel="noopener">CVPR 2026收录！字节Seed空间智能新突破SpatialTree，重新建构多模态大模型空间能力路线图</a></h3>
+                <p class="desc">今天的多模态大模型，已经很会看图。它们能描述图片、理解视频，也能完成一些视觉推理任务。但会看图，不等于真的懂空间。判断物体远近、估算大小、理解多视角关系、规划行动路线、生成机器人操作序列，这些能力看起</p>
+                <span class="source">智猩猩AI</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5Mjk2ODM2MA==&mid=2652744706&idx=6&sn=dcdf36d6bb76a769b956ffe02aa60e9d&chksm=bc30ff67f44b67b86a9741676d220f46677ac08dfb3b235049047b78ba4e6ee1003a4f9a64d5#rd" target="_blank" rel="noopener">豆包视频生成模型Seedance 2.5预计7月初正式上线，支持单段原生30秒视频直出，可同时导入50个全模态参考素材</a></h3>
+                <p class="desc">2月12日，字节跳动发布豆包视频生成模型Seedance 2.0，旗下AI产品豆包和即梦宣布接入。目前用户可以在豆包APP、电脑端、网页版以及即梦APP、即梦网页版等产品中体验该模型。</p>
+                <span class="source">安徽交通广播</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxMzUzMDY0Nw==&mid=2247484757&idx=1&sn=f962292180aada1fa27e136d17405de8&chksm=9a4372a6884de190f2926a2cc461fed7c556b82eca7c0499c2caa00817e7321707e2e2dac548#rd" target="_blank" rel="noopener">字节联合北大新论文：多模态大模型终于开始“并行看图”了</a></h3>
+                <p class="desc">今天的多模态大模型已经很会看图了。你给它一张图片，它能回答图里有什么、人在做什么、物体在哪里，甚至还能解释图表、识别文字、推理视觉关系。</p>
+                <span class="source">AILabNotes</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3NjE4MTc4OQ==&mid=2247503815&idx=1&sn=79a4318bf44e95f86f1a6391a7b4d091&chksm=ea391c4064988e09df470d1c3753f340fa279585b6cbc4176c35eda6e8ebb9c4632216daf691#rd" target="_blank" rel="noopener">字节跳动拟采购5万颗AI芯片，国产GPU供应商迎来机遇</a></h3>
+                <p class="desc">分析人士认为，字节跳动的这一采购计划将为国产GPU供应商带来重要机遇，有助于推动国内AI芯片产业的发展。同时，这也反映了国内企业对供应链安全和技术自主可控的重视。</p>
+                <span class="source">海峡导报大财经</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzODgxNTI5OA==&mid=2247483728&idx=1&sn=3e380ff257ced452dbd806c002080ce5&chksm=c3af1c2ccc932e99ae29964dda434d5adbd1772591e5b5d4f2b530c12b64643288c9a58e4949#rd" target="_blank" rel="noopener">Seedance 2.5亮相：AI 视频的下一个天花板来了！支持30秒原生直出、50个素材联合生成</a></h3>
+                <p class="desc">AI 视频的竞争，早已不是 “谁能生成更清晰的画面”，而是谁能先跑通工业化生产的全链路。而Seedance 2.5，就是冲着这个拐点来的，模型将在7月初正式上线。</p>
+                <span class="source">华强方特AITOP100</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIxODI2NTY4OQ==&mid=2247544253&idx=1&sn=a1a034fd4d4e3f4e595e9122f873255c&chksm=963891416931326e572ccc9bdb9284715480c38074b9b104ae99fed576fa772d8ed6c974c5b4#rd" target="_blank" rel="noopener">今天，豆包宣布收费</a></h3>
+                <p class="desc">当前AI赛道内卷严重，通义、混元主打基础免费，Kimi、智谱先行试水会员。海外GPT、Claude早已依靠订阅实现稳定造血，国产AI迫急需变现渠道。字节采取“免费引流+生产力付费”双线打法，给全行业提供参考模板。</p>
+                <span class="source">深科技</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMTM0MjQ1Mw==&mid=2247486770&idx=1&sn=745619f7bd980266237eb431f7f3021b&chksm=c0efbee276b9f51a1f7f0ff4afe7b808c165bc3855e4fd1285ceedfc546d9967b38fa3174de9#rd" target="_blank" rel="noopener">字节AI全栈露齿：Force大会今日开幕，梁汝波在下一盘什么棋？</a></h3>
+                <p class="desc">豆包大模型（多模态）通义千问（Qwen）混元（Hunyuan）文心一言（ERNIE）ToB云端火山引擎阿里云（中国市场第一）腾讯云百度智能云Agent平台扣子（Coze）宜搭AI</p>
+                <span class="source">EchoTech</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMTM0MjQ1Mw==&mid=2247486775&idx=2&sn=e315a7feac98febd23e653db4d496770&chksm=c0818e17900c4e420564c57e2a5762ce65d39507f3f7129de06e264360b36e0a852e5e5ea5a1#rd" target="_blank" rel="noopener">字节AI全栈露齿：Force大会今日开幕，梁汝波在下一盘什么棋？</a></h3>
+                <p class="desc">豆包大模型（多模态）通义千问（Qwen）混元（Hunyuan）文心一言（ERNIE）ToB云端火山引擎阿里云（中国市场第一）腾讯云百度智能云Agent平台扣子（Coze）宜搭AI</p>
+                <span class="source">EchoTech</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMTM0MjQ1Mw==&mid=2247486783&idx=2&sn=98b05e5ce3a486846ad67150bba35656&chksm=c0b32d221efb1296d6d97cd09ecf160ded0f57c7ec6bc36617bf9ad5f0493abcc27ded494ad8#rd" target="_blank" rel="noopener">字节AI全栈露齿：Force大会今日开幕，梁汝波在下一盘什么棋？</a></h3>
+                <p class="desc">豆包大模型（多模态）通义千问（Qwen）混元（Hunyuan）文心一言（ERNIE）ToB云端火山引擎阿里云（中国市场第一）腾讯云百度智能云Agent平台扣子（Coze）宜搭AI</p>
+                <span class="source">EchoTech</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">创业 <span class="count">(9篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3MzAxMDM3Mg==&mid=2649106683&idx=1&sn=20d1feed578b5244d63ffc04aa3dc2af&chksm=86fcff6781623d249d26eae8ce6a9d22fa44dbd4f929787c06b8821c9aecfb2d4840a4fa7c2b#rd" target="_blank" rel="noopener">创新工场天使轮公司，顶级资本下注，Sand.ai三个月两轮融资超1亿美元，专注视频生成下一个前沿｜创新事</a></h3>
+                <p class="desc">而在视频生成领域，Sand.ai 是少数几个能够在方向并不清晰的时候敢于下注并积极探索本质的公司。这也使得这家公司在技术路线上的选择显著领先行业——在Diffusion还是视频生成领域的共识的阶段，他们率先将研究重心放在自</p>
+                <span class="source">创新工场</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA4Mzg3MjExNQ==&mid=2654024333&idx=1&sn=d0bc9f2fd33ec000765b6edf5ab5bf96&chksm=85792c9a35c9a00f45000989a26351757177ce6c893a7c48e598293020bca8f173c82bc53b8b#rd" target="_blank" rel="noopener">中国黑马狂赚3亿美金！国内AI应用断层第一，估值20亿美金</a></h3>
+                <p class="desc">这不仅是一笔简单的融资，这是近期全球AI领域最引人注目的资本事件之一，更是国内AI应用层有史以来最大单笔融资金额。在资本市场逐步回归理性的今天，当无数AI公司还在为下一轮融资发愁的时候，顶级VC和产业巨头却同时</p>
+                <span class="source">图解金融</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODAxMjU2MA==&mid=2649802955&idx=1&sn=33634daaa50f91395f5a797b8829f498&chksm=bf62d69a4b5fe0e913a64b57db916f618f15e054f6697f7216357f9f1bce98c58c4d51fbdf1f#rd" target="_blank" rel="noopener">融资数亿元，这家00后AI公司为什么被大厂追投？</a></h3>
+                <p class="desc">在世界模型融资火热的当下，他们选择死磕的是一个更底层、更难、也更“不性感”的问题：如何让AI生成的3D模型，真正能被工业级场景所使用——无论是3A游戏的雕刻级模型，还是手游的Low Poly布线，抑或是工业级3D打印千万</p>
+                <span class="source">凤凰网科技</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA4NDE1MjQ3NQ==&mid=2651861049&idx=1&sn=6ab6bac302dafc6b78379300de3860a8&chksm=85b294711cabdbee424ce2352b8c9b9c410f159ff33a3f4c4d3090e93ea51299f98e41da92bf#rd" target="_blank" rel="noopener">AI创投周报｜General Intuition获3.2亿美元A轮融资，Mirendil种子轮融了2亿美元</a></h3>
+                <p class="desc">获得早期融资的AI创业公司1.General Intuition拿下3.2亿美元A轮，用游戏动作数据训练具身Agent官方网站：www.generalintuition.comGeneral Intuition在A轮融资中筹集3.2亿美元，</p>
+                <span class="source">阿尔法公社</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NTUzNzY5MA==&mid=2247497814&idx=1&sn=eeb5f798d61f111f95c3d8da5d6c53c8&chksm=cf7dc98fb1c8cbc61f35e0ce8d41deb20252f037090dec63297d8e7585c7d6845468e4058715#rd" target="_blank" rel="noopener">创业融资｜上科大孵化企业影眸科技Hyper3D获数亿元新融资，新模型上线首月 ARR 环比增速扩大 400%</a></h3>
+                <p class="desc">影眸科技此轮融资与新品发布，正值市场对AI公司价值的评判标准发生变化之际。过去一年，企业级（B端）营收的质量与可持续性，正逐步取代消费级用户规模，成为衡量AI公司长期价值的核心维度——以Anthropic为代表的企业级</p>
+                <span class="source">上科大技术转移</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxODAzNDc0NA==&mid=2651606489&idx=1&sn=2370559e40e063dd3a4a228d1ff49415&chksm=813d1ac0a977f3295686353a388accba620d465484a44d8dda1ce68b044888a4c44ff09e6db5#rd" target="_blank" rel="noopener">22岁北大毕业生创业，完成超亿美元融资！</a></h3>
+                <p class="desc">记者从北京智源人工智能研究院获悉，逆矩阵科技近日完成超亿美元种子++轮融资。本轮由多家等头部机构共同参与，并获其他机构持续超额加注。资金将主要用于通用世界基座模型的预训练研发、及规模化训练体系建设。</p>
+                <span class="source">光明微教育</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU2MjA4Njc4OA==&mid=2247570013&idx=2&sn=d18dfdf32fa04ea42c5ff2ac634a29b4&chksm=fde2627550948478483330bc510a8ca1009a09a628ad6445c18cdc397593b2bec162c3a3faf3#rd" target="_blank" rel="noopener">3个月融资35亿，清华90后博士杀疯了</a></h3>
+                <p class="desc">从算法科研、芯片落地、自动驾驶量产到连续创业融资，黄冠在物理AI这个链条上的每一环都淌过泥、踩过坑。这种“全栈式”的经历，是极佳视界护城河之一。</p>
+                <span class="source">WBusiness商业</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNzc0NTQyMw==&mid=2247486240&idx=1&sn=54ab975ddce6724c8977e125425c4e54&chksm=c3dc009d2e6a2355dcd336cf0ee8878b8b18db58b623f492f8bc25a6cde5ddebc190065beb25#rd" target="_blank" rel="noopener">00后清华博士5个月融资5亿：具身智能的"青春风暴"与代际更迭</a></h3>
+                <p class="desc">他的出现，标志着清华系AI创业进入了一个新阶段——"第三代"创业者正在登场。而这三代创业者走过的路径，恰好勾勒出中国AI创业从1.0到3.0的完整进化史。</p>
+                <span class="source">创业AI洞察</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg0NzExMQ==&mid=2247501945&idx=2&sn=200c4c89cd2435fcb0ff89b3a650d26a&chksm=c57e183b0d9fb8a8ebda5d1e618d406b90070841636b0029017acb49a88af455b7d13c1fbf65#rd" target="_blank" rel="noopener">AI初创General Intuition洽谈3亿美元融资，估值超20亿美元 | News</a></h3>
+                <p class="desc">据TechCrunch报道，这家从游戏视频平台Medal拆分出来的纽约AI创业公司，正在洽谈约3亿美元新融资。若交易完成，公司估值将超过20亿美元。消息人士称，潜在支持者包括JeffBezos、EricSchmidt，以及既有投资方Khos</p>
+                <span class="source">创新观察局</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">强化学习 <span class="count">(8篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIzOTAxOTk3Nw==&mid=2247538667&idx=1&sn=9dc65bd484151e2c2a3b2982cc379bc4&chksm=e88c8d19b633179215d43634120d3e8099a2b9ee6235cb236c14707e5c59963a56800a9f0140#rd" target="_blank" rel="noopener">ICML 2026 Spotlight｜Agentic RL 下半场：JitRL——无需梯度更新的即时强化学习</a></h3>
+                <p class="desc">新加坡国立大学（NUS）提出 JitRL（Just-In-Time Reinforcement Learning，即时强化学习）：不重新训练、不更新任何梯度，而是在推理时检索历史经验、现场估计动作优势，并把优势直接加到模型输出的 logit</p>
+                <span class="source">AI TIME 论道</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMDE3MDEwMw==&mid=2247485394&idx=2&sn=b55b065a9328a3102eb54f9cc63fc47a&chksm=c066236b0155cd8cd299b513bfc4ee45f6d1243058b2332756b52d9d49473cd8005571ee9b7f#rd" target="_blank" rel="noopener">单轮RL如何迁移到多轮RL？不确定性过滤、KL 移除、非对称裁剪</a></h3>
+                <p class="desc">挑战： 现有的LLM强化学习研究多集中在单轮静态任务（如数学解题、代码生成），而智能体任务需要多轮决策、记忆保持以及应对环境的随机反馈。</p>
+                <span class="source">西西嘛呦</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MTU5OTg1OQ==&mid=2247507646&idx=2&sn=86fda9e77027795e58dc9cd74e58c06c&chksm=c37ed96aed8708f12643443e0a6038659b263ea4590294c4c0b8f51735808dccb65d98eaefa8#rd" target="_blank" rel="noopener">不让模型看标准答案，反而学得更好：一种全新的RL训练方法</a></h3>
+                <p class="desc">论文提出的方法叫 ExpRL（Exploratory RL，探索性强化学习），专门用于 LLM 的 Mid-Training（中期训练）阶段。核心思路是：手里有标准参考答案，但不让模型看到，只把答案交给一个 LLM 裁判，让裁判拿着答案给模</p>
+                <span class="source">AI帝国</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwNDM1NzYwNQ==&mid=2247483722&idx=1&sn=df1282573fcff2b5325bbe4aebc434b8&chksm=f5da21b093b095f4bbd0f6044bf67797bbdf821d73db782f798d2c3f81e5828ad3b6225ecf71#rd" target="_blank" rel="noopener">NPJ Digital Medicine | 大模型+强化学习，革新脓毒症管理策略</a></h3>
+                <p class="desc">提出MORE-CLEAR框架，首次将LLM与离线强化学习结合，同时利用结构化数据和临床文本进行脓毒症治疗策略优化。在MIMIC-III/IV和首尔大学医院三个独立数据集上验证，多模态模型在OPE指标上全面超越单模态基线。</p>
+                <span class="source">AI医学社</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMTk1NTYxOQ==&mid=2247483686&idx=1&sn=f04eae888e4bda31832dfbb5276158a9&chksm=f13d63d484be952ded405156173ad6190f5eb3958d129edd910678024b04151e4580c0fd7378#rd" target="_blank" rel="noopener">大模型强化学习（RL）后训练：从对齐到 Agent，这才是关键一步</a></h3>
+                <p class="desc">你学过的游戏 RL 和 LLM 的 RL，根本上不是同一件事。第四，RL 正在重塑 Agent。从自我对弈到搜索策略训练，从过程奖励模型到工业级 RL 框架——这是当前大模型后训练最活跃的前沿。</p>
+                <span class="source">AAA知识批发王哥</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNTAwODIyMg==&mid=2247492161&idx=1&sn=fd8e1370849bcc88090769fb18ddf77d&chksm=f12e78471f3bdbd1016af11facf0b6c2bc63c2db57bcf524d714a026957c8a0fada0b8adcae3#rd" target="_blank" rel="noopener">LLM论文｜大语言模型对某些政党感到困惑 (1/20篇) · 6月21日</a></h3>
+                <p class="desc"># 485%面向智能体与多模态大语言模型的上下文感知强化学习Context-Aware RL for Agentic and Multimodal LLMs 9大语言模型（LLM）在处理长或复杂上下文时，常因难以定位关键证据而失效。</p>
+                <span class="source">浩瀚無垠宇宙時空中耀眼的塵埃</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAwNzY1NzU2Mw==&mid=2247485618&idx=1&sn=c5324b51e08320881e9259fb27116424&chksm=9ab4a3a06994e35fd302dab3cf569079257f1e6dd501f32ec2740c7cfdeb8d8797c8c2bad807#rd" target="_blank" rel="noopener">强化学习理论进展与AI模型应用多方向突破</a></h3>
+                <p class="desc">涵盖RL语义与可达性理论、RLVR计算-监督权衡、LLM Agent故障修复、概念瓶颈模型对抗攻击、通用图异常检测、EEG基础模型、嗅觉导航持续学习、LLM路由优化、流体力学RL环境、病毒基因组基准测试、世界模型预测架构及AI天气预报</p>
+                <span class="source">科技大卫</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU3NDQ3MjI3Nw==&mid=2247487680&idx=1&sn=a611eedbf37b253bedd78ec814656132&chksm=fc7bdf1a0aa392eca49cbac49f4cd4405fe59df7c4139d457636c2bf9aca155565bbc7cd5db7#rd" target="_blank" rel="noopener">【深度理解自注意力机制27】强化学习与对齐——RLHF与DPO</a></h3>
+                <p class="desc">做法：用SFT数据对预训练模型进行监督微调。SFT后的模型已经具备了基本的对话能力，但回答质量参差不齐——有时好有时差，有时不符合人类偏好。</p>
+                <span class="source">野生AI架构师</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">阿里 <span class="count">(6篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAxMTU2MTM4Mg==&mid=2650709155&idx=1&sn=25719e7b359b15a0bfb82d404e2d6b22&chksm=82bf138d6651e5a9b65f8cfaf61b5e6502d09254f2b9238c12e8010c9120a65b9acd592d62ff#rd" target="_blank" rel="noopener">阿里巴巴牵头的媒体多模态大模型国际标准发布，助力AI媒体应用规范落地与性能评估</a></h3>
+                <p class="desc">requirements and evaluation of media content enhancement and media editing system based on multimodal foundation models"</p>
+                <span class="source">互联网标准江湖</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDQ4NjA3Nw==&mid=2247488793&idx=1&sn=2920a5676db4be07b7c5903bcbe5c931&chksm=c5a9085b33e18682019ec0cfc0845010999bc80e0a7719ca63528ec3a48e6adb40cfa7ad279a#rd" target="_blank" rel="noopener">阿里这款AI编程工具，让我彻底放弃了手动写代码</a></h3>
+                <p class="desc">说实话，我之前对国产AI编程工具是持怀疑态度的。试过好几个，让它们写个函数还行，但凡需求复杂一点，直接崩给你看。直到上周，我抱着试试看的心态用了阿里刚发布的 Qoder Desktop，说实话，有点被惊到了。</p>
+                <span class="source">AI科技驿站</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzMjc5ODc5MA==&mid=2247484090&idx=1&sn=52fce26effa6c991696acae3e7abb662&chksm=f1a77dc85293f0be965e1e06a22da3bc58649bdd32c6654a4903affd2bc81a76574418c18d55#rd" target="_blank" rel="noopener">阿里出手！这款国产AI编程助手，永久免费，彻底吊打GitHub Copilot！</a></h3>
+                <p class="desc">版本价格核心功能适用人群个人基础版 永久免费代码生成、智能问答、图片问答、提交信息生成个人开发者、学生个人专业版 限时免费（2026.5.20截止）编程智能体、多文件修改、MCP配置、500MB知识管理专业开发者企业标准版包</p>
+                <span class="source">上班干货铺</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4NDM1MTY4Ng==&mid=2247483757&idx=1&sn=0aee46f96378165bfbeff75dd9b1ed12&chksm=f2927019ed5d1ec8b73ccc0a368fe8cefd6f3c9934b37e078956919bc4ecd78c39cdfd6ebba1#rd" target="_blank" rel="noopener">通义千问 vs 豆包Seedream 5.0 Pro：我拿10个场景实测，国产AI视觉谁更强</a></h3>
+                <p class="desc">==通义3.7-Plus的视觉能力和豆包Seedream 5.0 Pro，听起来都在说"AI能看懂图片了"，但背后的技术路线、擅长场景、适合谁用，差得挺远的。==我花了一天时间，把这两家的公开技术资料翻了一遍、实测了几个场景、又扒了一堆评测</p>
+                <span class="source">AI智聊社</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyODE0NzE4OA==&mid=2247483669&idx=1&sn=3aef9234d03be063c9a9945c5b868ec8&chksm=e9e492d7493358ba0b70a51163585e4cbdf9bff1fff804ee9611b0b4607c65733816249a5397#rd" target="_blank" rel="noopener">Qwen 2.5 与 Qwen 3 系列微调深度调研</a></h3>
+                <p class="desc">1.1 SFT（监督微调）：基础路径Qwen 2.5 的微调起点是 监督微调（Supervised Fine-Tuning），通过高质量指令-回答对训练模型遵循特定任务指令。数据格式要求： Qwen 2.5 使用 ChatML 模板作为标准</p>
+                <span class="source">风控张小哥</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyODE0NzE4OA==&mid=2247483658&idx=1&sn=f8f044204ed82bd1e19290b8ab98c486&chksm=e9031838f37376615c555ddd50f880f9b702aaa804c22ca5f0c44db331eae4053480b5d32649#rd" target="_blank" rel="noopener">Qwen 2.5 与 Qwen 3 系列微调深度调研</a></h3>
+                <p class="desc">1.1 SFT（监督微调）：基础路径Qwen 2.5 的微调起点是监督微调（Supervised Fine-Tuning），通过高质量指令-回答对训练模型遵循特定任务指令。数据格式要求：Qwen 2.5 使用 ChatML 模板作为标准对话</p>
+                <span class="source">风控张小哥</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">视频生成 <span class="count">(6篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5MTI3MTY3Mg==&mid=2651625807&idx=1&sn=adadb705e9ace6cadd5debbea76e3114&chksm=bcba06d2506e022b7e2ef4b5364fa372c14af53dbbc6a5537ffdb08a71b4ff3c0c09cf6daa24#rd" target="_blank" rel="noopener">豆包视频生成模型Seedance 2.5预计7月初正式上线，支持单段原生30秒视频直出，可同时导入50个全模态参考素材</a></h3>
+                <p class="desc">2月12日，字节跳动发布豆包视频生成模型Seedance 2.0，旗下AI产品豆包和即梦宣布接入。目前用户可以在豆包APP、电脑端、网页版以及即梦APP、即梦网页版等产品中体验该模型。</p>
+                <span class="source">荆楚网</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4MjYyMzUyNw==&mid=2247517355&idx=1&sn=a9473e57b206c61fc30fdea90a64b66a&chksm=cea8d7ddff5be9167f1c81fc3ba932dd2c05739e8e57eccef67fa736e0754d72f8bdfc8846b4#rd" target="_blank" rel="noopener">阿里发布视频生成模型HappyHorse 1.1</a></h3>
+                <p class="desc">阿里巴巴今日发布视频生成模型HappyHorse 1.1，较1.0版本，在动态表现力、主体一致性、指令遵循、视觉质感和音频能力等维度系统性升级。在技术规格上，HappyHorse 1.1与1.0版本一致，单次生成时长3到15秒，支持720p</p>
+                <span class="source">财联社AI daily</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg5Njk4MjI0NQ==&mid=2247489982&idx=1&sn=1a36a14baeaa567a449b8cf36a74e417&chksm=c19eb95ab9a597515754a648cad158475dd68dd0aee8c39ae78d11841417cd8fdd80dbff7505#rd" target="_blank" rel="noopener">Seedance 2.0 Mini 来了：做 AI 视频，成本约减半，出片更快</a></h3>
+                <p class="desc">AI 视频生成正在从“尝鲜工具”进入“生产工具”阶段。过去大家关心的是画质、动作、镜头和真实感，现在越来越多人开始关心另一个问题： 能不能更便宜、更快、更适合大量出片？</p>
+                <span class="source">MXAI绘画中文站</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkxMTU1NDg4OA==&mid=2247486416&idx=1&sn=f50e9e8fd25e68a9affe50c3655e9cd2&chksm=c06c4b2ddca22df77f9c2e97fff5b4139765ee851cdb20bfcb4b3661712af5d4f46056f4f79c#rd" target="_blank" rel="noopener">FrameVideo：一句话生成可发布的视频</a></h3>
+                <p class="desc">蝉镜AI正式发布 FrameVideo。这是一款由蝉镜 AI 打造的视频生成产品。面向产品宣传、知识课程、短视频口播、活动预告、企业培训等场景，帮助用户把一个想法快速变成一支完整视频。</p>
+                <span class="source">蝉镜</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5NzI0NTY3Mg==&mid=2448571618&idx=1&sn=3620e962bd520b98c1c502f43fc55bd4&chksm=b359d91f7e4f45a78a8187f99acf7a75b913e298be3ccfe6f1bf9ae864c1536d9938c2c07695#rd" target="_blank" rel="noopener">2026 年 AI 视频创作平台全景对比：12 款产品深度横评</a></h3>
+                <p class="desc">L1 视频生成器可灵、PixVerse、海艺AI、即梦AI、Vidu、Pika、智谱清影、通义万相、HappyHorse文本/图片→视频片段内容创作者、短视频运营L2 视频编辑平台</p>
+                <span class="source">出海流量玄学研究</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU4NDI3MDEzNQ==&mid=2247512382&idx=1&sn=32b7a3b0b36bd6167d475365b3a452ca&chksm=fc0158579d32cc0d02ef5cd6c4e626e39d983df2309aafd8869a383c343bef8150d29842125e#rd" target="_blank" rel="noopener">2026国内AI视频工具产业深度调研报告</a></h3>
+                <p class="desc">4. 剧本辅助工具豆包专业创作智能体、通义智文、GPT系列（海外）各梯队工具核心维度对比总表梯队代表工具市场算力占比核心服务对象单集量产成本</p>
+                <span class="source">UcanFilm</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">学术 <span class="count">(5篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MjYwOTUzMw==&mid=2247493634&idx=1&sn=d54d1af6c33a449b721913d44eaf03ac&chksm=cfd0759c0800897d4537c37826c4b1e4801a280bd128376f2196835188256c997a68ee8222dc#rd" target="_blank" rel="noopener">清华北大NUS三篇ICML 2026齐发：大模型智能体终于学会“边做边学”了</a></h3>
+                <p class="desc">这三项研究集中展示了LLM智能体在“探索式推理”、“图记忆重构”以及“测试时学习强化”三个关键维度的突破。它们共同打破了当前大模型在复杂任务和长程交互中的落地瓶颈，打造了更聪明、更持久、更具成长性的AI“大</p>
+                <span class="source">geeAI学习室</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNjA4MTE3Mw==&mid=2247489326&idx=2&sn=e82c5326856888ee0d4762a52fb71eaa&chksm=f1cc5341e6838f00a51776e0120515d3277c17404cbcc19fd03abd14428474c30695844cde1d#rd" target="_blank" rel="noopener">RAL 2025 | 中科院提出 CRTO：认知推理轨迹优化，LLM 加速机器人强化学习</a></h3>
+                <p class="desc">研究团队先给大语言模型定义好和机器人的信息交换规则，再喂少量不完整的轨迹样本（20-30步就行）做微调。微调后的LLM能直接根据机器人的当前状态、环境反馈，输出单步动作值。</p>
+                <span class="source">大模型与具身智能</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NzYxODI3MQ==&mid=2247516449&idx=1&sn=e49b32b63d23a98ecaa2ae53711f5cf5&chksm=cfed59a4e4ab21fd983a37e6ccc1a3cbc410cd723a252b6e6bd6716d0784dd7f078e2b87c602#rd" target="_blank" rel="noopener">谢赛宁&Meta团队：多模态大模型即为含噪表征编码器</a></h3>
+                <p class="desc">本文提出RepFusion文生图模型，摒弃传统模型LLM仅静态编码文本、扩散网络全权去噪的范式，依托语义更强的RAE视觉表征空间，将冻结的预训练多模态大模型用作含噪视觉表征编码器，仅微调MLP投影层与轻量化扩散Transformer。</p>
+                <span class="source">学姐带你玩AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk3NTQxNTEwNQ==&mid=2247485111&idx=1&sn=889520c6a8e33c8a0741bc828b96afda&chksm=c51656003df3d46a96a064bc42f639300eb74d85216e15d26e2e5ffbe3d52044d2869c8ef2c0#rd" target="_blank" rel="noopener">清华提出 KARL：知识边界感知的幻觉抑制强化学习</a></h3>
+                <p class="desc">现有 LLM 幻觉抑制方法常陷入”敢答就幻觉、拒答就保守”的两难：1 普通 SFT 或二元奖励会鼓励模型尽量作答，导致未知问题上盲猜；2 静态三元奖励虽然鼓励拒答，但容易让模型过早收敛到”I don’t know”；</p>
+                <span class="source">MindChain.AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNDIxNTM1NA==&mid=2247485976&idx=1&sn=26d2ca9fa3cd477ab8805c048499891d&chksm=f1b454dd0a2c506ea0e2f1f22b65d7b96b0d709c0e253a659dbbe9fa41dfd8db7266bc724eb6#rd" target="_blank" rel="noopener">Nature子刊【AI4C】把Llama调教成化学家：加州大学伯克利分校用提示工程+微调，让通用大模型直接吐出候选药物分子</a></h3>
+                <p class="desc">这篇论文要解决的问题正是这个空白：能不能用相对低成本的监督微调（SFT），把一个开源的通用模型（Llama-3.1-8B-Instruct）改造成一个既会生成药物分子、又保留一定自然语言对话能力的"双语者"？</p>
+                <span class="source">AIChemLab</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">AI芯片 <span class="count">(3篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU5NzEyMDMzNw==&mid=2247534710&idx=1&sn=62ca400cecdabde86ce8377cf1655579&chksm=fff4be9ebc5bfb02b783da5f5897c00b81f9572d1ca87aa194d1c4b56a0daf64b02fac7ff105#rd" target="_blank" rel="noopener">中美AI对弈之下的算力难题 | 巨潮</a></h3>
+                <p class="desc">主要产品  NVIDIA的A100、AMD的MI100等高性能GPU，以及Google的TPU等专用AI芯片  NVIDIA的T4、Intel的Movidius VPU等 相较而言，推理芯片的任务要轻松许多。用于模型训练完成后的部署阶段，主</p>
+                <span class="source">巨潮WAVE</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYzNTY0MTExOA==&mid=2247485800&idx=1&sn=8a92e1632a9f13d8973acea9e54bcfe9&chksm=f1dcf15cba2b4b7c6bd4e8430a9112d5e5a1cc91314575de888ec359dbc2cc5c35ba8c002f46#rd" target="_blank" rel="noopener">GPU四小龙上桌，寒武纪们不再孤单</a></h3>
+                <p class="desc">这条路的核心思想是专为AI而生，通过在芯片中针对AI训练高频场景设计专用计算单元，如矩阵计算单元、向量计算单元的方式，集中资源为AI计算做硬件优化，从而在AI场景下实现比通用GPU更高的效率和更低的功耗。</p>
+                <span class="source">市值水晶</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1NTYzMjIwMA==&mid=2247485583&idx=1&sn=1c2aee7680f478f5e772df6d2a6e695a&chksm=fa9d74d1ac4faa1454ee9a1f877283dceca773eee74d5d4cab71c3e784019b8185b716a2fb7c#rd" target="_blank" rel="noopener">2026国产AI芯片梯队：华为昇腾占半壁江山，第二梯队谁在突围？</a></h3>
+                <p class="desc">作为国产AI专用芯片龙头，也是第二梯队中商业化兑现最快的厂商。主力产品思元590采用7nm Chiplet封装，FP16算力256TFLOPS，综合性能接近英伟达A100 的80%。</p>
+                <span class="source">数转行动派</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">腾讯 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwMjUxNTkwNQ==&mid=2247634027&idx=4&sn=af2e40a0061d3204510a8e8e55732260&chksm=c18f3a6daf1c2bdd68588548a96ad0238ab5936f226e1c7368ae81142c95fd4644afd393be87#rd" target="_blank" rel="noopener">腾讯蚂蚁红杉一起投了家AI独角兽丨投融周报</a></h3>
+                <p class="desc">近日，具身智能企业穹彻智能（Noematrix）宣布完成新一轮数亿元融资，投资方为上海交通大学AI未来基金（创业基金）、上海创之智科技有限公司（上海创智学院全资子公司）、无锡数据集团、一村资本等。</p>
+                <span class="source">投中网</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5ODYwMjI2MA==&mid=2649802370&idx=1&sn=933bed02fa58d278084e12946d3fa8ce&chksm=bf672968b3478835a81e17f942bddc25d4d8cc726bd295e0f4e6cec191d02e7595cea28ee91c#rd" target="_blank" rel="noopener">腾讯混元AI Infra如何优化Hy3 Preview：一次大模型推理性能提升的技术拆解</a></h3>
+                <p class="desc">随着大语言模型向千亿参数、百万级上下文加速演进，推理效率已成为模型规模化落地的决定性瓶颈。更大的模型、更长的序列、更复杂的 MoE 稀疏架构，在带来能力跃升的同时，也对算力、显存与通信提出了前所未有的挑战。</p>
+                <span class="source">腾讯技术工程</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">投机解码 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3OTg4ODU5Mg==&mid=2247483731&idx=1&sn=2a78e17998bb902163c5a50072e5323d&chksm=9ee41078b6ea295030b2127c5ef591bdd0481a9ea773d06346203426604bbed293f10a7664c8#rd" target="_blank" rel="noopener">Domino：让大模型推理快 5.5 倍的投机解码新范式</a></h3>
+                <p class="desc">背景：大模型推理为什么慢？大模型（如 Llama、Qwen）生成文本时，是逐个 token 输出的——每次只生成一个词，然后把它拼回输入再生成下一个。这个过程的瓶颈不是计算量，而是内存带宽。</p>
+                <span class="source">江小凡</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MjM5NjY0MTk4MQ==&mid=2257485956&idx=1&sn=c8d5062a69b37cc1c11237d300db197f&chksm=a413415f439f5621e9bc1c739e419b0177125f14883fa356ce0a8dd82800cc8d533b9bd3328e#rd" target="_blank" rel="noopener">让大模型推理快 15 倍：DFlash 用"整块起草"改写了推测解码的玩法</a></h3>
+                <p class="desc">这里有个反直觉的点，先按下，后面要用：大模型推理慢，瓶颈往往不在"算力不够"，而在"等数据"。每生成一个字，GPU 都要把那个几百亿参数的庞大模型，从显存里完整搬一遍到计算单元。</p>
+                <span class="source">AI新势力智能体</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Claude Code <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI0MTc5NjUyNw==&mid=2247484587&idx=1&sn=fffbb097024b925c2bdac1668206ff5b&chksm=e8d275d0f10689f89d14f7a39983970ea0e988c984b957976a075fd6ed3869a1ec4ec4f4fa41#rd" target="_blank" rel="noopener">这份Claude新手指南，能让你比98%的人更会用AI</a></h3>
+                <p class="desc">Claude和ChatGPT、文心一言底层技术差不多，都是基于Transformer架构的大语言模型——说人话就是：你给它输入一段话，它根据“海量训练数据”学到的规律，一个字一个字地预测、生成接下来的内容。</p>
+                <span class="source">会讲故事的AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNzMwMDk0NQ==&mid=2247485016&idx=1&sn=fc6bc86f9ddc0bd6d1a4fb84ae92d4b3&chksm=c35044fc8815e9785197f181193961961189e213198773af7000d97ac0d3b5dc62a4fd7169ac#rd" target="_blank" rel="noopener">一起吃透 Claude Code，告别 AI coding 迷茫</a></h3>
+                <p class="desc">Claude Code 不是「代码生成器」，而是「编程伙伴」。它不会取代你的思考，但能放大你的能力。掌握正确的方法，它就是你最好的助手。3 个关键转变：</p>
+                <span class="source">Java进步</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">智谱 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNDU5MDEzOA==&mid=2247490720&idx=1&sn=7da54db2b2b65dc2e5df481cf7638bc3&chksm=c305bc9b6b3f3b5f91311ae88f76c85648a911aeb305e5f87d65b561c6df8743c55a69876b3b#rd" target="_blank" rel="noopener">GLM-5.2登顶开源王座：智谱与DeepSeek，两种中国AI打法</a></h3>
+                <p class="desc">一句话：GLM-5.2 当下从 DeepSeek 手里接过了「开源王座」，但在「又强又便宜」这件事上，DeepSeek 依然是那个价格屠夫。四、两种打法，两条路模型之争的背后，其实是两家公司截然不同的活法。</p>
+                <span class="source">AI盐究所</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwNTM1NzI0OA==&mid=2247483673&idx=1&sn=e661e4c1ecc0bb6ba8a7538982b7e78d&chksm=f58fb0e5b846821683749d7312c5ee92a7ab826c9a609a25c5dcbd9f13307a9848ae0bd9244b#rd" target="_blank" rel="noopener">估值万亿的资本狂飙：智谱AI深度报告</a></h3>
+                <p class="desc">智谱的融资密度，在中国大模型创业史上几乎无出其右。从2019年成立到2026年上市，前后累计融资超过160亿元人民币，投资方涵盖了国内最顶级的财务投资机构、产业资本和地方政府国资平台。</p>
+                <span class="source">商业拆解局中局</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">AI编程工具 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjcxNTMwNQ==&mid=2247483721&idx=1&sn=aba50da250f2fa6b6023ef00000770f8&chksm=fa6acbba22e68dd8ddb4749bbd2c7ecaa14024c8b8cee0786bc7368ec63c4df10adb8c932b9e#rd" target="_blank" rel="noopener">国产AI编程工具实测：Zcode 对比 Codex、Kimi、Qoder Work、Mimo Code</a></h3>
+                <p class="desc">毕竟市面上的 AI 编程工具已经不少，一个没什么名气的国产工具，能有什么亮点？但上手之后，我直接改变了想法。三个关键词：快、准、深用了一段时间后，如果让我给 Zcode 贴标签，我会用这三个词：</p>
+                <span class="source">亦慕子陵</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMjE2ODg4MA==&mid=2247484214&idx=1&sn=90d7884c2f1cb595e67471cc9ee85120&chksm=f5bfb942ea4366a50b77092c944dbf4392adeb3fcbbad96203339f7db2ab1b83f229ca6be2d3#rd" target="_blank" rel="noopener">2026 年主流国产 AI 编程工具横评 六款，全跑了一遍</a></h3>
+                <p class="desc">评测维度：① 代码生成质量 — 单文件 / 多文件 / 复杂业务逻辑② Agent 能力 — 能否自主拆任务、执行、修复③ 生态集成 — IDE 支持、云平台、框架对接</p>
+                <span class="source">欠酱的AI粥铺</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">小米 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk0MTY4NzcxMQ==&mid=2247485270&idx=1&sn=e9f17caed5ed998e28e6678172555677&chksm=c383d4fe41e248928103bb7776319a6c357154fc1ba74ba971ea3ac0ade8bf2de234ff535026#rd" target="_blank" rel="noopener">小米开源AI编程助手：免费替代Claude Code（附安装指南）</a></h3>
+                <p class="desc">它的核心能力可以概括为以下5点：能力说明实际场景智能代码生成根据自然语言描述生成代码"写一个Python脚本批量重命名文件"代码理解与重构分析现有代码结构并给出优化建议</p>
+                <span class="source">N学无止界</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1NjcxNTMwNQ==&mid=2247483706&idx=1&sn=e56c280f5dffcb0024015e885c8748e7&chksm=fa0bfac474bb6299ea0c2a9e16e9f830ad23619341ea437d16e3811d24172f2bdf7dab4620c5#rd" target="_blank" rel="noopener">小米MiMo Code开源体验：免费的AI编程助手，到底能打几分？</a></h3>
+                <p class="desc">但在代码生成的质量上，还有提升空间。有时候给出的方案不太理想，需要你反复调试和引导，才能慢慢往正确的方向靠。换句话说，它不是那种"一句话丢进去就给你完美答案"的工具，更像一个需要你带着走的助手。</p>
+                <span class="source">亦慕子陵</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">豆包Seed <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI3MDIzODA4OQ==&mid=2247490235&idx=1&sn=a04c49419008c2162bf29c166a89c5e9&chksm=ebbde1b7891d496dde76e0b72665e54021e57cc39da73bed18ff94357594ea80f22c0a6c6fa7#rd" target="_blank" rel="noopener">主流AI产品对比评测报告（2026年6月）</a></h3>
+                <p class="desc">豆包、元宝、马维斯、飞书AI、通义千问均处优秀水平（4分），在各自场景中表现可圈可点，但在全场景通用性和深度推理上略逊于DeepSeek。多模态能力：豆包以文本/图片/语音的全面覆盖和流畅体验显著领先（5分）；</p>
+                <span class="source">淄博海纳网络</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzAwMjM4OTIwOA==&mid=2247486480&idx=1&sn=0453cf0e646f209636450f0948d54dfd&chksm=9b636341bde3d0650b2882d4bb6e1cd77fc41dded414659cb2d04f059c0026d3194c2749e628#rd" target="_blank" rel="noopener">杰富瑞6月AI深度研报万字拆解：国产大模型token消费反超美国，成本优势碾压、多模态与Agent全面进入兑现期</a></h3>
+                <p class="desc">1.豆包 3.2997 亿、2. 通义 2.337 亿、3. 夸克 1.6213 亿、4.DeepSeek1.4121 亿、5. 元宝 1.118 亿细分亮点：2.Kling 可灵 MAU 824 万，环比增长 5%，文生视频工具用户增速最</p>
+                <span class="source">调研纪要杂货铺</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Google <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyMzAxMDc4OA==&mid=2247487625&idx=1&sn=2d5df2701ca07b84c2b11603118e1b59&chksm=e9ef2b82d74f8d4e072c71c141e4ba47c3a57d441bea785e25c0ced3d198a7e2b0e1b797acc8#rd" target="_blank" rel="noopener">DeepMind研究员：好模型做一样的决定，比变坏更危险</a></h3>
+                <p class="desc">安全对齐（让AI的行为符合人类的意图和价值观）这件事，在一个AI助理身上做已经够难了。在一万个AI助理互相之间还频繁换搭档的分布式系统里做，是另一个维度的问题。</p>
+                <span class="source">两斤的AI实验室</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDMxNDMzOA==&mid=2247483943&idx=1&sn=d0279e090327bf3ec556466cdf118aa2&chksm=c57649d2509cf8e6778d77dfc5a9bdc75156a93aca68e711573aa6b2f9be374f913ab8cc64b6#rd" target="_blank" rel="noopener">48小时跑了两员大将：谷歌AI的护城河正在漏水</a></h3>
+                <p class="desc">对 Anthropic 来说， Jumper 带来的"科学方法论视角"会让 Claude 在安全对齐上跟竞品拉开差距——毕竟能解决蛋白质折叠问题的人，处理"AI 行为不可预测"这种事，方法论上是通的。</p>
+                <span class="source">GuideToAGI</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Anthropic <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMTMwNjYwNw==&mid=2247484047&idx=1&sn=fd71592697b8482a33a4fb37e7fee72d&chksm=f5237e680997684a986c58d98c9141a511305a5f282e672304c6986706bcef82ec0c778c806e#rd" target="_blank" rel="noopener">Anthropic估值9650亿的秘密：安全才是AI最贵的护城河</a></h3>
+                <p class="desc">而 Anthropic 的"宪法AI"（Constitutional AI）路线和 RLHF 的安全对齐技术，恰恰在这一点上打出了差异化。▎底层逻辑是：安全不是成本，而是溢价。它的卖点从来不是"我的模型参数更多"，而是**"我的模型能用、敢</p>
+                <span class="source">金材AI</span>
+            </article><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU4MjE0MDMyNw==&mid=2247483959&idx=1&sn=ec36231e8555b8c9ab0c58f0d448e957&chksm=fcf7a33fbc460c0de469bf95cecc9902cbf724f25a28a220bbd332cebb9d21fd246055626577#rd" target="_blank" rel="noopener">Anthropic到底定义了什么</a></h3>
+                <p class="desc">而是它用一套完全不同于硅谷共识的打法——安全优先、宪法对齐、开源标准、公众信任——硬生生在所有人都在疯狂加速的时候，拿到了AI行业的王座。</p>
+                <span class="source">ITer小站</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">推理 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4MTg4NzcyOQ==&mid=2247490073&idx=1&sn=bc1d96cd4be1c3e7e9ec05261a556441&chksm=ce14e9456c3edb0c5f805c01cc12ecf8c808e9cac072e1be7852be2e1f97b64e1f9a85e523b2#rd" target="_blank" rel="noopener">LLM推理优化全景：从自回归到投机解码的工程实战</a></h3>
+                <p class="desc">本文核心观点：大模型推理优化的本质不是"让模型跑得更快"，而是"用更少的计算和显存产生等价的输出"。KV Cache是这个问题的核心战场，投机解码是目前性价比最高的加速手段，而量化是部署阶段绕不开的妥协艺术。</p>
+                <span class="source">真龙现身</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">腾讯混元 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk4ODQ1NzYyNQ==&mid=2247486973&idx=1&sn=15ff797511ef5c5680ae2652719e21a2&chksm=c415b33c404b929abb6fa8d3dfb4a25674a7c8195eec4fe917d0fc532092cb0819b107ac0adc#rd" target="_blank" rel="noopener">CVPR 2026 | 多模态大模型 | 腾讯混元新作！AdaptVision:  通过自适应视觉获取机制构建高效的视觉语言模型！</a></h3>
+                <p class="desc">NeurIPS 2024 | 多模态大模型可解释性 | 字典学习解释多模态大模型内部表征！CVPR 2025 | 多模态大模型可解释性 | 入选Highlight！理论分析提高多模态大模型在视觉检测可解释性能力！</p>
+                <span class="source">多模态论文每日速递</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">京东 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU2OTg5NTU2Ng==&mid=2247501072&idx=3&sn=34e9e67b85f04b7652ee4cb1e2190909&chksm=fdb82c548055f8aef6abd30ebff047ff285c24965ade08a43fa9e6d8c3e311d8f44f046cb5de#rd" target="_blank" rel="noopener">媲美顶尖闭源模型！京东开源240亿参数多模态模型JoyAI-Image：统一理解/生成/编辑，重塑AI图像编辑。</a></h3>
+                <p class="desc">京东探索研究院推出的JoyAI-Image，是业内首个以空间智能为核心的统一多模态基础模型，一体化支持图像理解、文生图、指令编辑三大能力。模型基于8B MLLM+16B MMDiT架构，通过理解 - 生成 - 编辑闭环协同，在空间推理、长文</p>
+                <span class="source">AIGC Studio</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Kimi <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNDkxOTYzMg==&mid=2247488516&idx=1&sn=b4ee175a47517cccb5f5b8fef23d9a97&chksm=c3dacf96ac5bf6e03e42113bf2d05c2869c89730b5fc964848c559a1a365fab8768fbaaa7359#rd" target="_blank" rel="noopener">无需GUI，一行命令搞定编程，Kimi K2.7 Code深度测评</a></h3>
+                <p class="desc">AI编程领域又添一员猛将。先是6月12日，月之暗面正式发布并开源了Kimi K2.7 Code编程模型。这是Kimi系列在不到一年时间内的第五次大版本更新，更是一款专门面向代码生成与理解的垂直模型。</p>
+                <span class="source">AGI研究社</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Codex <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUzNTc5NjA4NQ==&mid=2247505836&idx=1&sn=2a79cf1dff33833b1a8d63b86d34668a&chksm=fb561235bbe326b357e16ef012fc535031e7e49164b89fd559754ca342b23a074ed6ecaaacc5#rd" target="_blank" rel="noopener">Codex 上手机了！用AI实现远程办公，3 步上手</a></h3>
+                <p class="desc">AI 编程从"工位专属"变成"全天候随时随地"。3 步上手 Codex 移动版第 1 步：更新 ChatGPT AppCodex 不是独立 App，直接内嵌在 ChatGPT 移动 App 里。 iOS：App Store 更新到最新版 C</p>
+                <span class="source">晚枫AI学习笔记</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Cursor <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY4NTAxMTAwMA==&mid=2247483737&idx=1&sn=79b9c7595825d8a217bb0bba3d4af4e2&chksm=f2e3e0ab0f3ca1def029edc24f36794e4cbe718c11b1ae0a1a955cba967403792733b6d5a087#rd" target="_blank" rel="noopener">Cursor：真正的 AI 原生编辑器，用完就回不去了</a></h3>
+                <p class="desc">生成代码要 Review：AI 不了解你的业务逻辑，生成的代码要认真看，尤其是权限校验、事务处理这类关键逻辑免费额度有限：Agent 模式很消耗 token，频繁使用建议购买 Pro</p>
+                <span class="source">从CRUD到架构师</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">TRAE Work <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk3NTY0OTg4Ng==&mid=2247486131&idx=1&sn=162fc1f4c0348810a46d0cb014992c0a&chksm=c533cfd67b28598bafab4ff505b0b1130bbf3a5e0bed613b126dccd27bffe90a403e4206f0b6#rd" target="_blank" rel="noopener">Trae：字节这个AI编程工具太香了</a></h3>
+                <p class="desc">完整地讲解了 ai 应用开发的一整套流程，确实值得一看。五、总结Trae不是完美的，但它做对了一件事：把AI从助手升级成了同事。Trae的Solo模式，是「你说我做」。</p>
+                <span class="source">嘿哥的AI基地</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Vibe Coding <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU0OTU3ODg3MA==&mid=2247483982&idx=1&sn=bd3fab1d787a98c85a181f9e1018e643&chksm=faa9ab23f4b230722926bd76d823df1f89c2d83a011936dc87eda100e9d20f974a2f4cde253a#rd" target="_blank" rel="noopener">[教程] 不会写代码也能做游戏？我用AI 100% Vibe Coding 完成了一个Game Jam（全流程+提示词）</a></h3>
+                <p class="desc">AI生成代码后——直接打开HTML文件，在浏览器里看效果。Cursor里右键 index.html → Open in Browser。步骤3：你试玩 → 发现不爽 → 对话改（核心循环）第一版跑起来后，你会发现各种问题。</p>
+                <span class="source">AI元思</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">英伟达 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwOTI0NDkxNQ==&mid=2247487218&idx=1&sn=6fdd644fb331778368067998b32bc8ff&chksm=f4e5ebb18b0e85f02a7c5231eaadafea3fc97128853018c9bfb55e1f070237e6e2c0d74b699e#rd" target="_blank" rel="noopener">黄仁勋重新定义「GPU」：两吨重、300万美元、12万瓦！AI工厂时代来了</a></h3>
+                <p class="desc">配文直指ai基建瓶颈一个"GPU"，150万个零件把话说明白：黄仁勋口中的"一个GPU"，指的是NVIDIA GB200 NVL72。这是一台什么机器？72颗Blackwell B200 GPU，36颗Grace CPU，18个计算托盘，9</p>
+                <span class="source">无限推理AGI</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Claude Fable <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-mid">
+                <span class="score-badge">7</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4NzY1MDE5NQ==&mid=2247486202&idx=1&sn=d85b8bc14321360e8687fffb2761c5d1&chksm=ce83e3f88db3d7c482aaf7ec9948222f98134da929dc592adc19cb981e737b9bf240be0bea6b#rd" target="_blank" rel="noopener">Claude 5三天被攻破、Copilot一键RCE：AI大模型攻防战实况</a></h3>
+                <p class="desc">攻击目标 模型的安全对齐（让它说不该说的）软件层的权限（让它做不该做的）关键区别：Copilot的RCE不是因为GPT-4被攻破了，是Copilot把"修改配置文件"和"执行Shell命令"的权限给了AI，又没做好输入过滤。</p>
+                <span class="source">LinuxROS</span>
+            </article></div></section>
+<footer class="footer">Powered by TikHub WeChat Search & Claude Scoring · <a href="index.html">AI 资讯日报</a></footer>
+</div>
+</body>
+</html>
