@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 热点新闻 — 微信搜一搜高评文章</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f2ece0;
+  --ink: #1a1714;
+  --muted: #8a7f6a;
+  --accent: #c8860a;
+  --gold: #e8a020;
+  --green: #2d8a56;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', serif;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+.masthead {
+  padding-top: 48px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.masthead h1 em { font-style: italic; color: var(--accent); }
+.masthead .rule { border: none; border-top: 3px solid var(--ink); margin: 16px auto; width: 60px; }
+.masthead .meta {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.topic-section { margin-bottom: 36px; }
+.topic-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.topic-title .count {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--accent); }
+.card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.card h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.card h3 a:hover { color: var(--accent); }
+.card .desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.card .source {
+  font-size: 12px;
+  color: var(--muted);
+}
+.score-badge {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-mid .score-badge { background: var(--muted); }
+.footer {
+  text-align: center;
+  padding: 32px 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .page { padding: 0 16px 40px; }
+  .article-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="masthead">
+  <h1>AI <em>热点</em> 新闻</h1>
+  <hr class="rule">
+  <p class="meta">微信搜一搜 · 高评分文章聚合 · 2026-07-02 10:50 更新 · 共 19 篇</p>
+  <a class="back-link" href="index.html">← 返回首页</a>
+</header>
+<section class="topic-section"><h2 class="topic-title">英伟达 <span class="count">(5篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjk3MzAyMA==&mid=2247514018&idx=1&sn=97b559a963961266bd7c64f56a4c5dcd&chksm=c32be8acece941e8c7118d2ed1dad7aceb5afa9b32b46b9b4ca9a1bec0d4017af2d3181a83dd#rd" target="_blank" rel="noopener">AI算力的过去、现在、未来</a></h3>
+                <p class="desc">存储芯片承担算力终端数据存储功能，电源管理芯片（PMIC）则为AI服务器、高端GPU提供稳定电力供给，是算力硬件不可或缺的核心配套元器件。随着AI算力硬件单机功耗持续攀升，行业对高精度、低损耗供电方案的需求爆发，电</p>
+                <span class="source">国泰海通证券财富</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwNzQ5MzkwMA==&mid=2247590466&idx=1&sn=f257185e04e10ea1c8d44001a0247a73&chksm=c1664ce160bc11884dac6f6883ff670fae287bcae537d947815cfeb2e6be198b12bd71d17a00#rd" target="_blank" rel="noopener">一天吃透一个产业链——算力芯片</a></h3>
+                <p class="desc">主要产品及应用领域  GPU 架板、系统级芯片及软件。主导全球 AI 训练/推理、HPC、图形渲染及自动驾驶市场，拥有最完善的 CUDA 生态壁垒。  全栈自主 AI 算力（翼腾）。构建芯片+ CANN + MindSpore +云的闭环生</p>
+                <span class="source">银创智库</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzk2NDg4MDM2Mw==&mid=2247484086&idx=2&sn=bfda7646cc0ab28161c8ac61535436ab&chksm=c55c349324d70add854f4f5e5903b0e30d06ad0c93addf106da1f6ef9f4cad03fb79cc2d977b#rd" target="_blank" rel="noopener">英伟达H20彻底受限！国产AI芯片三足定局，谁能扛起算力大旗？</a></h3>
+                <p class="desc">2026年6月的最新管制升级，主要针对H200等更高阶GPU，意味着国内AI厂商彻底告别所有特供版英伟达芯片，海外算力替代通道全面收紧。这场持续升级的芯片禁令，短期让行业面临算力供给阵痛，长期却是国产AI芯片等待多年的黄</p>
+                <span class="source">AI知行路</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzIyNjQ0OTcyOA==&mid=2247513056&idx=1&sn=0797ad5aafb88e7d6028a5a6e735ed3f&chksm=e9574f609dcfc45d1a4b1e0b41cd63c61cba6848d02baa38c25fc1b16018d42b0ba71f187991#rd" target="_blank" rel="noopener">算力战争：AI芯片为何是半导体皇冠上的明珠？</a></h3>
+                <p class="desc">1.2 GPU vs ASIC vs FPGA：三条路线的牌局很多人以为AI芯片就是GPU。其实这个市场是三条技术路线在打牌，而且牌面正在变。维度GPUASICFPGA代表NVIDIA B200、AMD MI300X</p>
+                <span class="source">路科验证</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwMTYxMzY2MA==&mid=2247503583&idx=1&sn=8b44e049e95ac94c804bb19185704e01&chksm=c120a3281bd9f296290601cae42aa317e6f72911de666653600deaedf2887ff4b2c260ce0a43#rd" target="_blank" rel="noopener">AI硬件全面升级：从GPU到HBM，一场全栈革命正在发生</a></h3>
+                <p class="desc">AI Agent正在推动算力需求指数级增长芯片、存储、封装到数据中心，全产业链迎来新一轮升级周期最近在看这份关于AI产业链的报告时，我有一个越来越强烈的直观感受：</p>
+                <span class="source">芯联汇</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">DeepSeek <span class="count">(4篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg4MjYyMzUyNw==&mid=2247517433&idx=1&sn=478c9543a78554aa4b22b78e47f25916&chksm=ce3fa78d431d5c22990be4c58af475363eb9c544c8195aa6b49c1da0b9e57a9321716f6e4a76#rd" target="_blank" rel="noopener">大模型推理最高提速85%！DeepSeek发表重磅论文 提出两项互补机制</a></h3>
+                <p class="desc">未来的优化方向可在草稿模型内部引入难度感知的早退出机制，使此类请求能够跳过完整块生成流程。▍不拼参数拼速度：DSpark的两项技术突破大语言模型采用自回归方式生成文本——每生成一个新token都需要一次完整前向传播</p>
+                <span class="source">财联社AI daily</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5NzM1NjIxMg==&mid=2247483825&idx=1&sn=52aec7e8cf6723f6390f31c7efbe5d8a&chksm=f591657557bcc357accd3a788fabb6849c380a8aebdcc584779ede597e6655d8a65c90c0dc9f#rd" target="_blank" rel="noopener">DeepSeek提速80%，ChatGPT刚发GPT-5.6，Claude连发两版——Token要变天了</a></h3>
+                <p class="desc">DeepSeek联手北大开源DSpark》（2026.06.29） 今日头条《全球登顶！DeepSeek DSpark刷新大模型推理加速世界纪录》（2026.06.30） 36氪《ASIC商业化，拐点已至》（2026.06.29）</p>
+                <span class="source">算力集</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwNTM0NzMwNg==&mid=2247483806&idx=1&sn=0bc1f75f880813bde71f5e1ec4b3c0ea&chksm=f572b23bbd87c34ebafe9ce11cb8f22b9c45dab47f9ae0b878b780cc2c40b2f861f90ee0cd27#rd" target="_blank" rel="noopener">国产 AI 三线反超：DeepSeek 开源、GLM 硬刚、Kimi 量化</a></h3>
+                <p class="desc">DeepSeek V4 Pro 已经敢说"对标顶级闭源"了，实测也确实在很多场景不输 GPT 和 Claude。以前是"闭源强，开源追"，现在是"各有所长"。出口管制加速了国产替代。</p>
+                <span class="source">Hero丶Edward</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzYyMjY2Njc4MA==&mid=2247483736&idx=1&sn=4dcba9bd80a6935e1a0de089dc2b661c&chksm=fee9f9a82a94e22eb28f61e129dc5127ecd726a300733f7672e4746c623fcca4d5727d1f2fcf#rd" target="_blank" rel="noopener">DeepSeek和OpenAI今天同时放大招</a></h3>
+                <p class="desc">DeepSeek V4、Qwen3、Llama 4、Gemma 4...全都是免费开源的。2026年真的是普通人用AI的好时候，不花钱也能用上顶级模型。3. AI开始从"聊天"变成"干活"了以前AI就是陪你聊天问答，现在越来越能帮你做具体的</p>
+                <span class="source">小雾能量室</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">开源 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU2OTg5NTU2Ng==&mid=2247501094&idx=2&sn=cc3c661cef006ea16ae40d67ec0c47e0&chksm=fd5ed3a5309bc031f49c297871dbb2c634589bff0167ab8529d45e9fc68e1e391857587cf275#rd" target="_blank" rel="noopener">清华&字节开源HuMo: 开启多模态可控人物视频生成新方向，输入文字/图片/音频即可生成电影级视频。</a></h3>
+                <p class="desc">利用所提出的时间自适应 CFG 策略，模型能够在推理过程中对这三种模态进行灵活、细粒度和协同的控制。HuMo 满足了以人为本的短视频创作中对文本提示跟随、主题保留和视听同步的多重需求。</p>
+                <span class="source">AIGC Studio</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI4ODI0MjcyNQ==&mid=2247484846&idx=1&sn=8afb4e4aa776b13846617211909f38ae&chksm=ea7810a2b738bbe461f32e40a9b24252c445f903099407c64c73511b35801ea8c590209d50f1#rd" target="_blank" rel="noopener">开源模型第一次在代码能力上击败了Claude：背后是一种"自己教自己"的方法</a></h3>
+                <p class="desc">用Claude或GPT写代码，你的代码仓库、API密钥、内部架构——每一条信息都会被上传到Anthropic或OpenAI的服务器。而Ornith的所有推理都在你自己的GPU集群上完成，代码永远不会离开你的防火墙。</p>
+                <span class="source">这件小事儿啊</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Claude Code <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2MzcyODQ5MQ==&mid=2247502843&idx=1&sn=8e1ed9a491c126decca0495a8b0a5042&chksm=cf158ff35e76aec293963eca2936e696c3e9a42d77613c9098394d9fa3c4679bfd8a3f462e03#rd" target="_blank" rel="noopener">Claude Code 太折腾？这个国产开源 AI 编程平台打开就能用</a></h3>
+                <p class="desc">MonkeyCode 是一款开源的企业级 AI 开发平台，内置了开发环境管理、AI 模型管理、AI 任务管理、项目需求管理等能力，区别于其他的 vibe coding 工具，</p>
+                <span class="source">叶小钗</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI2MTIzMzY3Mw==&mid=2247562458&idx=1&sn=e83d1124581168c4094c434bf51639f3&chksm=eb46ec0bb6bf1ff7d3f76121aa2f01107b67b628098c89889414b3bffa63d7cb6499141c50c7#rd" target="_blank" rel="noopener">换掉Claude Code！这款AI编程神器，夯爆了</a></h3>
+                <p class="desc">协议集成：LSP（语言服务器协议）为AI生成代码提供静态分析保障，MCP（模型上下文协议）允许AI助手通过MCP服务扩展能力。跨平台终端：除了核心的TUI设计，还支持桌面应用以及主流IDE扩展。</p>
+                <span class="source">互联网架构师</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">阿里 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=Mzg2NzU4MDgzMA==&mid=2247560743&idx=1&sn=ce6530dda95ccf3f35ea18e363c71c5d&chksm=cf07cd9e40d270039b89ebd08f0cf6ce865d230d171a31cd1dd67f3e2d2885beca3e10b292a9#rd" target="_blank" rel="noopener">ICML 2026 | 一个模型同时调度人、物、声、动作，多模态可控视频生成迈进工业级！</a></h3>
+                <p class="desc">3. ECCV 2026 | 视频生成模型，真的会「推理」吗？303 道题全面揭示世界模型的推理短板4. ms-swift 视觉大模型调优与部署实战（下）：跑通 Qwen3-VL 微调全流程</p>
+                <span class="source">机智流</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">模型发布 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkwODYwNjExMA==&mid=2247489074&idx=1&sn=fb981b89b7006ad7e01c8f8d5898a5e6&chksm=c1cc89805580e915c2cfd20e9ebf9565a065b0a089bd3d2b25a4c8f0f8822552e693603f3247#rd" target="_blank" rel="noopener">GPT-5.6 或成为最强性能模型、Claude Sonnet 5 和 Science 重磅上线、DeepSeek开源DSpark最高提速85%</a></h3>
+                <p class="desc">OpenAI 把 GPT-5.6 Sol 放进限量预览。模型越来越强，推理越来越快，前沿模型接下来会更像工程系统，而不是一个普通聊天入口。这一期重点看三条线：Agent 能力下放、科研工作台化、推理服务提速。</p>
+                <span class="source">语兴数据</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">小米 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU2NDgxMzE4NQ==&mid=2247484525&idx=1&sn=c9f53c53faaeafed839e3edf723828e0&chksm=fd80d915461157872a00e9d670e1e4667324845293045e256fd97998b8891f978ed25173bc3a#rd" target="_blank" rel="noopener">小米开源了个 AI 程序员，用了两天我发现它比我想的聪明</a></h3>
+                <p class="desc">模型与智能体协同进化。不是"帮你补全代码"，是"帮你进化"。我装了试试。用了两天，发现它确实跟别的 AI 编码工具不太一样。一、MiMo Code 是什么？</p>
+                <span class="source">编译完就下班</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">国产GPU <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU3NTQ3MjkzNg==&mid=2247486131&idx=1&sn=6254c289e89d480ea5c55c6c13796fe5&chksm=fc59b78fc6c7b42f1dac1305de41c032ba4f1e8c691e8b5a48ca5118d2dacd727bd4a2e35830#rd" target="_blank" rel="noopener">中国AI算力五强全景对比</a></h3>
+                <p class="desc">百度唯一实现 100%全栈自研（昆仑芯+百舸平台），完全免疫美国芯片出口管制，3.2万卡规模居国内前列投入之王阿里巴巴近四季投入 ~1200亿，宣布三年 3800亿，超过过去十年总和，民企科技投资之最（败家）</p>
+                <span class="source">GOODLIGHT</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">字节 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzUyODcxMjkyMA==&mid=2247525964&idx=1&sn=a513f52356703bb84356fe476dd8e51a&chksm=fb03fd762c71ffcfb8839092909005bc626252a96d510e1ec59c543ecb8a84cf304bf174bf9d#rd" target="_blank" rel="noopener">热点丨天数智芯拿下字节5万颗芯片，国产GPU推理进入实战</a></h3>
+                <p class="desc">AI产业的算力重心正在从训练侧快速向推理侧迁移，2026年国内AI推理GPU市场规模预计接近六千亿元，两年复合增长率接近四成，推理算力已经成为AI算力投入的核心增量来源。</p>
+                <span class="source">AI芯天下</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">芯片 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU1NzgyNzY2MQ==&mid=2247485178&idx=1&sn=da90a316c8eedf5ef649bb42ce89b4c2&chksm=fd18712ba855152d98499d2bf891ef91da9ae30cb8f7d7d77284b7f02ade4f49d48e5d7cd38f#rd" target="_blank" rel="noopener">深挖 AI 算力卖铲人：4 大环节谁在闷声赚大钱</a></h3>
+                <p class="desc">先给大家搭个最基础的认知：算力芯片主要分GPU和ASIC两类，对应AI行业两个完全不同的市场——训练和推理。很多人投资的时候容易把这俩混为一谈，其实技术要求、竞争格局天差地别，必须分开看。</p>
+                <span class="source">增长飞轮</span>
+            </article></div></section>
+<footer class="footer">Powered by TikHub WeChat Search & Claude Scoring · <a href="index.html">AI 资讯日报</a></footer>
+</div>
+</body>
+</html>
