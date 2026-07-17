@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 热点新闻 — 微信搜一搜高评文章</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f2ece0;
+  --ink: #1a1714;
+  --muted: #8a7f6a;
+  --accent: #c8860a;
+  --gold: #e8a020;
+  --green: #2d8a56;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif SC', serif;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 32px 80px;
+}
+.masthead {
+  padding-top: 48px;
+  text-align: center;
+  margin-bottom: 40px;
+}
+.masthead h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(40px, 7vw, 72px);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.masthead h1 em { font-style: italic; color: var(--accent); }
+.masthead .rule { border: none; border-top: 3px solid var(--ink); margin: 16px auto; width: 60px; }
+.masthead .meta {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.topic-section { margin-bottom: 36px; }
+.topic-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+.topic-title .count {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  transition: all 0.2s;
+}
+.card:hover { border-color: var(--accent); }
+.card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+.card h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.card h3 a:hover { color: var(--accent); }
+.card .desc {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+.card .source {
+  font-size: 12px;
+  color: var(--muted);
+}
+.score-badge {
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.score-mid .score-badge { background: var(--muted); }
+.footer {
+  text-align: center;
+  padding: 32px 0 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .page { padding: 0 16px 40px; }
+  .article-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="masthead">
+  <h1>AI <em>热点</em> 新闻</h1>
+  <hr class="rule">
+  <p class="meta">微信搜一搜 · 高评分文章聚合 · 2026-07-16 10:44 更新 · 共 10 篇</p>
+  <a class="back-link" href="index.html">← 返回首页</a>
+</header>
+<section class="topic-section"><h2 class="topic-title">视频生成 <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkyMzcwMDIyMQ==&mid=2247502892&idx=1&sn=40a7505bd72c2599cd1cdd1dda3dbe97&chksm=c0194e51e1c5a7a86484c5ee8ccb738bab4bdf3f8392203ae3c8d6fdfe41f4f7613407e03be2#rd" target="_blank" rel="noopener">今日开源（2026-7-10）：LingBot-Video正式开源，首个面向具身智能的大规模MoE视频生成模型，多维度奖励系统优化物理合理性</a></h3>
+                <p class="desc">★LIMSSR针对训练阶段多模态观测不完整的现实挑战，重新定义不完全多模态学习为条件序列推理任务。框架利用大语言模型的语义推理能力，通过提示引导的上下文感知模态插补和多维表示融合，从可用上下文中推断潜在语义，</p>
+                <span class="source">机器之心SOTA模型</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzY5MzM3ODY4OQ==&mid=2247483699&idx=1&sn=0ef0b38850914d0912765c602cf362e4&chksm=f50fce6f3101808caf3d8ca5268129de3e238ada8140808f8e73bf10d248f31f049dc38fa7e4#rd" target="_blank" rel="noopener">生成一条AI视频不满意还要重跑？谷歌“会话式编辑”来了——说一句自然语言就能改视频</a></h3>
+                <p class="desc">关键在于Gemini Omni把大语言模型的推理能力和视频生成能力结合在了一起。它不只是“看”画面，而是“理解”画面里的元素有什么区别。角色、背景、物体、光线，它知道哪些是独立的，可以分开修改。</p>
+                <span class="source">AI智潮</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">DeepSeek <span class="count">(2篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzcwMjMyNDc5Nw==&mid=2247483869&idx=1&sn=10037214d6c6f84217d07fdbadeb6047&chksm=f5eb293c94a3d24522cfe97f7c28e31831806411ee9570b7054f2aa3e11e8b173b4b935d75dd#rd" target="_blank" rel="noopener">美国企业集体“叛逃”：Claude失宠，DeepSeek上位，中国AI在美调用占比从4.5%飙到46%</a></h3>
+                <p class="desc">美国企业正在大规模从Anthropic的Claude、OpenAI的GPT等美国模型，转向DeepSeek、智谱GLM等中国模型。一、数据不会说谎：从4.5%到46%的“逆袭”OpenRouter的统计数据显示：</p>
+                <span class="source">IT吃瓜局</span>
+            </article><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkxMjc1NTYyMg==&mid=2247486257&idx=1&sn=b6a713415e805344097d3e5478b646cd&chksm=c08be6ccf922f66b198be7c3fdc871adebb409513f7bb826c03fc544da29fc25388693518f9b#rd" target="_blank" rel="noopener">今天AI变天了：DeepSeek V4正式上线，豆包千问集体下线——开源追平闭源，监管画了红线</a></h3>
+                <p class="desc">·帮企业从GPT/Claude迁移到DeepSeek/混元：能力差不多，成本降90%·帮企业做模型选型：不同场景用不同模型，省钱提效·帮企业搭双轨方案：国产模型为主+海外模型为辅，降低地缘风险</p>
+                <span class="source">AI解忧社</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Anthropic <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA3NTQxNjgwMA==&mid=2448331348&idx=1&sn=f80aecd6a05f4092ae90999bb9c65111&chksm=8abcd1edc70e3c0167f9949c0ed938b8e560f1aa8eb029e4367f14612ee0afbd9567e50ddce2#rd" target="_blank" rel="noopener">2026 推理大模型终极对决：Anthropic 称王能力榜，但真正的赢家在中国</a></h3>
+                <p class="desc">三、视频生成：中国已经平视 Sora推理大模型之外，另一个战场是视频生成。快手可灵、生数 Vidu、字节即梦，在生成质量、动作连贯性、物理一致性上，已经不输 OpenAI Sora。</p>
+                <span class="source">悦智互动</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">AI编程 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU0Mjk4NDk1MA==&mid=2247496047&idx=1&sn=9a7df3bad4793741c456fb886ffa929f&chksm=fab756a5e8fab3ad27b3a33c4e3cbeec5446efe56b748a4fd60acfdee734df9c412e8fa1ccff#rd" target="_blank" rel="noopener">DeepSeek刚开源了一个编程神器，国产版Claude Code来了，我第一时间装好了</a></h3>
+                <p class="desc">Claude CodeClaude否$20/月追求最强能力CursorGPT-4否$20/月追求最快补全GitHub CopilotGPT-4否$10/月追求生态集成Deep CodeDeepSeek-V4是按API用量追求国产+开源Dee</p>
+                <span class="source">浩浩学编程</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">Claude Code <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzkzNjE4NTIyOA==&mid=2247484355&idx=1&sn=00e3ec339aafa33dc25d7782d286b41f&chksm=c35015fd2bcf994f65be9798f5d67acb0ce5d976c6645643602d9b77531e724fec87f52354b7#rd" target="_blank" rel="noopener">Claude Science 一键接入国产大模型？这个开源工具让你自由选择推理引擎</a></h3>
+                <p class="desc">你能在 Claude Science 的本地工作流中用 DeepSeek 等第三方模型完成对话和推理，而且可以保存多套 Profile，在 DeepSeek、GLM、Kimi 等来源之间随时切换。</p>
+                <span class="source">冯博群书</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">OpenAI <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzI2MzYzNjU1Mw==&mid=2247520693&idx=2&sn=d2ba979c18157c1883b96ed0d0cde517&chksm=ebee0aa6b27c0d37df0693baa7e520e9ee11dfe8facd447594d2da1a727c246ca2c590f7e49a#rd" target="_blank" rel="noopener">2026全球AI模型实力排行榜</a></h3>
+                <p class="desc">1、GPT-5.5/GPT-5.4 Pro2、Claude Opus 4.73、Gemini 3.1 Pro4、GPT-5.45、Claude Opus 4.66、Grok 4.x7、DeepSeek V3/R1（DeepSeek）8、Ki</p>
+                <span class="source">浪潮数据</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">开源 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzU4NDY2Mjk4Nw==&mid=2247484295&idx=1&sn=ab6923129f4697860f149b940f126f5d&chksm=fc966d468de7744e7663157c785791d29c6e49f59afbf60fdf3a30168e7a79566a6b67322d8c#rd" target="_blank" rel="noopener">2026 年 10+ 个最佳开源编码模型：从 GLM、Kimi 到 DeepSeek，怎么选</a></h3>
+                <p class="desc">2026 年，代码模型的核心竞争力是“能否在真实仓库里持续读代码、调工具、修错误，并交付一个可合并的改动”。开放权重模型第一次有了足够多的候选项，但它们适合的工作完全不同。</p>
+                <span class="source">效能加速</span>
+            </article></div></section><section class="topic-section"><h2 class="topic-title">英伟达 <span class="count">(1篇)</span></h2><div class="article-grid"><article class="card score-high">
+                <span class="score-badge">8</span>
+                <h3><a href="http://mp.weixin.qq.com/s?__biz=MzA5NjUyODQyOA==&mid=2448301995&idx=1&sn=6934b9fd8f4f67d28f234e92e929959b&chksm=85f83d8152d8c3260477bbea077dc4eda6e1342665409bafc74938abb2001846d12e59fe98c2#rd" target="_blank" rel="noopener">英伟达亮出"从未见过"新芯片：AI算力下一站不在GPU</a></h3>
+                <p class="desc">英伟达推推理芯片，不是因为GPU做错了，而是因为AI产业走到了一个分岔口——算力需求从"训练一个模型"变成"运行亿万次推理"。往下走的路不止一条。</p>
+                <span class="source">硬核价值</span>
+            </article></div></section>
+<footer class="footer">Powered by TikHub WeChat Search & Claude Scoring · <a href="index.html">AI 资讯日报</a></footer>
+</div>
+</body>
+</html>
