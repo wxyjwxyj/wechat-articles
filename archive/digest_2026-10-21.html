@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今日 AI 资讯速览｜2026-10-21</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0c0c0e;
+      --border:  #222228;
+      --text:    #f0ece2;
+      --muted:   #6b6b7a;
+      --accent:  #f5a623;
+      --accent2: #e8845a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Serif SC', 'PingFang SC', serif;
+      min-height: 100vh;
+      background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .masthead {
+      max-width: 760px; margin: 0 auto; padding: 60px 32px 0;
+    }
+    .masthead-eyebrow {
+      font-family: 'Playfair Display', serif;
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 14px;
+    }
+    .masthead-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 6vw, 56px); font-weight: 900;
+      line-height: 1.08; letter-spacing: -1px;
+      color: var(--text); margin-bottom: 20px;
+    }
+    .masthead-title em { font-style: italic; color: var(--accent); }
+    .masthead-rule {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
+    }
+    .masthead-rule::before, .masthead-rule::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .masthead-rule span {
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); white-space: nowrap;
+    }
+    .masthead-sub {
+      font-size: 13px; color: var(--muted);
+      padding-bottom: 32px; border-bottom: 1px solid var(--border);
+    }
+    .masthead-sub strong { color: var(--accent); font-weight: 600; }
+    .feed { max-width: 760px; margin: 0 auto; padding: 0 32px 80px; }
+    .card {
+      display: grid; grid-template-columns: 52px 1fr; gap: 0 20px;
+      padding: 32px 0; border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateY(16px);
+      animation: rise 0.5s ease forwards;
+    }
+    @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+    .card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 48px; font-weight: 900; color: var(--border);
+      line-height: 1; padding-top: 4px; user-select: none;
+      transition: color 0.2s;
+    }
+    .card:hover .card-num { color: var(--accent); }
+    .card-body { min-width: 0; }
+    .card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .source-name {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .merged-tag {
+      font-size: 10px; background: var(--accent2); color: #fff;
+      padding: 1px 6px; border-radius: 3px; letter-spacing: 0.5px;
+    }
+    .score-tag {
+      font-size: 10px; color: var(--accent); border: 1px solid #f5a62344;
+      padding: 1px 6px; border-radius: 3px; margin-left: auto;
+    }
+    .card-title {
+      font-size: 18px; font-weight: 600; line-height: 1.55;
+      color: var(--text); margin-bottom: 14px; transition: color 0.2s;
+    }
+    .card:hover .card-title { color: #fff; }
+    .comment {
+      background: #f5a62309; border-left: 2px solid var(--accent);
+      padding: 10px 14px; margin-bottom: 12px; border-radius: 0 6px 6px 0;
+    }
+    .comment-mark {
+      display: inline-block; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 5px;
+    }
+    .comment p { font-size: 13px; line-height: 1.7; color: #c8c4b8; }
+    .summary { font-size: 13px; line-height: 1.75; color: var(--muted); margin-bottom: 14px; }
+    .card-footer a {
+      font-size: 12px; color: var(--accent); text-decoration: none;
+      letter-spacing: 0.5px; transition: opacity 0.15s;
+    }
+    .card-footer a:hover { opacity: 0.7; }
+    .card-footer a + a { margin-left: 12px; }
+    .page-footer {
+      text-align: center; padding: 24px 32px 48px;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #2e2e38;
+    }
+    @media (max-width: 600px) {
+      .masthead, .feed { padding-left: 20px; padding-right: 20px; }
+      .card { grid-template-columns: 36px 1fr; gap: 0 12px; }
+      .card-num { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="masthead">
+    <div class="masthead-eyebrow">AI Daily Digest</div>
+    <h1 class="masthead-title">今日 <em>AI</em><br>资讯速览</h1>
+    <div class="masthead-rule"><span>2026-10-21</span></div>
+    <p class="masthead-sub">编辑精选 <strong>2 条</strong>重要资讯 &nbsp;·&nbsp; 自动采集 + Claude 导读</p>
+  </div>
+  <div class="feed">
+    
+    <article class="card" style="animation-delay: 0.00s">
+      <div class="card-num">01</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">GitHub Trending</span>
+          
+          <span class="score-tag">5分</span>
+        </div>
+        <h2 class="card-title">shiyu-coder/Kronos</h2>
+        
+        <p class="summary">⭐ 733 stars today · 42,387 total · Kronos: A Foundation Model for the Language of Financial Markets</p>
+        <div class="card-footer"><a href="https://github.com/shiyu-coder/Kronos" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+    <article class="card" style="animation-delay: 0.08s">
+      <div class="card-num">02</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="source-name">Hacker News</span>
+          
+          <span class="score-tag">5分</span>
+        </div>
+        <h2 class="card-title">DeepInfer: High-performance inference framework for DeepSeek models</h2>
+        
+        <p class="summary">HN 2145 points · 838 comments · https://github.com/deepseek-ai/DeepInfer</p>
+        <div class="card-footer"><a href="https://news.ycombinator.com/item?id=50163277" target="_blank">查看原文 →</a></div>
+      </div>
+    </article>
+  </div>
+  <div class="page-footer">AI Daily · 2026-10-21 · Powered by Claude</div>
+</body>
+</html>
