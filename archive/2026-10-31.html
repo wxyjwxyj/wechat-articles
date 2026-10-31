@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微信公众号文章汇总 - 2026-10-31</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f0f2f5;
+      line-height: 1.6;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+    /* 顶部 Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 28px 32px 24px;
+    }
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+    }
+    .header .meta {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* 话题栏 */
+    .topics-bar {
+      background: #fff;
+      padding: 10px 32px;
+      border-bottom: 1px solid #eaecf0;
+    }
+    .topic-group {
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 5px;
+      padding: 4px 0;
+    }
+    .topic-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 0;
+    }
+    .topic-group + .topic-group {
+      border-top: 1px solid #f3f4f6;
+    }
+    .topic-cat-label {
+      font-size: 11px;
+      color: #bbb;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      min-width: 44px;
+      flex-shrink: 0;
+    }
+    .topics-label {
+      font-size: 12px;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+    .topic-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: #f3f4f6;
+      color: #555;
+      border: 1px solid #e5e7eb;
+      padding: 2px 9px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 400;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.1s;
+    }
+    .topic-tag em {
+      font-style: normal;
+      font-size: 10px;
+      color: #aaa;
+    }
+    .topic-tag:hover {
+      background: #e9eaf0;
+      color: #333;
+      transform: translateY(-1px);
+    }
+    .topic-tag.active {
+      box-shadow: 0 0 0 2px currentColor;
+      font-weight: 500;
+      opacity: 1;
+    }
+    .topic-tag.dimmed { opacity: 0.35; }
+
+    /* 来源筛选栏 */
+    .sources-bar {
+      background: #fff;
+      padding: 10px 32px;
+      border-bottom: 1px solid #eaecf0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .source-row {
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .source-chips {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .chip-line {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .source-row-label {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      min-width: 44px;
+      flex-shrink: 0;
+    }
+    .source-filter {
+      display: inline-block;
+      padding: 5px 13px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s, transform 0.1s, box-shadow 0.1s;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .source-filter:hover { opacity: 0.8; transform: translateY(-1px); }
+    .source-filter.active { box-shadow: 0 0 0 2px currentColor; transform: translateY(-1px); }
+    .source-filter.dimmed { opacity: 0.3; }
+    .source-filter em {
+      font-style: normal;
+      font-size: 11px;
+      opacity: 0.65;
+      margin-left: 2px;
+    }
+
+    /* 表格 */
+    .table-wrap { padding: 0 32px 28px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed;
+    }
+    th {
+      background: #f8f9fb;
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #eaecf0;
+    }
+    th:nth-child(1) { width: 48%; }
+    th:nth-child(2) { width: 32%; }
+    th:nth-child(3) { width: 13%; }
+    th:nth-child(4) { width: 7%; }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #f0f2f5;
+      vertical-align: top;
+    }
+    tr.article-row:hover td { background: #fafbff; }
+    tr.merged td { background: #fdf9ff; }
+    tr.merged:hover td { background: #f8f2ff; }
+
+    /* ── 分数分段折叠 ── */
+    /* 默认隐藏中/低分行；tbody.expanded-X 类切换显示 */
+    tr.article-row.tier-mid, tr.article-row.tier-low { display: none; }
+    tbody.expanded-mid tr.article-row.tier-mid { display: table-row; }
+    tbody.expanded-low tr.article-row.tier-low { display: table-row; }
+    /* 过滤激活时跨段显示所有命中行，分隔条隐藏 */
+    tbody.filter-active tr.article-row { display: table-row; }
+    tbody.filter-active tr.article-row.filter-hidden { display: none; }
+    tbody.filter-active tr.tier-separator { display: none; }
+
+    tr.tier-separator td {
+      padding: 0;
+      background: #f8f9fb;
+      border-top: 1px solid #eaecf0;
+      border-bottom: 1px solid #eaecf0;
+    }
+    .tier-toggle {
+      width: 100%;
+      padding: 10px 16px;
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      color: #888;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      transition: color 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+    .tier-toggle:hover { background: #eef0f4; color: #667eea; }
+    .tier-arrow {
+      display: inline-block;
+      margin-left: 6px;
+      transition: transform 0.2s;
+      font-size: 10px;
+    }
+    tr.tier-separator.expanded .tier-arrow { transform: rotate(180deg); }
+
+    /* 标题列 */
+    .col-title { width: 30%; }
+    .title-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: #1a1a2e;
+      line-height: 1.5;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    .merged-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.5px;
+    }
+    .score-badge {
+      display: inline-block;
+      background: #f0f0f0;
+      color: #888;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-right: 6px;
+      vertical-align: middle;
+      font-variant-numeric: tabular-nums;
+    }
+    tr.article-row:has(.score-badge) .score-badge {
+      background: #fff3e0;
+      color: #e67e22;
+    }
+
+    /* 摘要列 */
+    .col-digest { width: 32%; }
+    .digest {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .no-digest { color: #bbb; font-style: italic; }
+
+    /* 来源列 */
+    .col-sources { width: 16%; }
+    .source-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid;
+      margin: 2px 2px 2px 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .source-badge:hover { opacity: 0.7; }
+
+    /* 时间列 */
+    .col-time { width: 8%; white-space: nowrap; }
+    .col-time { font-size: 13px; color: #aaa; text-align: right; }
+
+    /* 底部 */
+    .footer {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #bbb;
+      border-top: 1px solid #f0f2f5;
+    }
+
+    /* 话题栏折叠 */
+    .topics-bar {
+      overflow: visible;
+    }
+    .collapsible-group {
+      display: none;
+    }
+    .topics-bar.expanded .collapsible-group,
+    .sources-bar.expanded .collapsible-group {
+      display: flex;
+    }
+    .topics-toggle, .sources-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 32px;
+      font-size: 11px;
+      color: #bbb;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid #eaecf0;
+      background: #fff;
+      transition: color 0.15s;
+    }
+    .topics-toggle:hover, .sources-toggle:hover { color: #667eea; }
+
+    /* ── 手机适配 ── */
+    @media (max-width: 768px) {
+      .container { margin: 0; border-radius: 0; box-shadow: none; }
+      .header { padding: 16px 16px 14px; }
+      .header h1 { font-size: 18px; }
+      .header .meta { font-size: 11px; }
+
+      /* 窄屏 6 列太挤，改 3 列 */
+      .chip-line { grid-template-columns: repeat(3, 1fr); }
+
+      /* 标签栏手机端 */
+      .topics-bar {
+        padding: 8px 16px;
+      }
+      .topics-bar.expanded .collapsible-group {
+        display: flex;
+      }
+      .topics-toggle, .sources-toggle {
+        display: block !important;
+        text-align: center;
+        padding: 6px 0;
+        font-size: 11px;
+        color: #999;
+        cursor: pointer;
+        user-select: none;
+        background: #f8f9fb;
+        border-bottom: 1px solid #eaecf0;
+      }
+      .topics-toggle:active { color: #667eea; }
+      .topic-group {
+        gap: 4px;
+        padding: 3px 0;
+      }
+      .topic-cat-label {
+        font-size: 10px;
+        min-width: 40px;
+      }
+      .topic-tag {
+        font-size: 11px;
+        padding: 2px 7px;
+      }
+
+      /* 来源筛选栏 */
+      .sources-bar {
+        padding: 8px 16px;
+        gap: 4px;
+      }
+
+      /* 表格 → 卡片布局 */
+      .table-wrap { padding: 0; }
+      table { display: block; width: 100%; }
+      thead { display: none; }
+      tbody { display: block; }
+      tr.article-row {
+        display: block;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f2f5;
+      }
+      tr.article-row:hover td { background: transparent; }
+      td {
+        display: block;
+        padding: 0;
+        border: none;
+      }
+      .col-title {
+        width: 100%;
+        margin-bottom: 6px;
+      }
+      .title-text {
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      .col-digest {
+        display: block;
+        width: 100%;
+        margin-bottom: 6px;
+      }
+      .digest {
+        font-size: 12px;
+        color: #999;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .no-digest { display: none; }
+      .col-sources {
+        width: 100%;
+        display: inline;
+      }
+      .source-badge {
+        font-size: 11px;
+        padding: 1px 6px;
+        margin: 0 4px 0 0;
+      }
+      .col-time {
+        display: inline;
+        width: auto;
+        font-size: 11px;
+        color: #bbb;
+        margin-left: 4px;
+      }
+      .col-time::before {
+        content: '·';
+        margin-right: 4px;
+      }
+      .score-badge {
+        font-size: 9px;
+        padding: 0 4px;
+      }
+      .merged-badge {
+        font-size: 9px;
+        padding: 0 4px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📱 微信公众号文章汇总</h1>
+      <div class="meta">获取时间：2026-10-31 10:35:31 &nbsp;|&nbsp; 共采集 28 篇，聚合为 28 条资讯 &nbsp;|&nbsp; 2026-10-31</div>
+    </div>
+
+    <div class="topics-bar" id="topicsBar">
+      <div class='topic-group'><span class='topic-cat-label'>🏢 AI公司</span><div class='topic-chips'><div class='chip-line'><span class='topic-tag' data-tag='Anthropic' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>Anthropic <em>5</em></span><span class='topic-tag' data-tag='Google' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>Google <em>4</em></span><span class='topic-tag' data-tag='OpenAI' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>OpenAI <em>3</em></span><span class='topic-tag' data-tag='Gemma 4' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>Gemma 4 <em>1</em></span><span class='topic-tag' data-tag='英伟达' style='background:#3b82f622;color:#3b82f6;border-color:#3b82f666'>英伟达 <em>1</em></span></div></div></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>⚙️ AI技术</span><div class='topic-chips'><div class='chip-line'><span class='topic-tag' data-tag='Agent' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>Agent <em>11</em></span><span class='topic-tag' data-tag='ELF' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>ELF <em>2</em></span><span class='topic-tag' data-tag='强化学习' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>强化学习 <em>2</em></span><span class='topic-tag' data-tag='AI安全' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>AI安全 <em>1</em></span><span class='topic-tag' data-tag='AI芯片' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>AI芯片 <em>1</em></span><span class='topic-tag' data-tag='RAG' style='background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf666'>RAG <em>1</em></span></div></div></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>🌐 行业应用</span><div class='topic-chips'><div class='chip-line'><span class='topic-tag' data-tag='AR/VR' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>AR/VR <em>20</em></span><span class='topic-tag' data-tag='AI编程' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>AI编程 <em>2</em></span><span class='topic-tag' data-tag='芯片' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>芯片 <em>2</em></span><span class='topic-tag' data-tag='创业' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>创业 <em>1</em></span><span class='topic-tag' data-tag='招聘' style='background:#f59e0b22;color:#f59e0b;border-color:#f59e0b66'>招聘 <em>1</em></span></div></div></div>
+<div class='topic-group collapsible-group'><span class='topic-cat-label'>🔖 其他</span><div class='topic-chips'><div class='chip-line'><span class='topic-tag' data-tag='AI' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>AI <em>21</em></span><span class='topic-tag' data-tag='Claude Code' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>Claude Code <em>2</em></span><span class='topic-tag' data-tag='Cursor' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>Cursor <em>1</em></span><span class='topic-tag' data-tag='开源' style='background:#6b728022;color:#6b7280;border-color:#6b728066'>开源 <em>1</em></span></div></div></div>
+
+    </div>
+    <div class="topics-toggle" id="topicsToggle" onclick="var bar=document.getElementById('topicsBar');bar.classList.toggle('expanded');this.textContent=bar.classList.contains('expanded')?'收起 ▲':'展开全部话题 ▼'">展开全部话题 ▼</div>
+
+    <div class="sources-bar" id="sourcesBar">
+      <div class='source-row'><span class='source-row-label'>公众号</span><div class='source-chips'><div class='chip-line'><span class='source-filter inactive' data-source='量子位' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>量子位</span><span class='source-filter inactive' data-source='机器之心' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>机器之心</span><span class='source-filter inactive' data-source='数字生命卡兹克' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>数字生命卡兹克</span><span class='source-filter inactive' data-source='新智元' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>新智元</span><span class='source-filter inactive' data-source='AI前线' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>AI前线</span><span class='source-filter inactive' data-source='甲子光年' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>甲子光年</span></div></div></div>
+<div class='source-row collapsible-group'><div class='source-chips'><div class='chip-line'><span class='source-filter inactive' data-source='AI寒武纪' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>AI寒武纪</span><span class='source-filter inactive' data-source='APPSO' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>APPSO</span><span class='source-filter inactive' data-source='36氪' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>36氪</span><span class='source-filter inactive' data-source='虎嗅APP' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>虎嗅APP</span><span class='source-filter inactive' data-source='硅星人Pro' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>硅星人Pro</span><span class='source-filter inactive' data-source='AGI Hunt' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>AGI Hunt</span></div><div class='chip-line'><span class='source-filter inactive' data-source='赛博禅心' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>赛博禅心</span><span class='source-filter inactive' data-source='极客公园' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>极客公园</span><span class='source-filter inactive' data-source='小窗幽记机器学习' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>小窗幽记机器学习</span><span class='source-filter inactive' data-source='GiantPandaLLM' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>GiantPandaLLM</span><span class='source-filter inactive' data-source='麒芯说AI' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>麒芯说AI</span><span class='source-filter inactive' data-source='海外独角兽' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>海外独角兽</span></div><div class='chip-line'><span class='source-filter inactive' data-source='Z Potentials' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>Z Potentials</span><span class='source-filter inactive' data-source='AI科技评论' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>AI科技评论</span><span class='source-filter inactive' data-source='苍何' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>苍何</span><span class='source-filter inactive' data-source='袋鼠帝AI客栈' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>袋鼠帝AI客栈</span><span class='source-filter inactive' data-source='吃果冻不吐果冻皮' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>吃果冻不吐果冻皮</span><span class='source-filter inactive' data-source='包包算法笔记' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>包包算法笔记</span></div><div class='chip-line'><span class='source-filter inactive' data-source='老刘说NLP' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>老刘说NLP</span><span class='source-filter inactive' data-source='Datawhale' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>Datawhale</span><span class='source-filter inactive' data-source='精神抖擞王大鹏' style='color:#ccc;border-color:#e5e7eb;background:#fafafa;cursor:default'>精神抖擞王大鹏</span></div></div></div>
+<div class='sources-toggle' id='sourcesToggle' onclick="var bar=document.getElementById('sourcesBar');bar.classList.toggle('expanded');this.textContent=bar.classList.contains('expanded')?'收起 ▲':'展开全部公众号 ▼'">展开全部公众号 ▼</div>
+<div class='source-row'><span class='source-row-label'>海外源</span><div class='source-chips'><div class='chip-line'><span class='source-filter' data-source='Hacker News' style='background:#84fab022;color:#84fab0;border-color:#84fab066'>Hacker News <em>2</em></span><span class='source-filter' data-source='ArXiv' style='background:#f5576c22;color:#f5576c;border-color:#f5576c66'>ArXiv <em>1</em></span><span class='source-filter' data-source='GitHub Trending' style='background:#4481eb22;color:#4481eb;border-color:#4481eb66'>GitHub Trending <em>10</em></span><span class='source-filter' data-source='TechCrunch AI' style='background:#667eea22;color:#667eea;border-color:#667eea66'>TechCrunch AI <em>8</em></span><span class='source-filter' data-source='MIT Technology Review' style='background:#f093fb22;color:#f093fb;border-color:#f093fb66'>MIT Technology Review <em>3</em></span><span class='source-filter' data-source='The Verge AI' style='background:#4facfe22;color:#4facfe;border-color:#4facfe66'>The Verge AI <em>4</em></span></div></div></div>
+
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>标题</th>
+            <th>摘要</th>
+            <th>来源</th>
+            <th style="text-align:right">时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class='tier-separator' data-tier='mid' data-label='5-6 分（28 篇）'><td colspan='4'><button class='tier-toggle' type='button'><span class='tier-text'>展开 5-6 分（28 篇）</span><span class='tier-arrow'>▼</span></button></td></tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>lightpanda-io/browser</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 626 stars today · 38,459 total · Lightpanda: the headless browser designed for AI and automation</div></td>
+  <td class='col-sources'><a href='https://github.com/lightpanda-io/browser' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AR/VR' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>obra/superpowers</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 今日新增1,653颗星标 · 累计173,158颗星标 · 一套经过验证的智能体技能框架与软件开发方法论。</div></td>
+  <td class='col-sources'><a href='https://github.com/obra/superpowers' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AI安全 AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>togg53192-cmd/jailbreaks</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 2055 stars today · 11,179 total · LIST OF ALL MY JAILBREAKS</div></td>
+  <td class='col-sources'><a href='https://github.com/togg53192-cmd/jailbreaks' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI ELF' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>JetBrains/thinkrail</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 722 stars today · 6,613 total · Vibe code with pi in a lightweight, real IDE that customises itself around the way you…</div></td>
+  <td class='col-sources'><a href='https://github.com/JetBrains/thinkrail' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Anthropic Agent AR/VR' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>anthropics/skills</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 今日625颗星 · 总计134,743颗星 · Agent Skills公开仓库</div></td>
+  <td class='col-sources'><a href='https://github.com/anthropics/skills' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>mattpocock/skills</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 今日7429星 · 总计35,059 · 真正工程师的技能。直接来自我的.claude目录。</div></td>
+  <td class='col-sources'><a href='https://github.com/mattpocock/skills' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='开源 RAG AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Renhuai123/ziwei-doushu</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 1126 stars today · 11,289 total · 紫微斗数开源排盘引擎 — 基于倪海厦《天纪》体系，含完整排盘算法、四化系统、格局知识库、古籍原文数据</div></td>
+  <td class='col-sources'><a href='https://github.com/Renhuai123/ziwei-doushu' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AI编程 AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>CopilotKit/OpenBot</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 706 stars today · 8,838 total · Open-source AI coworkers that each get a computer of their own: a browser, files and t…</div></td>
+  <td class='col-sources'><a href='https://github.com/CopilotKit/OpenBot' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AI编程 AR/VR AI' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>pbakaus/impeccable</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 今日 485 颗星 · 总计 32,697 颗星 · 让你的 AI 更擅长设计的设计语言。</div></td>
+  <td class='col-sources'><a href='https://github.com/pbakaus/impeccable' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Claude Code Anthropic Google Agent' data-sources='GitHub Trending'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>thedotmack/claude-mem</span>
+  </td>
+  <td class='col-digest'><div class='digest'>⭐ 今日新增 352 颗星 · 总计 78,653 颗星 · 为每个智能体提供跨会话的持久化上下文 – 捕获智能体在会话中的所有操作，利用 AI 进行压缩，并将相关上下文注入后续会话。兼容 Claude Code、OpenClaw、Code…</div></td>
+  <td class='col-sources'><a href='https://github.com/thedotmack/claude-mem' target='_blank' class='source-badge' style='background:#4481eb22;color:#4481eb;border-color:#4481eb44'>GitHub Trending</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR ELF' data-sources='MIT Technology Review'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Our climate models have a big, dangerous blind spot</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Climate change itself is increasingly fueling climate change. Rising concentrations of greenhouse gases are driving up g…</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/10/29/1147735/climate-models-blind-spot/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>MIT Technology Review</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='OpenAI Agent AR/VR AI' data-sources='MIT Technology Review'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>We urgently need to monitor AI agents’ actions in real time</span>
+  </td>
+  <td class='col-digest'><div class='digest'>This summer, hundreds of OpenAI agents tried to cheat on a cybersecurity test. They broke out of their test environment …</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/10/29/1147824/monitor-ai-agents-actions-real-time/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>MIT Technology Review</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent 强化学习 AR/VR AI' data-sources='MIT Technology Review'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>The Download: AI agent tracking and climate feedback loops</span>
+  </td>
+  <td class='col-digest'><div class='digest'>This is today&#8217;s edition of The Download, our weekday newsletter that provides a daily dose of what&#8217;s going o…</div></td>
+  <td class='col-sources'><a href='https://www.technologyreview.com/2026/10/29/1147830/the-download-monitoring-ai-agents-climate-feedback-loops/' target='_blank' class='source-badge' style='background:#f093fb22;color:#f093fb;border-color:#f093fb44'>MIT Technology Review</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Google 芯片 AI芯片 Gemma 4' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Google’s first data center satellite is online and writing poetry</span>
+  </td>
+  <td class='col-digest'><div class='digest'>The first TPU in space is running a Google DeepMind Gemma 4 model and writing cheesy poetry.</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/googles-first-data-center-satellite-is-online-and-writing-poetry/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Zest’s new AI agent finds restaurants and books reservations over text</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Can't agree on where to eat? Zest's AI concierge can combine everyone's tastes, put restaurant options to a vote, and ma…</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/zests-new-ai-agent-finds-restaurants-and-books-reservations-over-text/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Cracks are emerging in the AI spending boom</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Big Tech is pouring billions into AI infrastructure, but mounting debt, negative cash flow, and growing investor skeptic…</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/cracks-are-emerging-in-the-ai-spending-boom/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Last-minute Halloween costumes for tech nerds</span>
+  </td>
+  <td class='col-digest'><div class='digest'>No Halloween costume? Just be a deceptively cute AI agent icon, a PHP vulnerability, or sleepy time Bryan Johnson.</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/last-minute-halloween-costumes-for-tech-nerds/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Anthropic 创业 AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Anthropic expected to receive high ‘junk’ rating from credit agencies following IPO, FT report says</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Blackstone's forecast is just a prediction, but naturally, a high junk rating would make it more difficult and costlier …</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/anthropic-expected-to-receive-high-junk-rating-from-credit-agencies-following-ipo-report-says/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Intel’s stock crashes, knocking $12B from government’s stake</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Intel is being hurt by PC sales as the AI industry gobbles memory and other components causing PC prices to rise.</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/intels-stock-crashes-knocking-12b-from-governments-stake/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Ollie, a privacy-focused AI assistant, is shutting down</span>
+  </td>
+  <td class='col-digest'><div class='digest'>As an increasing number of AI assistants flood the market, the founder of Ollie, an assistant that respected its users' …</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/ollie-a-privacy-focused-ai-assistant-is-shutting-down/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='英伟达 招聘 AI' data-sources='TechCrunch AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Nvidia weighs playing the cosigner for Nscale’s AI data center in West Virginia</span>
+  </td>
+  <td class='col-digest'><div class='digest'>When investors get nervous about AI spending, it helps to have the chipmaker that sells the chips offer to cosign the lo…</div></td>
+  <td class='col-sources'><a href='https://techcrunch.com/2026/10/30/nvidia-weighs-playing-the-cosigner-for-nscales-ai-data-center-in-west-virginia/' target='_blank' class='source-badge' style='background:#667eea22;color:#667eea;border-color:#667eea44'>TechCrunch AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI' data-sources='The Verge AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Starbucks wants to use AI to show you a ‘personalized digital menu’ at the drive-thru</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Starbucks could eventually show you a personalized digital menu when you pull up to the drive-thru. During an earnings c…</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/ai-artificial-intelligence/1023440/starbucks-ai-personalized-menu-drive-thru' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>The Verge AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Google AR/VR 芯片 AI' data-sources='The Verge AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Google&amp;#8217;s satellite AI server transmits its first response to Earth</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Google's AI chip-equipped satellite has generated its first response from space. In a blog post on Friday, Google says i…</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/tech/1023528/google-project-suncatcher-ai-satellite-transmission' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>The Verge AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='OpenAI Anthropic Google 强化学习' data-sources='The Verge AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>The biggest names in AI are backing a new way to opt out of scraping</span>
+  </td>
+  <td class='col-digest'><div class='digest'>OpenAI, Google, Microsoft, and Anthropic say they will adopt a new standard that publishers can use to opt out of being …</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/tech/1023763/openai-google-microsoft-ai-scraping-standard-opt-out' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>The Verge AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='OpenAI AR/VR AI' data-sources='The Verge AI'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Sam Altman says it’s better for RAM to be in a data center than on your desk</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Asked about supply chain shortages, like the ongoing RAM shortage, OpenAI CEO Sam Altman said in an interview that it's …</div></td>
+  <td class='col-sources'><a href='https://www.theverge.com/ai-artificial-intelligence/1023820/sam-altman-ram-shortage-cloud-servers' target='_blank' class='source-badge' style='background:#4facfe22;color:#4facfe;border-color:#4facfe44'>The Verge AI</a></td>
+  <td class='col-time'>02:35</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='AR/VR AI' data-sources='Hacker News'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>US Reps Lead Democratic Resolution Opposing A.I. Bubble Bailout for Big Tech</span>
+  </td>
+  <td class='col-digest'><div class='digest'>HN 626 points · 472 comments · https://progressives.house.gov/2026/10/reps-casar-waters-lead-democratic-resolution-oppos…</div></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=50302814' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>Hacker News</a></td>
+  <td class='col-time'>12:08</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Claude Code Anthropic Cursor AR/VR' data-sources='Hacker News'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>Backdoor in Claude Code for VS Code extension on the Cursor Marketplace</span>
+  </td>
+  <td class='col-digest'><div class='digest'>HN 791 points · 494 comments · https://phorion.io/blog/offical-claude-code-vsx-compromise/</div></td>
+  <td class='col-sources'><a href='https://news.ycombinator.com/item?id=50300683' target='_blank' class='source-badge' style='background:#84fab022;color:#84fab0;border-color:#84fab044'>Hacker News</a></td>
+  <td class='col-time'>07:09</td>
+</tr>
+<tr class='article-row tier-mid' data-tier='mid' data-tags='Agent AR/VR AI' data-sources='ArXiv'>
+  <td class='col-title'>
+    <span class='score-badge'>5</span>
+    <span class='title-text'>HEDGE: Gated Hypergraph Memory for Scalable Multi-Agent Debate</span>
+  </td>
+  <td class='col-digest'><div class='digest'>Multi-agent debate systems require agents to retain and revisit arguments across multiple rounds, yet limited context wi…</div></td>
+  <td class='col-sources'><a href='https://arxiv.org/abs/2610.38902v1' target='_blank' class='source-badge' style='background:#f5576c22;color:#f5576c;border-color:#f5576c44'>ArXiv</a></td>
+  <td class='col-time'>20:57</td>
+</tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">由 Claude 自动生成 · 2026-10-31 10:35:31</div>
+  </div>
+
+  <script>
+    const topicBtns  = document.querySelectorAll('.topic-tag');
+    const sourceBtns = document.querySelectorAll('.source-filter');
+    const rows = document.querySelectorAll('.article-row');
+    const tbody = document.querySelector('tbody');
+
+    let activeTag    = null;
+    let activeSource = null;
+
+    function applyFilter() {
+      const filterActive = !!(activeTag || activeSource);
+      tbody.classList.toggle('filter-active', filterActive);
+      rows.forEach(r => {
+        const rowTags    = r.dataset.tags    || '';
+        const rowSources = r.dataset.sources || '';
+        const tagOk    = !activeTag    || rowTags.includes(activeTag);
+        const sourceOk = !activeSource || rowSources.split('|').includes(activeSource);
+        r.classList.toggle('filter-hidden', !(tagOk && sourceOk));
+      });
+    }
+
+    // 分数分段折叠：点击分隔条上的按钮展开/收起 mid 或 low 段
+    document.querySelectorAll('.tier-separator').forEach(sep => {
+      const btn = sep.querySelector('.tier-toggle');
+      if (!btn) return;
+      const tier = sep.dataset.tier;
+      const label = sep.dataset.label || '';
+      const textEl = sep.querySelector('.tier-text');
+      btn.addEventListener('click', () => {
+        const expanded = tbody.classList.toggle('expanded-' + tier);
+        sep.classList.toggle('expanded', expanded);
+        if (textEl) textEl.textContent = (expanded ? '收起 ' : '展开 ') + label;
+      });
+    });
+
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.tag;
+        activeTag = (activeTag === name) ? null : name;
+        topicBtns.forEach(b => {
+          b.classList.toggle('active',  b.dataset.tag === activeTag && activeTag !== null);
+          b.classList.toggle('dimmed',  activeTag !== null && b.dataset.tag !== activeTag);
+        });
+        applyFilter();
+      });
+    });
+
+    sourceBtns.forEach(btn => {
+      if (btn.classList.contains('inactive')) return;
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.source;
+        activeSource = (activeSource === name) ? null : name;
+        sourceBtns.forEach(b => {
+          b.classList.toggle('active',  b.dataset.source === activeSource && activeSource !== null);
+          b.classList.toggle('dimmed',  activeSource !== null && b.dataset.source !== activeSource);
+        });
+        applyFilter();
+      });
+    });
+
+  </script>
+</body>
+</html>
