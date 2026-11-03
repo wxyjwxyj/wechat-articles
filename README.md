@@ -4,3 +4,4 @@
 
 👉 [查看今日日报](https://wxyjwxyj.github.io/wechat-articles/)
 
+本仓库由每日自动采集脚本维护。
